@@ -3,6 +3,7 @@
 #include "Core/Formats/DatArchive.h"
 
 #include <fstream>
+#include <algorithm>
 #include <map>
 #include <memory>
 #include <mutex>
@@ -44,7 +45,9 @@ struct Located {
 Located locate(const std::filesystem::path& root, const std::filesystem::path& relative) {
     Located l;
     std::filesystem::path base = root;
-    std::filesystem::path inGame = relative;
+    std::string normalized = relative.string();
+    std::replace(normalized.begin(), normalized.end(), '\\', '/');
+    std::filesystem::path inGame = normalized;
     if (relative.has_root_path()) {
         // A full path: inside the game's folder from there, else a file of its own.
         inGame = relative.lexically_relative(root);
@@ -55,7 +58,7 @@ Located locate(const std::filesystem::path& root, const std::filesystem::path& r
     }
     std::vector<std::filesystem::path> parts;
     for (const std::filesystem::path& part : inGame) {
-        if (!part.empty() && part != "." && part.native() != L"\\" && part.native() != L"/") parts.push_back(part);
+        if (!part.empty() && part != "." && part != "\\" && part != "/") parts.push_back(part);
     }
     if (parts.empty()) {
         l.loose = root / relative;
@@ -113,7 +116,7 @@ char g_languageLetter = 0;
 // two characters before the '.'.
 std::optional<std::filesystem::path> localized(const std::filesystem::path& relative) {
     if (g_languageLetter == 0) return std::nullopt;
-    const std::wstring text = relative.native();
+    const std::wstring text = relative.wstring();
     const size_t dot = text.rfind(L'.');
     if (dot == std::wstring::npos) return std::nullopt;
     if (dot >= 2 && text[dot - 2] == L'_') return std::nullopt;

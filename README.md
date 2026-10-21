@@ -1,97 +1,52 @@
-# OpenJuice
+# Juiced for macOS
 
-An engine that runs Juiced (PC, 2005) from the files of an installed copy of the game. The first goal is the stock
-game as it is: the same tracks, cars, physics, AI, menus and look, with the same results - a base for mods to start
-from. The code is written from descriptions of the game's behaviour; it carries no code and none of the game's files,
-which it reads from the user's own installation.
+A native macOS port of [OpenJuice](https://gitlab.com/sidecr3w/openjuice), the recreation of Juiced (PC, 2005). Uses SDL 3, Metal, MojoShader and FFmpeg. Runs the engine directly on Apple Silicon; Wine, Windows and the original game executable are not used.
 
-This project is AI assisted.
+**Early development build, not yet a complete or visually faithful port.** The native build loads the game's data, displays the interface, renders a race, runs physics and AI, and decodes music. Rendering compatibility and broader gameplay validation remain work in progress. See [the port status](docs/macos-port.md).
 
-This is the branch `retail/1.01/dx9`: the retail build 1.00 of the game with the official patch 1.01's changes
-(`docs/spec/patch-1.01.md`), drawn with Direct3D 9. It is `retail/1.00/dx9` with the patch's changes on top. The
-project's branches are listed on [`master`](https://gitlab.com/sidecr3w/openjuice/-/tree/master).
+Game assets are not included. Supply your own Juiced installation or extracted data.
 
-To build it and play: [`docs/guide.md`](docs/guide.md).
+## Build
 
-## Layout
+Requires a Metal-capable Mac, Xcode Command Line Tools, CMake, pkg-config and FFmpeg. Tested on Apple Silicon; Intel builds have not been tested. Install build dependencies with Homebrew:
 
-| folder | what it is |
-|---|---|
-| `src/Core` | the game without a screen: the game's files and formats, the data, the career, the cars' physics, the race's rules, the saves, input, the network (`Base`, `Data`, `Formats`, `Career`, `Cars`, `Physics`, `Race`, `Tracks`, `Saves`, `Input`, `Network`) |
-| `src/Render` | `IRenderDevice`, the engine's only door to the graphics API; `D3D9/` the backend of the stock game |
-| `src/Audio` | the sound system: banks, players, streams, voices |
-| `src/Game` | the game: the main loop (`App`, `App/Main.cpp` its `WinMain`), the windows' interface (`UI`), the front end's windows (`Frontend`, see `docs/code/frontend.md`), the race (`Race`), the 3D scene (`Scene`), the cars' models and sounds (`Cars`), movies and music (`Media`), the platform (`Platform`). `OpenJuice.Game.vcxproj` builds it as a library (the tests link it); `OpenJuice.vcxproj` makes `OpenJuice.exe` of its object files |
-| `tests` | unit and integration tests (`OpenJuice.Tests.exe`) |
-| `docs/spec` | what the stock game does, by part, with its addresses |
-| `docs/code` | how the port's code is put together |
-| `build/OpenJuice.props` | settings shared by all projects |
-
-Graphics: Direct3D 9, as the stock game draws (same states, same shaders).
-
-## Building
-
-Visual Studio 2026 with the C++ desktop workload: open `OpenJuice.slnx`, platforms x64 and x86, or
-
-```
-MSBuild OpenJuice.slnx -p:Configuration=Release -p:Platform=x64
+```sh
+xcode-select --install
+brew install cmake pkg-config ffmpeg
+cmake -S . -B out -DCMAKE_BUILD_TYPE=Release
+cmake --build out --target juiced juiced_app juiced_tests -j 8
+ctest --test-dir out --output-on-failure
 ```
 
-Output: `bin\x64\Release\OpenJuice64.exe` and `bin\Win32\Release\OpenJuice.exe` (32-bit); the debug builds are
-`OpenJuice64_d.exe` and `OpenJuice_d.exe`. The version resource (`src/Game/App/Version.h`) names the game's build the
-branch follows and OpenJuice's release. Static runtime (`/MT`), Windows 7 SP1 and later.
+CMake downloads pinned revisions of SDL 3 and MojoShader on the first configure. FFmpeg is dynamically linked from the local installation. `out/Juiced.app` is a local development app, not a self-contained redistributable bundle; it still needs those installed FFmpeg libraries. No signing identity is required to build locally.
 
-## Running
+## Run
 
-OpenJuice runs from the game's folder, as the stock game does: put the executable in the folder of an installed Juiced
-(the one holding `tracks\`) and start it there. It can take the place of `Juiced.exe`: renamed `Juiced.exe`, it starts
-as the game did. Away from the game's folder it says the folder was not found and stops (the stock game stops there too,
-without its `binkw32.dll`). No `Juiced.exe` is read: either version's installation, protected or not, will do. The
-install may be packed or not: a folder with a `<folder>.dat` beside it (`scripts.dat`, `ui.dat`, `cars\eclipse.dat`,
-`tracks\<track>.dat`...) is read from that archive, as the stock game does, else from the folder itself. The game's own
-settings (resolution, windowed, antialiasing, language...) are those of `JuicedConfig.exe` in
-`HKEY_CURRENT_USER\Software\THQ\Juiced`; when the adapter saved there is not found, `JuicedConfig.exe` is started first,
-as the stock game does.
-
-`OpenJuice.ini` next to the executable (written with the defaults on the first start):
-
-```
-[Game]
-Language=
-SkipIntroMovies=0
+```sh
+./out/juiced --game /absolute/path/to/Juiced
 ```
 
-The game's build this engine follows was made for another region; OpenJuice has the region binding removed. The language
-is picked as the English build 1.0.1 does, from `JuicedConfig.exe`'s `language` value (a Windows language id) or the
-user's language, among all eight languages (English when none fits); `Language=english` (french, german, italian,
-spanish, czech, polish, russian) under `[Game]` in `OpenJuice.ini` chooses one. It picks the texts, the windows' texts,
-the controls, the speech (`audio\speech\ui<letter>`, `race<letter>`) and the movies' sound track: a language's files the
-installation lacks are missing in the game as well.
+The data folder contains `tracks/` and `carmodels.dat`. The path is remembered. You can subsequently open `out/Juiced.app`; when no valid remembered path exists, it opens a folder picker. Intro movies are currently skipped. Keyboard input is implemented; controllers and steering wheels are not yet connected. With the supplied English controls: arrows steer/accelerate/brake, B is the handbrake, Enter selects, and Escape goes back.
 
-The movies are played by the game's own `binkw32.dll` in the 32-bit build; the 64-bit build decodes them itself (Bink 1,
-`src/Game/Media/BinkNative.*`). `SkipIntroMovies=0` (the default) plays the opening movies (THQ, Juice Games, the intro)
-as the stock game does; `1` passes them at once. The saves are the stock game's, in `%APPDATA%\THQ\Juiced`; the debug
-builds also read `[Saves] Folder`, the folder holding `SAVE` (empty: the stock game's).
+An instant race bypasses profile creation:
 
-The game's command line switches work as in the stock game (`docs/spec/01-startup.md`); OpenJuice adds `-setup`, which
-opens the game's configuration tool (`JuicedConfig.exe`) and starts no game. The debug builds also take OpenJuice's
-switches of scripted runs (`--frames N`, `--test`, `--seed N`, `--capture <file>`, ..;
-`src/Game/Platform/CommandLine.h`). `OpenJuice.log` is written next to the executable.
+```sh
+./out/juiced --game /absolute/path/to/Juiced -i
+```
 
-## Tests
+A reproducible AI-driven race and screenshot:
 
-`tests/` holds the checks of the engine (`OpenJuice.Tests.exe [save folder] [--game <folder>] [--unit | --integration]
-[--suite <name>] [--list]`): `Unit/` tests one part each with the data they make, `Integration/` the parts together
-through the file system, sockets on the loopback, the player's saves and the installed game's files (the `--game`
-folder; without one the tests of the game's data are left out). `Framework/` registers the tests, runs them and holds
-what they share (`Fakes/`: stand-ins such as a render device that draws nothing and a front end for the windows' tests).
+```sh
+./out/juiced --game /absolute/path/to/Juiced -i --autopilot \
+  --seed 1 --frames 2100 --capture "$PWD/out/race.bmp"
+```
 
-## Specification
+Capture paths should be absolute: the engine switches its working directory to the game folder. `--frames` and scripted input switches remain enabled in this port's release build. Logs, settings and the remembered game path live in `~/Library/Application Support/Juiced/`; stock-format saves live in `~/Library/Application Support/THQ/Juiced/`. To change data folders, pass `--game` again.
 
-`docs/spec/` describes the stock game's behaviour that the code follows, step by step from the entry point.
+## Source and license
 
-## License
+Based on upstream branch `retail/1.01/dx9`, commit `bd7e638b187e999c13f85a608d007108a228a05b` (see the exact revision in [provenance](docs/macos-port.md)). The original source import is kept as the repository's first commit. Native adapters are in `src/Mac/`; Windows source and upstream engine documentation remain available.
 
-OpenJuice is free for everyone under the [PolyForm Noncommercial License 1.0.0](LICENSE.md): it may be used,
-changed, forked and passed on for any noncommercial purpose, without asking; it may not be sold or used commercially.
-Whoever passes a copy on keeps its `Required Notice` line (the author's credit) with it. The game itself is not part
-of OpenJuice: it needs your own installed copy. Speex (`third_party/speex-1.0.3`) keeps its own license.
+Required Notice: Copyright 2026 Sidewinder (https://gitlab.com/sidecr3w/openjuice)
+
+[PolyForm Noncommercial 1.0.0](LICENSE.md) applies to the engine and this port. This is source-available under noncommercial terms, not a permissive open-source license. SDL, MojoShader, FFmpeg and bundled third-party code retain their respective licenses. The game's assets are separate and are not distributed here. The original README is preserved in [docs/UPSTREAM-README.md](docs/UPSTREAM-README.md).

@@ -37,7 +37,7 @@ OJ_INTEGRATION_TEST(SceneObjects, EveryDlh) {
     size_t dlhFiles = 0, read = 0, objects = 0, nodes = 0, hulls = 0, meshesDrawn = 0, meshesHidden = 0;
     std::error_code error;
     for (const auto& entry : std::filesystem::recursive_directory_iterator(game.root() / "tracks", error)) {
-        if (!entry.is_regular_file() || _wcsicmp(entry.path().extension().c_str(), L".dlh") != 0) continue;
+        if (!entry.is_regular_file() || _wcsicmp(entry.path().extension().wstring().c_str(), L".dlh") != 0) continue;
         ++dlhFiles;
         const auto file = game.read(entry.path().lexically_relative(game.root()));
         if (!file) continue;

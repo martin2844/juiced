@@ -403,7 +403,7 @@ private:
     void drawChart(const Element& e, State& s);
     void openMovie(size_t index, State& s);  // 0x005AA3A0
     void drawMovie(size_t index, State& s);  // 0x005AA4C0, after the box
-    static inline MovieMessages s_movieMessages;
+    static MovieMessages s_movieMessages;
     static void showState(State& s, bool animate);
     void drawString(Font* f, uint32_t colour, const std::wstring& text, float x, float baseline,
                     const TextModifier* modifier = nullptr);

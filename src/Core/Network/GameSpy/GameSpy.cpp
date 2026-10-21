@@ -1,3 +1,5 @@
+#include <fstream>
+#include <filesystem>
 #include "Core/Network/GameSpy/GameSpy.h"
 
 #include "Core/Network/GameSpy/GameSpyPresence.h"
@@ -292,6 +294,22 @@ std::string makeUniqueId(uint32_t seed) {
     return id;
 }
 
+#ifdef OJ_MACOS
+std::string uniqueId() {
+    const char* home = std::getenv("HOME");
+    const auto folder = std::filesystem::path(home ? home : ".") / "Library/Application Support/Juiced";
+    std::error_code ec;
+    std::filesystem::create_directories(folder, ec);
+    std::string id;
+    std::ifstream input(folder / "network-id");
+    input >> id;
+    if (id.size() != 19) {
+        id = makeUniqueId(GetTickCount() ^ static_cast<uint32_t>(std::time(nullptr)));
+        std::ofstream(folder / "network-id") << id;
+    }
+    return id.substr(0,4)+id.substr(5,4)+id.substr(10,4)+id.substr(15,4);
+}
+#else
 std::string uniqueId() {
     constexpr const char* kKey = "Software\\GameSpy\\GameSpy 3D\\Registration";
     HKEY key = nullptr;
@@ -322,5 +340,6 @@ std::string uniqueId() {
     RegCloseKey(key);
     return id.substr(0, 4) + id.substr(5, 4) + id.substr(10, 4) + id.substr(15, 4);
 }
+#endif
 
 }  // namespace oj::net

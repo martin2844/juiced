@@ -303,7 +303,10 @@ public:
     // check's result must be "available" (else a parameter error); Winsock 1.1 started, the C runtime's rand() seeded
     // with GetTickCount(), gp.info read.
     static Result create(std::shared_ptr<Connection>& out, int32_t productId, int32_t namespaceId,
-                         const Server& server = {});
+                         const Server& server);
+    static Result create(std::shared_ptr<Connection>& out, int32_t productId, int32_t namespaceId) {
+        return create(out, productId, namespaceId, Server{});
+    }
     // gpDestroy (0x00579210): disconnected (the logout when logged in), gp.info written when the state is not 0.
     ~Connection();
     Connection(const Connection&) = delete;

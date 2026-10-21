@@ -7,3 +7,9 @@ OpenJuice.ini
 .ai/
 play/
 releases/
+
+/out/
+/.cache/
+/assets/
+*.log
+.DS_Store

@@ -548,3 +548,5 @@ void Screen::draw(float seconds, float dt) {
 }
 
 }  // namespace oj::ui
+
+oj::ui::Screen::MovieMessages oj::ui::Screen::s_movieMessages{};

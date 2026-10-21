@@ -135,7 +135,7 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
         return 0;
     }
 
-    const oj::render::Backend backend = oj::render::Backend::D3D9;
+    const oj::render::Backend backend = oj::render::Backend::Metal;
     oj::render::DeviceDesc desc;
     desc.window = platform.window();
     desc.windowed = settings.windowed != 0;

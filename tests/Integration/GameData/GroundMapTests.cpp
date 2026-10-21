@@ -27,7 +27,7 @@ OJ_INTEGRATION_TEST(GroundMaps, EverySqhPqh) {
     for (const auto& entry : std::filesystem::recursive_directory_iterator(game.root() / "tracks", error)) {
         const auto ext = entry.path().extension();
         if (!entry.is_regular_file() ||
-            (_wcsicmp(ext.c_str(), L".sqh") != 0 && _wcsicmp(ext.c_str(), L".pqh") != 0)) {
+            (_wcsicmp(ext.wstring().c_str(), L".sqh") != 0 && _wcsicmp(ext.wstring().c_str(), L".pqh") != 0)) {
             continue;
         }
         ++mapFiles;
