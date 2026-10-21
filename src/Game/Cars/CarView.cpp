@@ -319,7 +319,7 @@ void CarView::attach(CrtRandom& random) {
             }
         }
     }
-    if (!m_setup.logo.empty()) m_screen.setHidden(m_setup.logo, false);
+    if (!m_setup.logo.empty()) m_screen.setHidden(m_setup.logo, j.car->def == nullptr || j.car->def->make <= 0);
     if (!m_setup.origin.empty()) m_screen.setHidden(m_setup.origin, false);
     m_car = j.car;
     m_shown = std::move(job);

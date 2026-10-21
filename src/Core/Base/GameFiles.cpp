@@ -17,6 +17,21 @@ namespace {
 // The archives looked for, by their path (none where there is none), read once for every GameFiles.
 std::mutex g_archivesLock;
 std::map<std::wstring, std::shared_ptr<const DatArchive>> g_archives;
+std::filesystem::path g_overrideRoot;
+
+std::filesystem::path overrideFile(const std::filesystem::path& root, const std::filesystem::path& name) {
+    if (g_overrideRoot.empty()) return {};
+    std::string normalized = name.generic_string();
+    std::replace(normalized.begin(), normalized.end(), '\\', '/');
+    std::filesystem::path relative = normalized;
+    if (relative.is_absolute()) relative = relative.lexically_relative(root);
+    if (relative.empty()) return {};
+    for (const auto& part : relative) if (part == "..") return {};
+    // Mod packages use lowercase paths, including on case-sensitive installations.
+    normalized = relative.generic_string();
+    for (char& c : normalized) if (c >= 'A' && c <= 'Z') c += 'a' - 'A';
+    return g_overrideRoot / normalized;
+}
 
 std::shared_ptr<const DatArchive> archiveAt(const std::filesystem::path& file) {
     std::wstring key = file.wstring();
@@ -128,6 +143,8 @@ std::optional<std::filesystem::path> localized(const std::filesystem::path& rela
 }
 
 bool existsAt(const std::filesystem::path& root, const std::filesystem::path& relative) {
+    std::error_code overlayError;
+    if (std::filesystem::is_regular_file(overrideFile(root, relative), overlayError)) return true;
     const Located l = locate(root, relative);
     if (l.archive) return l.archive->contains(l.inside);
     std::error_code ec;
@@ -135,6 +152,7 @@ bool existsAt(const std::filesystem::path& root, const std::filesystem::path& re
 }
 
 std::optional<std::vector<std::byte>> readAt(const std::filesystem::path& root, const std::filesystem::path& relative) {
+    if (auto data = readLoose(overrideFile(root, relative))) return data;
     const Located l = locate(root, relative);
     if (l.archive) {
         if (auto data = l.archive->read(l.inside)) return data;
@@ -146,6 +164,10 @@ std::optional<std::vector<std::byte>> readAt(const std::filesystem::path& root, 
 
 void GameFiles::setLanguageLetter(char letter) {
     g_languageLetter = letter;
+}
+
+void GameFiles::setOverrideRoot(std::filesystem::path root) {
+    g_overrideRoot = std::move(root);
 }
 
 bool GameFiles::exists(const std::filesystem::path& relative) const {

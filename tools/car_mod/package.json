@@ -1,0 +1,1 @@
+{"private":true,"description":"Offline Draco decoding and bounded-error mesh simplification for the car importer","dependencies":{"draco3dgltf":"1.5.7","meshoptimizer":"1.3.0"}}

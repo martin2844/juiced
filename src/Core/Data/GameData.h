@@ -41,6 +41,8 @@ public:
     explicit GameData(std::filesystem::path gameFolder);
 
     bool load(CrtRandom& random, std::string* error);
+    // Optional scripts/mod_unlocks.txt, supplied by a loose-file mod overlay.
+    void applyModUnlocks();
     bool loaded() const { return m_loaded; }
     const GameFiles& files() const { return m_files; }
 

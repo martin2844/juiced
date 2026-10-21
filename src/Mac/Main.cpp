@@ -12,9 +12,22 @@ std::filesystem::path chooseGameFolder();
 int main(int argc, char **argv) {
     signal(SIGPIPE, SIG_IGN);
     std::filesystem::path game;
+    std::filesystem::path mod;
     std::string command;
     for (int i = 1; i < argc; i++) {
         std::string arg = argv[i];
+        if (arg == "--mod") {
+            if (i + 1 == argc) {
+                std::cerr << "--mod requires a folder path\n";
+                return 2;
+            }
+            mod = std::filesystem::absolute(argv[++i]);
+            if (!std::filesystem::is_directory(mod)) {
+                std::cerr << "Mod folder does not exist: " << mod << '\n';
+                return 2;
+            }
+            continue;
+        }
         if (arg == "--controls") {
             oj::mac::requestControlsEditor();
             continue;
@@ -29,7 +42,7 @@ int main(int argc, char **argv) {
         }
         if (arg == "--help") {
             std::cout << "Juiced for macOS\nUsage: juiced --game /path/to/Juiced [--frames N] [--capture image.bmp] "
-                         "[-i] [--autopilot] [--controls]\n";
+                         "[-i] [--autopilot] [--controls] [--mod /path/to/mod]\n";
             return 0;
         }
         command += '"' + arg + '"';
@@ -62,6 +75,10 @@ int main(int argc, char **argv) {
         auto config = oj::Config::load(support / "OpenJuice.ini");
         config.skipIntroMovies = true;
         auto options = oj::parseCommandLine(command.c_str());
+        oj::GameFiles::setOverrideRoot(mod);
+        if (!mod.empty() && options.saves.empty()) {
+            options.saves = (mod / "Saves").string();
+        }
         int result = app::gameMain(options, config);
         oj::log::close();
         return result;

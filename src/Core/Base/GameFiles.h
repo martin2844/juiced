@@ -33,6 +33,10 @@ public:
     // The language's letter of the localized names (e f g i s c p r); 0 none (no language object yet).
     static void setLanguageLetter(char letter);
 
+    // Optional loose-file mod overlay. Set before creating/loading game data; empty disables it.
+    // Files absent from the overlay still come from the user's retail installation.
+    static void setOverrideRoot(std::filesystem::path root);
+
 private:
     std::filesystem::path m_root;
 };
