@@ -1,5 +1,11 @@
 # Juiced for macOS
 
+## Platforms and downloads
+
+This repository keeps the native ports on separate branches: [macOS (`main`)](https://github.com/martin2844/juiced/tree/main) and [Android (`android`)](https://github.com/martin2844/juiced/tree/android). Each branch contains its full engine source and platform build instructions. Platform fixes are not automatically shared between branches.
+
+Download the Android development APK from [Releases](https://github.com/martin2844/juiced/releases). On first launch, choose **Import Juiced ZIP** and select your own game archive; game data is not included.
+
 A native macOS port of [OpenJuice](https://gitlab.com/sidecr3w/openjuice), the recreation of Juiced (PC, 2005). Uses SDL 3, Metal, MojoShader and FFmpeg. Runs the engine directly on Apple Silicon; Wine, Windows and the original game executable are not used.
 
 **Early development build, not yet a complete or visually faithful port.** The native build loads the game's data, displays the interface, renders a race, runs physics and AI, and decodes music. Rendering compatibility and broader gameplay validation remain work in progress. See [the port status](docs/macos-port.md).
