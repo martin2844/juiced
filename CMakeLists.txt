@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.24)
-project(JuicedMac VERSION 0.3.1 LANGUAGES C CXX OBJCXX)
+project(JuicedMac VERSION 0.3.2 LANGUAGES C CXX OBJCXX)
 if(NOT APPLE)
   message(FATAL_ERROR "This target requires macOS")
 endif()
@@ -49,8 +49,8 @@ set_target_properties(juiced_app PROPERTIES
   OUTPUT_NAME "Juiced"
   MACOSX_BUNDLE_GUI_IDENTIFIER "org.openjuice.macos"
   MACOSX_BUNDLE_BUNDLE_NAME "Juiced"
-  MACOSX_BUNDLE_BUNDLE_VERSION "0.3.1"
-  MACOSX_BUNDLE_SHORT_VERSION_STRING "0.3.1")
+  MACOSX_BUNDLE_BUNDLE_VERSION "0.3.2"
+  MACOSX_BUNDLE_SHORT_VERSION_STRING "0.3.2")
 
 include(CTest)
 if(BUILD_TESTING)

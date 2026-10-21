@@ -1,9 +1,13 @@
 #include "Mac/ControlsOverlay.h"
 #include "Core/Base/Text.h"
 #include <algorithm>
+#include <cctype>
 namespace oj::mac {
 ControlsOverlay::ControlsOverlay(render::IRenderDevice &device, const Language &language, std::filesystem::path path)
-    : m_device(device), m_text(device, language), m_path(std::move(path)), m_draft(loadBindings(m_path)) {}
+    : m_device(device), m_text(device, language), m_background(device, language), m_path(std::move(path)), m_draft(loadBindings(m_path)) {
+    m_background.load("opts_bg");
+    m_background.finishTransitions();
+}
 float ControlsOverlay::scale() const {
     return std::min(m_device.width() / 1000.f, m_device.height() / 700.f);
 }
@@ -22,7 +26,19 @@ void ControlsOverlay::box(float x, float y, float w, float h, uint32_t colour) {
         {x, y, 0, 0, colour}, {x + w, y, 1, 0, colour}, {x, y + h, 0, 1, colour}, {x + w, y + h, 1, 1, colour}};
     m_device.drawQuad(q, 0, render::Blend::Alpha);
 }
+// Slanted strips follow the original game's header, selection and footer graphics.
+void ControlsOverlay::ribbon(float x, float y, float w, float h, uint32_t colour) {
+    const float skew = 22;
+    const auto vertex = [&](float px, float py) {
+        return render::QuadVertex{left() + px * scale(), top() + py * scale(), 0, 0, colour};
+    };
+    const render::QuadVertex q[4] = {vertex(x + skew, y), vertex(x + w, y),
+                                   vertex(x, y + h), vertex(x + w - skew, y + h)};
+    m_device.drawQuad(q, 0, render::Blend::Alpha);
+}
 void ControlsOverlay::text(const std::string &value, float x, float y, float size, uint32_t colour, float width) {
+    m_text.drawOverlayText(toWide(value), left() + (x + 1.5f) * scale(), top() + (y + 2) * scale(), size * scale(),
+                           0xFF000000, width * scale());
     m_text.drawOverlayText(toWide(value), left() + x * scale(), top() + y * scale(), size * scale(), colour,
                            width * scale());
 }
@@ -120,44 +136,48 @@ ControlsOverlay::Result ControlsOverlay::update(const std::vector<input::KeyEven
 }
 void ControlsOverlay::draw() {
     m_device.setRenderTarget(0, 0);
-    m_device.setRenderState(render::RenderState::AlphaTestEnable, 0); // UI is alpha-blended, never alpha-tested.
+    m_device.setRenderState(render::RenderState::AlphaTestEnable, 0);
     m_device.setClip(nullptr);
-    box(0, 0, 1000, 700, 0xFF11151E);
-    box(56, 40, 48, 4, 0xFFFFAE35);
-    text("CONTROLS", 56, 61, 34, 0xFFF5F6F8);
-    text("YOUR KEYS. YOUR RACE.", 56, 110, 14, 0xFF9AA9BA);
-    text("KEYBOARD", 800, 78, 13, 0xFFFFAE35, 144);
-    const char *groups[] = {"DRIVING", "GEARS & CAMERA", "CREW COMMANDS"};
+    box(0, 0, 1000, 700, 0xFF080C12);
+    if (m_background.loaded()) m_background.draw(0);
+    // Keep the game's artwork around a dark, legible menu surface.
+    box(0, 32, 1000, 630, 0xE6081017);
+    ribbon(-24, 44, 1048, 68, 0xFF1600FF);
+    ribbon(-24, 108, 650, 5, 0xFF32E800);
+    text("CONTROLS", 56, 62, 34, 0xFFFFFFFF);
+    text("KEYBOARD", 780, 78, 16, 0xFFFFFFFF, 164);
+    const char *groups[] = {"DRIVING", "GEARS / CAMERA", "CREW COMMANDS"};
     for (int tab = 0; tab < 3; ++tab) {
-        box(56 + tab * 300, 144, 288, 44, tab == m_tab ? 0xFF303A49 : 0xFF1D2430);
-        if (tab == m_tab)
-            box(56 + tab * 300, 184, 288, 4, 0xFFFFAE35);
-        text(groups[tab], 72 + tab * 300, 159, 15, tab == m_tab ? 0xFFFFC66D : 0xFF9AA9BA, 260);
+        if (tab == m_tab) ribbon(56 + tab * 300, 144, 288, 44, 0xE51600FF);
+        text(groups[tab], 74 + tab * 300, 158, 16, tab == m_tab ? 0xFF00DFFF : 0xFFB8BEC5, 258);
     }
+    box(56, 195, 888, 2, 0xFF38E500);
     for (int row = 0; row < 7; ++row) {
         const size_t index = m_tab * 7 + row;
         const float y = 208 + row * 44;
         const bool capture = m_capture == static_cast<int>(index);
-        box(56, y, 888, 40, row == m_focus ? 0xFF283344 : 0xFF19212D);
-        if (row == m_focus)
-            box(56, y, 3, 40, 0xFFFFAE35);
-        text(bindingActions()[index].label, 76, y + 12, 16, 0xFFF1F4F8, 570);
-        box(698, y + 5, 230, 30, capture ? 0xFFFFAE35 : 0xFF354256);
-        text(capture ? "PRESS A KEY..." : bindingKey(m_draft[index])->label, 714, y + 12, 15,
-             capture ? 0xFF11151E : 0xFFF5F6F8, 204);
+        const bool selected = row == m_focus;
+        if (selected) ribbon(56, y, 888, 40, capture ? 0xB52BA400 : 0xB51600FF);
+        else box(76, y + 39, 848, 1, 0x283E8BA3);
+        if (selected) text(">", 69, y + 11, 18, 0xFFFFFFFF, 22);
+        std::string label = bindingActions()[index].label;
+        std::transform(label.begin(), label.end(), label.begin(), [](unsigned char c) { return std::toupper(c); });
+        text(label, 100, y + 12, 17, selected ? 0xFF00DFFF : 0xFFFFFFFF, 550);
+        text(capture ? "PRESS A KEY..." : bindingKey(m_draft[index])->label, 714, y + 12, 17,
+             selected ? 0xFF00DFFF : 0xFFFFFFFF, 204);
     }
-    text(m_status, 56, 540, 12, 0xFFFFC66D, 888);
-    text("CLICK A BINDING OR USE ARROWS + ENTER. USED KEYS SWAP.", 56, 567, 12, 0xFF9AA9BA, 888);
+    text(m_status, 76, 537, 13, 0xFFFFFFFF, 848);
+    text("LEFT / RIGHT: CATEGORY    UP / DOWN: ACTION    ENTER: CHANGE", 76, 570, 12, 0xFF00DFFF, 848);
     const float x[] = {56, 614, 784};
     const float widths[] = {264, 150, 160};
-    const char *captions[] = {"RESTORE DEFAULTS", "CANCEL", "SAVE"};
+    const char *captions[] = {"DEFAULTS", "CANCEL", "SAVE"};
+    ribbon(-24, 598, 1048, 50, 0xFF1600FF);
     for (int i = 0; i < 3; ++i) {
         const bool selected = m_focus == i + 7;
-        box(x[i], 600, widths[i], 44, i == 2 && m_capture < 0 ? 0xFFFFAE35 : selected ? 0xFF45556A : 0xFF293444);
-        if (selected)
-            box(x[i], 644, widths[i], 2, 0xFFFFAE35);
-        text(captions[i], x[i] + 16, 615, 14, i == 2 && m_capture < 0 ? 0xFF11151E : 0xFFF5F6F8, widths[i] - 25);
+        if (selected) ribbon(x[i], 600, widths[i], 44, 0xFF208C00);
+        text(captions[i], x[i] + 22, 614, 18, selected ? 0xFF00DFFF : 0xFFFFFFFF, widths[i] - 30);
     }
-    text("CHANGES APPLY WHEN YOU SAVE. THE GAME IS PAUSED WHILE THIS MENU IS OPEN.", 56, 669, 11, 0xFF9AA9BA, 888);
+    text("ESC: BACK WITHOUT SAVING", 56, 669, 12, 0xFFFFFFFF, 400);
+    text("ENTER: SELECT", 744, 669, 12, 0xFFFFFFFF, 200);
 }
 } // namespace oj::mac
