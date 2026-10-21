@@ -443,12 +443,7 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
                 if (press.down == rendered) keys.push_back({press.code, true});
                 if (press.up == rendered) keys.push_back({press.code, false});
             }
-            float mx = 0, my = 0;
-            const auto buttons = SDL_GetMouseState(&mx, &my);
-            int ww = 1, wh = 1;
-            SDL_GetWindowSize(reinterpret_cast<SDL_Window*>(platform.window()), &ww, &wh);
-            const auto result = controlsEditor->update(keys, mx * device->width() / std::max(ww, 1),
-                my * device->height() / std::max(wh, 1), (buttons & SDL_BUTTON_LMASK) != 0,
+            const auto result = controlsEditor->update(keys,
                 (SDL_GetModState() & (SDL_KMOD_GUI | SDL_KMOD_ALT)) != 0);
             controlsEditor->draw();
             if (options.frames && rendered + 1 >= options.frames && !options.capture.empty()) {

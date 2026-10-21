@@ -51,7 +51,7 @@ Capture paths should be absolute: the engine switches its working directory to t
 
 ## Controls editor
 
-Open **Options → Controls** in the game (also available through the race pause menu). The editor renders inside the game window; the game is frozen while it is open. Click a binding and press a replacement key, or use Up/Down and Enter. Left/Right switch the Driving, Gears & Camera, and Crew Commands tabs. Escape cancels key capture, or closes the editor without saving when not capturing.
+Open **Options → Controls** in the game (also available through the race pause menu). The editor uses the original options-menu widgets, fonts, highlight animation and message box. Use Up/Down and Enter to choose Driving, Gears and Camera, or Crew Commands, then select an action and press its replacement key. Escape cancels key capture, returns from a category, or closes the root controls menu without saving. Choose **Save and Return** to apply changes. The game is frozen while the editor is open.
 
 If a key is already assigned, the two actions swap keys. **Save** applies changes immediately and stores them in `~/Library/Application Support/Juiced/controls.ini`; **Cancel** discards edits, and **Restore Defaults** resets the draft until saved. Escape and Enter remain reserved for navigation. Bindings use physical key positions, so labels follow a US layout on non-US keyboards.
 

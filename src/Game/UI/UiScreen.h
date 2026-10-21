@@ -72,10 +72,6 @@ public:
     void setSwitchWaiting(bool waiting) { m_switchWaiting = waiting; }
     const std::string& name() const { return m_name; }
 
-    // Draw a label for runtime overlays using the game's font atlas, in back-buffer pixels.
-    void drawOverlayText(const std::wstring& text, float x, float y, float height,
-                         uint32_t colour, float maxWidth);
-
     // The text of an element whose text the code sets (instead of a Caption line).
     void setText(const std::string& element, const std::wstring& text);
     // The text an element shows: the text set, else its Caption line.
