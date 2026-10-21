@@ -1,0 +1,23 @@
+plugins { id 'com.android.application' }
+android {
+    namespace 'org.openjuice.android'
+    compileSdk 35
+    ndkVersion '28.2.13676358'
+    defaultConfig {
+        applicationId 'org.openjuice.android'
+        minSdk 26
+        targetSdk 35
+        versionCode 1
+        versionName '0.2.0-dev'
+        ndk { abiFilters 'arm64-v8a' }
+        externalNativeBuild { cmake { arguments '-DANDROID_STL=c++_shared'
+            ['sdlSource': 'FETCHCONTENT_SOURCE_DIR_SDL3', 'mojoSource': 'FETCHCONTENT_SOURCE_DIR_MOJOSHADER', 'ffmpegArchive': 'OJ_FFMPEG_ARCHIVE'].each { property, variable ->
+                if (project.hasProperty(property)) arguments "-D${variable}=${project.property(property)}"
+            }
+            targets 'main', 'SDL3-shared' } }
+    }
+    sourceSets.main.java.srcDirs += '../../third_party/SDL3-android/java'
+    externalNativeBuild { cmake { path '../../CMakeLists.txt'; version '3.31.6' } }
+    buildTypes { debug { debuggable true }; release { minifyEnabled false } }
+    compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
+}

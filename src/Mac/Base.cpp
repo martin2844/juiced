@@ -67,7 +67,11 @@ void cpuName(const char *vendor, uint32_t, uint32_t, std::array<char, 31> &out) 
 uint32_t queryCpu(CpuInfo *info) {
     if (info) {
         *info = {};
+#ifdef OJ_ANDROID
+        cpuName("Android ARM64", 0, 0, info->name);
+#else
         cpuName("Apple Silicon", 0, 0, info->name);
+#endif
     }
     return 0;
 }

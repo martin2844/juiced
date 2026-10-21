@@ -1,4 +1,5 @@
 #include "Core/Base/GameFiles.h"
+#include "Core/Base/CasePath.h"
 
 #include "Core/Formats/DatArchive.h"
 
@@ -28,8 +29,8 @@ std::shared_ptr<const DatArchive> archiveAt(const std::filesystem::path& file) {
     if (const auto it = g_archives.find(key); it != g_archives.end()) return it->second;
     std::shared_ptr<const DatArchive> archive;
     std::error_code ec;
-    if (std::filesystem::is_regular_file(file, ec)) {
-        if (auto opened = DatArchive::open(file)) archive = std::make_shared<const DatArchive>(std::move(*opened));
+    if (std::filesystem::is_regular_file(gameNativePath(file), ec)) {
+        if (auto opened = DatArchive::open(gameNativePath(file))) archive = std::make_shared<const DatArchive>(std::move(*opened));
     }
     g_archives[key] = archive;
     return archive;
@@ -82,7 +83,7 @@ Located locate(const std::filesystem::path& root, const std::filesystem::path& r
 }
 
 std::optional<std::vector<std::byte>> readLoose(const std::filesystem::path& file) {
-    std::ifstream in(file, std::ios::binary | std::ios::ate);
+    std::ifstream in(gameNativePath(file), std::ios::binary | std::ios::ate);
     if (!in) {
         return std::nullopt;
     }
@@ -101,11 +102,11 @@ GameFiles::GameFiles(std::filesystem::path root) : m_root(std::move(root)) {}
 
 bool GameFiles::valid() const {
     std::error_code ec;
-    return !m_root.empty() && std::filesystem::is_directory(m_root / L"tracks", ec);
+    return !m_root.empty() && std::filesystem::is_directory(gameNativePath(m_root / L"tracks"), ec);
 }
 
 std::filesystem::path GameFiles::resolve(const std::filesystem::path& relative) const {
-    return m_root / relative;
+    return gameNativePath(m_root / relative);
 }
 
 namespace {
@@ -131,7 +132,7 @@ bool existsAt(const std::filesystem::path& root, const std::filesystem::path& re
     const Located l = locate(root, relative);
     if (l.archive) return l.archive->contains(l.inside);
     std::error_code ec;
-    return std::filesystem::is_regular_file(l.loose, ec);
+    return std::filesystem::is_regular_file(gameNativePath(l.loose), ec);
 }
 
 std::optional<std::vector<std::byte>> readAt(const std::filesystem::path& root, const std::filesystem::path& relative) {

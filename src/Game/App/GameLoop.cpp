@@ -135,7 +135,11 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
         return 0;
     }
 
+#ifdef OJ_ANDROID
+    const oj::render::Backend backend = oj::render::Backend::GLES;
+#else
     const oj::render::Backend backend = oj::render::Backend::Metal;
+#endif
     oj::render::DeviceDesc desc;
     desc.window = platform.window();
     desc.windowed = settings.windowed != 0;

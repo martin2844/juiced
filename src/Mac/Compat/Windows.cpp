@@ -1,4 +1,5 @@
 #include "windows.h"
+#include "Core/Base/CasePath.h"
 #include <SDL3/SDL.h>
 #include <codecvt>
 #include <fcntl.h>
@@ -13,9 +14,7 @@ struct NativeHandle {
 };
 static thread_local DWORD lastError = 0;
 std::string nativePath(const std::filesystem::path &p) {
-    auto s = p.string();
-    std::replace(s.begin(), s.end(), '\\', '/');
-    return s;
+    return oj::gameNativePath(p).string();
 }
 DWORD GetLastError() {
     return lastError;
