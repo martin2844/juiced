@@ -71,7 +71,13 @@ void ColourMenu::update(GarageHost& host, ui::Screen& s, uint32_t event) {
         garage.priceShown(host, true);
         s.showContaining("BUY_", true);
         m_showBuy = 0;
-        if (s.find("BUY_TEST") >= 0) s.setText("BUY_TEST", texts.at(kTextBuyPaint));
+        if (s.find("BUY_TEST") >= 0) {
+#ifdef OJ_MACOS
+            s.setText("BUY_TEST", L"[0] " + texts.at(kTextBuyPaint));
+#else
+            s.setText("BUY_TEST", texts.at(kTextBuyPaint));
+#endif
+        }
     }
     if (m_askedBuy != 0) {
         if (m_answer == 1) {

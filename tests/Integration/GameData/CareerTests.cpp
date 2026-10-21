@@ -330,3 +330,46 @@ OJ_INTEGRATION_TEST(Career, StartAndNewDriver) {
               "into the career: the first event's bets on crew 1 and its race of two");
     }
 }
+
+// Hosted meetings from older native builds accidentally kept challenge index zero.
+OJ_INTEGRATION_TEST(HostedRace, RaceTypesAndRealChallenges) {
+    const auto& shared = oj::test::sharedGameData();
+    if (!shared.carDefsRead) return;
+    auto career = std::make_unique<oj::Career>();
+    oj::CrtRandom random;
+    int counter = 1, mate = 0;
+    oj::CarMaking making{shared.defs, shared.catalogue, random, counter};
+    oj::CareerContext context{shared.tables, making, *shared.dynamics, oj::test::gameFiles(), mate};
+    auto& event = career->calendar.events[0];
+    event.used = 1;
+    event.round.used = 1;
+    event.round.laps = 1;
+    event.round.drivers = 3;
+    event.timeOfDay = 1;
+    event.weather = 2;
+    for (auto kind : {oj::EventKind::Sprint, oj::EventKind::Circuit, oj::EventKind::PointToPoint}) {
+        for (int index : {-1, 0}) {
+            event.type = event.round.type = kind;
+            event.challengeIndex = static_cast<int8_t>(index);
+            oj::RaceSetup race;
+            oj::startRace(*career, context, race, 1, 0);
+            auto expected = kind == oj::EventKind::Sprint ? oj::RaceType::Sprint :
+                kind == oj::EventKind::Circuit ? oj::RaceType::Circuit : oj::RaceType::PointToPoint;
+            check(race.type == expected && event.challengeIndex == -1 && race.laps == 1,
+                  "hosted races retain their selected type, including older saved events");
+            if (kind == oj::EventKind::Sprint)
+                check(race.heat == 0 && race.heats == 3 && race.gearbox == 0,
+                      "hosted sprint starts heat one of three with manual gears");
+        }
+    }
+    event.type = event.round.type = oj::EventKind::Challenge;
+    event.crew = 1;
+    event.challenge = 1;
+    event.challengeIndex = 0;
+    career->crews[1].challenges[0].type = oj::ChallengeType::LapTime;
+    career->crews[1].challenges[0].value = 60;
+    oj::RaceSetup race;
+    oj::startRace(*career, context, race, 1, 0);
+    check(race.type == oj::RaceType::TimedLap && race.lapTime == 60 && event.challengeIndex == 0,
+          "real crew challenges retain their time limit and challenge index");
+}

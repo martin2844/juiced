@@ -37,6 +37,7 @@ int32_t HostMeeting::attendance(CareerHost& host) {
     GameData* data = host.gameData();
     const Career& career = *data->career;
     CalendarEvent e{};
+    e.challengeIndex = -1;  // A hosted meeting is not a crew challenge.
     e.location = static_cast<int8_t>(m_setup.location);
     e.type = m_setup.type;
     e.entranceFee = 5000;
@@ -501,6 +502,7 @@ void HostMeeting::makeEvent(CareerHost& host) {
     Calendar& calendar = career.calendar;
     CareerProfile& p = career.profile;
     CalendarEvent e{};
+    e.challengeIndex = -1;  // A hosted meeting is not a crew challenge.
     e.dayOfMonth = static_cast<int8_t>(calendar.chosenDayOfMonth);
     e.month = calendar.chosenMonth;
     pay(career, m_setup.cost);

@@ -1415,6 +1415,14 @@ void startRace(Career& career, CareerContext& context, RaceSetup& race, int32_t 
         // Stock problem: without an event of the current day the stock code reads through a null pointer.
         return;
     }
+    // Older native builds left player-hosted meetings pointing at challenge zero.
+    // Repair that sentinel before choosing rules (otherwise its zero-second limit
+    // ends the race immediately). Genuine crew challenges retain their index.
+    if (event->crew == 0 && event->challenge == 0 &&
+        (event->type == EventKind::Sprint || event->type == EventKind::Circuit ||
+         event->type == EventKind::PointToPoint)) {
+        event->challengeIndex = -1;
+    }
     const EventRound& round = *roundOf(career, *event);
     for (Crew& crew : career.crews) crew.rams = 0.0f;
     career.news = RaceNews{};
