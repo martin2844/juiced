@@ -175,6 +175,15 @@ void TrackView::endRace() {
         }
     }
     netDetach();
+    // Camera effects keep shared ownership beyond the scene's particle lists. Drop every
+    // player's references while the scene and audio world still exist: a wet camera's
+    // rain emitter releases its sound instance in its destructor.
+    for (const std::unique_ptr<RacePlayer>& p : players) {
+        p->cameraRain.reset();
+        p->cameraSplash.reset();
+        p->cameraBlobs.reset();
+        p->rainSound = nullptr;
+    }
     race.reset();
     cars.clear();
     first().slot = nullptr;
@@ -183,7 +192,6 @@ void TrackView::endRace() {
     route.reset();
     places.clear();
     racing = false;
-    first().rainSound = nullptr;
     airhornSound = nullptr;
     oj::raceSounds() = nullptr;
     oj::gameSounds().world = nullptr;
