@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.24)
-project(JuicedMac VERSION 0.2.0 LANGUAGES C CXX OBJCXX)
+project(JuicedMac VERSION 0.2.1 LANGUAGES C CXX OBJCXX)
 if(NOT APPLE)
   message(FATAL_ERROR "This target requires macOS")
 endif()
@@ -49,8 +49,8 @@ set_target_properties(juiced_app PROPERTIES
   OUTPUT_NAME "Juiced"
   MACOSX_BUNDLE_GUI_IDENTIFIER "org.openjuice.macos"
   MACOSX_BUNDLE_BUNDLE_NAME "Juiced"
-  MACOSX_BUNDLE_BUNDLE_VERSION "0.2.0"
-  MACOSX_BUNDLE_SHORT_VERSION_STRING "0.2.0")
+  MACOSX_BUNDLE_BUNDLE_VERSION "0.2.1"
+  MACOSX_BUNDLE_SHORT_VERSION_STRING "0.2.1")
 
 include(CTest)
 if(BUILD_TESTING)
@@ -78,4 +78,10 @@ if(BUILD_TESTING)
   add_executable(mac_controls_overlay_check tests/Mac/ControlsOverlayTest.cpp)
   target_link_libraries(mac_controls_overlay_check PRIVATE juice_game)
   add_test(NAME mac_controls_overlay COMMAND mac_controls_overlay_check)
+endif()
+
+if(BUILD_TESTING)
+  add_executable(mac_reflection_check tests/Mac/ReflectionTest.cpp)
+  target_link_libraries(mac_reflection_check PRIVATE juice_render)
+  add_test(NAME mac_reflections COMMAND mac_reflection_check)
 endif()

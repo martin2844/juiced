@@ -5,7 +5,7 @@
 #include <stdexcept>
 #include <vector>
 namespace oj::mac {
-Shader::Shader(SDL_GPUDevice *d, const uint32_t *code) : device(d) {
+Shader::Shader(SDL_GPUDevice *d, const uint32_t *code, uint32_t cubeMask) : device(d) {
     // TEXCOORD in ps_1_1 saturates the interpolated texture register. Lower it
     // to MOV_SAT before translation; the other instructions retain their order.
     std::vector<uint32_t> lowered;
@@ -38,11 +38,22 @@ Shader::Shader(SDL_GPUDevice *d, const uint32_t *code) : device(d) {
         input = lowered.data();
     }
     bool vertex = original->shader_type == MOJOSHADER_TYPE_VERTEX;
+    const bool legacyPixel = !vertex && original->major_ver == 1;
+    if (legacyPixel)
+        legacyCode.assign(code, code + original->output_len / 4);
     MOJOSHADER_freeParseData(original);
     MOJOSHADER_swizzle swizzles[2] = {{MOJOSHADER_USAGE_COLOR, 0, {2, 1, 0, 3}},
                                       {MOJOSHADER_USAGE_COLOR, 1, {2, 1, 0, 3}}};
+    // Shader Model 1 derives sampler dimensions from the bound texture, unlike
+    // later shaders with explicit declarations. Cars use this for cube reflections.
+    std::vector<MOJOSHADER_samplerMap> samplerTypes;
+    if (legacyPixel) {
+        for (int i = 0; i < 16; ++i)
+            if (cubeMask & (1u << i))
+                samplerTypes.push_back({i, MOJOSHADER_SAMPLER_CUBE});
+    }
     parsed = MOJOSHADER_parse("metal", "oj_shader", (const unsigned char *)input, 0, vertex ? swizzles : nullptr,
-                              vertex ? 2 : 0, nullptr, 0, nullptr, nullptr, nullptr);
+                              vertex ? 2 : 0, samplerTypes.data(), static_cast<unsigned>(samplerTypes.size()), nullptr, nullptr, nullptr);
     if (parsed->error_count) {
         std::string error = parsed->errors[0].error;
         MOJOSHADER_freeParseData(parsed);
@@ -93,8 +104,10 @@ Shader::Shader(SDL_GPUDevice *d, const uint32_t *code) : device(d) {
             R"(if(oj_alpha.x>0){float a=output.oC0.a;float r=oj_alpha.y;int f=int(oj_alpha.z);bool ok=f==1?false:f==2?a<r:f==3?a==r:f==4?a<=r:f==5?a>r:f==6?a!=r:f==7?a>=r:true;if(!ok)discard_fragment();}
 )");
     }
-    for (int i = 0; i < parsed->sampler_count; i++)
+    for (int i = 0; i < parsed->sampler_count; i++) {
         slots = std::max(slots, (unsigned)parsed->samplers[i].index + 1);
+        samplerMask |= 1u << parsed->samplers[i].index;
+    }
     SDL_GPUShaderCreateInfo ci{};
     ci.code = (const Uint8 *)source.data();
     ci.code_size = source.size();
@@ -111,6 +124,15 @@ Shader::Shader(SDL_GPUDevice *d, const uint32_t *code) : device(d) {
         parsed = nullptr;
         throw std::runtime_error(error);
     }
+}
+SDL_GPUShader *Shader::forCubeSamplers(uint32_t mask) {
+    mask &= samplerMask;
+    if (legacyCode.empty() || mask == 0)
+        return gpu;
+    auto &variant = variants[mask];
+    if (!variant)
+        variant = std::make_unique<Shader>(device, legacyCode.data(), mask);
+    return variant->gpu;
 }
 Shader::~Shader() {
     if (gpu)

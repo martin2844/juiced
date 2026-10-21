@@ -16,7 +16,7 @@ The existing C++ engine retains its game data, physics, race, career, frontend a
 
 - SDL 3 window, keyboard events and Metal GPU device.
 - A Metal implementation of `IRenderDevice`: textures, buffers, declarations, shader constants, render targets, pipeline states, frame presentation and capture.
-- MojoShader converts the game's D3D shader bytecode to Metal at runtime. Local adapter fixes cover ps_1_1 texture-coordinate instructions and missing texture-coordinate stage inputs. Pixel alpha testing is applied outside the original bytecode, as D3D9 does.
+- MojoShader converts the game's D3D shader bytecode to Metal at runtime. Local adapter fixes cover ps_1_1 texture-coordinate instructions and missing texture-coordinate stage inputs. Shader Model 1 sampler dimensions follow the bound texture, with cached Metal variants for cube-map reflections. Pixel alpha testing is applied outside the original bytecode, as D3D9 does.
 - SDL audio mixer behind the existing sound-bank interface, plus FFmpeg WMA music decoding. Software mixing and no-EAX are selected explicitly.
 - POSIX files, sockets and timers behind a narrow compatibility header layer; AppKit handles selecting the game folder. There is no Windows runtime emulation.
 
@@ -46,6 +46,8 @@ cmake --build out --target juiced_shader_check -j 8
 ```
 
 Files must be `.bin`, one D3D shader each. No proprietary shader binaries are included.
+
+The 0.2.1 reflection fix corrects legacy car/glass shaders that previously sampled cube maps as 2D textures. A standalone Metal regression checks six cube faces and alternates cube/2D bindings on the same shader, including a nonzero sampler slot. All 137 retail shaders still compile. A 1,800-frame race and a car-selection capture confirm corrected glass reflections; this is not a claim of complete lighting parity.
 
 ## Remaining work
 

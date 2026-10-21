@@ -14,7 +14,7 @@ Requires a Metal-capable Mac, Xcode Command Line Tools, CMake, pkg-config and FF
 xcode-select --install
 brew install cmake pkg-config ffmpeg
 cmake -S . -B out -DCMAKE_BUILD_TYPE=Release
-cmake --build out --target juiced juiced_app juiced_tests -j 8
+cmake --build out --target juiced juiced_app juiced_tests mac_controls_check mac_controls_overlay_check mac_reflection_check -j 8
 ctest --test-dir out --output-on-failure
 ```
 

@@ -382,7 +382,13 @@ fragment float4 ff_ps(V v [[stage_in]],texture2d<float> tex [[texture(0)]],sampl
                 throw std::runtime_error("Missing shader: vs=" + std::to_string(vs) + " ps=" + std::to_string(ps) +
                                          " decl=" + std::to_string(decl) + " fvf=" + std::to_string(fvf));
             v = shaders.at(vs)->gpu;
-            f = ps ? shaders.at(ps)->gpu : fixedFragment();
+            uint32_t cubeMask = 0;
+            for (unsigned i = 0; i < bound.size(); ++i) {
+                auto texture = textures.find(bound[i]);
+                if (texture != textures.end() && texture->second.layers == 6)
+                    cubeMask |= 1u << i;
+            }
+            f = ps ? shaders.at(ps)->forCubeSamplers(cubeMask) : fixedFragment();
             for (auto &e : declarations.at(decl)) {
                 int location = shaders.at(vs)->attribute((MOJOSHADER_usage)e.usage, e.usageIndex);
                 if (location >= 0)
