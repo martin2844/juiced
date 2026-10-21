@@ -1,0 +1,223 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>18.0</VCProjectVersion>
+    <ProjectGuid>{4940519A-A764-4AA2-B9F2-707CAB229C54}</ProjectGuid>
+    <RootNamespace>OpenJuiceCore</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v145</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseDebugLibraries Condition="'$(Configuration)'=='Debug'">true</UseDebugLibraries>
+    <UseDebugLibraries Condition="'$(Configuration)'=='Release'">false</UseDebugLibraries>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\build\OpenJuice.props" />
+  </ImportGroup>
+  <ItemGroup>
+    <ClInclude Include="Base\ByteReader.h" />
+    <ClInclude Include="Base\Config.h" />
+    <ClInclude Include="Base\Cpu.h" />
+    <ClInclude Include="Base\CpuInfo.h" />
+    <ClInclude Include="Base\GameFiles.h" />
+    <ClInclude Include="Base\Log.h" />
+    <ClInclude Include="Base\Matrix.h" />
+    <ClInclude Include="Base\Random.h" />
+    <ClInclude Include="Base\RawFields.h" />
+    <ClInclude Include="Base\Script.h" />
+    <ClInclude Include="Base\Text.h" />
+    <ClInclude Include="Base\X87.h" />
+    <ClInclude Include="Career\Career.h" />
+    <ClInclude Include="Career\CareerAdvice.h" />
+    <ClInclude Include="Career\CareerEvents.h" />
+    <ClInclude Include="Career\CareerFiles.h" />
+    <ClInclude Include="Career\CareerInit.h" />
+    <ClInclude Include="Career\EventKinds.h" />
+    <ClInclude Include="Career\Money.h" />
+    <ClInclude Include="Career\Phone.h" />
+    <ClInclude Include="Cars\Car.h" />
+    <ClInclude Include="Cars\CarCollection.h" />
+    <ClInclude Include="Cars\CarDamage.h" />
+    <ClInclude Include="Cars\CarDefs.h" />
+    <ClInclude Include="Cars\CarEffects.h" />
+    <ClInclude Include="Cars\CarPhysics.h" />
+    <ClInclude Include="Cars\CarRepair.h" />
+    <ClInclude Include="Data\Controls.h" />
+    <ClInclude Include="Data\EffectDefs.h" />
+    <ClInclude Include="Data\ExeTables.h" />
+    <ClInclude Include="Data\GameData.h" />
+    <ClInclude Include="Data\GameTexts.h" />
+    <ClInclude Include="Data\JetTexts.h" />
+    <ClInclude Include="Data\Language.h" />
+    <ClInclude Include="Data\NameFilter.h" />
+    <ClInclude Include="Formats\Cld.h" />
+    <ClInclude Include="Formats\D8f.h" />
+    <ClInclude Include="Formats\DatArchive.h" />
+    <ClInclude Include="Formats\Ddt.h" />
+    <ClInclude Include="Formats\Dlh.h" />
+    <ClInclude Include="Formats\Effect.h" />
+    <ClInclude Include="Formats\Inflate.h" />
+    <ClInclude Include="Formats\Model.h" />
+    <ClInclude Include="Formats\Ocd.h" />
+    <ClInclude Include="Input\ForceFeedback.h" />
+    <ClInclude Include="Input\Input.h" />
+    <ClInclude Include="Network\GameSpy\GameSpy.h" />
+    <ClInclude Include="Network\GameSpy\GameSpyBrowser.h" />
+    <ClInclude Include="Network\GameSpy\GameSpyHttp.h" />
+    <ClInclude Include="Network\GameSpy\GameSpyNatNeg.h" />
+    <ClInclude Include="Network\GameSpy\GameSpyPresence.h" />
+    <ClInclude Include="Network\GameSpy\GameSpyPresenceDetail.h" />
+    <ClInclude Include="Network\GameSpy\GameSpyQr2.h" />
+    <ClInclude Include="Network\GameSpy\GameSpyStats.h" />
+    <ClInclude Include="Network\GameSpy\GameSpyUser.h" />
+    <ClInclude Include="Network\GameSpy\GameSpyVoice.h" />
+    <ClInclude Include="Network\Matchmaking.h" />
+    <ClInclude Include="Network\NetCar.h" />
+    <ClInclude Include="Network\NetSession.h" />
+    <ClInclude Include="Network\NetTcp.h" />
+    <ClInclude Include="Network\NetTransport.h" />
+    <ClInclude Include="Network\OnlineRecords.h" />
+    <ClInclude Include="Network\OnlineSessions.h" />
+    <ClInclude Include="Network\OnlineStats.h" />
+    <ClInclude Include="Network\SessionStage.h" />
+    <ClInclude Include="Network\VoiceChat.h" />
+    <ClInclude Include="Physics\CarBody.h" />
+    <ClInclude Include="Physics\Contact.h" />
+    <ClInclude Include="Physics\Dynamics.h" />
+    <ClInclude Include="Physics\PhysicsWorld.h" />
+    <ClInclude Include="Physics\RigidBody.h" />
+    <ClInclude Include="Physics\TrackCollision.h" />
+    <ClInclude Include="Race\Arcade.h" />
+    <ClInclude Include="Race\Cruise.h" />
+    <ClInclude Include="Race\DriverControl.h" />
+    <ClInclude Include="Race\RaceKinds.h" />
+    <ClInclude Include="Race\Racer.h" />
+    <ClInclude Include="Race\RaceSession.h" />
+    <ClInclude Include="Race\RaceSounds.h" />
+    <ClInclude Include="Race\RaceStart.h" />
+    <ClInclude Include="Race\Replay.h" />
+    <ClInclude Include="Saves\GraphicsConfig.h" />
+    <ClInclude Include="Saves\HighScores.h" />
+    <ClInclude Include="Saves\Profile.h" />
+    <ClInclude Include="Saves\Save.h" />
+    <ClInclude Include="Saves\SaveDevice.h" />
+    <ClInclude Include="Saves\SaveEntries.h" />
+    <ClInclude Include="Tracks\Atmosphere.h" />
+    <ClInclude Include="Tracks\Route.h" />
+    <ClInclude Include="Tracks\SceneObjects.h" />
+    <ClInclude Include="Tracks\SunMap.h" />
+    <ClInclude Include="Tracks\Track.h" />
+    <ClCompile Include="Base\Config.cpp" />
+    <ClCompile Include="Base\Cpu.cpp" />
+    <ClCompile Include="Base\CpuInfo.cpp" />
+    <ClCompile Include="Base\GameFiles.cpp" />
+    <ClCompile Include="Base\Log.cpp" />
+    <ClCompile Include="Base\Matrix.cpp" />
+    <ClCompile Include="Base\Random.cpp" />
+    <ClCompile Include="Base\Script.cpp" />
+    <ClCompile Include="Base\Text.cpp" />
+    <ClCompile Include="Career\Career.cpp" />
+    <ClCompile Include="Career\CareerAdvice.cpp" />
+    <ClCompile Include="Career\CareerEvents.cpp" />
+    <ClCompile Include="Career\CareerFiles.cpp" />
+    <ClCompile Include="Career\CareerInit.cpp" />
+    <ClCompile Include="Career\Money.cpp" />
+    <ClCompile Include="Career\Phone.cpp" />
+    <ClCompile Include="Cars\Car.cpp" />
+    <ClCompile Include="Cars\CarCollection.cpp" />
+    <ClCompile Include="Cars\CarDamage.cpp" />
+    <ClCompile Include="Cars\CarDefs.cpp" />
+    <ClCompile Include="Cars\CarPhysics.cpp" />
+    <ClCompile Include="Cars\CarRepair.cpp" />
+    <ClCompile Include="Data\Controls.cpp" />
+    <ClCompile Include="Data\EffectDefs.cpp" />
+    <ClCompile Include="Data\ExeTables.cpp" />
+    <ClCompile Include="Data\StockTables.cpp" />
+    <ClCompile Include="Data\GameData.cpp" />
+    <ClCompile Include="Data\Language.cpp" />
+    <ClCompile Include="Data\NameFilter.cpp" />
+    <ClCompile Include="Formats\Cld.cpp" />
+    <ClCompile Include="Formats\D8f.cpp" />
+    <ClCompile Include="Formats\DatArchive.cpp" />
+    <ClCompile Include="Formats\Ddt.cpp" />
+    <ClCompile Include="Formats\Dlh.cpp" />
+    <ClCompile Include="Formats\Effect.cpp" />
+    <ClCompile Include="Formats\Inflate.cpp" />
+    <ClCompile Include="Formats\Model.cpp" />
+    <ClCompile Include="Formats\Ocd.cpp" />
+    <ClCompile Include="Input\ForceFeedback.cpp" />
+    <ClCompile Include="Input\Input.cpp" />
+    <ClCompile Include="Network\GameSpy\GameSpy.cpp" />
+    <ClCompile Include="Network\GameSpy\GameSpyBrowser.cpp" />
+    <ClCompile Include="Network\GameSpy\GameSpyHttp.cpp" />
+    <ClCompile Include="Network\GameSpy\GameSpyNatNeg.cpp" />
+    <ClCompile Include="Network\GameSpy\GameSpyPresence.cpp" />
+    <ClCompile Include="Network\GameSpy\GameSpyPresencePeers.cpp" />
+    <ClCompile Include="Network\GameSpy\GameSpyPresenceSearch.cpp" />
+    <ClCompile Include="Network\GameSpy\GameSpyQr2.cpp" />
+    <ClCompile Include="Network\GameSpy\GameSpyStats.cpp" />
+    <ClCompile Include="Network\GameSpy\GameSpyUser.cpp" />
+    <ClCompile Include="Network\GameSpy\GameSpyVoice.cpp">
+      <AdditionalIncludeDirectories>$(OpenJuiceRoot)third_party\speex-1.0.3\libspeex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Include="Network\Matchmaking.cpp" />
+    <ClCompile Include="Network\NetCar.cpp" />
+    <ClCompile Include="Network\NetSession.cpp" />
+    <ClCompile Include="Network\NetTcp.cpp" />
+    <ClCompile Include="Network\NetTransport.cpp" />
+    <ClCompile Include="Network\OnlineRecords.cpp" />
+    <ClCompile Include="Network\OnlineSessions.cpp" />
+    <ClCompile Include="Network\OnlineStats.cpp" />
+    <ClCompile Include="Network\VoiceChat.cpp" />
+    <ClCompile Include="Physics\CarBody.cpp" />
+    <ClCompile Include="Physics\Contact.cpp" />
+    <ClCompile Include="Physics\Dynamics.cpp" />
+    <ClCompile Include="Physics\PhysicsWorld.cpp" />
+    <ClCompile Include="Physics\RigidBody.cpp" />
+    <ClCompile Include="Physics\TrackCollision.cpp" />
+    <ClCompile Include="Race\Arcade.cpp" />
+    <ClCompile Include="Race\Cruise.cpp" />
+    <ClCompile Include="Race\DriverControl.cpp" />
+    <ClCompile Include="Race\RaceCar.cpp" />
+    <ClCompile Include="Race\Racer.cpp" />
+    <ClCompile Include="Race\RaceSession.cpp" />
+    <ClCompile Include="Race\RaceStart.cpp" />
+    <ClCompile Include="Race\Replay.cpp" />
+    <ClCompile Include="Saves\GraphicsConfig.cpp" />
+    <ClCompile Include="Saves\HighScores.cpp" />
+    <ClCompile Include="Saves\Profile.cpp" />
+    <ClCompile Include="Saves\Save.cpp" />
+    <ClCompile Include="Saves\SaveDevice.cpp" />
+    <ClCompile Include="Saves\SaveEntries.cpp" />
+    <ClCompile Include="Tracks\Atmosphere.cpp" />
+    <ClCompile Include="Tracks\Route.cpp" />
+    <ClCompile Include="Tracks\SceneObjects.cpp" />
+    <ClCompile Include="Tracks\SunMap.cpp" />
+    <ClCompile Include="Tracks\Track.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+</Project>

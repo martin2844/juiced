@@ -1,0 +1,440 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>18.0</VCProjectVersion>
+    <ProjectGuid>{8B2E4C71-3D5A-4F96-A1C8-6E0B9D7F2A43}</ProjectGuid>
+    <RootNamespace>OpenJuiceGame</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v145</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseDebugLibraries Condition="'$(Configuration)'=='Debug'">true</UseDebugLibraries>
+    <UseDebugLibraries Condition="'$(Configuration)'=='Release'">false</UseDebugLibraries>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\build\OpenJuice.props" />
+  </ImportGroup>
+  <PropertyGroup>
+    <TargetName>OpenJuice.Game</TargetName>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Core\OpenJuice.Core.vcxproj">
+      <Project>{4940519A-A764-4AA2-B9F2-707CAB229C54}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Render\OpenJuice.Render.vcxproj">
+      <Project>{41089D76-8D13-437A-B174-90C0994915D7}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Audio\OpenJuice.Audio.vcxproj">
+      <Project>{7A3C2E51-6B0D-4F8E-9C1A-3D5E7F902B14}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\third_party\speex-1.0.3\OpenJuice.Speex.vcxproj">
+      <Project>{5C2D8E14-7A31-4B6F-9E08-2F4A6B1C3D95}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="App\CrashLog.h" />
+    <ClInclude Include="App\DebugPages.h" />
+    <ClInclude Include="App\GameLoop.h" />
+    <ClInclude Include="App\Version.h" />
+    <ClInclude Include="Cars\CarModel.h" />
+    <ClInclude Include="Cars\CarSound.h" />
+    <ClInclude Include="Cars\CarView.h" />
+    <ClInclude Include="Cars\CarWheels.h" />
+    <ClInclude Include="Frontend\Arcade\ArcadeWindows.h" />
+    <ClInclude Include="Frontend\Career\Advice.h" />
+    <ClInclude Include="Frontend\Career\AtMeeting.h" />
+    <ClInclude Include="Frontend\Career\Calendar.h" />
+    <ClInclude Include="Frontend\Career\CalendarHelp.h" />
+    <ClInclude Include="Frontend\Career\CarCollection.h" />
+    <ClInclude Include="Frontend\Career\CareerChallengeResults.h" />
+    <ClInclude Include="Frontend\Career\CareerHost.h" />
+    <ClInclude Include="Frontend\Career\CareerLoad.h" />
+    <ClInclude Include="Frontend\Career\CareerMenu.h" />
+    <ClInclude Include="Frontend\Career\CareerRaceResults.h" />
+    <ClInclude Include="Frontend\Career\CharacterScreen.h" />
+    <ClInclude Include="Frontend\Career\CityMap.h" />
+    <ClInclude Include="Frontend\Career\CrewRaceSetup.h" />
+    <ClInclude Include="Frontend\Career\CrewWindow.h" />
+    <ClInclude Include="Frontend\Career\CutScene.h" />
+    <ClInclude Include="Frontend\Career\DemoFlyby.h" />
+    <ClInclude Include="Frontend\Career\GridWalk.h" />
+    <ClInclude Include="Frontend\Career\HostMeeting.h" />
+    <ClInclude Include="Frontend\Career\MeetingSummary.h" />
+    <ClInclude Include="Frontend\Career\NewCont.h" />
+    <ClInclude Include="Frontend\Career\OldCareerMenu.h" />
+    <ClInclude Include="Frontend\Career\PhoneWindows.h" />
+    <ClInclude Include="Frontend\Career\RaceSetup.h" />
+    <ClInclude Include="Frontend\Career\Respect.h" />
+    <ClInclude Include="Frontend\Career\RespectChanges.h" />
+    <ClInclude Include="Frontend\Career\RespectMessage.h" />
+    <ClInclude Include="Frontend\Career\RespectOverview.h" />
+    <ClInclude Include="Frontend\Career\Stats.h" />
+    <ClInclude Include="Frontend\Career\StatsMenu.h" />
+    <ClInclude Include="Frontend\CustomRace\CustomRace.h" />
+    <ClInclude Include="Frontend\CustomRace\CustomRaceHost.h" />
+    <ClInclude Include="Frontend\CustomRace\CustomRaceInternal.h" />
+    <ClInclude Include="Frontend\CustomRace\InstantManu.h" />
+    <ClInclude Include="Frontend\CustomRace\InstantSelCar.h" />
+    <ClInclude Include="Frontend\CustomRace\InstantSelType.h" />
+    <ClInclude Include="Frontend\CustomRace\InstantSetup.h" />
+    <ClInclude Include="Frontend\CustomRace\SplitSelCar.h" />
+    <ClInclude Include="Frontend\Frontend.h" />
+    <ClInclude Include="Frontend\FrontendInternal.h" />
+    <ClInclude Include="Frontend\Garage\CarBuy.h" />
+    <ClInclude Include="Frontend\Garage\CarSel.h" />
+    <ClInclude Include="Frontend\Garage\CarStats.h" />
+    <ClInclude Include="Frontend\Garage\Customise\Accessories.h" />
+    <ClInclude Include="Frontend\Garage\Customise\CustMenu.h" />
+    <ClInclude Include="Frontend\Garage\Customise\Paint.h" />
+    <ClInclude Include="Frontend\Garage\Customise\PartMenus.h" />
+    <ClInclude Include="Frontend\Garage\Customise\SchemeMenu.h" />
+    <ClInclude Include="Frontend\Garage\Customise\Styling.h" />
+    <ClInclude Include="Frontend\Garage\Customise\Tuning.h" />
+    <ClInclude Include="Frontend\Garage\Dealership.h" />
+    <ClInclude Include="Frontend\Garage\Garage.h" />
+    <ClInclude Include="Frontend\Garage\GarageHost.h" />
+    <ClInclude Include="Frontend\Garage\Graph.h" />
+    <ClInclude Include="Frontend\Garage\ModShop.h" />
+    <ClInclude Include="Frontend\Garage\Repair.h" />
+    <ClInclude Include="Frontend\Garage\RollingRoad.h" />
+    <ClInclude Include="Frontend\Loading\Loader.h" />
+    <ClInclude Include="Frontend\Menus\Cheats.h" />
+    <ClInclude Include="Frontend\Menus\DemoMenu.h" />
+    <ClInclude Include="Frontend\Menus\Extras.h" />
+    <ClInclude Include="Frontend\Menus\HiScores.h" />
+    <ClInclude Include="Frontend\Menus\MainMenu.h" />
+    <ClInclude Include="Frontend\Menus\MainMenuHost.h" />
+    <ClInclude Include="Frontend\Menus\VidTutorial.h" />
+    <ClInclude Include="Frontend\Messages.h" />
+    <ClInclude Include="Frontend\Network\LinkWindows.h" />
+    <ClInclude Include="Frontend\Network\NetworkHost.h" />
+    <ClInclude Include="Frontend\Network\OnlineCareerWindows.h" />
+    <ClInclude Include="Frontend\Network\OnlineCrewRaceSetup.h" />
+    <ClInclude Include="Frontend\Network\OnlineForms.h" />
+    <ClInclude Include="Frontend\Network\OnlineFriendInternal.h" />
+    <ClInclude Include="Frontend\Network\OnlineFriendOptions.h" />
+    <ClInclude Include="Frontend\Network\OnlineFriends.h" />
+    <ClInclude Include="Frontend\Network\OnlineFriendWindows.h" />
+    <ClInclude Include="Frontend\Network\OnlineHost.h" />
+    <ClInclude Include="Frontend\Network\OnlinePlayerOptions.h" />
+    <ClInclude Include="Frontend\Network\OnlinePlayers.h" />
+    <ClInclude Include="Frontend\Network\OnlineRaceSetup.h" />
+    <ClInclude Include="Frontend\Network\OnlineSessionWindows.h" />
+    <ClInclude Include="Frontend\Network\OnlineStatsWindow.h" />
+    <ClInclude Include="Frontend\Network\OnlineVoice.h" />
+    <ClInclude Include="Frontend\Network\OnlineWindows.h" />
+    <ClInclude Include="Frontend\Network\VoiceOptions.h" />
+    <ClInclude Include="Frontend\Options\AudioOptions.h" />
+    <ClInclude Include="Frontend\Options\GameOptions.h" />
+    <ClInclude Include="Frontend\Options\GraphicsOptions.h" />
+    <ClInclude Include="Frontend\Options\OptionsHost.h" />
+    <ClInclude Include="Frontend\Options\OptionsMenu.h" />
+    <ClInclude Include="Frontend\Options\SongList.h" />
+    <ClInclude Include="Frontend\Options\WheelOptions.h" />
+    <ClInclude Include="Frontend\Popups.h" />
+    <ClInclude Include="Frontend\Profile\ChooseWindows.h" />
+    <ClInclude Include="Frontend\Profile\Keyboard.h" />
+    <ClInclude Include="Frontend\Profile\ProfileHost.h" />
+    <ClInclude Include="Frontend\Saves\Autosave.h" />
+    <ClInclude Include="Frontend\Saves\Driver.h" />
+    <ClInclude Include="Frontend\Saves\LoadHighScores.h" />
+    <ClInclude Include="Frontend\Saves\LoadReplay.h" />
+    <ClInclude Include="Frontend\Saves\SaveHost.h" />
+    <ClInclude Include="Frontend\Saves\SaveProfile.h" />
+    <ClInclude Include="Frontend\SharedState.h" />
+    <ClInclude Include="Frontend\Startup\BootUpCheck.h" />
+    <ClInclude Include="Frontend\Startup\StartupHost.h" />
+    <ClInclude Include="Frontend\Startup\StartupWindows.h" />
+    <ClInclude Include="Frontend\Unused\CutWindows.h" />
+    <ClInclude Include="Frontend\WindowHost.h" />
+    <ClInclude Include="Frontend\WindowTools.h" />
+    <ClInclude Include="Media\BinkLibrary.h" />
+    <ClInclude Include="Media\BinkNative.h" />
+    <ClInclude Include="Media\Binkw32.h" />
+    <ClInclude Include="Media\Movies.h" />
+    <ClInclude Include="Media\Music.h" />
+    <ClInclude Include="Platform\CommandLine.h" />
+    <ClInclude Include="Platform\InputDevices.h" />
+    <ClInclude Include="Platform\Platform.h" />
+    <ClInclude Include="Platform\Settings.h" />
+    <ClInclude Include="Platform\SystemKeys.h" />
+    <ClInclude Include="Platform\Windows7.h" />
+    <ClInclude Include="Race\FrontEnd\RaceFrontEnd.h" />
+    <ClInclude Include="Race\Hud\ChallengeResults.h" />
+    <ClInclude Include="Race\Hud\CruiseResults.h" />
+    <ClInclude Include="Race\Hud\HudCrewOrders.h" />
+    <ClInclude Include="Race\Hud\HudInternal.h" />
+    <ClInclude Include="Race\Hud\HudRace.h" />
+    <ClInclude Include="Race\Hud\HudReplay.h" />
+    <ClInclude Include="Race\Hud\RaceComplete.h" />
+    <ClInclude Include="Race\Hud\RaceHud.h" />
+    <ClInclude Include="Race\Hud\RaceMessage.h" />
+    <ClInclude Include="Race\Hud\RacePause.h" />
+    <ClInclude Include="Race\Hud\RaceResults.h" />
+    <ClInclude Include="Race\Hud\RaceSaves.h" />
+    <ClInclude Include="Race\Hud\RaceScreenWindow.h" />
+    <ClInclude Include="Race\Hud\RaceWindowId.h" />
+    <ClInclude Include="Race\Hud\RaceWindows.h" />
+    <ClInclude Include="Race\Hud\SprintResults.h" />
+    <ClInclude Include="Race\RaceCamera.h" />
+    <ClInclude Include="Race\RaceGrids.h" />
+    <ClInclude Include="Race\RaceIntro.h" />
+    <ClInclude Include="Race\ReplaySaves.h" />
+    <ClInclude Include="Race\TrackView\TrackView.h" />
+    <ClInclude Include="Scene\LensFlares.h" />
+    <ClInclude Include="Scene\Particles.h" />
+    <ClInclude Include="Scene\Particles\CameraEmitter.h" />
+    <ClInclude Include="Scene\Particles\Emitter.h" />
+    <ClInclude Include="Scene\Particles\LeavesEmitter.h" />
+    <ClInclude Include="Scene\Particles\ParticlesInternal.h" />
+    <ClInclude Include="Scene\Particles\ParticleSystem.h" />
+    <ClInclude Include="Scene\Particles\SmearEmitter.h" />
+    <ClInclude Include="Scene\Particles\SmokeEmitter.h" />
+    <ClInclude Include="Scene\Particles\SparksEmitter.h" />
+    <ClInclude Include="Scene\Particles\TracksEmitter.h" />
+    <ClInclude Include="Scene\PostEffects.h" />
+    <ClInclude Include="Scene\Projector.h" />
+    <ClInclude Include="Scene\Scene3d.h" />
+    <ClInclude Include="Scene\Silhouette.h" />
+    <ClInclude Include="Scene\SunLight.h" />
+    <ClInclude Include="Scene\TrackScene.h" />
+    <ClInclude Include="Scene\WorldClock.h" />
+    <ClInclude Include="UI\Components\ColourChart.h" />
+    <ClInclude Include="UI\Components\Dial.h" />
+    <ClInclude Include="UI\Components\Menu.h" />
+    <ClInclude Include="UI\Components\MenuItem.h" />
+    <ClInclude Include="UI\Components\Meter.h" />
+    <ClInclude Include="UI\Components\Movie.h" />
+    <ClInclude Include="UI\Components\Slider.h" />
+    <ClInclude Include="UI\Components\Text.h" />
+    <ClInclude Include="UI\Components\TextModifier.h" />
+    <ClInclude Include="UI\Components\Ticker.h" />
+    <ClInclude Include="UI\Components\Transition.h" />
+    <ClInclude Include="UI\Components\View3d.h" />
+    <ClInclude Include="UI\MessageWindow.h" />
+    <ClInclude Include="UI\UiFile.h" />
+    <ClInclude Include="UI\UiInternal.h" />
+    <ClInclude Include="UI\UiScreen.h" />
+    <ClInclude Include="UI\UiSound.h" />
+    <ClInclude Include="UI\WindowManager.h" />
+    <ClCompile Include="App\CrashLog.cpp" />
+    <ClCompile Include="App\DebugPages.cpp" />
+    <ClCompile Include="App\GameLoop.cpp" />
+    <ClCompile Include="App\Main.cpp" />
+    <ClCompile Include="Cars\CarModel.cpp" />
+    <ClCompile Include="Cars\CarSound.cpp" />
+    <ClCompile Include="Cars\CarView.cpp" />
+    <ClCompile Include="Cars\CarWheels.cpp" />
+    <ClCompile Include="Frontend\Arcade\ArcadeWindows.cpp" />
+    <ClCompile Include="Frontend\Career\Advice.cpp" />
+    <ClCompile Include="Frontend\Career\AtMeeting.cpp" />
+    <ClCompile Include="Frontend\Career\Calendar.cpp" />
+    <ClCompile Include="Frontend\Career\CalendarHelp.cpp" />
+    <ClCompile Include="Frontend\Career\CarCollection.cpp" />
+    <ClCompile Include="Frontend\Career\CareerChallengeResults.cpp" />
+    <ClCompile Include="Frontend\Career\CareerLoad.cpp" />
+    <ClCompile Include="Frontend\Career\CareerMenu.cpp" />
+    <ClCompile Include="Frontend\Career\CareerRaceResults.cpp" />
+    <ClCompile Include="Frontend\Career\CharacterScreen.cpp" />
+    <ClCompile Include="Frontend\Career\CityMap.cpp" />
+    <ClCompile Include="Frontend\Career\CrewRaceSetup.cpp" />
+    <ClCompile Include="Frontend\Career\CrewWindow.cpp" />
+    <ClCompile Include="Frontend\Career\CutScene.cpp" />
+    <ClCompile Include="Frontend\Career\DemoFlyby.cpp" />
+    <ClCompile Include="Frontend\Career\GridWalk.cpp" />
+    <ClCompile Include="Frontend\Career\HostMeeting.cpp" />
+    <ClCompile Include="Frontend\Career\MeetingSummary.cpp" />
+    <ClCompile Include="Frontend\Career\NewCont.cpp" />
+    <ClCompile Include="Frontend\Career\OldCareerMenu.cpp" />
+    <ClCompile Include="Frontend\Career\PhoneWindows.cpp" />
+    <ClCompile Include="Frontend\Career\RaceSetup.cpp" />
+    <ClCompile Include="Frontend\Career\Respect.cpp" />
+    <ClCompile Include="Frontend\Career\RespectChanges.cpp" />
+    <ClCompile Include="Frontend\Career\RespectMessage.cpp" />
+    <ClCompile Include="Frontend\Career\RespectOverview.cpp" />
+    <ClCompile Include="Frontend\Career\Stats.cpp" />
+    <ClCompile Include="Frontend\Career\StatsMenu.cpp" />
+    <ClCompile Include="Frontend\Controllers.cpp" />
+    <ClCompile Include="Frontend\CustomRace\InstantManu.cpp" />
+    <ClCompile Include="Frontend\CustomRace\InstantSelCar.cpp" />
+    <ClCompile Include="Frontend\CustomRace\InstantSelType.cpp" />
+    <ClCompile Include="Frontend\CustomRace\InstantSetup.cpp" />
+    <ClCompile Include="Frontend\CustomRace\SplitSelCar.cpp" />
+    <ClCompile Include="Frontend\Frontend.cpp" />
+    <ClCompile Include="Frontend\FrontendAudio.cpp" />
+    <ClCompile Include="Frontend\FrontendCareer.cpp" />
+    <ClCompile Include="Frontend\FrontendDraw.cpp" />
+    <ClCompile Include="Frontend\FrontendNetwork.cpp" />
+    <ClCompile Include="Frontend\FrontendOnline.cpp" />
+    <ClCompile Include="Frontend\FrontendSaves.cpp" />
+    <ClCompile Include="Frontend\FrontendShared.cpp" />
+    <ClCompile Include="Frontend\Garage\CarBuy.cpp" />
+    <ClCompile Include="Frontend\Garage\CarSel.cpp" />
+    <ClCompile Include="Frontend\Garage\CarStats.cpp" />
+    <ClCompile Include="Frontend\Garage\Customise\Accessories.cpp" />
+    <ClCompile Include="Frontend\Garage\Customise\CustMenu.cpp" />
+    <ClCompile Include="Frontend\Garage\Customise\Paint.cpp" />
+    <ClCompile Include="Frontend\Garage\Customise\PartMenus.cpp" />
+    <ClCompile Include="Frontend\Garage\Customise\SchemeMenu.cpp" />
+    <ClCompile Include="Frontend\Garage\Customise\Styling.cpp" />
+    <ClCompile Include="Frontend\Garage\Customise\Tuning.cpp" />
+    <ClCompile Include="Frontend\Garage\Dealership.cpp" />
+    <ClCompile Include="Frontend\Garage\Garage.cpp" />
+    <ClCompile Include="Frontend\Garage\Graph.cpp" />
+    <ClCompile Include="Frontend\Garage\ModShop.cpp" />
+    <ClCompile Include="Frontend\Garage\Repair.cpp" />
+    <ClCompile Include="Frontend\Garage\RollingRoad.cpp" />
+    <ClCompile Include="Frontend\Loading\Loader.cpp" />
+    <ClCompile Include="Frontend\Menus\Cheats.cpp" />
+    <ClCompile Include="Frontend\Menus\DemoMenu.cpp" />
+    <ClCompile Include="Frontend\Menus\Extras.cpp" />
+    <ClCompile Include="Frontend\Menus\HiScores.cpp" />
+    <ClCompile Include="Frontend\Menus\MainMenu.cpp" />
+    <ClCompile Include="Frontend\Menus\VidTutorial.cpp" />
+    <ClCompile Include="Frontend\Messages.cpp" />
+    <ClCompile Include="Frontend\Network\LinkWindows.cpp" />
+    <ClCompile Include="Frontend\Network\OnlineCareerWindows.cpp" />
+    <ClCompile Include="Frontend\Network\OnlineCrewRaceSetup.cpp" />
+    <ClCompile Include="Frontend\Network\OnlineFriendOptions.cpp" />
+    <ClCompile Include="Frontend\Network\OnlineFriends.cpp" />
+    <ClCompile Include="Frontend\Network\OnlineFriendWindows.cpp" />
+    <ClCompile Include="Frontend\Network\OnlinePlayerOptions.cpp" />
+    <ClCompile Include="Frontend\Network\OnlinePlayers.cpp" />
+    <ClCompile Include="Frontend\Network\OnlineRaceSetup.cpp" />
+    <ClCompile Include="Frontend\Network\OnlineSessionWindows.cpp" />
+    <ClCompile Include="Frontend\Network\OnlineStatsWindow.cpp" />
+    <ClCompile Include="Frontend\Network\OnlineVoice.cpp" />
+    <ClCompile Include="Frontend\Network\OnlineWindows.cpp" />
+    <ClCompile Include="Frontend\Network\VoiceOptions.cpp" />
+    <ClCompile Include="Frontend\Options\AudioOptions.cpp" />
+    <ClCompile Include="Frontend\Options\GameOptions.cpp" />
+    <ClCompile Include="Frontend\Options\GraphicsOptions.cpp" />
+    <ClCompile Include="Frontend\Options\OptionsMenu.cpp" />
+    <ClCompile Include="Frontend\Options\SongList.cpp" />
+    <ClCompile Include="Frontend\Options\WheelOptions.cpp" />
+    <ClCompile Include="Frontend\Popups.cpp" />
+    <ClCompile Include="Frontend\Profile\ChooseWindows.cpp" />
+    <ClCompile Include="Frontend\Profile\Keyboard.cpp" />
+    <ClCompile Include="Frontend\Saves\Autosave.cpp" />
+    <ClCompile Include="Frontend\Saves\Driver.cpp" />
+    <ClCompile Include="Frontend\Saves\LoadHighScores.cpp" />
+    <ClCompile Include="Frontend\Saves\LoadReplay.cpp" />
+    <ClCompile Include="Frontend\Saves\SaveProfile.cpp" />
+    <ClCompile Include="Frontend\Startup\BootUpCheck.cpp" />
+    <ClCompile Include="Frontend\Startup\StartupWindows.cpp" />
+    <ClCompile Include="Frontend\Unused\CutWindows.cpp" />
+    <ClCompile Include="Frontend\WindowBase.cpp" />
+    <ClCompile Include="Frontend\WindowTools.cpp" />
+    <ClCompile Include="Media\BinkLibrary.cpp" />
+    <ClCompile Include="Media\BinkNative.cpp" />
+    <ClCompile Include="Media\Binkw32.cpp" />
+    <ClCompile Include="Media\Movies.cpp" />
+    <ClCompile Include="Media\Music.cpp" />
+    <ClCompile Include="Platform\CommandLine.cpp" />
+    <ClCompile Include="Platform\InputDevices.cpp" />
+    <ClCompile Include="Platform\Platform.cpp" />
+    <ClCompile Include="Platform\Settings.cpp" />
+    <ClCompile Include="Platform\SystemKeys.cpp" />
+    <ClCompile Include="Platform\Windows7.cpp" />
+    <ClCompile Include="Race\FrontEnd\RaceFrontEnd.cpp" />
+    <ClCompile Include="Race\Hud\ChallengeResults.cpp" />
+    <ClCompile Include="Race\Hud\CruiseResults.cpp" />
+    <ClCompile Include="Race\Hud\HudCrewOrders.cpp" />
+    <ClCompile Include="Race\Hud\HudRace.cpp" />
+    <ClCompile Include="Race\Hud\HudReplay.cpp" />
+    <ClCompile Include="Race\Hud\RaceComplete.cpp" />
+    <ClCompile Include="Race\Hud\RaceHud.cpp" />
+    <ClCompile Include="Race\Hud\RaceHudCareer.cpp" />
+    <ClCompile Include="Race\Hud\RaceHudUpdate.cpp" />
+    <ClCompile Include="Race\Hud\RaceMessage.cpp" />
+    <ClCompile Include="Race\Hud\RacePause.cpp" />
+    <ClCompile Include="Race\Hud\RaceResults.cpp" />
+    <ClCompile Include="Race\Hud\RaceSaves.cpp" />
+    <ClCompile Include="Race\Hud\RaceScreenWindow.cpp" />
+    <ClCompile Include="Race\Hud\RaceWindowId.cpp" />
+    <ClCompile Include="Race\Hud\SprintResults.cpp" />
+    <ClCompile Include="Race\RaceCamera.cpp" />
+    <ClCompile Include="Race\RaceGrids.cpp" />
+    <ClCompile Include="Race\RaceIntro.cpp" />
+    <ClCompile Include="Race\TrackView\TrackViewCamera.cpp" />
+    <ClCompile Include="Race\TrackView\TrackViewControllers.cpp" />
+    <ClCompile Include="Race\TrackView\TrackViewDraw.cpp" />
+    <ClCompile Include="Race\TrackView\TrackViewFrame.cpp" />
+    <ClCompile Include="Race\TrackView\TrackViewLoad.cpp" />
+    <ClCompile Include="Race\TrackView\TrackViewNetwork.cpp" />
+    <ClCompile Include="Race\TrackView\TrackViewParticles.cpp" />
+    <ClCompile Include="Race\TrackView\TrackViewReplay.cpp" />
+    <ClCompile Include="Race\TrackView\TrackViewRestart.cpp" />
+    <ClCompile Include="Race\TrackView\TrackViewScene.cpp" />
+    <ClCompile Include="Race\TrackView\TrackViewSounds.cpp" />
+    <ClCompile Include="Race\TrackView\TrackViewWindows.cpp" />
+    <ClCompile Include="Scene\LensFlares.cpp" />
+    <ClCompile Include="Scene\Particles\CameraEmitter.cpp" />
+    <ClCompile Include="Scene\Particles\Emitter.cpp" />
+    <ClCompile Include="Scene\Particles\LeavesEmitter.cpp" />
+    <ClCompile Include="Scene\Particles\ParticleSystem.cpp" />
+    <ClCompile Include="Scene\Particles\SmearEmitter.cpp" />
+    <ClCompile Include="Scene\Particles\SmokeEmitter.cpp" />
+    <ClCompile Include="Scene\Particles\SparksEmitter.cpp" />
+    <ClCompile Include="Scene\Particles\TracksEmitter.cpp" />
+    <ClCompile Include="Scene\PostEffects.cpp" />
+    <ClCompile Include="Scene\Projector.cpp" />
+    <ClCompile Include="Scene\Scene3d.cpp" />
+    <ClCompile Include="Scene\Silhouette.cpp" />
+    <ClCompile Include="Scene\SunLight.cpp" />
+    <ClCompile Include="Scene\TrackReflections.cpp" />
+    <ClCompile Include="Scene\TrackScene.cpp" />
+    <ClCompile Include="UI\Components\Box.cpp" />
+    <ClCompile Include="UI\Components\ColourChart.cpp" />
+    <ClCompile Include="UI\Components\Dial.cpp" />
+    <ClCompile Include="UI\Components\Menu.cpp" />
+    <ClCompile Include="UI\Components\Meter.cpp" />
+    <ClCompile Include="UI\Components\Movie.cpp" />
+    <ClCompile Include="UI\Components\Slider.cpp" />
+    <ClCompile Include="UI\Components\Text.cpp" />
+    <ClCompile Include="UI\Components\TextModifier.cpp" />
+    <ClCompile Include="UI\Components\Ticker.cpp" />
+    <ClCompile Include="UI\Components\Transition.cpp" />
+    <ClCompile Include="UI\MessageWindow.cpp" />
+    <ClCompile Include="UI\UiFile.cpp" />
+    <ClCompile Include="UI\UiScreen.cpp" />
+    <ClCompile Include="UI\UiSound.cpp" />
+    <ClCompile Include="UI\WindowManager.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <!-- The objects OpenJuice.vcxproj links in place of this library (UseLibraryDependencyInputs): the game's own,
+       in the project's order, as when they were the executable's; not those of the libraries it uses (the
+       targets' own GetResolvedLinkObjs adds them), which the executable links as libraries. -->
+  <Target Name="GetResolvedLinkObjs" Returns="@(ObjFullPath)" DependsOnTargets="$(CommonBuildOnlyTargets);ComputeCLOutputs">
+    <ItemGroup>
+      <ObjFullPath Include="@(Obj->'%(FullPath)')">
+        <FileType>obj</FileType>
+        <ProjectType>$(ConfigurationType)</ProjectType>
+      </ObjFullPath>
+    </ItemGroup>
+  </Target>
+</Project>

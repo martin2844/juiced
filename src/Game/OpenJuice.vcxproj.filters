@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="OpenJuice.manifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="OpenJuice.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Platform\Win7Imports.cpp" />
+    <MASM Include="Platform\Win7Imports32.asm" />
+  </ItemGroup>
+</Project>

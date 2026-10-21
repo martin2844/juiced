@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="D3D9">
+      <UniqueIdentifier>{57411042-C754-5520-815B-2E8073B38900}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Materials">
+      <UniqueIdentifier>{D6B3699D-E50A-5868-8902-C62B1FD57D9E}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="D3D9\D3D9Device.cpp">
+      <Filter>D3D9</Filter>
+    </ClCompile>
+    <ClCompile Include="HlslCompiler.cpp" />
+    <ClCompile Include="Materials.cpp" />
+    <ClCompile Include="Model.cpp" />
+    <ClCompile Include="Program.cpp" />
+    <ClCompile Include="RenderDevice.cpp" />
+    <ClCompile Include="Renderer3d.cpp" />
+    <ClCompile Include="Sky.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="D3D9\D3D9Device.h">
+      <Filter>D3D9</Filter>
+    </ClInclude>
+    <ClInclude Include="HlslCompiler.h" />
+    <ClInclude Include="Materials.h" />
+    <ClInclude Include="Materials\CarMaterials.h">
+      <Filter>Materials</Filter>
+    </ClInclude>
+    <ClInclude Include="Materials\MaterialsInternal.h">
+      <Filter>Materials</Filter>
+    </ClInclude>
+    <ClInclude Include="Materials\SpriteMaterials.h">
+      <Filter>Materials</Filter>
+    </ClInclude>
+    <ClInclude Include="Materials\StandardMaterials.h">
+      <Filter>Materials</Filter>
+    </ClInclude>
+    <ClInclude Include="Materials\UnlitMaterials.h">
+      <Filter>Materials</Filter>
+    </ClInclude>
+    <ClInclude Include="Materials\WorldMaterials.h">
+      <Filter>Materials</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h" />
+    <ClInclude Include="Program.h" />
+    <ClInclude Include="RenderDevice.h" />
+    <ClInclude Include="Renderer3d.h" />
+    <ClInclude Include="RenderStates.h" />
+    <ClInclude Include="Sky.h" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,143 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>18.0</VCProjectVersion>
+    <ProjectGuid>{F7C81C20-92A1-4F57-AD9A-9BC1C0A33AC4}</ProjectGuid>
+    <RootNamespace>OpenJuiceTests</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v145</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseDebugLibraries Condition="'$(Configuration)'=='Debug'">true</UseDebugLibraries>
+    <UseDebugLibraries Condition="'$(Configuration)'=='Release'">false</UseDebugLibraries>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\build\OpenJuice.props" />
+  </ImportGroup>
+  <PropertyGroup>
+    <TargetName>OpenJuice.Tests</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <AdditionalDependencies>shell32.lib;dbghelp.lib;d3d9.lib;dinput8.lib;dsound.lib;dxguid.lib;strmiids.lib;ole32.lib;user32.lib;gdi32.lib;advapi32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\src\Game\OpenJuice.Game.vcxproj">
+      <Project>{8B2E4C71-3D5A-4F96-A1C8-6E0B9D7F2A43}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\src\Render\OpenJuice.Render.vcxproj">
+      <Project>{41089D76-8D13-437A-B174-90C0994915D7}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\src\Audio\OpenJuice.Audio.vcxproj">
+      <Project>{7A3C2E51-6B0D-4F8E-9C1A-3D5E7F902B14}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\src\Core\OpenJuice.Core.vcxproj">
+      <Project>{4940519A-A764-4AA2-B9F2-707CAB229C54}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\third_party\speex-1.0.3\OpenJuice.Speex.vcxproj">
+      <Project>{5C2D8E14-7A31-4B6F-9E08-2F4A6B1C3D95}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Framework\Fakes\FakeGpcm.h" />
+    <ClInclude Include="Framework\Fakes\FakeWindowHost.h" />
+    <ClInclude Include="Framework\Fakes\FlatGround.h" />
+    <ClInclude Include="Framework\Fakes\NullRenderDevice.h" />
+    <ClInclude Include="Framework\Fixtures.h" />
+    <ClInclude Include="Framework\Test.h" />
+    <ClCompile Include="Framework\Fixtures.cpp" />
+    <ClCompile Include="Framework\TestMain.cpp" />
+    <ClCompile Include="Integration\Audio\DirectSoundTests.cpp" />
+    <ClCompile Include="Integration\Frontend\MainMenuTests.cpp" />
+    <ClCompile Include="Integration\Frontend\MessageWindowTests.cpp" />
+    <ClCompile Include="Integration\Frontend\StartupTests.cpp" />
+    <ClCompile Include="Integration\GameData\CarDefsTests.cpp" />
+    <ClCompile Include="Integration\GameData\CareerTests.cpp" />
+    <ClCompile Include="Integration\GameData\CarPhysicsTests.cpp" />
+    <ClCompile Include="Integration\GameData\EffectDefsTests.cpp" />
+    <ClCompile Include="Integration\GameData\EffectsTests.cpp" />
+    <ClCompile Include="Integration\GameData\ExeTablesTests.cpp" />
+    <ClCompile Include="Integration\GameData\GroundMapTests.cpp" />
+    <ClCompile Include="Integration\GameData\ModelFilesTests.cpp" />
+    <ClCompile Include="Integration\GameData\MoviesTests.cpp" />
+    <ClCompile Include="Integration\GameData\ReplayTests.cpp" />
+    <ClCompile Include="Integration\GameData\SceneObjectsTests.cpp" />
+    <ClCompile Include="Integration\GameData\TracksTests.cpp" />
+    <ClCompile Include="Integration\Network\HttpTests.cpp" />
+    <ClCompile Include="Integration\Network\LeaderboardTests.cpp" />
+    <ClCompile Include="Integration\Network\MatchmakingTests.cpp" />
+    <ClCompile Include="Integration\Network\NatNegotiationTests.cpp" />
+    <ClCompile Include="Integration\Network\PresenceTests.cpp" />
+    <ClCompile Include="Integration\Network\ServerBrowsingTests.cpp" />
+    <ClCompile Include="Integration\Network\SessionTests.cpp" />
+    <ClCompile Include="Integration\Network\TcpTests.cpp" />
+    <ClCompile Include="Integration\Network\TransportTests.cpp" />
+    <ClCompile Include="Integration\Platform\Windows7Tests.cpp" />
+    <ClCompile Include="Integration\Race\RaceFrontEndTests.cpp" />
+    <ClCompile Include="Integration\Saves\ReplaysDeviceTests.cpp" />
+    <ClCompile Include="Integration\Saves\SaveDeviceTests.cpp" />
+    <ClCompile Include="Integration\Saves\UserSavesTests.cpp" />
+    <ClCompile Include="Unit\Base\CpuInfoTests.cpp" />
+    <ClCompile Include="Unit\Base\ScriptTests.cpp" />
+    <ClCompile Include="Unit\Career\DealerTests.cpp" />
+    <ClCompile Include="Unit\Career\MoneyTests.cpp" />
+    <ClCompile Include="Unit\Cars\CarPartsTests.cpp" />
+    <ClCompile Include="Unit\Cars\DamageTests.cpp" />
+    <ClCompile Include="Unit\Data\LanguageTests.cpp" />
+    <ClCompile Include="Unit\Data\NameFilterTests.cpp" />
+    <ClCompile Include="Unit\Formats\InflateTests.cpp" />
+    <ClCompile Include="Unit\Formats\TextureTests.cpp" />
+    <ClCompile Include="Unit\Input\ControlsTests.cpp" />
+    <ClCompile Include="Unit\Input\GameControllerTests.cpp" />
+    <ClCompile Include="Unit\Input\KeyboardSteeringTests.cpp" />
+    <ClCompile Include="Unit\Input\UiInputTests.cpp" />
+    <ClCompile Include="Unit\Network\GameSpyPresenceTests.cpp" />
+    <ClCompile Include="Unit\Network\GameSpyTests.cpp" />
+    <ClCompile Include="Unit\Network\OnlineRecordsTests.cpp" />
+    <ClCompile Include="Unit\Network\VoiceTests.cpp" />
+    <ClCompile Include="Unit\Physics\DynamicsTests.cpp" />
+    <ClCompile Include="Unit\Physics\RigidBodyTests.cpp" />
+    <ClCompile Include="Unit\Platform\LanguageChoiceTests.cpp" />
+    <ClCompile Include="Unit\Race\DriverControlTests.cpp" />
+    <ClCompile Include="Unit\Race\RaceStartTests.cpp" />
+    <ClCompile Include="Unit\Race\RaceStateTests.cpp" />
+    <ClCompile Include="Unit\Race\RaceWindowIdTests.cpp" />
+    <ClCompile Include="Unit\Render\MeshTests.cpp" />
+    <ClCompile Include="Unit\Saves\ArchiveTests.cpp" />
+    <ClCompile Include="Unit\Saves\GraphicsConfigTests.cpp" />
+    <ClCompile Include="Unit\Saves\SettingsTests.cpp" />
+    <ClCompile Include="Unit\Scene\WorldClockTests.cpp" />
+    <ClCompile Include="Unit\Tracks\AtmosphereTests.cpp" />
+    <ClCompile Include="Unit\Tracks\RouteTests.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+</Project>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>18.0</VCProjectVersion>
+    <ProjectGuid>{41089D76-8D13-437A-B174-90C0994915D7}</ProjectGuid>
+    <RootNamespace>OpenJuiceRender</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v145</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseDebugLibraries Condition="'$(Configuration)'=='Debug'">true</UseDebugLibraries>
+    <UseDebugLibraries Condition="'$(Configuration)'=='Release'">false</UseDebugLibraries>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\build\OpenJuice.props" />
+  </ImportGroup>
+  <ItemDefinitionGroup>
+    <Lib>
+      <AdditionalDependencies>d3d9.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Core\OpenJuice.Core.vcxproj">
+      <Project>{4940519A-A764-4AA2-B9F2-707CAB229C54}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="D3D9\D3D9Device.h" />
+    <ClInclude Include="HlslCompiler.h" />
+    <ClInclude Include="Materials.h" />
+    <ClInclude Include="Materials\CarMaterials.h" />
+    <ClInclude Include="Materials\MaterialsInternal.h" />
+    <ClInclude Include="Materials\SpriteMaterials.h" />
+    <ClInclude Include="Materials\StandardMaterials.h" />
+    <ClInclude Include="Materials\UnlitMaterials.h" />
+    <ClInclude Include="Materials\WorldMaterials.h" />
+    <ClInclude Include="Model.h" />
+    <ClInclude Include="Program.h" />
+    <ClInclude Include="RenderDevice.h" />
+    <ClInclude Include="Renderer3d.h" />
+    <ClInclude Include="RenderStates.h" />
+    <ClInclude Include="Sky.h" />
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="D3D9\D3D9Device.cpp" />
+    <ClCompile Include="HlslCompiler.cpp" />
+    <ClCompile Include="Materials.cpp" />
+    <ClCompile Include="Model.cpp" />
+    <ClCompile Include="Program.cpp" />
+    <ClCompile Include="RenderDevice.cpp" />
+    <ClCompile Include="Renderer3d.cpp" />
+    <ClCompile Include="Sky.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+</Project>

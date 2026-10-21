@@ -1,0 +1,576 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Base">
+      <UniqueIdentifier>{FB7C596D-D09D-55F6-999E-FAB43792AC31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Career">
+      <UniqueIdentifier>{5FA68E62-E096-5E0E-B785-8612DE5C03B8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Cars">
+      <UniqueIdentifier>{D2BC18E4-6C0C-5C90-805B-51022B72F3C8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data">
+      <UniqueIdentifier>{3E610091-6DEB-55A9-920F-447567AD2D2D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Formats">
+      <UniqueIdentifier>{493BCFCE-228B-5C65-B8C6-56319888544E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Input">
+      <UniqueIdentifier>{BBEBA5D9-0035-5E3F-9FDB-8835898DF2ED}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Network">
+      <UniqueIdentifier>{5088174E-B6F3-52F9-8B93-F0176D29589A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Network\GameSpy">
+      <UniqueIdentifier>{A44A1A9A-1B77-5195-B0A9-B31759C8C424}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Physics">
+      <UniqueIdentifier>{A9C206BB-C0C4-5EC3-AB09-54207DFDDD89}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Race">
+      <UniqueIdentifier>{402BF1B3-0984-57C1-8E65-D4110E2ED387}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Saves">
+      <UniqueIdentifier>{566E7E71-AB98-55DF-908C-17D2DAA9AC1D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tracks">
+      <UniqueIdentifier>{7A9AFAC0-5BF7-5255-9F6A-B55F35E48574}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Base\Config.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Base\Cpu.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Base\CpuInfo.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Base\GameFiles.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Base\Log.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Base\Matrix.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Base\Random.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Base\Script.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Base\Text.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Career\Career.cpp">
+      <Filter>Career</Filter>
+    </ClCompile>
+    <ClCompile Include="Career\CareerAdvice.cpp">
+      <Filter>Career</Filter>
+    </ClCompile>
+    <ClCompile Include="Career\CareerEvents.cpp">
+      <Filter>Career</Filter>
+    </ClCompile>
+    <ClCompile Include="Career\CareerFiles.cpp">
+      <Filter>Career</Filter>
+    </ClCompile>
+    <ClCompile Include="Career\CareerInit.cpp">
+      <Filter>Career</Filter>
+    </ClCompile>
+    <ClCompile Include="Career\Money.cpp">
+      <Filter>Career</Filter>
+    </ClCompile>
+    <ClCompile Include="Career\Phone.cpp">
+      <Filter>Career</Filter>
+    </ClCompile>
+    <ClCompile Include="Cars\Car.cpp">
+      <Filter>Cars</Filter>
+    </ClCompile>
+    <ClCompile Include="Cars\CarCollection.cpp">
+      <Filter>Cars</Filter>
+    </ClCompile>
+    <ClCompile Include="Cars\CarDamage.cpp">
+      <Filter>Cars</Filter>
+    </ClCompile>
+    <ClCompile Include="Cars\CarDefs.cpp">
+      <Filter>Cars</Filter>
+    </ClCompile>
+    <ClCompile Include="Cars\CarPhysics.cpp">
+      <Filter>Cars</Filter>
+    </ClCompile>
+    <ClCompile Include="Cars\CarRepair.cpp">
+      <Filter>Cars</Filter>
+    </ClCompile>
+    <ClCompile Include="Data\Controls.cpp">
+      <Filter>Data</Filter>
+    </ClCompile>
+    <ClCompile Include="Data\EffectDefs.cpp">
+      <Filter>Data</Filter>
+    </ClCompile>
+    <ClCompile Include="Data\ExeTables.cpp">
+      <Filter>Data</Filter>
+    </ClCompile>
+    <ClCompile Include="Data\StockTables.cpp">
+      <Filter>Data</Filter>
+    </ClCompile>
+    <ClCompile Include="Data\GameData.cpp">
+      <Filter>Data</Filter>
+    </ClCompile>
+    <ClCompile Include="Data\Language.cpp">
+      <Filter>Data</Filter>
+    </ClCompile>
+    <ClCompile Include="Data\NameFilter.cpp">
+      <Filter>Data</Filter>
+    </ClCompile>
+    <ClCompile Include="Formats\Cld.cpp">
+      <Filter>Formats</Filter>
+    </ClCompile>
+    <ClCompile Include="Formats\D8f.cpp">
+      <Filter>Formats</Filter>
+    </ClCompile>
+    <ClCompile Include="Formats\DatArchive.cpp">
+      <Filter>Formats</Filter>
+    </ClCompile>
+    <ClCompile Include="Formats\Ddt.cpp">
+      <Filter>Formats</Filter>
+    </ClCompile>
+    <ClCompile Include="Formats\Dlh.cpp">
+      <Filter>Formats</Filter>
+    </ClCompile>
+    <ClCompile Include="Formats\Effect.cpp">
+      <Filter>Formats</Filter>
+    </ClCompile>
+    <ClCompile Include="Formats\Inflate.cpp">
+      <Filter>Formats</Filter>
+    </ClCompile>
+    <ClCompile Include="Formats\Model.cpp">
+      <Filter>Formats</Filter>
+    </ClCompile>
+    <ClCompile Include="Formats\Ocd.cpp">
+      <Filter>Formats</Filter>
+    </ClCompile>
+    <ClCompile Include="Input\ForceFeedback.cpp">
+      <Filter>Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Input\Input.cpp">
+      <Filter>Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\GameSpy\GameSpy.cpp">
+      <Filter>Network\GameSpy</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\GameSpy\GameSpyBrowser.cpp">
+      <Filter>Network\GameSpy</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\GameSpy\GameSpyHttp.cpp">
+      <Filter>Network\GameSpy</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\GameSpy\GameSpyNatNeg.cpp">
+      <Filter>Network\GameSpy</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\GameSpy\GameSpyPresence.cpp">
+      <Filter>Network\GameSpy</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\GameSpy\GameSpyPresencePeers.cpp">
+      <Filter>Network\GameSpy</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\GameSpy\GameSpyPresenceSearch.cpp">
+      <Filter>Network\GameSpy</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\GameSpy\GameSpyQr2.cpp">
+      <Filter>Network\GameSpy</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\GameSpy\GameSpyStats.cpp">
+      <Filter>Network\GameSpy</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\GameSpy\GameSpyUser.cpp">
+      <Filter>Network\GameSpy</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\GameSpy\GameSpyVoice.cpp">
+      <Filter>Network\GameSpy</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\Matchmaking.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\NetCar.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\NetSession.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\NetTcp.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\NetTransport.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\OnlineRecords.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\OnlineSessions.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\OnlineStats.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\VoiceChat.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Physics\CarBody.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Physics\Contact.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Physics\Dynamics.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Physics\PhysicsWorld.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Physics\RigidBody.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Physics\TrackCollision.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Race\Arcade.cpp">
+      <Filter>Race</Filter>
+    </ClCompile>
+    <ClCompile Include="Race\Cruise.cpp">
+      <Filter>Race</Filter>
+    </ClCompile>
+    <ClCompile Include="Race\DriverControl.cpp">
+      <Filter>Race</Filter>
+    </ClCompile>
+    <ClCompile Include="Race\RaceCar.cpp">
+      <Filter>Race</Filter>
+    </ClCompile>
+    <ClCompile Include="Race\Racer.cpp">
+      <Filter>Race</Filter>
+    </ClCompile>
+    <ClCompile Include="Race\RaceSession.cpp">
+      <Filter>Race</Filter>
+    </ClCompile>
+    <ClCompile Include="Race\RaceStart.cpp">
+      <Filter>Race</Filter>
+    </ClCompile>
+    <ClCompile Include="Race\Replay.cpp">
+      <Filter>Race</Filter>
+    </ClCompile>
+    <ClCompile Include="Saves\GraphicsConfig.cpp">
+      <Filter>Saves</Filter>
+    </ClCompile>
+    <ClCompile Include="Saves\HighScores.cpp">
+      <Filter>Saves</Filter>
+    </ClCompile>
+    <ClCompile Include="Saves\Profile.cpp">
+      <Filter>Saves</Filter>
+    </ClCompile>
+    <ClCompile Include="Saves\Save.cpp">
+      <Filter>Saves</Filter>
+    </ClCompile>
+    <ClCompile Include="Saves\SaveDevice.cpp">
+      <Filter>Saves</Filter>
+    </ClCompile>
+    <ClCompile Include="Saves\SaveEntries.cpp">
+      <Filter>Saves</Filter>
+    </ClCompile>
+    <ClCompile Include="Tracks\Atmosphere.cpp">
+      <Filter>Tracks</Filter>
+    </ClCompile>
+    <ClCompile Include="Tracks\Route.cpp">
+      <Filter>Tracks</Filter>
+    </ClCompile>
+    <ClCompile Include="Tracks\SceneObjects.cpp">
+      <Filter>Tracks</Filter>
+    </ClCompile>
+    <ClCompile Include="Tracks\SunMap.cpp">
+      <Filter>Tracks</Filter>
+    </ClCompile>
+    <ClCompile Include="Tracks\Track.cpp">
+      <Filter>Tracks</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Base\ByteReader.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Base\Config.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Base\Cpu.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Base\CpuInfo.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Base\GameFiles.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Base\Log.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Base\Matrix.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Base\Random.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Base\RawFields.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Base\Script.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Base\Text.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Base\X87.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Career\Career.h">
+      <Filter>Career</Filter>
+    </ClInclude>
+    <ClInclude Include="Career\CareerAdvice.h">
+      <Filter>Career</Filter>
+    </ClInclude>
+    <ClInclude Include="Career\CareerEvents.h">
+      <Filter>Career</Filter>
+    </ClInclude>
+    <ClInclude Include="Career\CareerFiles.h">
+      <Filter>Career</Filter>
+    </ClInclude>
+    <ClInclude Include="Career\CareerInit.h">
+      <Filter>Career</Filter>
+    </ClInclude>
+    <ClInclude Include="Career\EventKinds.h">
+      <Filter>Career</Filter>
+    </ClInclude>
+    <ClInclude Include="Career\Money.h">
+      <Filter>Career</Filter>
+    </ClInclude>
+    <ClInclude Include="Career\Phone.h">
+      <Filter>Career</Filter>
+    </ClInclude>
+    <ClInclude Include="Cars\Car.h">
+      <Filter>Cars</Filter>
+    </ClInclude>
+    <ClInclude Include="Cars\CarCollection.h">
+      <Filter>Cars</Filter>
+    </ClInclude>
+    <ClInclude Include="Cars\CarDamage.h">
+      <Filter>Cars</Filter>
+    </ClInclude>
+    <ClInclude Include="Cars\CarDefs.h">
+      <Filter>Cars</Filter>
+    </ClInclude>
+    <ClInclude Include="Cars\CarEffects.h">
+      <Filter>Cars</Filter>
+    </ClInclude>
+    <ClInclude Include="Cars\CarPhysics.h">
+      <Filter>Cars</Filter>
+    </ClInclude>
+    <ClInclude Include="Cars\CarRepair.h">
+      <Filter>Cars</Filter>
+    </ClInclude>
+    <ClInclude Include="Data\Controls.h">
+      <Filter>Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Data\EffectDefs.h">
+      <Filter>Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Data\ExeTables.h">
+      <Filter>Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Data\GameData.h">
+      <Filter>Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Data\GameTexts.h">
+      <Filter>Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Data\JetTexts.h">
+      <Filter>Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Data\Language.h">
+      <Filter>Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Data\NameFilter.h">
+      <Filter>Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Formats\Cld.h">
+      <Filter>Formats</Filter>
+    </ClInclude>
+    <ClInclude Include="Formats\D8f.h">
+      <Filter>Formats</Filter>
+    </ClInclude>
+    <ClInclude Include="Formats\DatArchive.h">
+      <Filter>Formats</Filter>
+    </ClInclude>
+    <ClInclude Include="Formats\Ddt.h">
+      <Filter>Formats</Filter>
+    </ClInclude>
+    <ClInclude Include="Formats\Dlh.h">
+      <Filter>Formats</Filter>
+    </ClInclude>
+    <ClInclude Include="Formats\Effect.h">
+      <Filter>Formats</Filter>
+    </ClInclude>
+    <ClInclude Include="Formats\Inflate.h">
+      <Filter>Formats</Filter>
+    </ClInclude>
+    <ClInclude Include="Formats\Model.h">
+      <Filter>Formats</Filter>
+    </ClInclude>
+    <ClInclude Include="Formats\Ocd.h">
+      <Filter>Formats</Filter>
+    </ClInclude>
+    <ClInclude Include="Input\ForceFeedback.h">
+      <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Input\Input.h">
+      <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\GameSpy\GameSpy.h">
+      <Filter>Network\GameSpy</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\GameSpy\GameSpyBrowser.h">
+      <Filter>Network\GameSpy</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\GameSpy\GameSpyHttp.h">
+      <Filter>Network\GameSpy</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\GameSpy\GameSpyNatNeg.h">
+      <Filter>Network\GameSpy</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\GameSpy\GameSpyPresence.h">
+      <Filter>Network\GameSpy</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\GameSpy\GameSpyPresenceDetail.h">
+      <Filter>Network\GameSpy</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\GameSpy\GameSpyQr2.h">
+      <Filter>Network\GameSpy</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\GameSpy\GameSpyStats.h">
+      <Filter>Network\GameSpy</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\GameSpy\GameSpyUser.h">
+      <Filter>Network\GameSpy</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\GameSpy\GameSpyVoice.h">
+      <Filter>Network\GameSpy</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\Matchmaking.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\NetCar.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\NetSession.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\NetTcp.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\NetTransport.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\OnlineRecords.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\OnlineSessions.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\OnlineStats.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\SessionStage.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\VoiceChat.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Physics\CarBody.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Physics\Contact.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Physics\Dynamics.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Physics\PhysicsWorld.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Physics\RigidBody.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Physics\TrackCollision.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Race\Arcade.h">
+      <Filter>Race</Filter>
+    </ClInclude>
+    <ClInclude Include="Race\Cruise.h">
+      <Filter>Race</Filter>
+    </ClInclude>
+    <ClInclude Include="Race\DriverControl.h">
+      <Filter>Race</Filter>
+    </ClInclude>
+    <ClInclude Include="Race\RaceKinds.h">
+      <Filter>Race</Filter>
+    </ClInclude>
+    <ClInclude Include="Race\Racer.h">
+      <Filter>Race</Filter>
+    </ClInclude>
+    <ClInclude Include="Race\RaceSession.h">
+      <Filter>Race</Filter>
+    </ClInclude>
+    <ClInclude Include="Race\RaceSounds.h">
+      <Filter>Race</Filter>
+    </ClInclude>
+    <ClInclude Include="Race\RaceStart.h">
+      <Filter>Race</Filter>
+    </ClInclude>
+    <ClInclude Include="Race\Replay.h">
+      <Filter>Race</Filter>
+    </ClInclude>
+    <ClInclude Include="Saves\GraphicsConfig.h">
+      <Filter>Saves</Filter>
+    </ClInclude>
+    <ClInclude Include="Saves\HighScores.h">
+      <Filter>Saves</Filter>
+    </ClInclude>
+    <ClInclude Include="Saves\Profile.h">
+      <Filter>Saves</Filter>
+    </ClInclude>
+    <ClInclude Include="Saves\Save.h">
+      <Filter>Saves</Filter>
+    </ClInclude>
+    <ClInclude Include="Saves\SaveDevice.h">
+      <Filter>Saves</Filter>
+    </ClInclude>
+    <ClInclude Include="Saves\SaveEntries.h">
+      <Filter>Saves</Filter>
+    </ClInclude>
+    <ClInclude Include="Tracks\Atmosphere.h">
+      <Filter>Tracks</Filter>
+    </ClInclude>
+    <ClInclude Include="Tracks\Route.h">
+      <Filter>Tracks</Filter>
+    </ClInclude>
+    <ClInclude Include="Tracks\SceneObjects.h">
+      <Filter>Tracks</Filter>
+    </ClInclude>
+    <ClInclude Include="Tracks\SunMap.h">
+      <Filter>Tracks</Filter>
+    </ClInclude>
+    <ClInclude Include="Tracks\Track.h">
+      <Filter>Tracks</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

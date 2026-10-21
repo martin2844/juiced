@@ -1,0 +1,294 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Framework">
+      <UniqueIdentifier>{5B7B245C-4FF6-5C02-BD4C-772C0E5E967C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Framework\Fakes">
+      <UniqueIdentifier>{825B85FC-03B1-5AE8-B248-607AAB7630F4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Integration">
+      <UniqueIdentifier>{64787B3F-5C26-594F-8E4A-2E75ECDC492E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Integration\Audio">
+      <UniqueIdentifier>{ECBB2303-8E59-51A1-98D9-2380B254828D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Integration\Frontend">
+      <UniqueIdentifier>{66F5F269-E63F-52E4-8646-6D3CFDE96757}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Integration\GameData">
+      <UniqueIdentifier>{3E2CD07F-3434-5754-95FD-A78CAAE2A394}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Integration\Platform">
+      <UniqueIdentifier>{78343DCC-B939-5F91-BBCF-82141D95D887}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Integration\Network">
+      <UniqueIdentifier>{D859CEF7-097C-5518-A404-FF2172B42AF8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Integration\Race">
+      <UniqueIdentifier>{4B0E182F-2ABD-5D38-879C-E1149CC9F84D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Integration\Saves">
+      <UniqueIdentifier>{EDEEBDEF-8C02-556C-AE5D-36F58FB907FD}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Unit">
+      <UniqueIdentifier>{7CB88817-9640-5D29-AC20-EEE63527310D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Unit\Base">
+      <UniqueIdentifier>{C5991E1F-1179-56FE-BAE2-C893D66D9769}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Unit\Career">
+      <UniqueIdentifier>{3BCFEC8B-7280-5C41-83EE-E73930294FC8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Unit\Cars">
+      <UniqueIdentifier>{B32A1EDF-F854-50EC-921B-603DB80C4566}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Unit\Data">
+      <UniqueIdentifier>{EFDE69E4-7E56-5B54-B990-ECDFE5DEB036}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Unit\Formats">
+      <UniqueIdentifier>{AF42863D-E0DE-5178-8C86-F8A8D75BAB9C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Unit\Input">
+      <UniqueIdentifier>{38AB6953-E512-525C-BF91-A498EB9ADF74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Unit\Network">
+      <UniqueIdentifier>{AE405641-9751-5562-8327-3C88DC49B792}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Unit\Physics">
+      <UniqueIdentifier>{53EACC23-DE15-5865-851C-A022499C1FA4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Unit\Platform">
+      <UniqueIdentifier>{2F288FE5-4BBC-5BC5-8341-BFAB77F9C25C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Unit\Race">
+      <UniqueIdentifier>{E1295664-2EBB-5B12-9558-9936A0207293}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Unit\Render">
+      <UniqueIdentifier>{1EA16582-0601-5E63-BC00-B8ECDBD2F289}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Unit\Saves">
+      <UniqueIdentifier>{9397C52B-4BB3-5E9D-B114-B6E17654AEDD}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Unit\Scene">
+      <UniqueIdentifier>{FE578DF8-923C-5E49-BE43-68820E6C00F1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Unit\Tracks">
+      <UniqueIdentifier>{21F66EA1-7061-5E25-8A7C-2CC3F1DB6354}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Framework\Fixtures.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\TestMain.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Audio\DirectSoundTests.cpp">
+      <Filter>Integration\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Frontend\MainMenuTests.cpp">
+      <Filter>Integration\Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Frontend\MessageWindowTests.cpp">
+      <Filter>Integration\Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Frontend\StartupTests.cpp">
+      <Filter>Integration\Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\GameData\CarDefsTests.cpp">
+      <Filter>Integration\GameData</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\GameData\CareerTests.cpp">
+      <Filter>Integration\GameData</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\GameData\CarPhysicsTests.cpp">
+      <Filter>Integration\GameData</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\GameData\EffectDefsTests.cpp">
+      <Filter>Integration\GameData</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\GameData\EffectsTests.cpp">
+      <Filter>Integration\GameData</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\GameData\ExeTablesTests.cpp">
+      <Filter>Integration\GameData</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\GameData\GroundMapTests.cpp">
+      <Filter>Integration\GameData</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\GameData\ModelFilesTests.cpp">
+      <Filter>Integration\GameData</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\GameData\MoviesTests.cpp">
+      <Filter>Integration\GameData</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\GameData\ReplayTests.cpp">
+      <Filter>Integration\GameData</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\GameData\SceneObjectsTests.cpp">
+      <Filter>Integration\GameData</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\GameData\TracksTests.cpp">
+      <Filter>Integration\GameData</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Network\HttpTests.cpp">
+      <Filter>Integration\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Network\LeaderboardTests.cpp">
+      <Filter>Integration\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Network\MatchmakingTests.cpp">
+      <Filter>Integration\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Network\NatNegotiationTests.cpp">
+      <Filter>Integration\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Network\PresenceTests.cpp">
+      <Filter>Integration\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Network\ServerBrowsingTests.cpp">
+      <Filter>Integration\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Network\SessionTests.cpp">
+      <Filter>Integration\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Network\TcpTests.cpp">
+      <Filter>Integration\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Network\TransportTests.cpp">
+      <Filter>Integration\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Platform\Windows7Tests.cpp">
+      <Filter>Integration\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Race\RaceFrontEndTests.cpp">
+      <Filter>Integration\Race</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Saves\ReplaysDeviceTests.cpp">
+      <Filter>Integration\Saves</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Saves\SaveDeviceTests.cpp">
+      <Filter>Integration\Saves</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Saves\UserSavesTests.cpp">
+      <Filter>Integration\Saves</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Base\CpuInfoTests.cpp">
+      <Filter>Unit\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Base\ScriptTests.cpp">
+      <Filter>Unit\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Career\DealerTests.cpp">
+      <Filter>Unit\Career</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Career\MoneyTests.cpp">
+      <Filter>Unit\Career</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Cars\CarPartsTests.cpp">
+      <Filter>Unit\Cars</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Cars\DamageTests.cpp">
+      <Filter>Unit\Cars</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Data\LanguageTests.cpp">
+      <Filter>Unit\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Data\NameFilterTests.cpp">
+      <Filter>Unit\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Formats\InflateTests.cpp">
+      <Filter>Unit\Formats</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Formats\TextureTests.cpp">
+      <Filter>Unit\Formats</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Input\ControlsTests.cpp">
+      <Filter>Unit\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Input\GameControllerTests.cpp">
+      <Filter>Unit\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Input\KeyboardSteeringTests.cpp">
+      <Filter>Unit\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Input\UiInputTests.cpp">
+      <Filter>Unit\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Network\GameSpyPresenceTests.cpp">
+      <Filter>Unit\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Network\GameSpyTests.cpp">
+      <Filter>Unit\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Network\OnlineRecordsTests.cpp">
+      <Filter>Unit\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Network\VoiceTests.cpp">
+      <Filter>Unit\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Physics\DynamicsTests.cpp">
+      <Filter>Unit\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Physics\RigidBodyTests.cpp">
+      <Filter>Unit\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Platform\LanguageChoiceTests.cpp">
+      <Filter>Unit\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Race\DriverControlTests.cpp">
+      <Filter>Unit\Race</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Race\RaceStartTests.cpp">
+      <Filter>Unit\Race</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Race\RaceStateTests.cpp">
+      <Filter>Unit\Race</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Race\RaceWindowIdTests.cpp">
+      <Filter>Unit\Race</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Render\MeshTests.cpp">
+      <Filter>Unit\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Saves\ArchiveTests.cpp">
+      <Filter>Unit\Saves</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Saves\GraphicsConfigTests.cpp">
+      <Filter>Unit\Saves</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Saves\SettingsTests.cpp">
+      <Filter>Unit\Saves</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Scene\WorldClockTests.cpp">
+      <Filter>Unit\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Tracks\AtmosphereTests.cpp">
+      <Filter>Unit\Tracks</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Tracks\RouteTests.cpp">
+      <Filter>Unit\Tracks</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Framework\Fakes\FakeGpcm.h">
+      <Filter>Framework\Fakes</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Fakes\FakeWindowHost.h">
+      <Filter>Framework\Fakes</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Fakes\FlatGround.h">
+      <Filter>Framework\Fakes</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Fakes\NullRenderDevice.h">
+      <Filter>Framework\Fakes</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Fixtures.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Test.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

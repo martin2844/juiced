@@ -1,0 +1,19 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/src/">
+    <Project Path="src/Core/OpenJuice.Core.vcxproj" Id="4940519a-a764-4aa2-b9f2-707cab229c54" />
+    <Project Path="src/Render/OpenJuice.Render.vcxproj" Id="41089d76-8d13-437a-b174-90c0994915d7" />
+    <Project Path="src/Audio/OpenJuice.Audio.vcxproj" Id="7a3c2e51-6b0d-4f8e-9c1a-3d5e7f902b14" />
+    <Project Path="src/Game/OpenJuice.Game.vcxproj" Id="8b2e4c71-3d5a-4f96-a1c8-6e0b9d7f2a43" />
+    <Project Path="src/Game/OpenJuice.vcxproj" Id="4f993d45-2f52-4d97-a850-6e25859ccd7f" />
+  </Folder>
+  <Folder Name="/third_party/">
+    <Project Path="third_party/speex-1.0.3/OpenJuice.Speex.vcxproj" Id="5c2d8e14-7a31-4b6f-9e08-2f4a6b1c3d95" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/OpenJuice.Tests.vcxproj" Id="f7c81c20-92a1-4f57-ad9a-9bc1c0a33ac4" />
+  </Folder>
+</Solution>

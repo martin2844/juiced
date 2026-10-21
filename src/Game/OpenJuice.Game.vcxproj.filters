@@ -1,0 +1,1191 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="App">
+      <UniqueIdentifier>{D9817CBE-E6E7-506D-AD7E-A3BA7F457E2F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Cars">
+      <UniqueIdentifier>{C6B78280-E37C-535E-9EA8-E655B3219B63}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Frontend">
+      <UniqueIdentifier>{BAA757C0-AD33-5CA8-AB5F-FD8753DFCB50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Frontend\Arcade">
+      <UniqueIdentifier>{7EE34DE8-BD23-5CCE-A833-0D8C60FF8655}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Frontend\Career">
+      <UniqueIdentifier>{D6FF43D7-4753-54E6-A2A5-EFCAF4F7A91D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Frontend\CustomRace">
+      <UniqueIdentifier>{178F604A-828B-5CFE-9653-E85BAFAFEB06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Frontend\Garage">
+      <UniqueIdentifier>{B92AA69A-746F-5199-9909-4695C37CEEAE}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Frontend\Garage\Customise">
+      <UniqueIdentifier>{3D246DDE-0CA3-57D3-A1AA-8162567FCBDB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Frontend\Loading">
+      <UniqueIdentifier>{87B7920C-E000-5145-B561-7880FECF1318}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Frontend\Menus">
+      <UniqueIdentifier>{26950453-6F96-5267-827F-D784FA6568B1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Frontend\Network">
+      <UniqueIdentifier>{49D76E9E-0BB1-59B1-81D0-11EFA03EA114}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Frontend\Options">
+      <UniqueIdentifier>{8F848A30-5F85-5D40-8B25-96BEF528E536}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Frontend\Profile">
+      <UniqueIdentifier>{0D083873-9487-5B35-B51A-1B9DC9ECD9EE}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Frontend\Saves">
+      <UniqueIdentifier>{37A72D56-067A-5628-B142-F7DF8C4E5B45}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Frontend\Startup">
+      <UniqueIdentifier>{EF4D3DD6-2C2E-5DA0-8A4F-0B6818B6CDAC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Frontend\Unused">
+      <UniqueIdentifier>{9AADCC37-B591-5B73-84A0-8CD1434D26DB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Media">
+      <UniqueIdentifier>{E130288A-4D6A-57B3-93CC-E94A939FE7FE}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Platform">
+      <UniqueIdentifier>{8755C4B2-CE83-58C3-A788-E12EBBDC9C28}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Race">
+      <UniqueIdentifier>{84125B08-C148-5573-91AD-38F5B6F5C6CD}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Race\FrontEnd">
+      <UniqueIdentifier>{14414422-7707-5707-AB58-ED0461414D65}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Race\Hud">
+      <UniqueIdentifier>{736C18CB-EB08-5CBB-9A70-53B4081AD366}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Race\TrackView">
+      <UniqueIdentifier>{31B1EB5A-25BA-5CDC-AD7E-1CE91AED8D10}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene">
+      <UniqueIdentifier>{72A4A63C-757A-5772-AA52-AC2165496613}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene\Particles">
+      <UniqueIdentifier>{89A58E39-2D57-572B-B21F-92948D4E3066}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI">
+      <UniqueIdentifier>{CB4545A1-C138-5927-9DCA-975207B65C60}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Components">
+      <UniqueIdentifier>{2A17D311-3F8A-5C3B-9576-16305A5B2A30}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="App\CrashLog.cpp">
+      <Filter>App</Filter>
+    </ClCompile>
+    <ClCompile Include="App\DebugPages.cpp">
+      <Filter>App</Filter>
+    </ClCompile>
+    <ClCompile Include="App\GameLoop.cpp">
+      <Filter>App</Filter>
+    </ClCompile>
+    <ClCompile Include="App\Main.cpp">
+      <Filter>App</Filter>
+    </ClCompile>
+    <ClCompile Include="Cars\CarModel.cpp">
+      <Filter>Cars</Filter>
+    </ClCompile>
+    <ClCompile Include="Cars\CarSound.cpp">
+      <Filter>Cars</Filter>
+    </ClCompile>
+    <ClCompile Include="Cars\CarView.cpp">
+      <Filter>Cars</Filter>
+    </ClCompile>
+    <ClCompile Include="Cars\CarWheels.cpp">
+      <Filter>Cars</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Arcade\ArcadeWindows.cpp">
+      <Filter>Frontend\Arcade</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Career\Advice.cpp">
+      <Filter>Frontend\Career</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Career\AtMeeting.cpp">
+      <Filter>Frontend\Career</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Career\Calendar.cpp">
+      <Filter>Frontend\Career</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Career\CalendarHelp.cpp">
+      <Filter>Frontend\Career</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Career\CarCollection.cpp">
+      <Filter>Frontend\Career</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Career\CareerChallengeResults.cpp">
+      <Filter>Frontend\Career</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Career\CareerLoad.cpp">
+      <Filter>Frontend\Career</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Career\CareerMenu.cpp">
+      <Filter>Frontend\Career</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Career\CareerRaceResults.cpp">
+      <Filter>Frontend\Career</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Career\CharacterScreen.cpp">
+      <Filter>Frontend\Career</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Career\CityMap.cpp">
+      <Filter>Frontend\Career</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Career\CrewRaceSetup.cpp">
+      <Filter>Frontend\Career</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Career\CrewWindow.cpp">
+      <Filter>Frontend\Career</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Career\CutScene.cpp">
+      <Filter>Frontend\Career</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Career\DemoFlyby.cpp">
+      <Filter>Frontend\Career</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Career\GridWalk.cpp">
+      <Filter>Frontend\Career</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Career\HostMeeting.cpp">
+      <Filter>Frontend\Career</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Career\MeetingSummary.cpp">
+      <Filter>Frontend\Career</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Career\NewCont.cpp">
+      <Filter>Frontend\Career</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Career\OldCareerMenu.cpp">
+      <Filter>Frontend\Career</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Career\PhoneWindows.cpp">
+      <Filter>Frontend\Career</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Career\RaceSetup.cpp">
+      <Filter>Frontend\Career</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Career\Respect.cpp">
+      <Filter>Frontend\Career</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Career\RespectChanges.cpp">
+      <Filter>Frontend\Career</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Career\RespectMessage.cpp">
+      <Filter>Frontend\Career</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Career\RespectOverview.cpp">
+      <Filter>Frontend\Career</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Career\Stats.cpp">
+      <Filter>Frontend\Career</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Career\StatsMenu.cpp">
+      <Filter>Frontend\Career</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Controllers.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\CustomRace\InstantManu.cpp">
+      <Filter>Frontend\CustomRace</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\CustomRace\InstantSelCar.cpp">
+      <Filter>Frontend\CustomRace</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\CustomRace\InstantSelType.cpp">
+      <Filter>Frontend\CustomRace</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\CustomRace\InstantSetup.cpp">
+      <Filter>Frontend\CustomRace</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\CustomRace\SplitSelCar.cpp">
+      <Filter>Frontend\CustomRace</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Frontend.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\FrontendAudio.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\FrontendCareer.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\FrontendDraw.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\FrontendNetwork.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\FrontendOnline.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\FrontendSaves.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\FrontendShared.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Garage\CarBuy.cpp">
+      <Filter>Frontend\Garage</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Garage\CarSel.cpp">
+      <Filter>Frontend\Garage</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Garage\CarStats.cpp">
+      <Filter>Frontend\Garage</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Garage\Customise\Accessories.cpp">
+      <Filter>Frontend\Garage\Customise</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Garage\Customise\CustMenu.cpp">
+      <Filter>Frontend\Garage\Customise</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Garage\Customise\Paint.cpp">
+      <Filter>Frontend\Garage\Customise</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Garage\Customise\PartMenus.cpp">
+      <Filter>Frontend\Garage\Customise</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Garage\Customise\SchemeMenu.cpp">
+      <Filter>Frontend\Garage\Customise</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Garage\Customise\Styling.cpp">
+      <Filter>Frontend\Garage\Customise</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Garage\Customise\Tuning.cpp">
+      <Filter>Frontend\Garage\Customise</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Garage\Dealership.cpp">
+      <Filter>Frontend\Garage</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Garage\Garage.cpp">
+      <Filter>Frontend\Garage</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Garage\Graph.cpp">
+      <Filter>Frontend\Garage</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Garage\ModShop.cpp">
+      <Filter>Frontend\Garage</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Garage\Repair.cpp">
+      <Filter>Frontend\Garage</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Garage\RollingRoad.cpp">
+      <Filter>Frontend\Garage</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Loading\Loader.cpp">
+      <Filter>Frontend\Loading</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Menus\Cheats.cpp">
+      <Filter>Frontend\Menus</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Menus\DemoMenu.cpp">
+      <Filter>Frontend\Menus</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Menus\Extras.cpp">
+      <Filter>Frontend\Menus</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Menus\HiScores.cpp">
+      <Filter>Frontend\Menus</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Menus\MainMenu.cpp">
+      <Filter>Frontend\Menus</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Menus\VidTutorial.cpp">
+      <Filter>Frontend\Menus</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Messages.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Network\LinkWindows.cpp">
+      <Filter>Frontend\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Network\OnlineCareerWindows.cpp">
+      <Filter>Frontend\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Network\OnlineCrewRaceSetup.cpp">
+      <Filter>Frontend\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Network\OnlineFriendOptions.cpp">
+      <Filter>Frontend\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Network\OnlineFriends.cpp">
+      <Filter>Frontend\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Network\OnlineFriendWindows.cpp">
+      <Filter>Frontend\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Network\OnlinePlayerOptions.cpp">
+      <Filter>Frontend\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Network\OnlinePlayers.cpp">
+      <Filter>Frontend\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Network\OnlineRaceSetup.cpp">
+      <Filter>Frontend\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Network\OnlineSessionWindows.cpp">
+      <Filter>Frontend\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Network\OnlineStatsWindow.cpp">
+      <Filter>Frontend\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Network\OnlineVoice.cpp">
+      <Filter>Frontend\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Network\OnlineWindows.cpp">
+      <Filter>Frontend\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Network\VoiceOptions.cpp">
+      <Filter>Frontend\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Options\AudioOptions.cpp">
+      <Filter>Frontend\Options</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Options\GameOptions.cpp">
+      <Filter>Frontend\Options</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Options\GraphicsOptions.cpp">
+      <Filter>Frontend\Options</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Options\OptionsMenu.cpp">
+      <Filter>Frontend\Options</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Options\SongList.cpp">
+      <Filter>Frontend\Options</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Options\WheelOptions.cpp">
+      <Filter>Frontend\Options</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Popups.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Profile\ChooseWindows.cpp">
+      <Filter>Frontend\Profile</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Profile\Keyboard.cpp">
+      <Filter>Frontend\Profile</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Saves\Autosave.cpp">
+      <Filter>Frontend\Saves</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Saves\Driver.cpp">
+      <Filter>Frontend\Saves</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Saves\LoadHighScores.cpp">
+      <Filter>Frontend\Saves</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Saves\LoadReplay.cpp">
+      <Filter>Frontend\Saves</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Saves\SaveProfile.cpp">
+      <Filter>Frontend\Saves</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Startup\BootUpCheck.cpp">
+      <Filter>Frontend\Startup</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Startup\StartupWindows.cpp">
+      <Filter>Frontend\Startup</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\Unused\CutWindows.cpp">
+      <Filter>Frontend\Unused</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\WindowBase.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="Frontend\WindowTools.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="Media\BinkLibrary.cpp">
+      <Filter>Media</Filter>
+    </ClCompile>
+    <ClCompile Include="Media\BinkNative.cpp">
+      <Filter>Media</Filter>
+    </ClCompile>
+    <ClCompile Include="Media\Binkw32.cpp">
+      <Filter>Media</Filter>
+    </ClCompile>
+    <ClCompile Include="Media\Movies.cpp">
+      <Filter>Media</Filter>
+    </ClCompile>
+    <ClCompile Include="Media\Music.cpp">
+      <Filter>Media</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform\CommandLine.cpp">
+      <Filter>Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform\InputDevices.cpp">
+      <Filter>Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform\Platform.cpp">
+      <Filter>Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform\Settings.cpp">
+      <Filter>Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform\SystemKeys.cpp">
+      <Filter>Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform\Windows7.cpp">
+      <Filter>Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Race\FrontEnd\RaceFrontEnd.cpp">
+      <Filter>Race\FrontEnd</Filter>
+    </ClCompile>
+    <ClCompile Include="Race\Hud\ChallengeResults.cpp">
+      <Filter>Race\Hud</Filter>
+    </ClCompile>
+    <ClCompile Include="Race\Hud\CruiseResults.cpp">
+      <Filter>Race\Hud</Filter>
+    </ClCompile>
+    <ClCompile Include="Race\Hud\HudCrewOrders.cpp">
+      <Filter>Race\Hud</Filter>
+    </ClCompile>
+    <ClCompile Include="Race\Hud\HudRace.cpp">
+      <Filter>Race\Hud</Filter>
+    </ClCompile>
+    <ClCompile Include="Race\Hud\HudReplay.cpp">
+      <Filter>Race\Hud</Filter>
+    </ClCompile>
+    <ClCompile Include="Race\Hud\RaceComplete.cpp">
+      <Filter>Race\Hud</Filter>
+    </ClCompile>
+    <ClCompile Include="Race\Hud\RaceHud.cpp">
+      <Filter>Race\Hud</Filter>
+    </ClCompile>
+    <ClCompile Include="Race\Hud\RaceHudCareer.cpp">
+      <Filter>Race\Hud</Filter>
+    </ClCompile>
+    <ClCompile Include="Race\Hud\RaceHudUpdate.cpp">
+      <Filter>Race\Hud</Filter>
+    </ClCompile>
+    <ClCompile Include="Race\Hud\RaceMessage.cpp">
+      <Filter>Race\Hud</Filter>
+    </ClCompile>
+    <ClCompile Include="Race\Hud\RacePause.cpp">
+      <Filter>Race\Hud</Filter>
+    </ClCompile>
+    <ClCompile Include="Race\Hud\RaceResults.cpp">
+      <Filter>Race\Hud</Filter>
+    </ClCompile>
+    <ClCompile Include="Race\Hud\RaceSaves.cpp">
+      <Filter>Race\Hud</Filter>
+    </ClCompile>
+    <ClCompile Include="Race\Hud\RaceScreenWindow.cpp">
+      <Filter>Race\Hud</Filter>
+    </ClCompile>
+    <ClCompile Include="Race\Hud\RaceWindowId.cpp">
+      <Filter>Race\Hud</Filter>
+    </ClCompile>
+    <ClCompile Include="Race\Hud\SprintResults.cpp">
+      <Filter>Race\Hud</Filter>
+    </ClCompile>
+    <ClCompile Include="Race\RaceCamera.cpp">
+      <Filter>Race</Filter>
+    </ClCompile>
+    <ClCompile Include="Race\RaceGrids.cpp">
+      <Filter>Race</Filter>
+    </ClCompile>
+    <ClCompile Include="Race\RaceIntro.cpp">
+      <Filter>Race</Filter>
+    </ClCompile>
+    <ClCompile Include="Race\TrackView\TrackViewCamera.cpp">
+      <Filter>Race\TrackView</Filter>
+    </ClCompile>
+    <ClCompile Include="Race\TrackView\TrackViewControllers.cpp">
+      <Filter>Race\TrackView</Filter>
+    </ClCompile>
+    <ClCompile Include="Race\TrackView\TrackViewDraw.cpp">
+      <Filter>Race\TrackView</Filter>
+    </ClCompile>
+    <ClCompile Include="Race\TrackView\TrackViewFrame.cpp">
+      <Filter>Race\TrackView</Filter>
+    </ClCompile>
+    <ClCompile Include="Race\TrackView\TrackViewLoad.cpp">
+      <Filter>Race\TrackView</Filter>
+    </ClCompile>
+    <ClCompile Include="Race\TrackView\TrackViewNetwork.cpp">
+      <Filter>Race\TrackView</Filter>
+    </ClCompile>
+    <ClCompile Include="Race\TrackView\TrackViewParticles.cpp">
+      <Filter>Race\TrackView</Filter>
+    </ClCompile>
+    <ClCompile Include="Race\TrackView\TrackViewReplay.cpp">
+      <Filter>Race\TrackView</Filter>
+    </ClCompile>
+    <ClCompile Include="Race\TrackView\TrackViewRestart.cpp">
+      <Filter>Race\TrackView</Filter>
+    </ClCompile>
+    <ClCompile Include="Race\TrackView\TrackViewScene.cpp">
+      <Filter>Race\TrackView</Filter>
+    </ClCompile>
+    <ClCompile Include="Race\TrackView\TrackViewSounds.cpp">
+      <Filter>Race\TrackView</Filter>
+    </ClCompile>
+    <ClCompile Include="Race\TrackView\TrackViewWindows.cpp">
+      <Filter>Race\TrackView</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\LensFlares.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\Particles\CameraEmitter.cpp">
+      <Filter>Scene\Particles</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\Particles\Emitter.cpp">
+      <Filter>Scene\Particles</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\Particles\LeavesEmitter.cpp">
+      <Filter>Scene\Particles</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\Particles\ParticleSystem.cpp">
+      <Filter>Scene\Particles</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\Particles\SmearEmitter.cpp">
+      <Filter>Scene\Particles</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\Particles\SmokeEmitter.cpp">
+      <Filter>Scene\Particles</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\Particles\SparksEmitter.cpp">
+      <Filter>Scene\Particles</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\Particles\TracksEmitter.cpp">
+      <Filter>Scene\Particles</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\PostEffects.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\Projector.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\Scene3d.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\Silhouette.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\SunLight.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\TrackReflections.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\TrackScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Components\Box.cpp">
+      <Filter>UI\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Components\ColourChart.cpp">
+      <Filter>UI\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Components\Dial.cpp">
+      <Filter>UI\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Components\Menu.cpp">
+      <Filter>UI\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Components\Meter.cpp">
+      <Filter>UI\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Components\Movie.cpp">
+      <Filter>UI\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Components\Slider.cpp">
+      <Filter>UI\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Components\Text.cpp">
+      <Filter>UI\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Components\TextModifier.cpp">
+      <Filter>UI\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Components\Ticker.cpp">
+      <Filter>UI\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Components\Transition.cpp">
+      <Filter>UI\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\MessageWindow.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\UiFile.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\UiScreen.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\UiSound.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\WindowManager.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="App\CrashLog.h">
+      <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="App\DebugPages.h">
+      <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="App\Version.h">
+      <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="App\GameLoop.h">
+      <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="Cars\CarModel.h">
+      <Filter>Cars</Filter>
+    </ClInclude>
+    <ClInclude Include="Cars\CarSound.h">
+      <Filter>Cars</Filter>
+    </ClInclude>
+    <ClInclude Include="Cars\CarView.h">
+      <Filter>Cars</Filter>
+    </ClInclude>
+    <ClInclude Include="Cars\CarWheels.h">
+      <Filter>Cars</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Arcade\ArcadeWindows.h">
+      <Filter>Frontend\Arcade</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Career\Advice.h">
+      <Filter>Frontend\Career</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Career\AtMeeting.h">
+      <Filter>Frontend\Career</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Career\Calendar.h">
+      <Filter>Frontend\Career</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Career\CalendarHelp.h">
+      <Filter>Frontend\Career</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Career\CarCollection.h">
+      <Filter>Frontend\Career</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Career\CareerChallengeResults.h">
+      <Filter>Frontend\Career</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Career\CareerHost.h">
+      <Filter>Frontend\Career</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Career\CareerLoad.h">
+      <Filter>Frontend\Career</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Career\CareerMenu.h">
+      <Filter>Frontend\Career</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Career\CareerRaceResults.h">
+      <Filter>Frontend\Career</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Career\CharacterScreen.h">
+      <Filter>Frontend\Career</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Career\CityMap.h">
+      <Filter>Frontend\Career</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Career\CrewRaceSetup.h">
+      <Filter>Frontend\Career</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Career\CrewWindow.h">
+      <Filter>Frontend\Career</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Career\CutScene.h">
+      <Filter>Frontend\Career</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Career\DemoFlyby.h">
+      <Filter>Frontend\Career</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Career\GridWalk.h">
+      <Filter>Frontend\Career</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Career\HostMeeting.h">
+      <Filter>Frontend\Career</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Career\MeetingSummary.h">
+      <Filter>Frontend\Career</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Career\NewCont.h">
+      <Filter>Frontend\Career</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Career\OldCareerMenu.h">
+      <Filter>Frontend\Career</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Career\PhoneWindows.h">
+      <Filter>Frontend\Career</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Career\RaceSetup.h">
+      <Filter>Frontend\Career</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Career\Respect.h">
+      <Filter>Frontend\Career</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Career\RespectChanges.h">
+      <Filter>Frontend\Career</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Career\RespectMessage.h">
+      <Filter>Frontend\Career</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Career\RespectOverview.h">
+      <Filter>Frontend\Career</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Career\Stats.h">
+      <Filter>Frontend\Career</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Career\StatsMenu.h">
+      <Filter>Frontend\Career</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\CustomRace\CustomRace.h">
+      <Filter>Frontend\CustomRace</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\CustomRace\CustomRaceHost.h">
+      <Filter>Frontend\CustomRace</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\CustomRace\CustomRaceInternal.h">
+      <Filter>Frontend\CustomRace</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\CustomRace\InstantManu.h">
+      <Filter>Frontend\CustomRace</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\CustomRace\InstantSelCar.h">
+      <Filter>Frontend\CustomRace</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\CustomRace\InstantSelType.h">
+      <Filter>Frontend\CustomRace</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\CustomRace\InstantSetup.h">
+      <Filter>Frontend\CustomRace</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\CustomRace\SplitSelCar.h">
+      <Filter>Frontend\CustomRace</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Frontend.h">
+      <Filter>Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\FrontendInternal.h">
+      <Filter>Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Garage\CarBuy.h">
+      <Filter>Frontend\Garage</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Garage\CarSel.h">
+      <Filter>Frontend\Garage</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Garage\CarStats.h">
+      <Filter>Frontend\Garage</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Garage\Customise\Accessories.h">
+      <Filter>Frontend\Garage\Customise</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Garage\Customise\CustMenu.h">
+      <Filter>Frontend\Garage\Customise</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Garage\Customise\Paint.h">
+      <Filter>Frontend\Garage\Customise</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Garage\Customise\PartMenus.h">
+      <Filter>Frontend\Garage\Customise</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Garage\Customise\SchemeMenu.h">
+      <Filter>Frontend\Garage\Customise</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Garage\Customise\Styling.h">
+      <Filter>Frontend\Garage\Customise</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Garage\Customise\Tuning.h">
+      <Filter>Frontend\Garage\Customise</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Garage\Dealership.h">
+      <Filter>Frontend\Garage</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Garage\Garage.h">
+      <Filter>Frontend\Garage</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Garage\GarageHost.h">
+      <Filter>Frontend\Garage</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Garage\Graph.h">
+      <Filter>Frontend\Garage</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Garage\ModShop.h">
+      <Filter>Frontend\Garage</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Garage\Repair.h">
+      <Filter>Frontend\Garage</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Garage\RollingRoad.h">
+      <Filter>Frontend\Garage</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Loading\Loader.h">
+      <Filter>Frontend\Loading</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Menus\Cheats.h">
+      <Filter>Frontend\Menus</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Menus\DemoMenu.h">
+      <Filter>Frontend\Menus</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Menus\Extras.h">
+      <Filter>Frontend\Menus</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Menus\HiScores.h">
+      <Filter>Frontend\Menus</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Menus\MainMenu.h">
+      <Filter>Frontend\Menus</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Menus\MainMenuHost.h">
+      <Filter>Frontend\Menus</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Menus\VidTutorial.h">
+      <Filter>Frontend\Menus</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Messages.h">
+      <Filter>Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Network\LinkWindows.h">
+      <Filter>Frontend\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Network\NetworkHost.h">
+      <Filter>Frontend\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Network\OnlineCareerWindows.h">
+      <Filter>Frontend\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Network\OnlineCrewRaceSetup.h">
+      <Filter>Frontend\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Network\OnlineForms.h">
+      <Filter>Frontend\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Network\OnlineFriendInternal.h">
+      <Filter>Frontend\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Network\OnlineFriendOptions.h">
+      <Filter>Frontend\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Network\OnlineFriends.h">
+      <Filter>Frontend\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Network\OnlineFriendWindows.h">
+      <Filter>Frontend\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Network\OnlineHost.h">
+      <Filter>Frontend\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Network\OnlinePlayerOptions.h">
+      <Filter>Frontend\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Network\OnlinePlayers.h">
+      <Filter>Frontend\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Network\OnlineRaceSetup.h">
+      <Filter>Frontend\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Network\OnlineSessionWindows.h">
+      <Filter>Frontend\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Network\OnlineStatsWindow.h">
+      <Filter>Frontend\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Network\OnlineVoice.h">
+      <Filter>Frontend\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Network\OnlineWindows.h">
+      <Filter>Frontend\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Network\VoiceOptions.h">
+      <Filter>Frontend\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Options\AudioOptions.h">
+      <Filter>Frontend\Options</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Options\GameOptions.h">
+      <Filter>Frontend\Options</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Options\GraphicsOptions.h">
+      <Filter>Frontend\Options</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Options\OptionsHost.h">
+      <Filter>Frontend\Options</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Options\OptionsMenu.h">
+      <Filter>Frontend\Options</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Options\SongList.h">
+      <Filter>Frontend\Options</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Options\WheelOptions.h">
+      <Filter>Frontend\Options</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Popups.h">
+      <Filter>Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Profile\ChooseWindows.h">
+      <Filter>Frontend\Profile</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Profile\Keyboard.h">
+      <Filter>Frontend\Profile</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Profile\ProfileHost.h">
+      <Filter>Frontend\Profile</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Saves\Autosave.h">
+      <Filter>Frontend\Saves</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Saves\Driver.h">
+      <Filter>Frontend\Saves</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Saves\LoadHighScores.h">
+      <Filter>Frontend\Saves</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Saves\LoadReplay.h">
+      <Filter>Frontend\Saves</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Saves\SaveHost.h">
+      <Filter>Frontend\Saves</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Saves\SaveProfile.h">
+      <Filter>Frontend\Saves</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\SharedState.h">
+      <Filter>Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Startup\BootUpCheck.h">
+      <Filter>Frontend\Startup</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Startup\StartupHost.h">
+      <Filter>Frontend\Startup</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Startup\StartupWindows.h">
+      <Filter>Frontend\Startup</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Unused\CutWindows.h">
+      <Filter>Frontend\Unused</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\WindowHost.h">
+      <Filter>Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\WindowTools.h">
+      <Filter>Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="Media\BinkLibrary.h">
+      <Filter>Media</Filter>
+    </ClInclude>
+    <ClInclude Include="Media\BinkNative.h">
+      <Filter>Media</Filter>
+    </ClInclude>
+    <ClInclude Include="Media\Binkw32.h">
+      <Filter>Media</Filter>
+    </ClInclude>
+    <ClInclude Include="Media\Movies.h">
+      <Filter>Media</Filter>
+    </ClInclude>
+    <ClInclude Include="Media\Music.h">
+      <Filter>Media</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform\CommandLine.h">
+      <Filter>Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform\InputDevices.h">
+      <Filter>Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform\Platform.h">
+      <Filter>Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform\Settings.h">
+      <Filter>Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform\SystemKeys.h">
+      <Filter>Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform\Windows7.h">
+      <Filter>Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Race\FrontEnd\RaceFrontEnd.h">
+      <Filter>Race\FrontEnd</Filter>
+    </ClInclude>
+    <ClInclude Include="Race\Hud\ChallengeResults.h">
+      <Filter>Race\Hud</Filter>
+    </ClInclude>
+    <ClInclude Include="Race\Hud\CruiseResults.h">
+      <Filter>Race\Hud</Filter>
+    </ClInclude>
+    <ClInclude Include="Race\Hud\HudCrewOrders.h">
+      <Filter>Race\Hud</Filter>
+    </ClInclude>
+    <ClInclude Include="Race\Hud\HudInternal.h">
+      <Filter>Race\Hud</Filter>
+    </ClInclude>
+    <ClInclude Include="Race\Hud\HudRace.h">
+      <Filter>Race\Hud</Filter>
+    </ClInclude>
+    <ClInclude Include="Race\Hud\HudReplay.h">
+      <Filter>Race\Hud</Filter>
+    </ClInclude>
+    <ClInclude Include="Race\Hud\RaceComplete.h">
+      <Filter>Race\Hud</Filter>
+    </ClInclude>
+    <ClInclude Include="Race\Hud\RaceHud.h">
+      <Filter>Race\Hud</Filter>
+    </ClInclude>
+    <ClInclude Include="Race\Hud\RaceMessage.h">
+      <Filter>Race\Hud</Filter>
+    </ClInclude>
+    <ClInclude Include="Race\Hud\RacePause.h">
+      <Filter>Race\Hud</Filter>
+    </ClInclude>
+    <ClInclude Include="Race\Hud\RaceResults.h">
+      <Filter>Race\Hud</Filter>
+    </ClInclude>
+    <ClInclude Include="Race\Hud\RaceSaves.h">
+      <Filter>Race\Hud</Filter>
+    </ClInclude>
+    <ClInclude Include="Race\Hud\RaceScreenWindow.h">
+      <Filter>Race\Hud</Filter>
+    </ClInclude>
+    <ClInclude Include="Race\Hud\RaceWindowId.h">
+      <Filter>Race\Hud</Filter>
+    </ClInclude>
+    <ClInclude Include="Race\Hud\RaceWindows.h">
+      <Filter>Race\Hud</Filter>
+    </ClInclude>
+    <ClInclude Include="Race\Hud\SprintResults.h">
+      <Filter>Race\Hud</Filter>
+    </ClInclude>
+    <ClInclude Include="Race\RaceCamera.h">
+      <Filter>Race</Filter>
+    </ClInclude>
+    <ClInclude Include="Race\RaceGrids.h">
+      <Filter>Race</Filter>
+    </ClInclude>
+    <ClInclude Include="Race\RaceIntro.h">
+      <Filter>Race</Filter>
+    </ClInclude>
+    <ClInclude Include="Race\ReplaySaves.h">
+      <Filter>Race</Filter>
+    </ClInclude>
+    <ClInclude Include="Race\TrackView\TrackView.h">
+      <Filter>Race\TrackView</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\LensFlares.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\Particles.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\Particles\CameraEmitter.h">
+      <Filter>Scene\Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\Particles\Emitter.h">
+      <Filter>Scene\Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\Particles\LeavesEmitter.h">
+      <Filter>Scene\Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\Particles\ParticlesInternal.h">
+      <Filter>Scene\Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\Particles\ParticleSystem.h">
+      <Filter>Scene\Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\Particles\SmearEmitter.h">
+      <Filter>Scene\Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\Particles\SmokeEmitter.h">
+      <Filter>Scene\Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\Particles\SparksEmitter.h">
+      <Filter>Scene\Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\Particles\TracksEmitter.h">
+      <Filter>Scene\Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\PostEffects.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\Projector.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\Scene3d.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\Silhouette.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\SunLight.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\TrackScene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\WorldClock.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Components\ColourChart.h">
+      <Filter>UI\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Components\Dial.h">
+      <Filter>UI\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Components\Menu.h">
+      <Filter>UI\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Components\MenuItem.h">
+      <Filter>UI\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Components\Meter.h">
+      <Filter>UI\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Components\Movie.h">
+      <Filter>UI\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Components\Slider.h">
+      <Filter>UI\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Components\Text.h">
+      <Filter>UI\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Components\TextModifier.h">
+      <Filter>UI\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Components\Ticker.h">
+      <Filter>UI\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Components\Transition.h">
+      <Filter>UI\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Components\View3d.h">
+      <Filter>UI\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\MessageWindow.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\UiFile.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\UiInternal.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\UiScreen.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\UiSound.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\WindowManager.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
