@@ -322,7 +322,10 @@ a quad of its size each way (z 5) in one triangle strip of 6 × NUM_POINTS − 4
 The race's camera (`0x00401760`, made with the player on the loading thread, `0x0041DE30`) keeps the atmosphere's Wet
 (`+0xD8`) and LightBlur (`+0xDC`) and makes (`0x00401AE0`) in the wet `rain1` (its value 0, `+0x18C`), `rainsplash1`
 (1, `+0x190`) and `rainblob1` (`+0x194`), in the dry `ground_rush_street` (0) and `ground_rush_scrub` (1). Its frame
-(`17-race-camera.md`) sets how much they show.
+(`17-race-camera.md`) sets how much they show. The camera holds them counted (`+0x08`, let go by `0x00401AE0` before
+it makes new ones), so they may outlive the track's effects manager; the stock's go harmlessly then (SMEAR's
+`0x0050EC60` frees only its own blobs, buffer and material). The port's emitters reach their particle system's device
+and the 3D world as they go, so the race's end lets the players' go before the scene and the world.
 
 ### LEAVES (`0x00508B80`)
 

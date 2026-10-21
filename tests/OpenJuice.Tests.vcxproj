@@ -131,6 +131,7 @@
     <ClCompile Include="Unit\Race\RaceStartTests.cpp" />
     <ClCompile Include="Unit\Race\RaceStateTests.cpp" />
     <ClCompile Include="Unit\Race\RaceWindowIdTests.cpp" />
+    <ClCompile Include="Unit\Race\TrackViewEndTests.cpp" />
     <ClCompile Include="Unit\Render\MeshTests.cpp" />
     <ClCompile Include="Unit\Saves\ArchiveTests.cpp" />
     <ClCompile Include="Unit\Saves\GraphicsConfigTests.cpp" />

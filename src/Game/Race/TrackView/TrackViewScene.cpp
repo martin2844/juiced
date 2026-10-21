@@ -227,10 +227,14 @@ void TrackView::carLights(RaceSlot& s) {
     }
 }
 
-void TrackView::makeCameraWeather(RacePlayer& player) {
+void TrackView::dropCameraWeather(RacePlayer& player) {
     player.cameraRain.reset();
     player.cameraSplash.reset();
     player.cameraBlobs.reset();
+}
+
+void TrackView::makeCameraWeather(RacePlayer& player) {
+    dropCameraWeather(player);
     player.cameraInTunnel = false;
     const oj::render::AtmosphereSet* set = scene->atmosphere();
     const oj::Atmosphere* a = set != nullptr ? set->current : nullptr;

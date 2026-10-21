@@ -158,6 +158,9 @@ void TrackView::endRace() {
         p->finished = false;
         p->raceComplete = false;
         p->introPlaying = false;
+        // Before the scene and the 3D world below: kept on till the next race's players were made, a wet race's
+        // screen smears were freed after their particle system (the crash loading the race after a wet one).
+        dropCameraWeather(*p);
     }
     frontEnd.raceFade = 0.0f;
     // 0x00420B30: the cruise manager's zones let go (0x004B0110); 0x004AA9E0: its car (+0x3C0) let go and its

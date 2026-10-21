@@ -870,6 +870,10 @@ struct TrackView {
     void soundListener();
 
     void makeCameraWeather(RacePlayer& player);
+    // The camera's rain, splash and screen smears let go. The stock's camera holds them counted and they free only
+    // their own as they go (0x0050EC60); these reach their particle system's device and the 3D world's voices, so
+    // they go before the scene and the world, not with the players made again for the next race.
+    void dropCameraWeather(RacePlayer& player);
 
     // 0x004066A3: the atmosphere's LightBlur: under the followed car's nitro its amount x 0.7, else the camera's kept
     // value.
