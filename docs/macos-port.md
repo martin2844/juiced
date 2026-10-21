@@ -50,7 +50,7 @@ Files must be `.bin`, one D3D shader each. No proprietary shader binaries are in
 ## Remaining work
 
 - **Renderer fidelity:** visible differences in car materials/reflections and other scene effects. The fixed-function path is partial; `drawUp` does not yet execute programmable postprocessing. Multi-stage texture combiners, fixed-function lights/materials, fog, depth bias and some render states need further implementation/verification. Occlusion queries, gamma control and N-patches are unsupported. Developer `.fx` compilation is unavailable; precompiled game `.fxo` assets are supported.
-- **Input:** keyboard only. SDL gamepad mapping, wheel input and force feedback remain unimplemented.
+- **Input:** keyboard with an in-game binding editor, persistent custom bindings and modern defaults. SDL gamepad mapping, wheel input and force feedback remain unimplemented.
 - **Audio:** basic software playback; no EAX or full 3D listener processing. Music is decoded into memory by segment, so starting songs may pause loading. FFmpeg timestamp warnings can occur on the supplied music streams.
 - **Movies:** intro playback is skipped; the upstream native Bink decoder renders the frontend background movie, but all intro/tutorial clips have not been validated.
 - **Networking:** POSIX adapters compile, but multiplayer has not been tested. GameSpy voice capture is explicitly unavailable.

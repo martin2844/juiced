@@ -1,3 +1,4 @@
+#include "Mac/Controls.h"
 #include "Core/Base/Config.h"
 #include "Core/Base/GameFiles.h"
 #include "Core/Base/Log.h"
@@ -14,6 +15,10 @@ int main(int argc, char **argv) {
     std::string command;
     for (int i = 1; i < argc; i++) {
         std::string arg = argv[i];
+        if (arg == "--controls") {
+            oj::mac::requestControlsEditor();
+            continue;
+        }
         if (arg == "--game") {
             if (i + 1 == argc) {
                 std::cerr << "--game requires a folder path\n";
@@ -24,7 +29,7 @@ int main(int argc, char **argv) {
         }
         if (arg == "--help") {
             std::cout << "Juiced for macOS\nUsage: juiced --game /path/to/Juiced [--frames N] [--capture image.bmp] "
-                         "[-i] [--autopilot]\n";
+                         "[-i] [--autopilot] [--controls]\n";
             return 0;
         }
         command += '"' + arg + '"';

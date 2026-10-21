@@ -1,3 +1,6 @@
+#ifdef OJ_MACOS
+#include "Mac/ControlsOverlay.h"
+#endif
 // The game's main function and its loop: the platform, the front end, the race and the frames between them
 // (docs/spec/01-startup.md).
 
@@ -199,6 +202,9 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
         } else {
             controlMaps =
                 oj::parseControls(std::string_view(reinterpret_cast<const char*>(bytes->data()), bytes->size()));
+#ifdef OJ_MACOS
+            oj::mac::applyBindings(controlMaps, oj::mac::loadBindings(oj::mac::bindingsPath()));
+#endif
             input.load(controlMaps);
         }
     }
@@ -410,6 +416,10 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
 
     uint64_t rendered = 0;
     bool frontendUi = false;  // the front end's +0x18: the UI map registered
+#ifdef OJ_MACOS
+    std::unique_ptr<oj::mac::ControlsOverlay> controlsEditor;
+    oj::input::Input::Map controlsPreviousMap = oj::input::Input::Map::None;
+#endif
     while (platform.pumpMessages()) {
         RECT client{};
         GetClientRect(platform.window(), &client);
@@ -418,6 +428,54 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
             Sleep(16);
             continue;
         }
+#ifdef OJ_MACOS
+        if (oj::mac::takeControlsRequest() && !controlsEditor) {
+            controlsPreviousMap = input.map();
+            controlsEditor = std::make_unique<oj::mac::ControlsOverlay>(*device, language, oj::mac::bindingsPath());
+        }
+        if (controlsEditor) {
+            oj::audio::setActive(false);
+            auto keys = platform.takeKeyEvents();
+            for (const auto& press : options.presses) {
+                if (press.down == rendered) keys.push_back({press.code, true});
+                if (press.up == rendered) keys.push_back({press.code, false});
+            }
+            float mx = 0, my = 0;
+            const auto buttons = SDL_GetMouseState(&mx, &my);
+            int ww = 1, wh = 1;
+            SDL_GetWindowSize(reinterpret_cast<SDL_Window*>(platform.window()), &ww, &wh);
+            const auto result = controlsEditor->update(keys, mx * device->width() / std::max(ww, 1),
+                my * device->height() / std::max(wh, 1), (buttons & SDL_BUTTON_LMASK) != 0,
+                (SDL_GetModState() & (SDL_KMOD_GUI | SDL_KMOD_ALT)) != 0);
+            controlsEditor->draw();
+            if (options.frames && rendered + 1 >= options.frames && !options.capture.empty()) {
+                const std::filesystem::path file = oj::toWide(options.capture);
+                device->capture((file.is_absolute() ? file : executableFolder() / file).wstring());
+            }
+            device->endFrame();
+            ++rendered;
+            if (result != oj::mac::ControlsOverlay::Result::Open) {
+                if (result == oj::mac::ControlsOverlay::Result::Saved) {
+                    oj::mac::applyBindings(controlMaps, controlsEditor->bindings());
+                    input.load(controlMaps);
+                }
+                std::vector<oj::input::KeyEvent> released;
+                for (int code = 1; code < 256; ++code) released.push_back({static_cast<uint8_t>(code), false});
+                input.poll(released, false, 0.0f);
+                if (controlsPreviousMap == oj::input::Input::Map::Driver) input.useDriver();
+                else if (controlsPreviousMap == oj::input::Input::Map::Ui) input.useUi();
+                controlsEditor.reset();
+                oj::audio::setActive(platform.active());
+            }
+            LARGE_INTEGER now{};
+            QueryPerformanceCounter(&now);
+            start.QuadPart += now.QuadPart - previousUpdate.QuadPart;
+            previousUpdate = last = now;
+            if (options.frames && rendered >= options.frames) break;
+            Sleep(16);
+            continue;
+        }
+#endif
         brightnessGamma(*device);
         // 0x00514B28: the profiler's frame timer (0) ended; 0x00514B5A: the debug pages' current page drawn while
         // they are shown (never); 0x00514C4B: timer 0 started again.

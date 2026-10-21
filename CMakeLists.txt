@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.24)
-project(JuicedMac VERSION 0.1.0 LANGUAGES C CXX OBJCXX)
+project(JuicedMac VERSION 0.2.0 LANGUAGES C CXX OBJCXX)
 if(NOT APPLE)
   message(FATAL_ERROR "This target requires macOS")
 endif()
@@ -39,7 +39,7 @@ add_library(juice_audio STATIC src/Audio/Bank.cpp src/Audio/Player.cpp src/Audio
 target_link_libraries(juice_audio PUBLIC juice_core PkgConfig::FFMPEG)
 file(GLOB_RECURSE GAME CONFIGURE_DEPENDS src/Game/*.cpp)
 list(FILTER GAME EXCLUDE REGEX "App/(Main|CrashLog)\\.cpp$|Platform/(Platform|InputDevices|Settings|SystemKeys|Win7Imports|Windows7)\\.cpp$|Media/Binkw32\\.cpp$")
-add_library(juice_game STATIC ${GAME} src/Mac/Platform.cpp)
+add_library(juice_game STATIC ${GAME} src/Mac/Platform.cpp src/Mac/Controls.cpp src/Mac/ControlsOverlay.cpp)
 target_link_libraries(juice_game PUBLIC juice_render juice_audio)
 add_executable(juiced src/Mac/Main.cpp src/Mac/Launcher.mm)
 target_link_libraries(juiced PRIVATE juice_game "-framework AppKit")
@@ -49,8 +49,8 @@ set_target_properties(juiced_app PROPERTIES
   OUTPUT_NAME "Juiced"
   MACOSX_BUNDLE_GUI_IDENTIFIER "org.openjuice.macos"
   MACOSX_BUNDLE_BUNDLE_NAME "Juiced"
-  MACOSX_BUNDLE_BUNDLE_VERSION "0.1.0"
-  MACOSX_BUNDLE_SHORT_VERSION_STRING "0.1.0")
+  MACOSX_BUNDLE_BUNDLE_VERSION "0.2.0"
+  MACOSX_BUNDLE_SHORT_VERSION_STRING "0.2.0")
 
 include(CTest)
 if(BUILD_TESTING)
@@ -70,3 +70,12 @@ endif()
 add_executable(juiced_shader_check EXCLUDE_FROM_ALL tools/ShaderCheck.cpp)
 target_include_directories(juiced_shader_check PRIVATE ${mojoshader_SOURCE_DIR})
 target_link_libraries(juiced_shader_check PRIVATE juice_render)
+
+if(BUILD_TESTING)
+  add_executable(mac_controls_check tests/Mac/ControlsTest.cpp)
+  target_link_libraries(mac_controls_check PRIVATE juice_game)
+  add_test(NAME mac_controls COMMAND mac_controls_check)
+  add_executable(mac_controls_overlay_check tests/Mac/ControlsOverlayTest.cpp)
+  target_link_libraries(mac_controls_overlay_check PRIVATE juice_game)
+  add_test(NAME mac_controls_overlay COMMAND mac_controls_overlay_check)
+endif()

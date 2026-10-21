@@ -5,6 +5,7 @@
 #include "Game/Platform/CommandLine.h"
 #include "Game/Platform/InputDevices.h"
 #include <SDL3/SDL.h>
+#include "Mac/Controls.h"
 #include <fstream>
 #include <windows.h>
 namespace oj {
@@ -14,64 +15,8 @@ bool focused = true, screenshot = false;
 FreeCameraMouse mouse;
 bool mouseHook = false;
 Language startupLanguage{};
-uint8_t scan(SDL_Scancode c) {
-    static const uint8_t letters[] = {30, 48, 46, 32, 18, 33, 34, 35, 23, 36, 37, 38, 50,
-                                      49, 24, 25, 16, 19, 31, 20, 22, 47, 17, 45, 21, 44};
-    if (c >= SDL_SCANCODE_A && c <= SDL_SCANCODE_Z)
-        return letters[c - SDL_SCANCODE_A];
-    if (c >= SDL_SCANCODE_1 && c <= SDL_SCANCODE_9)
-        return c - SDL_SCANCODE_1 + 2;
-    switch (c) {
-    case SDL_SCANCODE_0:
-        return 11;
-    case SDL_SCANCODE_RETURN:
-        return 28;
-    case SDL_SCANCODE_ESCAPE:
-        return 1;
-    case SDL_SCANCODE_SPACE:
-        return 57;
-    case SDL_SCANCODE_BACKSPACE:
-        return 14;
-    case SDL_SCANCODE_TAB:
-        return 15;
-    case SDL_SCANCODE_LSHIFT:
-        return 42;
-    case SDL_SCANCODE_RSHIFT:
-        return 54;
-    case SDL_SCANCODE_LCTRL:
-        return 29;
-    case SDL_SCANCODE_RCTRL:
-        return 157;
-    case SDL_SCANCODE_LALT:
-        return 56;
-    case SDL_SCANCODE_RALT:
-        return 184;
-    case SDL_SCANCODE_UP:
-        return 200;
-    case SDL_SCANCODE_DOWN:
-        return 208;
-    case SDL_SCANCODE_LEFT:
-        return 203;
-    case SDL_SCANCODE_RIGHT:
-        return 205;
-    case SDL_SCANCODE_DELETE:
-        return 211;
-    case SDL_SCANCODE_HOME:
-        return 199;
-    case SDL_SCANCODE_END:
-        return 207;
-    case SDL_SCANCODE_PAGEUP:
-        return 201;
-    case SDL_SCANCODE_PAGEDOWN:
-        return 209;
-    case SDL_SCANCODE_MINUS:
-        return 12;
-    case SDL_SCANCODE_EQUALS:
-        return 13;
-    default:
-        return 0;
-    }
-}
+uint8_t scan(SDL_Scancode c) { return mac::gameScanCode(c); }
+
 } // namespace
 void hookFreeCameraMouse(bool on) {
     mouseHook = on;

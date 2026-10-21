@@ -1,3 +1,6 @@
+#ifdef OJ_MACOS
+#include "Mac/Controls.h"
+#endif
 // The watch of the players' controllers and the critical notes it opens.
 
 #include "Game/Frontend/Frontend.h"
@@ -83,6 +86,9 @@ void Frontend::watchSecondController(bool connected, int32_t device, bool opens)
 // window: the message box shows. Either way the devices' controllers are made again (0x005957D1: 0x00590EE0) and the
 // map registered again.
 void Frontend::controlsSetUp() {
+#ifdef OJ_MACOS
+    mac::requestControlsEditor();
+#else
     TextTable jet;
     jet.load(std::filesystem::path("scripts") / (std::string("jettext") + m_language.controlsLetter + ".txt"));
     const auto at = [&](size_t i) { return i < jet.size() ? jet.at(i) : std::wstring(); };
@@ -91,6 +97,7 @@ void Frontend::controlsSetUp() {
     errorBox(at(kJetDirectInputProblem) + L"\n" + at(kJetSeeReadMe), at(kJetDirectInputTitle));
     // 0x00480612 then 0x0048062C: the device made again with DRIVER1, then with the UI map.
     m_inputUi = true;
+#endif
 }
 
 }  // namespace oj

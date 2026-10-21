@@ -25,9 +25,14 @@ void OptionsMenu::enter(OptionsHost& host, ui::Screen& s) {
         s.restoreMenu("BackMenu");
         for (size_t i = 0; i < s.menuSize("Menu"); ++i) {
             if (_stricmp(s.menuItemCommand("Menu", i).c_str(), "control") == 0) {
+#ifdef OJ_MACOS
+                s.setMenuItemText("Menu", i, L"CONTROLS");
+#else
                 s.setMenuItemText("Menu", i, texts.at(kTextControls));
+#endif
             }
         }
+#ifndef OJ_MACOS
         if (host.racePause()) {
             // From a race's pause: a highlighted control moves the highlight to the first item; control taken out
             // with BackMenu's first item; a highlight past the items back to the first.
@@ -44,6 +49,7 @@ void OptionsMenu::enter(OptionsHost& host, ui::Screen& s) {
                 s.selectMenuItem("BackMenu", 0);
             }
         }
+#endif
         s.insertCommandItem("Menu", static_cast<int>(s.menuSize("Menu")) - 1, texts.at(kTextSteeringWheel), 0.0f,
                             "wheel");
         s.addMenuItem("BackMenu", L"", 0.0f, "", "ui_pan5_ora");

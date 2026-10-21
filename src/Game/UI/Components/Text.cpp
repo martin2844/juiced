@@ -14,6 +14,32 @@ namespace oj::ui {
 
 using namespace detail;
 
+void Screen::drawOverlayText(const std::wstring& text, float x, float y, float height,
+                             uint32_t colour, float maxWidth) {
+    Font* f = font("goodtime11");
+    if (!f || f->height() <= 0) return;
+    const float scale = height / static_cast<float>(f->height());
+    float pen = x;
+    const float baseline = y + f->ascent * scale;
+    for (wchar_t c : text) {
+        if (c == L' ') { pen += f->data.spaceAdvance * scale; continue; }
+        const D8f::Glyph* g = f->data.find(c);
+        if (!g) continue;
+        if (pen + g->width * scale > x + maxWidth) break;
+        if (g->page < f->pages.size()) {
+            const float gx = pen + g->xOffset * scale, gy = baseline + g->yOffset * scale;
+            const float right = gx + g->width * scale, bottom = gy + g->height * scale;
+            const render::QuadVertex q[4] = {
+                {gx, gy, g->u0, g->v0, colour}, {right, gy, g->u1, g->v0, colour},
+                {gx, bottom, g->u0, g->v1, colour}, {right, bottom, g->u1, g->v1, colour}
+            };
+            render::applySampler(m_device, f->samplers[g->page], 0);
+            m_device.drawQuad(q, f->pages[g->page], render::Blend::Alpha, true);
+        }
+        pen += g->advance * scale;
+    }
+}
+
 void Screen::setText(int element, const std::wstring& text) {
     State& s = m_states[static_cast<size_t>(element)];
     s.text.set = true;

@@ -26,7 +26,7 @@ CMake downloads pinned revisions of SDL 3 and MojoShader on the first configure.
 ./out/juiced --game /absolute/path/to/Juiced
 ```
 
-The data folder contains `tracks/` and `carmodels.dat`. The path is remembered. You can subsequently open `out/Juiced.app`; when no valid remembered path exists, it opens a folder picker. Intro movies are currently skipped. Keyboard input is implemented; controllers and steering wheels are not yet connected. With the supplied English controls: arrows steer/accelerate/brake, B is the handbrake, Enter selects, and Escape goes back.
+The data folder contains `tracks/` and `carmodels.dat`. The path is remembered. You can subsequently open `out/Juiced.app`; when no valid remembered path exists, it opens a folder picker. Intro movies are currently skipped. Keyboard input is implemented; controllers and steering wheels are not yet connected. The default driving controls are W/S for throttle/brake, A/D for steering, Left Shift for nitrous, Space for handbrake, and R for reverse. Enter selects and Escape goes back.
 
 An instant race bypasses profile creation:
 
@@ -42,6 +42,20 @@ A reproducible AI-driven race and screenshot:
 ```
 
 Capture paths should be absolute: the engine switches its working directory to the game folder. `--frames` and scripted input switches remain enabled in this port's release build. Logs, settings and the remembered game path live in `~/Library/Application Support/Juiced/`; stock-format saves live in `~/Library/Application Support/THQ/Juiced/`. To change data folders, pass `--game` again.
+
+## Controls editor
+
+Open **Options → Controls** in the game (also available through the race pause menu). The editor renders inside the game window; the game is frozen while it is open. Click a binding and press a replacement key, or use Up/Down and Enter. Left/Right switch the Driving, Gears & Camera, and Crew Commands tabs. Escape cancels key capture, or closes the editor without saving when not capturing.
+
+If a key is already assigned, the two actions swap keys. **Save** applies changes immediately and stores them in `~/Library/Application Support/Juiced/controls.ini`; **Cancel** discards edits, and **Restore Defaults** resets the draft until saved. Escape and Enter remain reserved for navigation. Bindings use physical key positions, so labels follow a US layout on non-US keyboards.
+
+Defaults: WASD driving, Left Shift nitrous, Space handbrake, R reverse, Q/E manual gears, C camera, B rear view, Z/X look left/right, H horn, and 1–6 crew commands. These are keyboard bindings; gamepad and wheel support is still pending.
+
+To open the same in-game editor directly:
+
+```sh
+./out/juiced --controls
+```
 
 ## Source and license
 
