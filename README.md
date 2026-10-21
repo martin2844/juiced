@@ -1,5 +1,11 @@
 # Juiced for Android
 
+## Platforms and downloads
+
+This repository keeps the native ports on separate branches: [macOS (`main`)](https://github.com/martin2844/juiced/tree/main) and [Android (`android`)](https://github.com/martin2844/juiced/tree/android). Each branch contains its full engine source and platform build instructions. Platform fixes are not automatically shared between branches.
+
+Download the Android development APK from [Releases](https://github.com/martin2844/juiced/releases). On first launch, choose **Import Juiced ZIP** and select your own game archive; game data is not included.
+
 Native ARM64 Android port of [OpenJuice](https://gitlab.com/sidecr3w/openjuice), derived from the working macOS port. Targets the **Retroid Pocket 5** and uses SDL 3, OpenGL ES 3, and FFmpeg audio decoding. No Windows emulator, Wine, or game assets are included.
 
 ## Install and play
