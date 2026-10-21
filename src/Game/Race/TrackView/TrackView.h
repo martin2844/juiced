@@ -73,6 +73,7 @@ struct CarParticles {
     std::array<std::shared_ptr<oj::scene::Emitter>, 4> tarmacSkid, sandSkid, spray;
     std::shared_ptr<oj::scene::Emitter> tarmacSqueal, sandSqueal;
     std::array<oj::scene::Emitter*, 4> skid{};  // +0x70: the wheels' skid of their surface
+    oj::scene::Emitter* squeal = nullptr;       // +0x90: the tyres' squeal of the surface
 };
 
 struct RaceSlot {
@@ -630,6 +631,12 @@ struct TrackView {
     // tank full outside a replay's race, the gearbox by hand, a standing start, the world's grid made anew, placed;
     // with a nitro part the low nitro message counts as given when the car has none (+0x198); then let settle.
     void settleRace(oj::CrtRandom& random);
+    // 0x004976A5: the grid point of car i of the race's cars: on the network the session's grid place the car was made
+    // with (+0x4F0); in a career race (mode 2) the i-th; else (an arcade, custom, split screen or attract race) the
+    // count less i less 1, so the first cars made (the players') start at the back; a sprint's (type 6) moved on by its
+    // heat (-1 as 0) within the count (on the network one heat: none). Stock problem: a count past the route's grid
+    // points reads past them; here within them.
+    oj::Spl::GridPoint gridPlace(size_t i) const;
 
     // The fly-by's end (0x00405BE0): the count of 6 s and the player's camera on the sweep before the start (mode 10).
     void countAndSweep(RacePlayer& player);
@@ -675,9 +682,10 @@ struct TrackView {
     // not in the race puts its mark off (the tracks' level 0), then each wheel down marks its touch.
     void carParticles(RaceSlot& s);
 
-    // 0x004907D0's squeal (+0x90, after the wheels): no fast forward, the wheel of the largest skid level (the first
-    // of equals) gives 4 x its slide + its smoke + its skid; its sound from 500 ([0x0071786C]) at |the body's
-    // velocity| x 200 + the drawn pitch + 30000. Fast forward: 0.
+    // 0x004907D0's squeal (+0x90, after the wheels): the squeal of another surface taken puts the one before to 0
+    // (0x004908B3); no fast forward, the wheel of the largest skid level (the first of equals) gives 4 x its slide +
+    // its smoke + its skid; its sound from 500 ([0x0071786C]) at |the body's velocity| x 200 + the drawn pitch +
+    // 30000. Fast forward: 0.
     void squealSound(RaceSlot& s);
 
     // 0x0048A644: the scene objects of the model's nodes (0x00420FF0), each started at once (its slot 3): the chassis

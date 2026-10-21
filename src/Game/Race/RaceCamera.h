@@ -118,7 +118,7 @@ public:
     // behind the car (0x0040651D); 9 is the fly-by (0x00405BE0, 15-tracks.md), played apart from this camera here.
     enum Mode {
         kChase = 0, kChaseFar = 1, kChaseFarther = 2, kRightSide = 3, kLeftSide = 4, kBumper = 5, kBonnet = 6, kNextCar = 8,
-        kBeforeStart = 10, kTrackside = 11, kPassing = 12, kOnGround = 13, kFree = 14, kFreeStill = 15
+        kFlyBy = 9, kBeforeStart = 10, kTrackside = 11, kPassing = 12, kOnGround = 13, kFree = 14, kFreeStill = 15
     };
 
     // 0x00406990: the view taken (with the reset: the camera put back to the view's start), the view on the ground's
@@ -168,6 +168,8 @@ public:
     void release(render::Camera& camera);
 
     int mode() const { return m_mode; }
+    bool lookingBack() const { return m_lookBack; }  // +0xA8
+    float pan() const { return m_pan; }              // +0xCC
     float ground() const { return m_ground; }  // +0x168
     // 0x004206B1 .. 0x00420771: the listener's offset from the camera (cm, across and along): modes 3, 4, 6 100 back,
     // 5 200; 5 and 6 neither panned nor looking back 100 to the side of the look and 100 back again.

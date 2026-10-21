@@ -34,11 +34,6 @@ struct ScreenVertex {
 };
 constexpr DWORD kScreenVertexFvf = D3DFVF_XYZRHW | D3DFVF_DIFFUSE;
 
-D3DCOLOR toD3DColor(const Color& c) {
-    auto channel = [](float v) { return static_cast<int>(std::clamp(v, 0.0f, 1.0f) * 255.0f + 0.5f); };
-    return D3DCOLOR_ARGB(channel(c.a), channel(c.r), channel(c.g), channel(c.b));
-}
-
 // Candidate formats in the order the stock renderer tries them.
 constexpr D3DFORMAT kBackBuffer32[] = {D3DFMT_X8R8G8B8, D3DFMT_A2R10G10B10, D3DFMT_A8R8G8B8, D3DFMT_X8B8G8R8,
                                        D3DFMT_R5G6B5};
@@ -217,8 +212,8 @@ public:
             *error = std::format("IDirect3D9::CreateDevice failed (0x{:08X})", static_cast<uint32_t>(hr));
             return false;
         }
-        m_clearFlags = D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER |
-                       (hasStencil(m_pp.AutoDepthStencilFormat) ? D3DCLEAR_STENCIL : 0);
+        m_clearFlags = D3DCLEAR_ZBUFFER | (hasStencil(m_pp.AutoDepthStencilFormat) ? D3DCLEAR_STENCIL : 0);
+        clearScreen();
         return true;
     }
 
@@ -232,11 +227,11 @@ public:
                            static_cast<int>(m_pp.MultiSampleType), m_pp.MultiSampleQuality, m_flags);
     }
 
-    bool beginFrame(const Color& clear) override {
+    bool beginFrame() override {
         if (!restore()) {
             return false;
         }
-        m_device->Clear(0, nullptr, m_clearFlags, toD3DColor(clear), 1.0f, 0);
+        m_device->Clear(0, nullptr, m_clearFlags, 0xFF000000, 1.0f, 0);
         const HRESULT hr = m_device->BeginScene();
         if (FAILED(hr)) failed("BeginScene", hr);
         return SUCCEEDED(hr);
@@ -1022,6 +1017,14 @@ private:
         }
     }
 
+    // 0x005145F0, as the device is made or reset (0x0051359A): the colour, the depth and the stencil cleared, presented
+    // and cleared again, so the frames that keep their colour start from black.
+    void clearScreen() {
+        m_device->Clear(0, nullptr, m_clearFlags | D3DCLEAR_TARGET, 0, 1.0f, 0);
+        m_device->Present(nullptr, nullptr, nullptr, nullptr);
+        m_device->Clear(0, nullptr, m_clearFlags | D3DCLEAR_TARGET, 0, 1.0f, 0);
+    }
+
     bool restore() {
         if (m_lost) {
             const HRESULT state = m_device->TestCooperativeLevel();
@@ -1048,6 +1051,7 @@ private:
             remakeTargets();
             // A reset sets the device's states to their defaults; the callers keep the declaration they set last.
             setDeclaration(m_declaration);
+            clearScreen();
             log::info("d3d9: back buffer {}x{}", m_pp.BackBufferWidth, m_pp.BackBufferHeight);
         }
         return true;
@@ -1063,7 +1067,7 @@ private:
     bool m_fullScreenGamma = false;
     uint32_t m_textureCaps = 0;
     AdapterInfo m_info;
-    DWORD m_clearFlags = D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER;
+    DWORD m_clearFlags = D3DCLEAR_ZBUFFER;  // [0x00719360]: the depth, and the stencil when the format has one
     std::string m_adapter;
     bool m_lost = false;
     uint32_t m_failures = 0;

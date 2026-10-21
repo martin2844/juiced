@@ -84,10 +84,12 @@ void Credits::enter() {
 }
 
 // 0x00469D90: the page's text not written (+0x10): CREDITS multiline (+0x128), inside its box (+0x13C), scrolling
-// (+0x140) from 0 (+0x144), its colour (+0x150, the one drawn) 0xFF9CC4CE, and its text the page's lines each
-// followed by a line feed: page 1 lines 874 .. 1099, page 2 lines 1100 .. 1310, page 3 for each of 174 lines 1311 + n
-// when line 1100 + n is not empty (stock problem: the third page reads the second page's line for its test), else
-// lines 780 .. 873; +0x10 set.
+// (+0x140) from 0 (+0x144), +0x150 0xFF9CC4CE, and its text the page's lines each followed by a line feed: page 1
+// lines 874 .. 1099, page 2 lines 1100 .. 1310, page 3 for each of 174 lines 1311 + n when line 1100 + n is not empty
+// (stock problem: the third page reads the second page's line for its test), else lines 780 .. 873; +0x10 set.
+// Stock problem: +0x150 is the Font line's colour kept for the transitions (0x005AC4EC writes it with +0x11C), of
+// which the drawing takes only the alpha (0x005B2048); the text is drawn in +0x11C, the Font line's white, so the
+// blue never shows.
 // BACK (CLICK) extras; SELECT (CLICK) the next page (after 3 the first) to be written.
 void Credits::update(WindowHost& host, ui::Screen& s, uint32_t event) {
     const TextTable& texts = host.gameTexts();
@@ -95,7 +97,6 @@ void Credits::update(WindowHost& host, ui::Screen& s, uint32_t event) {
         if (s.find("CREDITS") >= 0) {
             s.setMultiline("CREDITS", true);
             s.setScrolling("CREDITS", true, true);
-            s.setFontColour(s.find("CREDITS"), 0xFF9CC4CE);
             std::wstring text;
             const auto lines = [&](size_t first, size_t last) {
                 for (size_t n = first; n <= last; ++n) text += texts.at(n) + L"\n";

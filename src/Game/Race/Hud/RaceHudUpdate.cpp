@@ -13,6 +13,7 @@
 #include "Core/Network/OnlineRecords.h"
 #include "Core/Physics/CarBody.h"
 #include "Core/Saves/SaveEntries.h"
+#include "Game/Race/RaceCamera.h"
 #include "Render/Materials.h"
 #include "Render/Model.h"
 
@@ -47,6 +48,16 @@ float speedometerEnd(const CarDynamics& d) {
 void RaceHud::update(const HudRace& race, float dt) {
     ui::Screen& s = m_screen;
     m_frameTime = dt;
+    // 0x0044D827 .. 0x0044D88E (the frame's end; it reads only the camera): no window drawn this frame through the
+    // fly-by and the sweep before the start, and with one player while the camera looks back or pans from the bumper
+    // or the bonnet (a pan not 0, or not a number).
+    {
+        using Camera = scene::RaceCamera;
+        const bool onCar = race.cameraMode == Camera::kBumper || race.cameraMode == Camera::kBonnet;
+        const bool aside = race.cameraLookBack || (onCar && !(race.cameraPan == 0.0f));
+        m_hidesWindows = (race.players.size() == 1 && aside) || race.cameraMode == Camera::kFlyBy ||
+                         race.cameraMode == Camera::kBeforeStart;
+    }
     if (race.race == nullptr) return;
     respect(race, dt);
     RaceState& state = *race.race;
@@ -242,7 +253,7 @@ void RaceHud::update(const HudRace& race, float dt) {
             if (r.newLap) {
                 // Every new lap: the first player's messages cleared, the panels in again, the lap's message.
                 m_messages[0].clear();
-                p.fade = keepsPanels(race.type) || race.type == RaceType::TimedLap ? kNeverFades : 4.0f;
+                p.fade = keepsPanels(race.type) ? kNeverFades : 4.0f;
                 HudMessages& m = m_messages[i];
                 const float best = r.bestLap;
                 if (best < m_worldRecord) {

@@ -269,8 +269,14 @@ void TrackView::pauseSounds() {
 void TrackView::squealSound(RaceSlot& s) {
     CarParticles& p = s.particles;
     const oj::CarEffects& e = s.car.effects;
-    if (e.squeal == nullptr) return;
-    oj::scene::Emitter* squeal = e.squeal == e.sandSqueal ? p.sandSqueal.get() : p.tarmacSqueal.get();
+    oj::scene::Emitter* squeal = e.squeal == nullptr         ? nullptr
+                                 : e.squeal == e.sandSqueal ? p.sandSqueal.get()
+                                                            : p.tarmacSqueal.get();
+    // A wheel's surface changing puts the squeal the car had to 0 before the car takes that surface's (0x004908B3).
+    if (squeal != p.squeal) {
+        if (p.squeal != nullptr) p.squeal->setLevel(0.0f);
+        p.squeal = squeal;
+    }
     if (squeal == nullptr) return;
     if (e.fastForward) {
         squeal->setLevel(0.0f);
@@ -347,13 +353,17 @@ void TrackView::soundListener() {
     sound3d->manager().listeners().count = static_cast<uint32_t>(players.size());
     for (size_t i = 0; i < players.size() && i < 4; ++i) {
         RacePlayer& player = *players[i];
-        const oj::Mat34& m = player.camera.world();
+        // 0x0042068C: the place the camera's world matrix's (+0x38); the matrix the camera's view (its +0x48,
+        // 0x00552A50: +0xC8, the world matrix's inverse, made as the camera was last drawn), whose rows take the
+        // listener's offset to the world and the voices' places to the listener's axes.
+        const oj::Mat34& w = player.camera.world();
+        const oj::Mat34& v = player.camera.view();
         float x = 0.0f, z = 0.0f;
         player.raceCamera.listenerOffset(x, z);
-        const oj::audio::Vec4 place{m[3] + (z * m[8] + x * m[0] + m[4] * 0.0f),
-                                    m[7] + (x * m[1] + z * m[9] + m[5] * 0.0f),
-                                    m[11] + (x * m[2] + z * m[10] + m[6] * 0.0f), 0.0f};
-        sound3d->manager().setListenerData(place, m.data(), i);
+        const oj::audio::Vec4 place{w[3] + (z * v[8] + x * v[0] + v[4] * 0.0f),
+                                    w[7] + (x * v[1] + z * v[9] + v[5] * 0.0f),
+                                    w[11] + (x * v[2] + z * v[10] + v[6] * 0.0f), 0.0f};
+        sound3d->manager().setListenerData(place, v.data(), i);
     }
 }
 

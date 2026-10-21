@@ -1,7 +1,7 @@
 #pragma once
 // The DirectInput side of the input manager (0x00591050): its DirectInput, the game controllers it found (each a
-// device's controller, Core/Input/Input's ControllerPort) and the mouse it makes and never reads. The keyboard is read from
-// the game window's messages (Platform), not through DirectInput.
+// device's controller, Core/Input/Input's ControllerPort), the keyboard as far as the maps go (Core/Input/Input's
+// KeyboardPort: its keys are read from the game window's messages, Platform) and the mouse it makes and never reads.
 
 #include "Core/Input/ForceFeedback.h"
 #include "Core/Input/Input.h"
@@ -27,6 +27,14 @@ public:
     bool start(HWND window);
     // The controllers found, in the order DirectInput listed them.
     std::vector<input::ControllerPort*> controllers() const;
+    // The keyboard's maps (GUID_SysKeyboard); none without DirectInput.
+    input::KeyboardPort* keyboard() const;
+    // 0x0059563F .. 0x0059571C: the controls' mapping window, IDirectInput8::ConfigureDevices with DICD_EDIT and no
+    // callback, its parameters: no user names, the one format of the map (the configuring device's), the desktop as
+    // the window, the colours text 0xFF9CC4CE, highlight, callouts and border 0xFFECEC01, the control and highlight
+    // fills 0xFF18536D, the area 0xFF253E4A, no target. True when it gives DI_OK (no window since Windows Vista: an
+    // error; DIMapper on Windows 7 and Wine have one). The user's map it keeps comes back with the next BuildActionMap.
+    bool configure(const input::MapFormat& format);
 
     // 0x00591DF0, the FF manager ([0x0075F5F8]) made with a DirectInput of its own ([0x0075F748]): the first two game
     // controllers attached opened (0x00596790), its channels, each with c_dfDIJoystick2 and the cooperative level 5

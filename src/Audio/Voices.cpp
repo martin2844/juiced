@@ -126,7 +126,7 @@ void Instance::setSet(int bank, int set) {
     if (m_handle != 0 && hw != nullptr) {
         int state = 0;
         if (hw->state(m_handle, state) == 0) {
-            hw->stop(m_handle);
+            hw->fadeOut(m_handle);  // the 3D handle's +0x20
             hw->setUser(m_handle, 0);
         }
     }
@@ -310,11 +310,11 @@ Instance* Manager::allocate(uint32_t flags, Instance** owner) {
 }
 
 void Manager::free(Instance* i) {
-    // 0x005BC140: the instance's buffer stopped and given back, its slot back to the pool.
+    // 0x005BC140: the instance's buffer faded out and given back, its slot back to the pool.
     if (m_hardware != nullptr && i->m_handle != 0) {
         int state = 0;
         if (m_hardware->state(i->m_handle, state) == 0) {
-            m_hardware->stop(i->m_handle);
+            m_hardware->fadeOut(i->m_handle);
             m_hardware->setUser(i->m_handle, 0);
         }
     }
@@ -328,10 +328,13 @@ void Manager::free(Instance* i) {
 }
 
 void Manager::stopVoice(Instance* i) {
+    // The 3D handle's +0x20 (0x005BD990) fades the voice out (Player::fadeOut): silent at once, the slot held in
+    // state 5 until the player's next frame stops it; till then the oldest-voice steal of another instance is
+    // refused (acquire).
     if (m_hardware != nullptr && i->m_handle != 0) {
         int state = 0;
         if (m_hardware->state(i->m_handle, state) == 0) {
-            m_hardware->stop(i->m_handle);
+            m_hardware->fadeOut(i->m_handle);
             m_hardware->setUser(i->m_handle, 0);
         }
     }
@@ -615,9 +618,15 @@ int Manager::acquire(Instance* i) {
     }
     uint32_t user = 0;
     hw.user(handle, user);
-    if (Instance* other = userInstance(user)) {
-        stopVoice(other);
-        move(other, kStarting);
+    if (user != 0) {
+        // 0x005BCF45: the slot still has an instance: that one's voice stopped and it starting again (0x005BC360),
+        // none for this one this frame. Stock problem: the voice findFree took stays busy; a set of one voice whose
+        // start time is still 0 (never played) can then give none (stealOldest finds nothing) for the race.
+        if (Instance* other = userInstance(user)) {
+            stopVoice(other);
+            move(other, kStarting);
+        }
+        return 3;
     }
     i->m_handle = handle;
     hw.renew(i->m_handle);
@@ -626,12 +635,12 @@ int Manager::acquire(Instance* i) {
 }
 
 void Manager::start(Instance* i) {
-    // 0x005C11F0: the buffer taken: the instance as its user, the set's users counted; a loop's start drawn at random
-    // (rand() x 4 % its bytes; given by +0x50, which the 3D player passes over); looping; the frequency (its own and
-    // the random part, times the pitch); the volume (its group's); placed.
+    // 0x005C11F0, nothing without a set's voices: the buffer taken: the instance as its user, the set's users counted;
+    // a loop's start drawn at random (rand() x 4 % its bytes; given by +0x50, which the 3D player passes over);
+    // looping; the frequency (its own and the random part, times the pitch); the volume (its group's); placed.
+    if (i->m_voices == nullptr) return;
     Player& hw = *m_hardware;
     hw.setUser(i->m_handle, i->m_index + 1);
-    if (i->m_voices == nullptr) return;
     ++i->m_voices->set().users;
     if (i->m_loop == 1) {
         const uint32_t size = i->m_size;
@@ -650,7 +659,11 @@ void Manager::start(Instance* i) {
 }
 
 void Manager::refresh(Instance* i) {
-    // 0x005C1360: a buffer kept: its volume, frequency, occlusion and place.
+    // 0x005C1360, nothing without a set's voices: a buffer kept counts as a user of its set (as start does), so a
+    // set's voices all kept, another instance of it gets none this frame (acquire) rather than taking one; its
+    // volume, frequency, occlusion and place.
+    if (i->m_voices == nullptr) return;
+    ++i->m_voices->set().users;
     Player& hw = *m_hardware;
     float v = i->m_volume;
     v = v < 0.0f ? 0.0f : (1.0f < v ? 1.0f : v);
@@ -734,7 +747,8 @@ void Manager::update(const Listener& l, uint32_t flags) {
                         m_hardware->hold(i->m_handle);
                         ++given;
                     } else {
-                        move(i, kHardware);
+                        // 0x005BC9F4: a voice that would not play: virtual, not held, not counted.
+                        move(i, kVirtual);
                     }
                 }
             }

@@ -100,3 +100,20 @@ OJ_INTEGRATION_TEST(MessageWindow, NetworkRules) {
         *w.screen, MessageState{MessageType::Continue, &answer, nullptr, false}, true, false, oj::input::kSelect);
     check(note1 == MessageClose::Network && answer == 1, "msgbox_network: a Continue note closes itself");
 }
+
+// msgbox's brackets (MSG_MENU_BACK) jump to the item MSG_MENU highlights (0x005A9238: 0x005AF8A0 with 0), not
+// gliding to it as a menu's highlight does.
+OJ_INTEGRATION_TEST(MessageWindow, BracketsJump) {
+    oj::test::InGameFolder folder;
+    if (!folder.valid()) return;
+    Window w("msgbox");
+    if (!w.screen) return;
+    int32_t answer = -1;
+    oj::ui::openMessage(*w.screen, MessageType::YesNo, L"Quit to Windows?");
+    oj::ui::enterMessage(*w.screen, false);
+    w.settle();
+    w.screen->selectMenuItem("MSG_MENU", 1, true);
+    oj::ui::messageEvent(*w.screen, MessageState{MessageType::YesNo, &answer, nullptr, false}, false, true, 0);
+    check(w.screen->selectedMenuItem("MSG_MENU_BACK") == 1 && w.screen->menuPosition("MSG_MENU_BACK") == 1.0f,
+          "msgbox: the brackets at \"no\" at once");
+}

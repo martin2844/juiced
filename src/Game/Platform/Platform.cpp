@@ -28,6 +28,7 @@ struct WindowState {
     std::array<bool, 256> down{};
     HCURSOR savedCursor = nullptr;   // the cursor hidden while the game is active
     bool cursorHidden = false;
+    bool configuring = false;        // [0x0075F770]: the controls' mapping window up
 };
 WindowState g_state;
 bool g_freeCameraHook = false;  // [0x0075EC84]
@@ -82,10 +83,11 @@ LRESULT CALLBACK windowProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lpara
     case WM_ACTIVATEAPP:
         g_state.active = wparam != 0;
         oj::audio::setActive(g_state.active);  // [0x0075F780]
+        // 0x0059BDBB / 0x0059BDDE: the cursor left alone while the controls' mapping window is up.
         if (g_state.active) {
-            hideCursor();
+            if (!g_state.configuring) hideCursor();
         } else {
-            restoreCursor();
+            if (!g_state.configuring) restoreCursor();
             // Keys held while the game loses the focus are let go.
             for (size_t code = 0; code < g_state.down.size(); ++code) {
                 if (g_state.down[code]) {
@@ -116,22 +118,17 @@ LRESULT CALLBACK windowProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lpara
         break;
     }
     case WM_SYSCOMMAND:
-        switch (wparam & 0xFFF0) {
-        case SC_KEYMENU:
-            if (lparam == VK_RETURN) {  // Alt+Enter
-                ShowWindow(hwnd, SW_MINIMIZE);
-                return 0;
-            }
-            break;
-        case SC_CLOSE:
+        switch (systemCommand(wparam, lparam)) {
+        case SystemCommand::kMinimize:
+            ShowWindow(hwnd, SW_MINIMIZE);
+            return 0;
+        case SystemCommand::kClose:
             g_state.closedFromSystemMenu = true;
             PostQuitMessage(0);
             return 0;
-        case SC_SCREENSAVE:
-        case SC_HOTKEY:
-        case SC_MONITORPOWER:
+        case SystemCommand::kDrop:
             return 0;
-        default:
+        case SystemCommand::kDefault:
             break;
         }
         break;
@@ -156,6 +153,17 @@ struct MonitorArea {
 MonitorArea g_monitor;
 
 }  // namespace
+
+SystemCommand systemCommand(uintptr_t command, intptr_t parameter) {
+    switch (command & 0xFFF0) {
+    case SC_KEYMENU: return parameter == VK_RETURN ? SystemCommand::kMinimize : SystemCommand::kDrop;
+    case SC_CLOSE: return SystemCommand::kClose;
+    case SC_SCREENSAVE:
+    case SC_HOTKEY:
+    case SC_MONITORPOWER: return SystemCommand::kDrop;
+    default: return SystemCommand::kDefault;
+    }
+}
 
 void hookFreeCameraMouse(bool on) {
     g_freeCameraHook = on;
@@ -212,8 +220,25 @@ std::wstring startupText(int index) {
     }
 }
 
-void errorBox(const std::wstring& text, const std::wstring& caption) {
-    MessageBoxW(GetActiveWindow(), text.c_str(), caption.c_str(), MB_ICONHAND | MB_SETFOREGROUND | MB_TOPMOST);
+void errorBox(const std::wstring& text, const std::wstring& caption, bool overDesktop) {
+    MessageBoxW(overDesktop ? GetDesktopWindow() : GetActiveWindow(), text.c_str(), caption.c_str(),
+                MB_ICONHAND | MB_SETFOREGROUND | MB_TOPMOST);
+}
+
+void Platform::beginControlsWindow() {
+    ShowWindow(m_window, SW_HIDE);
+    pumpMessages();
+    restoreCursor();
+    g_state.configuring = true;
+}
+
+void Platform::endControlsWindow() {
+    g_state.configuring = false;
+    hideCursor();
+    ShowWindow(m_window, SW_SHOW);
+    SetActiveWindow(m_window);
+    pumpMessages();
+    ShowWindow(m_window, SW_SHOWNORMAL);
 }
 
 Platform::~Platform() {

@@ -10,6 +10,7 @@
 #include "Game/Frontend/Startup/StartupHost.h"
 #include "Game/Frontend/Startup/StartupWindows.h"
 
+#include <bit>
 #include <memory>
 #include <string>
 
@@ -124,4 +125,26 @@ OJ_INTEGRATION_TEST(Startup, TitleAttractReplays) {
     }
     check(raced && played == "attracts\\attract1 attracts\\attract2 attracts\\attract1 " && data.attractsStarted == 3,
           "startup: the title's attract replays 1, 2, 1 (" + played + ")");
+}
+
+// Back to the title the save system's settings go back to a new driver's (0x00467060 with 0x004097F0): a save's music
+// at 0 is forgotten and the music takes 0.9; the paint scheme's first values (the constructor's) stay.
+OJ_INTEGRATION_TEST(Startup, TitleForgetsTheSavesSettings) {
+    oj::test::InGameFolder folder;
+    if (!folder.valid()) return;
+    FakeStartupHost host;
+    const auto s = host.open("start");
+    if (!s) return;
+    oj::save::Settings saved = oj::save::Settings::defaults(host.lang.index);
+    saved.setU32(oj::save::Settings::kMusicVolume, 0);
+    saved.setU32(oj::save::Settings::kEffectsVolume, 0);
+    saved.setU32(oj::save::Settings::kScheme, 0x12345678);
+    host.settings = saved;
+    oj::frontend::Title window;
+    window.enter(host, *s);
+    check(host.musicVolume == 0.9f && host.settings &&
+              host.settings->u32(oj::save::Settings::kEffectsVolume) == std::bit_cast<uint32_t>(0.75f),
+          "startup: the title's music at a new driver's 0.9, the effects at 0.75");
+    check(host.settings && host.settings->u32(oj::save::Settings::kScheme) == 0x12345678,
+          "startup: the scheme's base (the constructor's) kept");
 }

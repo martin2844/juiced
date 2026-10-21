@@ -215,6 +215,10 @@ oj::HudRace TrackView::hudRace() {
         r.players.push_back({&followedSlot(first())->car, &followedSlot(first())->record, false});
     }
     if (followedSlot(first()) != nullptr) r.cameraCar = &followedSlot(first())->car;
+    // The fly-by is the stock camera's mode 9; here it plays apart from the race camera.
+    r.cameraMode = first().introPlaying ? oj::scene::RaceCamera::kFlyBy : first().raceCamera.mode();
+    r.cameraLookBack = first().raceCamera.lookingBack();
+    r.cameraPan = first().raceCamera.pan();
     r.pausing = pausing != nullptr ? pausing->index : -1;
     r.route = routeLine;
     for (const std::unique_ptr<RaceSlot>& s : cars) r.cars.push_back(&s->car);

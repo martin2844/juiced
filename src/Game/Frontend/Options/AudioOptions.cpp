@@ -134,13 +134,15 @@ bool AudioOptions::updatePlayer(OptionsHost& host, ui::Screen& s, uint32_t event
         if (speechPlayer != nullptr) speechPlayer->setMasterVolume(speech);
     }
     if (audio::World* world = gameSounds().world) world->player().setMasterVolume(1.0f * sfx);  // [0x007116A0]
+    // Both meters' sounds with the masks 1 (0x00480F34, 0x00480FBB): only a free voice of the set, so a sound still
+    // playing is not started again (its one voice is not taken back) and the next plays when it is over.
     if (std::fabs(sfx - m_sfxHeard) > 0.07f) {
-        host.sound("Warning");
+        host.sound("Warning", 1.0f, 1);
         m_sfxHeard = sfx;
     }
     if (std::fabs(speech - m_speechHeard) > 0.01f) {
         host.setEffectsVolume(speech);
-        host.sound("SPEECH");
+        host.sound("SPEECH", 1.0f, 1);
         m_speechHeard = speech;
         host.setEffectsVolume(sfx);
     }

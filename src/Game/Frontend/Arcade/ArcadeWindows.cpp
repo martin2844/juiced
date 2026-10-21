@@ -328,6 +328,7 @@ void ArcadeRace::details(WindowHost& host, ui::Screen& s) {
                 texts.at(kTextBhp) + L")";
         s.setText("Car", text);
     }
+    s.setMultiline("Car", true);
     const int32_t c = a.i32(Arcade::kChampionshipIndex);
     const size_t first = Arcade::race(c, 0);
     size_t line = kTextChampionships + static_cast<size_t>(c);
@@ -337,6 +338,7 @@ void ArcadeRace::details(WindowHost& host, ui::Screen& s) {
         line = kTextExtreme + static_cast<size_t>(c - 14);
     }
     s.setText("Challenge", texts.at(line));
+    s.setMultiline("Challenge", true);
     const auto hideAll = [&](const char* name) {
         for (int e = 0; e < s.size(); ++e) {
             if (same(s.nameOf(e), name)) s.setHidden(e, true);
@@ -539,8 +541,8 @@ void ArcadeRace::update(WindowHost& host, ui::Screen& s, uint32_t event) {
 
 // Arcade_Results' enter (0x0042E150): Title2 the last of "UNLOCKED FINAL RACE" (1899), "SERIES COMPLETE" (1901), "NEW
 // SERIES UNLOCKED" (1903), "ARCADE COMPLETE!" (1905) by the news set (in the order series, next series, final race,
-// arcade); Comment (+0x128 1) the comments of the news in that order for a race of neither the developers nor the
-// extreme nitrous, else emptied.
+// arcade); Comment over several lines (+0x128 1, 0x0042E273), the comments of the news in that order for a race of
+// neither the developers nor the extreme nitrous, else emptied.
 void ArcadeResults::enter(WindowHost& host, ui::Screen& s) {
     GameData* data = host.gameData();
     const TextTable& texts = host.gameTexts();
@@ -552,6 +554,7 @@ void ArcadeResults::enter(WindowHost& host, ui::Screen& s) {
     for (size_t k = 0; k < 4; ++k) {
         if (a.i32(news[k]) != 0) s.setText("Title2", texts.at(kTextResultTitles[order[k]]));
     }
+    s.setMultiline("Comment", true);
     const size_t race = a.current();
     if (a.i32(race + Arcade::kRaceExtreme) == 0 && a.i32(race + Arcade::kRaceDevelopers) == 0) {
         for (size_t k = 0; k < 4; ++k) {

@@ -115,6 +115,7 @@
     <ClInclude Include="Race\Cruise.h" />
     <ClInclude Include="Race\DriverControl.h" />
     <ClInclude Include="Race\RaceKinds.h" />
+    <ClInclude Include="Race\StartingGrid.h" />
     <ClInclude Include="Race\Racer.h" />
     <ClInclude Include="Race\RaceSession.h" />
     <ClInclude Include="Race\RaceSounds.h" />

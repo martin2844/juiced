@@ -48,12 +48,19 @@ void setStartupLanguage(const Language& language);
 // game's (setStartupLanguage). A file that does not read makes every index 4.
 std::wstring startupText(int index);
 
-// A message box of an error (MB_ICONHAND | MB_SETFOREGROUND | MB_TOPMOST) over the active window.
-void errorBox(const std::wstring& text, const std::wstring& caption);
+// A message box of an error (MB_ICONHAND | MB_SETFOREGROUND | MB_TOPMOST) over the active window, or the desktop.
+void errorBox(const std::wstring& text, const std::wstring& caption, bool overDesktop = false);
 
 // The configuration tool the adapter check starts: JuicedConfig.exe of the current directory, waited for; when it
 // does not start, startupText(3) ("Cant find JuicedConfig", 0x0059C846) and false.
 bool runConfigurationTool();
+
+// What the game window's procedure does with a WM_SYSCOMMAND (0x0059BE2E), by its command and parameter: SC_KEYMENU
+// minimizes the window with Enter (Alt+Enter) and is dropped with any other key (Alt alone, Alt and a letter), so the
+// window's system menu never opens from the keyboard (up, it would hold the game's loop); SC_CLOSE ends the game
+// ([0x0075F774]); SC_SCREENSAVE, SC_HOTKEY and SC_MONITORPOWER are dropped; any other goes to DefWindowProc.
+enum class SystemCommand { kDefault, kDrop, kMinimize, kClose };
+SystemCommand systemCommand(uintptr_t command, intptr_t parameter);
 
 class Platform {
 public:
@@ -69,6 +76,12 @@ public:
 
     // Handles the waiting messages; false once the game was asked to quit.
     bool pumpMessages();
+    // Round the controls' mapping window (0x005956C5 .. 0x005956F8): the game's window hidden, the messages pumped,
+    // the cursor given back, [0x0075F770] set (the activation leaves the cursor alone). After it (0x0059577B ..
+    // 0x005957CC, 0x0059582D): [0x0075F770] 0, the cursor hidden, the window shown and made active, the messages
+    // pumped; the stock shows it normal (SW_SHOWNORMAL) once the controllers are made again, here at once.
+    void beginControlsWindow();
+    void endControlsWindow();
 
     bool active() const;
     bool closedFromSystemMenu() const;

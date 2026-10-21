@@ -55,7 +55,7 @@ and `+0x34` (c34), each with its alpha set to 255. Then:
 | `DIGITAL_BG_COMBO%d`, `_POINTS`, `_BEST`, `_SCORE%d`, `_BONUS`, `_TIME%d` | `+0x13C` | each found: colour c30; they share the field, the last search stays |
 | `DIGITAL_BG_RECORD%d`, `DIGITAL_BG_WORLD%d` | `+0x144`, `+0x14C` | colour c30 |
 | `TIME_BACK%d`, `LR_TIME_BACK%d`, `WR_TIME_BACK%d` | `+0x154` .. `+0x164` | colour c34, hidden |
-| | `+0x1AC` | the panels' fade timer: 10000000 for the types 1, 2, 6, 4, 3, else 3 |
+| | `+0x1AC` | the panels' fade timer: 10000000 for the types 1, 2, 6, 4, 3, 0 (`0x00448E01`), else 3 |
 | `WR_TIME%d` | `+0x114` | alpha 1, a fixed advance, colour c34; it and `DIGITAL_BG_WORLD` hidden without a world record (below 0) |
 | | | the player's best lap of the race (`R+0xF8`) above 0 takes the world record and the lap record where it is below them |
 | `LR_LAPTIME%d` | `+0x220` | alpha 1, shown |
@@ -166,6 +166,12 @@ before the trap's speed is reached (`+0x12C`), with no message waiting, "ACHIEVE
 the race time is within 5 .. 6, 7 .. 8 or 9 .. 10 s; after it, with no message waiting, below the challenge's speed
 (`[G+0x6C]+0x78`) + 15 for the car's speed (its local velocity's length × 2.235 whatever the units) "DRIVE FASTER"
 (47) for 1.5 s. The race's news (`0x0044A4C0`) comes last, after the map (`0x0044A7A0`).
+
+Then (`0x0044D827`) the frame asks its window manager not to draw the windows this frame (the manager's `+0x50`, cleared
+as its frame starts, `0x005A6B41`; read before the windows are drawn, `0x005A6BB5`): with one player while the first
+player's camera looks back (`+0xA8`) or, in view 5 or 6 (the bumper, the bonnet), pans (`+0xCC` not 0); with any
+number of players while it plays the fly-by or the sweep before the start (modes 9, 10). So a HUD the pause's CONTINUE
+asks for (`0x004584C0` with 1) during the fly-by comes in but shows nothing until the race's view takes over.
 
 In a sprint (type 6), after the count is done (`+0x10`), before the turbo's needle: with the first player in its own
 car and a gear up by hand this frame (the player's `+0x30`) the first player's messages are emptied and the change is

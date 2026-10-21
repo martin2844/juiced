@@ -47,7 +47,7 @@ public:
     int prepare(const SetRef& ref, uint32_t slotMask, uint32_t voiceMask, int& how, uint32_t& handle);
     int start(uint32_t handle);        // +0x18 (0x005BFA20)
     int restart(uint32_t handle);      // +0x1C (0x005BFB00)
-    int stop(uint32_t handle);         // +0x20 (0x005BFB90)
+    int stop(uint32_t handle);         // +0x20 of the 2D handle (0x005BD6A0 → 0x005BFB90)
     int pause(uint32_t handle);        // +0x24 (0x005BFC30)
     int resume(uint32_t handle);       // +0x28 (0x005BFC90)
     // +0x30 (0x005BFCF0): the voice's status (0x005C3DD0); a fading slot (5) still sounding is 5.
@@ -72,7 +72,8 @@ public:
     // +0xBC (0x005C0300), every frame: the slots' volumes go to their targets (up at once, down by 0.3 of the way a
     // frame, 0.0001 and below silence); a voice that ended frees its slot; a fading slot at silence is held.
     void update();
-    // 0x005C1A90: the slot fades out (its target 0, state 5) and stops when silent.
+    // +0x20 of the 3D handle (0x005BD990 → 0x005C1A90), the voice manager's stop: the slot silent at once (its
+    // volume and target 0), held in state 5; the next update stops it.
     int fadeOut(uint32_t handle);
     // +0xE8 (0x005BD840): a bank loaded elsewhere (0x005B9430) added to the banks.
     void addBank(Bank* bank) { m_banks.push_back(bank); }
@@ -123,6 +124,9 @@ private:
     float m_master = 1.0f;        // +0x20
     uint32_t m_maxId = 0xFFFFFFFF;  // +0x24
     uint32_t m_held = 0;          // +0x28
+    // A slot's bit in m_held: the x86's shl takes its count modulo 32, so slot 32 (of CHANNELS 32 + 1) shares slot
+    // 0's (which is never used).
+    static uint32_t bit(size_t i) { return 1u << (static_cast<uint32_t>(i) & 31); }
 };
 
 }  // namespace oj::audio

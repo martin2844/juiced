@@ -37,7 +37,7 @@ void setStartupLanguage(const Language &l) {
 std::wstring startupText(int) {
     return L"Juiced could not load the game data. Check the --game folder and the log.";
 }
-void errorBox(const std::wstring &text, const std::wstring &caption) {
+void errorBox(const std::wstring &text, const std::wstring &caption, bool) {
     MessageBoxW(nullptr, text.c_str(), caption.c_str(), 0);
 }
 bool runConfigurationTool() {
@@ -186,6 +186,11 @@ bool InputDevices::start(HWND) {
 std::vector<input::ControllerPort *> InputDevices::controllers() const {
     return {};
 }
+input::KeyboardPort *InputDevices::keyboard() const { return nullptr; }
+bool InputDevices::configure(const input::MapFormat&) { return false; }
+// The Mac controls overlay stays in the game window; these DirectInput hooks are unused.
+void Platform::beginControlsWindow() {}
+void Platform::endControlsWindow() {}
 void InputDevices::startWheels(HWND) {}
 void InputDevices::stopWheels() {}
 } // namespace oj

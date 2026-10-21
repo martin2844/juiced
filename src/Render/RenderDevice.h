@@ -137,8 +137,14 @@ public:
     // A line on the chosen formats and flags, for the log.
     virtual std::string description() const = 0;
 
-    // false: the device is lost or not restored yet; the frame is skipped (no endFrame).
-    virtual bool beginFrame(const Color& clear) = 0;
+    // The frame begun as the window manager's view begins it (0x00516880 with the view's flags 5, 0x005A6B37): the
+    // depth and the stencil cleared, the colour kept from the frames before (the interface draws over its last frame:
+    // a window's black fading in shows the window before it under it); a view that clears its colour (the race's)
+    // does it itself. The colour is cleared only as the device is made or reset (0x005145F0: cleared, presented,
+    // cleared again). false: the device is lost or not restored yet; the frame is skipped (no endFrame).
+    virtual bool beginFrame() = 0;
+    // Optional backend material calibration; UINT32_MAX marks non-material/UI draws.
+    virtual void setMaterialClass(uint32_t) {}
     virtual void endFrame() = 0;
 
     // New size of the window's client area; the back buffer follows at the next beginFrame.

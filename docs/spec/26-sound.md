@@ -113,13 +113,20 @@ the slot, an id no longer the slot's answers 4, slot 0 answers 3, a slot without
 
 - `+0x74` (`0x005C0130`): the first bank with a set of the name.
 - `+0x04` (`0x005BF900`): a voice of the set and a slot. The voice by the strategies of its mask (`0x005BF2D0`, table
-  `0x0071E738`): 1 a free one (`0x005C1B10`), 2 the quietest (`0x005C1B60`: the lowest volume, scanned from the last,
-  unless all equal their mean), 4 the oldest start (`0x005C1C90`). A taken voice's slot is stopped and its place
+  `0x0071E738`): 1 a free one (`0x005C1B10`), 2 the quietest (`0x005C1B60`: the lowest volume below 1, scanned from
+  the last, the first of equals kept, unless equal to the product of its sums; the unrolled loop adds the last
+  4 × (n / 4) volumes to the slot holding 1 / n and the first n % 4 to the sum, so below four voices that is their
+  mean, but with a multiple of four the sum stays 0 and the quietest is taken unless silent), 4 the oldest start
+  (`0x005C1C90`). A taken voice's slot is stopped and its place
   taken. Else the slot by its own mask (`0x005BF260`, table `0x0071E728`): 1 the first not held whose state is below 3,
   2 the set of the highest priority, 4 the quietest, 8 the oldest; one but the first is stopped. The slot gets a new
   id (`0x005BF8A0`: + the slots).
 - `+0x18` start (`0x005BFA20`): the volume times the master, played, the voice's owner and start time kept, state 3.
-- `+0x20` stop, `+0x24` pause, `+0x28` resume, `+0x30` state (4 looping, 3 playing, else 0; a fading slot playing 5),
+- `+0x20` stop: the 2D handle's (`0x005BD6A0` → `0x005BFB90`) stops the voice and frees the slot; the 3D handle's
+  (`0x005BD990` → `0x005C1A90`), every stop of the voice manager, fades it out: volume and target 0 at once, state 5,
+  held; the next `+0xBC` stops it, so till then the slot keeps its voice and the manager's oldest-voice steal of it is
+  refused.
+- `+0x24` pause, `+0x28` resume, `+0x30` state (4 looping, 3 playing, else 0; a fading slot playing 5),
   `+0x40` volume (now and as the target), `+0x48` frequency, `+0x5C` play flags, `+0x10` master volume.
 - `+0xBC` (`0x005C0300`): the slots' volumes to their targets (up at once, down by 0.3 of the way, 0.0001 and below
   silent), a voice that ended frees its slot. Only `0x005BA110` (every player of the list `[0x0075F874]`) calls it, from
@@ -211,9 +218,15 @@ Every frame (`0x005B96C0` from the main loop with the frame's time, `0x005BC8E0`
    `gain × min / ((clamp(d, min, max) - min) × rolloff + min)` times the cone's); 0.01 and below: virtual, its buffer
    given back; else a candidate.
 4. The candidates partly sorted (`0x005BD410`, MSVC's heap: the first slots - 1 by priority × volume, loudest first).
-5. Each of those first: one with a buffer still its own keeps it (`0x005C1360`: volume, frequency, place); else a buffer
-   (`0x005BCD10`: a free voice of its set, the quietest, the oldest; one taken from another instance moves that one to
-   starting) and `0x005C11F0`: a loop's start drawn `rand() × 4 % its bytes` (given to the 3D player's `+0x50`, which
+5. Each of those first: one with a buffer still its own keeps it (`0x005C1360`: a user of its set counted, volume,
+   frequency, place); else a buffer (`0x005BCD10`: none while the set's users of the frame (cleared in 3, counted by
+   `0x005C1360` and `0x005C11F0`) are as many as its voices; a free voice of its set, the quietest, the oldest; one
+   taken from another instance moves that one to starting; a new slot (`0x005BF260`, mask 0xF) that still has an
+   instance stops that one's voice, moves it to starting and gives none this frame, the voice taken from the set
+   left busy (a set of one voice never played then has none to give); a voice that does not play goes virtual,
+   neither held nor counted, `0x005BC9F4`). So of two instances of a set of one voice (the engine of
+   two cars of the same bank) the one after the keeper in the order gets none; only a louder one, coming first, takes
+   it. `0x005C11F0`: a loop's start drawn `rand() × 4 % its bytes` (given to the 3D player's `+0x50`, which
    does nothing), looping, the frequency `(its own + its random part) × the manager's pitch`, the volume (its group's),
    placed; a buffer not looping already is played. The others: virtual.
 6. The listener committed, the stopping ones stopped.
@@ -233,8 +246,12 @@ distance 0 (as Windows, the buffers keep 1); the rolloff FLT_MAX is asked for as
 with it: the places are deferred and their commit gives 0.001).
 
 The listener's data (`world + 0x28`) comes from the players' frame (`0x004205A0`): the players' count; for each its
-camera's world matrix and place, moved 100 cm back (views 3, 4, 6), 200 (5), and in views 5 and 6 neither panned nor
-looking back 100 cm to the side of the look and 100 forward again.
+camera's view matrix (the camera's `+0x48`, `0x00552A50`: `+0xC8`, the world matrix's inverse, made as the camera was
+last drawn) and place (the world matrix's, `+0x38`), moved along the view matrix's rows 100 cm back (views 3, 4, 6),
+200 (5), and in views 5 and 6 neither panned nor looking back 100 cm to the side of the look and 100 forward again.
+The voices' places are taken to the listener's axes by the view matrix's rows (`0x00407D80`), so a voice keeps its
+side as the camera turns. The garage's cut scene (`0x004C7C14`) and the rolling road (`0x004DF282`) give their view's
+camera the same way.
 
 The race camera's rain (`0x00401A4C`): in the wet `rain` (volume group 0, at the listener) looping, rolloff 0.0001; its
 volume goes by 0.2 of the way a frame (`0x0040686C`) to `(1 - clamp(|camera y - ground| × 0.001, 0, 1)) × the rain`,
@@ -279,8 +296,9 @@ low, mid and high (on and off filled each on its own), the splutters (an exhaust
 rpm) and `.vol` (three tables of four-knot curves, kept in the CarDef and their knots rebuilt from the ranges,
 `0x00494360`) give each slot's weight by the rpm (table 0) and the on/off mix by the load (table 2).
 
-The frame (`0x00494620`, from the car's sound frame `0x004875F0` after the road): the master volume (1.5 for cars the
-camera does not follow, 1 for its car), the clutch's slip, the down-shift blip, the smoothed throttle, a splutter
+The frame (`0x00494620`, from the car's sound frame `0x004875F0` after the road): the master volume (0 for another
+machine's car whose race is paused, `+0x4EC`; 1.5 for cars the camera does not follow, 1 for its car), the clutch's
+slip, the down-shift blip, the smoothed throttle, a splutter
 (`rand()` every call, a second when it fires), the volumes, the transmission's whine by the driven wheels' spin, the
 pitch with the shift's dip (`rand()` as a dip starts and repeats), the turbo's whine and dump (`rand()` as a dump
 plays), the nitro. A gear up (`0x00495240`) or down (`0x004952A0`) is told after the frame. The camera's car takes its

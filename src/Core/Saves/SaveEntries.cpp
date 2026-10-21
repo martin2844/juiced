@@ -90,53 +90,63 @@ const std::vector<std::pair<uint32_t, uint32_t>>& Settings::layout() {
 
 Settings Settings::defaults(int languageIndex) {
     Settings s;
+    // The constructor (0x00409750): the crew's paint scheme's base, metallic, pearl and their amounts, then the
+    // defaults (0x004097F0).
+    s.setU32(kScheme, 0xFFFFFFFF);
+    s.setU32(kScheme + 4, 0xFF000000);
+    s.setU32(kScheme + 8, 0xFFFFFFFF);
+    const float amounts[2] = {0.5f, 0.1f};
+    std::memcpy(s.object.data() + kScheme + 12, amounts, sizeof amounts);
+    s.reset(languageIndex);
+    return s;
+}
+
+void Settings::reset(int languageIndex) {
     auto f32 = [&](uint32_t offset, float v) {
         uint32_t bits = 0;
         std::memcpy(&bits, &v, 4);
-        s.setU32(offset, bits);
+        setU32(offset, bits);
     };
-    auto u16 = [&](uint32_t offset, uint16_t v) { std::memcpy(s.object.data() + offset, &v, 2); };
+    auto u16 = [&](uint32_t offset, uint16_t v) { std::memcpy(object.data() + offset, &v, 2); };
     constexpr uint32_t kNone = 0xFFFFFFFF;
     constexpr uint32_t kUnset = 9999;
-    // The constructor (0x00409750): the crew's paint scheme's base, metallic, pearl and their amounts, then the
-    // defaults (0x004097F0).
-    s.setU32(kScheme, kNone);
-    s.setU32(kScheme + 4, 0xFF000000);
-    s.setU32(kScheme + 8, kNone);
-    f32(kScheme + 12, 0.5f);
-    f32(kScheme + 16, 0.1f);
     f32(kMusicVolume, 0.9f);
     f32(kEffectsVolume, 0.75f);
     f32(kSpeechVolume, 1.0f);
-    s.setU32(kSpeakers, 1);
+    setU32(kSpeakers, 1);
     f32(kCustomDifficulty, 3.0f);
-    s.setU32(kCustomLaps, 3);
-    s.setU32(kCustomOpponents, 2);
+    setU32(kCustomLaps, 3);
+    setU32(kCustomOpponents, 2);
     using Offsets = std::initializer_list<uint32_t>;
-    for (uint32_t o : Offsets{0x1C, kAids, kMap, kAutomatic, kAutomatic + 4, kOnline, kVoiceChat}) s.setU32(o, 1);
-    for (uint32_t o : Offsets{kLogo, kSteeringWheel, kView, kView + 4, kDifficulty}) s.setU32(o, 0);
-    for (uint32_t i : {5u, 6u, 9u, 10u, 11u, 12u, 14u, 15u, 16u}) s.setU32(kScheme + 4 * i, kNone);
-    s.setU32(kMph, languageIndex == 0 ? 1 : 0);
-    for (uint32_t o : Offsets{kWheelForce, kWheelForce + 4, 0x68, 0x6C}) s.setU32(o, 1);
+    for (uint32_t o : Offsets{0x1C, kAids, kMap, kAutomatic, kAutomatic + 4, kOnline, kVoiceChat}) setU32(o, 1);
+    for (uint32_t o : Offsets{kLogo, kSteeringWheel, kView, kView + 4, kDifficulty}) setU32(o, 0);
+    // The scheme's values from the sixth (the first five are the constructor's alone).
+    for (uint32_t i : {5u, 6u, 9u, 10u, 11u, 12u, 14u, 15u, 16u}) setU32(kScheme + 4 * i, kNone);
+    for (uint32_t i : {7u, 8u, 13u}) setU32(kScheme + 4 * i, 0);
+    setU32(kMph, languageIndex == 0 ? 1 : 0);
+    for (uint32_t i = 0; i < 4; ++i) setU32(kDriverMap + 4 * i, 0);
+    for (uint32_t o : Offsets{kWheelForce, kWheelForce + 4, 0x68, 0x6C}) setU32(o, 1);
+    for (uint32_t o : Offsets{kWheelSpeed, kWheelSpeed + 4}) setU32(o, 0);
     for (uint32_t o : Offsets{kWheelStrength, kWheelStrength + 4, kSensitivity, kSensitivity + 4}) f32(o, 0.5f);
     u16(kOnlineNick, 0);
     u16(kOnlineEmail, 0);
     u16(kOnlinePassword, 0);
-    s.setU32(kCustomTimeOfDay, 2);
-    s.setU32(kCustomWeather, 1);
-    std::memcpy(s.object.data() + kCrewName, "The Z's", 8);
-    for (uint32_t i = 0; i < 4; ++i) s.setU32(kSongs + 4 * i, kNone);
+    setU32(kCustomTimeOfDay, 2);
+    setU32(kCustomWeather, 1);
+    std::memcpy(object.data() + kCrewName, "The Z's", 8);
+    for (uint32_t i = 0; i < 4; ++i) setU32(kSongs + 4 * i, kNone);
+    setU32(0x21C, 0);
     u16(0x220, 0);
     u16(0x26C, 0);
-    for (uint32_t o : {0x24Cu, 0x250u, 0x254u, 0x294u, 0x2ACu, 0x2B0u}) s.setU32(o, 1);
+    for (uint32_t o : {0x240u, 0x268u, 0x28Cu, 0x29Cu, 0x2A0u, 0x2A4u, 0x2A8u, 0x2C0u, 0x2CCu}) setU32(o, 0);
+    for (uint32_t o : {0x24Cu, 0x250u, 0x254u, 0x294u, 0x2ACu, 0x2B0u}) setU32(o, 1);
     for (uint32_t o : {0x248u, 0x258u, 0x25Cu, 0x260u, 0x264u, 0x2B4u, 0x2B8u, 0x2C4u, 0x2C8u, 0x2D0u}) {
-        s.setU32(o, kUnset);
+        setU32(o, kUnset);
     }
-    s.setU32(0x298, 7);
-    s.setU32(0x2BC, 7);
-    std::memcpy(s.object.data() + kVoiceInput, "none", 5);
-    std::memcpy(s.object.data() + kVoiceOutput, "none", 5);
-    return s;
+    setU32(0x298, 7);
+    setU32(0x2BC, 7);
+    std::memcpy(object.data() + kVoiceInput, "none", 5);
+    std::memcpy(object.data() + kVoiceOutput, "none", 5);
 }
 
 uint32_t Settings::u32(uint32_t offset) const {

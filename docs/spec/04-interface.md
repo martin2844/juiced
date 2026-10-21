@@ -406,6 +406,11 @@ alpha 1 - the nearness (at least 0, no more than the colour's).
 `+0x118` (1, down by the frame time, x 12 while a switch waits, back to 1 below 0.2) only becomes the alpha of the
 selected picture's colour after that picture is drawn.
 
+A textured item's pictures are the textures its two names loaded (`+0x48` its own, `+0x4C` the highlight's, by
+`0x005A8AC0` as `0x005AF480` makes it; a name the game's files do not have leaves 0). With neither the item has no
+picture (`0x005B06D2`); the selected item is drawn with the highlight's, else its own (`0x005B0964`); another only
+with its own (`0x005B0AE0`).
+
 AutoArrows (`0x005B0D87`, after the items and the end of the clip, before the help ticker), on a HORIZONTAL menu
 whose widest item is not 0: the arrows' distance from the menu's middle (`+0x198`) moves toward its target (`+0x19C`)
 by (target - distance) x the front end's frame time x 10; the target is (the selected item's text width in the

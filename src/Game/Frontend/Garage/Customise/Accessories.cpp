@@ -163,8 +163,9 @@ void NeonMenu::update(GarageHost& host, ui::Screen& s, uint32_t event) {
 }
 
 // 0x0043ED70: the base enter; the price and its box come in; the price 100; the car's dial colours (+0x30, +0x34)
-// kept; COLOURMENU holds each [DialColour] of the CarDefs in its first colour (ui_dials_off, ui_dial_choose), the
-// car's highlighted; MPH "MPH" or "KPH" (1494, 1495) by the settings' units (+0x94).
+// kept; COLOURMENU holds each [DialColour] of the CarDefs in its first colour (ui_dials_off, ui_dial_choose: Stock
+// problem, not in the game's files, so the highlighted dial is drawn with ui_dials_off), the car's highlighted; MPH
+// "MPH" or "KPH" (1494, 1495) by the settings' units (+0x94).
 void HudColourMenu::enter(GarageHost& host, ui::Screen& s) {
     GameData* data = host.gameData();
     const TextTable& texts = host.gameTexts();

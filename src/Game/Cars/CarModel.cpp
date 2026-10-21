@@ -113,8 +113,7 @@ std::unique_ptr<CarModel> CarModel::load(Engine& engine, const Car& car, const P
     return m;
 }
 
-// The body parts, the wheels and the exhaust of the car put in the model's slots (in CarModel::load; again after the
-// car's parts changed, 0x0045A8A0).
+// The body parts, the wheels and the exhaust of the car put in the model's slots (in CarModel::load).
 void CarModel::fitParts(Car& car, const PartCatalogue& catalogue) {
     if (car.def == nullptr) return;
     const CarDef& def = *car.def;
@@ -144,7 +143,26 @@ void CarModel::fitParts(Car& car, const PartCatalogue& catalogue) {
                                      : std::string();
         fillBody(static_cast<int>(category), part);
     }
+    fitWheelsAndExhaust(car, catalogue);
+}
 
+void CarModel::refitParts(Car& car, const PartCatalogue& catalogue) {
+    if (car.def == nullptr) return;
+    for (size_t category = 0; category < 9; ++category) {
+        const CarPartList& list = car.def->parts[category];
+        if (list.parts.empty()) continue;
+        const auto chosen = static_cast<int8_t>(car.body[category]);
+        const std::string part = chosen >= 0 && chosen != 0x7F && static_cast<size_t>(chosen) < list.parts.size()
+                                     ? list.parts[static_cast<size_t>(chosen)].model
+                                     : std::string();
+        fillBody(static_cast<int>(category), part);
+    }
+    fitWheelsAndExhaust(car, catalogue);
+}
+
+void CarModel::fitWheelsAndExhaust(const Car& car, const PartCatalogue& catalogue) {
+    if (car.def == nullptr) return;
+    const CarDef& def = *car.def;
     // The wheels (0x0048ABC0): the CarDef's STANDARDWHEELS from the car's folders, else the catalogue wheel's mesh
     // from the shared ones (one past the list: the wheels as they were); the same mesh front and rear.
     const uint8_t chosenWheel = car.mods[kWheel];

@@ -172,7 +172,10 @@ void Frontend::startLoader(const std::string& window, const std::string& animati
     m_loadingFrontEnd = true;
     m_loader.askTips();
     enter(window);
-    m_popups.push_back(Popup{animation, makeScreen(animation)});
+    std::shared_ptr<ui::Screen> screen = makeScreen(animation);
+    // 0x004639BE: the arcade's animation's TEXT over several lines (the others' as their .ui has them).
+    if (screen && is(animation, "arcade_loader_anim")) screen->setMultiline("TEXT", true);
+    m_popups.push_back(Popup{animation, std::move(screen)});
 }
 
 std::shared_ptr<ui::Screen> Frontend::makeScreen(const std::string& name) {

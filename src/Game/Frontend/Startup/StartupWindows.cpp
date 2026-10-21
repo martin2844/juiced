@@ -63,9 +63,12 @@ void Title::enter(StartupHost& host, ui::Screen& s) {
     GameData* data = host.gameData();
     const TextTable& texts = host.gameTexts();
     host.releaseInput();
-    // 0x00467060: the save system's settings go back to a new driver's and the music is shuffled again.
+    // 0x00467060: the save system's settings go back to a new driver's (0x004097F0: the volumes read below are the new
+    // driver's, not the ones of the save loaded before) and the music is shuffled again.
+    std::optional<save::Settings>& settings = host.driverSettings();
+    if (settings) settings->reset(host.language().index);
     if (data) {
-        data->shuffleMusic(save::Settings::defaults(host.language().index), gameRandom());
+        data->shuffleMusic(settings ? *settings : save::Settings::defaults(host.language().index), gameRandom());
     }
     // The game's sounds resumed as 0x0040D8E0 with 0 does it; the renderer's +0x38 with 2 (empty on the PC); the music's
     // and the effects' volumes of the settings (the speech's not); the front end's +0x18 .. +0x24 0 (the players'

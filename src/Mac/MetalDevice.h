@@ -8,7 +8,8 @@ class MetalDevice final : public IRenderDevice {
     Backend backend() const override;
     std::string adapterName() const override;
     std::string description() const override;
-    bool beginFrame(const Color &clear) override;
+    bool beginFrame() override;
+    void setMaterialClass(uint32_t id) override;
     void endFrame() override;
     void resize(uint32_t width, uint32_t height) override;
     void drawDebugTriangles(const DebugVertex *vertices, uint32_t count) override;

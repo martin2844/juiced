@@ -34,6 +34,10 @@ public:
     void cruise(const HudRace& race);
     // 0x0044B1C0 (the players' messages run down in the race front end's frame, 0x00456300: TrackView).
     void update(const HudRace& race, float dt);
+    // 0x0044D827 .. 0x0044D88E, the frame's end: the window manager's windows not drawn this frame (its +0x50) while
+    // the first player's camera plays the fly-by or the sweep before the start (9, 10), and with one player while it
+    // looks back or, from the bumper or the bonnet (5, 6), pans.
+    bool hidesWindows() const { return m_hidesWindows; }
     // 0x0044A450: the window let go (+0x18); the crew's orders' window and lines (the race drivers' +0x38 .. +0x5C)
     // cleared; each player's messages emptied.
     void leave();
@@ -105,6 +109,7 @@ private:
     int m_turbo = -1;               // +0x234
     int m_revMeter = -1;            // +0x23C
     bool m_mapShown = false;        // +0x244: the map's setting as last applied
+    bool m_hidesWindows = false;    // the frame's ask that the windows go undrawn (the window manager's +0x50)
     int m_map3d = -1;               // +0x240: MAP3D
     scene::View3d* m_mapView = nullptr;
     bool m_mapReady = false;        // +0x248

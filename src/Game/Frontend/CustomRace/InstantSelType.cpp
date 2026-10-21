@@ -61,17 +61,32 @@ void InstantSelType::enter(CustomRaceHost& host, ui::Screen& s) {
     }
 }
 
-// 0x0045B390: BackMenu follows Menu. SELECT on an item (CLICK): cruise the profile's +0x634 0, type 4, laps 99999,
-// one player, no opponents, clear (1) at morning (1); solo type 3, laps 99999, one player, no opponents; race type 5,
-// a lap, one player; sprint type 6, +0x08 0, +0x0C 3 (1 on the network), a lap, one player; then instant_setup. BACK
-// (CLICK): instant_selcar (mode 3).
+// 0x0045B390: BackMenu follows Menu. On the network the shared checks (0x0046E0F0, the stage 1, as instant_manu's);
+// a client highlights the item whose value is the type the host sent ([0x007191CC], gliding), Menu taking no events
+// (+0x178 0), and goes no further. SELECT on an item: the host sends its value (0x004EA7F0); CLICK; cruise the
+// profile's +0x634 0, type 4, laps 99999, one player, no opponents, clear (1) at morning (1), on the network the laps
+// sent (0x004EA760); solo type 3, laps 99999, one player, no opponents; race type 5, a lap, one player; sprint type
+// 6, +0x08 0, +0x0C 3 (1 on the network), a lap, one player; then instant_setup. BACK off the network (CLICK):
+// instant_selcar (mode 3); on it the shared checks take BACK.
 void InstantSelType::update(CustomRaceHost& host, ui::Screen& s, uint32_t event) {
     GameData* data = host.gameData();
     const size_t item = s.selectedMenuItem("Menu");
     if (s.find("BackMenu") >= 0) s.selectMenuItem("BackMenu", item);
+    if (network() != nullptr) {
+        if (host.netKeys(event, net::SessionStage::RaceKind, true)) return;
+        if (client()) {
+            const auto type = static_cast<float>(network()->session.raceType());
+            for (size_t i = 0; i < s.menuSize("Menu"); ++i) {
+                if (s.menuItemValue("Menu", i) == type) s.selectMenuItem("Menu", i, true);
+            }
+            s.setMenuActive("Menu", false);
+            return;
+        }
+    }
     if (data == nullptr) return;
     RaceSetup& race = data->race;
     if (event == input::kSelect && s.menuSize("Menu") != 0) {
+        if (hosting()) network()->session.sendRaceType(x87::chop(s.menuItemValue("Menu", item)));
         host.sound("CLICK");
         const std::string name = s.menuItemCommand("Menu", item);
         if (same(name, "cruise")) {
@@ -82,6 +97,7 @@ void InstantSelType::update(CustomRaceHost& host, ui::Screen& s, uint32_t event)
             race.opponents = 0;
             race.weather = 1;
             race.timeOfDay = 1;
+            if (network() != nullptr) network()->session.sendLaps(99999);
         } else if (same(name, "solo")) {
             race.type = RaceType::Solo;
             race.laps = 99999;
@@ -94,12 +110,12 @@ void InstantSelType::update(CustomRaceHost& host, ui::Screen& s, uint32_t event)
         } else if (same(name, "sprint")) {
             race.type = RaceType::Sprint;
             race.heat = 0;
-            race.heats = 3;
+            race.heats = network() == nullptr ? 3 : 1;
             race.laps = 1;
             race.players = 1;
         }
         host.request("instant_setup", SwitchMode::Replace);
-    } else if (event == input::kBack) {
+    } else if (event == input::kBack && network() == nullptr) {
         host.sound("CLICK");
         host.request("instant_selcar", SwitchMode::ReplaceAfterTransitions);
     }

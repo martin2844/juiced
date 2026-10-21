@@ -374,6 +374,7 @@ void Renderer3d::applySampler(const SamplerParams& p, uint32_t stage) {
 }
 
 void Renderer3d::beginMaterialPass(Material& material, uint32_t pass) {
+    m_device.setMaterialClass(material.classId());
     if (m_current != nullptr && m_current != &material) {
         if (Program* p = m_current->program()) p->end();
     }
@@ -387,6 +388,7 @@ void Renderer3d::beginMaterialPass(Material& material, uint32_t pass) {
 }
 
 void Renderer3d::endMaterial() {
+    m_device.setMaterialClass(UINT32_MAX);
     if (m_current != nullptr) {
         if (Program* p = m_current->program()) p->end();
     }

@@ -4,7 +4,8 @@
 
 - Upstream: https://gitlab.com/sidecr3w/openjuice
 - Branch: `retail/1.01/dx9`
-- Revision: `bd7e638b187e999c13f85a608d007108a228a05b`
+- Original import: `bd7e638b187e999c13f85a608d007108a228a05b`
+- Upstream fixes synchronized through: `2805fd2` (2026-10-21)
 - SDL 3: `829a65d769d935c4852f8159e964312c0957260a`
 - MojoShader: `ad5dff84830c2863c841f4b1f4e3df78c705b383`
 
@@ -48,6 +49,16 @@ cmake --build out --target juiced_shader_check -j 8
 Files must be `.bin`, one D3D shader each. No proprietary shader binaries are included.
 
 The 0.2.1 reflection fix corrects legacy car/glass shaders that previously sampled cube maps as 2D textures. A standalone Metal regression checks six cube faces and alternates cube/2D bindings on the same shader, including a nonzero sampler slot. All 137 retail shaders still compile. A 1,800-frame race and a car-selection capture confirm corrected glass reflections; this is not a claim of complete lighting parity.
+
+## 0.3.0 update
+
+All changes between the original import and upstream `2805fd2` are incorporated, including the rain cleanup already present, audio voice ownership/fades and listener orientation, starting-grid order, HUD visibility/targets, garage part removal and lowering, title settings reset, menu pictures, message brackets, credits and online race-type selection. Metal now preserves frame colour for menu transitions and clears newly allocated back buffers. The Mac controls overlay and SDL input remain the active platform implementations; upstream DirectInput configuration, Windows system-menu handling and the standalone Windows configuration program are retained as source but are not Mac features. Windows-only system-command tests are excluded; the configuration data's portable tests run on Mac.
+
+The native renderer applies a deliberate material calibration: paint ambient/directional RGB is multiplied by 1.65 at upload, without modifying stored lighting or alpha. Car-glass cube-sample RGB is multiplied by 0.35 before the original shader mixes reflections, leaving its alpha and ordinary textures unchanged. Other materials and the UI retain their lighting. This is a visual adjustment requested for the port, not evidence of exact original-game lighting. It does not modify game assets, saved paint colours, or car physics.
+
+Validation includes the four CTest checks, all 137 retail shader translations, the newly imported garage/frontend/race/audio regression suites, night-race captures, and a daytime Beetle capture. The Metal regression checks retained frame colour, all six cube faces, 2D/cube switching, glass attenuation, paint lighting and restoration of ordinary lighting after a paint draw. Audio integration tests use SDL's dummy sink with the actual native mixer and game banks.
+
+Handling research (2026-10-21): [JuicedFixes](https://github.com/GrimMaple/JuicedFixes) offers XInput and crash fixes for the original Windows executable, not a physics overhaul. [JuicedEditor](https://github.com/N1GHT-MAR3/JuicedEditor) edits the Windows executable for online support, cheats and unlocks; development ended on 2026-10-02. No verified ready-to-install Juiced 1 handling overhaul was found in the public sources searched. Neither Windows executable patch is directly applicable to this native engine. The engine already exposes steering sensitivity, speed-sensitive steering and steering ramp speed in `Core/Race/DriverControl`; handling tuning can be implemented here independently. No handling mod or grip changes are enabled by this release.
 
 ## Remaining work
 

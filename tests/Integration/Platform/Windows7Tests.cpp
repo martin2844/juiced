@@ -1,11 +1,12 @@
 // Integration tests: Windows7.
-// OpenJuice runs on Windows 7 (the build targets _WIN32_WINNT 0x0601). The executable of the tests' own configuration
-// (beside them: OpenJuice64.exe, OpenJuice.exe, their _d) is checked as the system's loader sees it: its header asks
-// for Windows 6.1 at most and every function it imports is one Windows 7 has. The list of those is checked by the
-// compiler: each name is taken from the SDK's headers as they declare it for 0x0601, and a function of a later Windows
-// is not declared there, so a wrong entry does not build. An import not on the list fails with its name: a function
-// of a later Windows needs a way round (Game/Platform/Win7Imports.cpp), one of Windows 7 its entry here. The functions
-// the executable runs in place of Windows 8's (Game/Platform/Windows7.h) are checked doing what those do.
+// OpenJuice runs on Windows 7 (the build targets _WIN32_WINNT 0x0601). The executables of the tests' own configuration
+// (beside them: OpenJuice64.exe, OpenJuice.exe, their _d, and OpenJuiceConfig's) are checked as the system's loader
+// sees them: each one's header asks for Windows 6.1 at most and every function it imports is one Windows 7 has. The
+// list of those is checked by the compiler: each name is taken from the SDK's headers as they declare it for 0x0601,
+// and a function of a later Windows is not declared there, so a wrong entry does not build. An import not on the list
+// fails with its name: a function of a later Windows needs a way round (Game/Platform/Win7Imports.cpp), one of
+// Windows 7 its entry here. The functions the game runs in place of Windows 8's (Game/Platform/Windows7.h) are
+// checked doing what those do.
 
 #include "Framework/Test.h"
 
@@ -22,7 +23,9 @@
 #include <mmreg.h>
 #include <dsound.h>
 #include <objbase.h>
+#include <oleauto.h>
 #include <shlobj.h>
+#include <commctrl.h>
 
 #include <algorithm>
 #include <cstddef>
@@ -39,7 +42,8 @@ namespace {
 
 using oj::test::check;
 
-// A function Windows 7 has: imported by name, or by its ordinal (WS2_32's and DSOUND's, by their import libraries).
+// A function Windows 7 has: imported by name, or by its ordinal (WS2_32's, DSOUND's and OLEAUT32's, by their import
+// libraries).
 struct Windows7Function {
     const char* dll;
     const char* name;
@@ -51,7 +55,7 @@ struct Windows7Function {
 #define OJ_WIN7_ORDINAL(dll, ordinal, function) \
     Windows7Function{dll, (static_cast<void>(sizeof(&::function)), #function), ordinal}
 
-// What the four executables import (Release and Debug, x86 and x64).
+// What the executables import (Release and Debug, x86 and x64).
 const Windows7Function kWindows7[] = {
     // KERNEL32.dll
     OJ_WIN7("KERNEL32.dll", AcquireSRWLockExclusive),
@@ -225,23 +229,32 @@ const Windows7Function kWindows7[] = {
     OJ_WIN7("USER32.dll", CreateWindowExA),
     OJ_WIN7("USER32.dll", DefWindowProcA),
     OJ_WIN7("USER32.dll", DestroyWindow),
+    OJ_WIN7("USER32.dll", DialogBoxParamA),
+    OJ_WIN7("USER32.dll", DialogBoxParamW),
     OJ_WIN7("USER32.dll", DispatchMessageA),
     OJ_WIN7("USER32.dll", EnableWindow),
+    OJ_WIN7("USER32.dll", EndDialog),
     OJ_WIN7("USER32.dll", FindWindowA),
     OJ_WIN7("USER32.dll", GetActiveWindow),
     OJ_WIN7("USER32.dll", GetClientRect),
     OJ_WIN7("USER32.dll", GetCursor),
     OJ_WIN7("USER32.dll", GetDesktopWindow),
+    OJ_WIN7("USER32.dll", GetDlgItem),
     OJ_WIN7("USER32.dll", GetForegroundWindow),
     OJ_WIN7("USER32.dll", GetMonitorInfoA),
     OJ_WIN7("USER32.dll", LoadCursorA),
     OJ_WIN7("USER32.dll", LoadIconA),
     OJ_WIN7("USER32.dll", LoadImageA),
+    OJ_WIN7("USER32.dll", LoadStringA),
+    OJ_WIN7("USER32.dll", LoadStringW),
     OJ_WIN7("USER32.dll", MessageBoxA),
     OJ_WIN7("USER32.dll", MessageBoxW),
     OJ_WIN7("USER32.dll", PeekMessageA),
     OJ_WIN7("USER32.dll", PostQuitMessage),
     OJ_WIN7("USER32.dll", RegisterClassA),
+    OJ_WIN7("USER32.dll", SendMessageA),
+    OJ_WIN7("USER32.dll", SendMessageW),
+    OJ_WIN7("USER32.dll", SetActiveWindow),
     OJ_WIN7("USER32.dll", SetCursor),
     OJ_WIN7("USER32.dll", SetFocus),
     OJ_WIN7("USER32.dll", ShowCursor),
@@ -265,6 +278,11 @@ const Windows7Function kWindows7[] = {
     OJ_WIN7("ole32.dll", CoInitialize),
     OJ_WIN7("ole32.dll", CoInitializeEx),
     OJ_WIN7("ole32.dll", CoUninitialize),
+    // OLEAUT32.dll
+    OJ_WIN7_ORDINAL("OLEAUT32.dll", 8, VariantInit),
+    OJ_WIN7_ORDINAL("OLEAUT32.dll", 9, VariantClear),
+    // COMCTL32.dll
+    OJ_WIN7("COMCTL32.dll", InitCommonControlsEx),
     // WS2_32.dll
     OJ_WIN7_ORDINAL("WS2_32.dll", 1, accept),
     OJ_WIN7_ORDINAL("WS2_32.dll", 2, bind),
@@ -317,14 +335,15 @@ const Windows7Function kWindows7[] = {
 #undef OJ_WIN7
 #undef OJ_WIN7_ORDINAL
 
-// The executable of the tests' configuration, beside them.
-std::filesystem::path executable() {
+// An executable of the tests' configuration, beside them: the game's (OpenJuice) or the settings tool's
+// (OpenJuiceConfig).
+std::filesystem::path executable(const std::wstring& base) {
     wchar_t tests[MAX_PATH] = {};
     GetModuleFileNameW(nullptr, tests, MAX_PATH);
 #if defined(_M_X64)
-    const std::wstring name = L"OpenJuice64";
+    const std::wstring name = base + L"64";
 #else
-    const std::wstring name = L"OpenJuice";
+    const std::wstring name = base;
 #endif
 #if defined(_DEBUG)
     return std::filesystem::path(tests).parent_path() / (name + L"_d.exe");
@@ -459,11 +478,9 @@ uint64_t ticks(const FILETIME& t) {
     return (static_cast<uint64_t>(t.dwHighDateTime) << 32) | t.dwLowDateTime;
 }
 
-}  // namespace
-
-// The executable starts on Windows 7: its header asks for 6.1 at most, and it imports only functions Windows 7 has.
-OJ_INTEGRATION_TEST(Windows7, Executable) {
-    const std::filesystem::path file = executable();
+// The executable starts on Windows 7: its header asks for 6.1 at most, and it imports only functions Windows 7 has
+// (at least the count given read).
+void checkStartsOnWindows7(const std::filesystem::path& file, size_t leastImports) {
     std::ifstream in(file, std::ios::binary);
     check(in.good(), "the executable beside the tests: " + file.filename().string());
     if (!in) return;
@@ -479,7 +496,7 @@ OJ_INTEGRATION_TEST(Windows7, Executable) {
           "the header asks for Windows 6.1 at most (the system " + std::to_string(pe.operatingSystem()) +
               ", the subsystem " + std::to_string(pe.subsystem()) + ")");
     const std::vector<PeFile::Import> imports = pe.imports();
-    check(imports.size() > 100, "the imports read (" + std::to_string(imports.size()) + ")");
+    check(imports.size() >= leastImports, "the imports read (" + std::to_string(imports.size()) + ")");
     std::string later;
     for (const PeFile::Import& import : imports) {
         if (onWindows7(import)) continue;
@@ -487,6 +504,14 @@ OJ_INTEGRATION_TEST(Windows7, Executable) {
     }
     check(later.empty(), "every import is one of Windows 7's" + (later.empty() ? std::string() : ", not:" + later));
 }
+
+}  // namespace
+
+// The game's executable starts on Windows 7.
+OJ_INTEGRATION_TEST(Windows7, Executable) { checkStartsOnWindows7(executable(L"OpenJuice"), 100); }
+
+// The settings tool's executable starts on Windows 7.
+OJ_INTEGRATION_TEST(Windows7, ConfigTool) { checkStartsOnWindows7(executable(L"OpenJuiceConfig"), 50); }
 
 // CreateFile2 without Windows 8: CreateFileW with its parameters' attributes and flags.
 OJ_INTEGRATION_TEST(Windows7, CreateFile2) {

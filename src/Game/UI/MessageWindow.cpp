@@ -95,7 +95,7 @@ void messageFont(Screen& s, bool small) {
 MessageClose messageEvent(Screen& s, const MessageState& m, bool network, bool entered, uint32_t event) {
     if (!s.transitionsDone()) return MessageClose::None;
     if (entered && s.find("MSG_MENU_BACK") >= 0 && s.isMenu("MSG_MENU")) {
-        s.selectMenuItem("MSG_MENU_BACK", s.selectedMenuItem("MSG_MENU"), true);
+        s.selectMenuItem("MSG_MENU_BACK", s.selectedMenuItem("MSG_MENU"));
     }
     switch (m.type) {
     case MessageType::Continue:

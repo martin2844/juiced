@@ -7,6 +7,7 @@
 #include "Core/Base/X87.h"
 #include "Core/Cars/CarCollection.h"
 #include "Core/Cars/CarPhysics.h"
+#include "Core/Race/StartingGrid.h"
 #include "Core/Network/OnlineRecords.h"
 
 #include <windows.h>
@@ -513,9 +514,19 @@ RaceSlot* TrackView::racerCamera() const {
     return slotOf(0);
 }
 
+oj::Spl::GridPoint TrackView::gridPlace(size_t i) const {
+    const RaceSlot& s = *cars[i];
+    const std::vector<oj::Spl::GridPoint>& grid = scene->lines().grid;
+    if (net != nullptr || grid.empty()) return s.place;
+    const size_t index = oj::startingGridIndex(rules.mode, rules.type, rules.heat, cars.size(), i);
+    return grid[index % grid.size()];
+}
+
 void TrackView::settleRace(oj::CrtRandom& random) {
     race->reset(random, 0.0f);
-    for (std::unique_ptr<RaceSlot>& s : cars) {
+    for (size_t i = 0; i < cars.size(); ++i) {
+        std::unique_ptr<RaceSlot>& s = cars[i];
+        const oj::Spl::GridPoint place = gridPlace(i);
         if (rules.type == RaceType::Sprint) s->body->nitroRate = 2.5f;
         s->car.steeringFault = false;
         s->car.turboLost = false;
@@ -528,8 +539,8 @@ void TrackView::settleRace(oj::CrtRandom& random) {
         if (s->car.hasNitro && s->car.carRecord != nullptr) {
             s->car.nitroWarning = oj::Car::asFloat(s->car.carRecord->nitro) == 0.0f ? 1 : 0;
         }
-        oj::settleOnGrid(*s->body, world->pools(), {s->place.x, s->place.y, s->place.z, 0.0f}, s->place.heading,
-                         firstSettle, world.get(), !rules.replayRace);
+        oj::settleOnGrid(*s->body, world->pools(), {place.x, place.y, place.z, 0.0f}, place.heading, firstSettle,
+                         world.get(), !rules.replayRace);
         oj::placeTracker(s->car);
         if (s->sound) s->sound->reset();  // +0x498's +0x34
     }

@@ -105,6 +105,15 @@ public:
     virtual void recreate() = 0;
 };
 
+// The platform's keyboard of the devices as far as the maps go (the input manager's +0x40, an IDirectInputDevice8 of
+// GUID_SysKeyboard): 0x005954D0's BuildActionMap and SetActionMap on it, each key (a DIK code) the map gives an action
+// with the action's uAppData; DirectInput's map of the user's when it keeps one (the controls' mapping window's).
+class KeyboardPort {
+public:
+    virtual ~KeyboardPort() = default;
+    virtual std::vector<std::pair<uint8_t, uint32_t>> setActionMap(const MapFormat& format) = 0;
+};
+
 // The kinds of a device's controls: a key or a button (vtable 0x006FC5F0, 0x00594030: 1 while its value is not 0), an
 // axis (0x006FC5B8, 0x00593F70: its value x 0.01) and an axis through the response table (0x006FC5F4, 0x00593F90).
 enum class ControlKind : uint8_t { Key, Axis, AxisTable };
@@ -192,6 +201,10 @@ public:
     void load(const std::vector<ActionMap>& maps);
     // 0x00591050: a device for each controller found, in the order DirectInput listed them; none: one device without.
     void setControllers(const std::vector<ControllerPort*>& controllers);
+    // The keyboard's maps; none (a test run, no DirectInput): each DIKEYBOARD_ action on its key.
+    void setKeyboard(KeyboardPort* keyboard) { m_keyboardPort = keyboard; }
+    // The uAppData of the action the keyboard's map gives a key (a DIK code), -1 for none.
+    int64_t keyAction(uint8_t key) const { return m_keyboard.appData[key]; }
 
     size_t deviceCount() const { return m_devices.size(); }
     const Device& device(size_t i) const { return m_devices[i]; }
@@ -216,6 +229,8 @@ public:
 
     void useUi(int player = 0);      // 0x00407FB0 for the player's controller
     void useDriver(int player = 0);  // 0x004080D0 for the player's controller
+    // The format the player's device registered last (the controls' mapping window's, 0x00595664); none without one.
+    const MapFormat* playerFormat(int player = 0) const;
     void release();    // 0x0058FEA0: no player devices (+0x28, +0x2C -1), every device emptied to raw (0x00595890)
     // The map the first player's device has registered last (that of the last device without a first player).
     Map map() const;
@@ -292,6 +307,7 @@ private:
     Controller* playerController(int player);
     uint32_t setting(save::Settings::Field field) const;  // the driver's settings' value
     void registerMap(const std::string& name, Device& device);  // 0x0058F890 with the device's +0x18 (0x005954D0)
+    void mapKeyboard(const MapFormat& format);                   // 0x005954D0's keyboard part
     void empty(Device& device);                                  // 0x00595890
     void pollDevice(Device& device, bool active, float dt);     // 0x00594C20
     void step(Device& device, float dt);                         // 0x00590B50
@@ -308,6 +324,7 @@ private:
     Keyboard m_keyboard;
     std::array<int32_t, 2048> m_table{};
     std::vector<MapFormat> m_formats;       // each device's format registered last (for 0x005957D6)
+    KeyboardPort* m_keyboardPort = nullptr;  // the input manager's +0x40
     ff::Wheels* m_wheels = nullptr;
 };
 

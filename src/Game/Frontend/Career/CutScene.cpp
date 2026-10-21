@@ -470,10 +470,11 @@ void CutScene::update(CareerHost& host, ui::Screen& s, uint32_t event) {
     if (!m_cars.empty()) {
         script(host, s);
         camera(host, s);
-        // The 3D world's listener: one, the view's camera's matrix and place.
+        // 0x004C7C14: the 3D world's listener: one, the view's camera's place and its view matrix (its +0x48,
+        // the world matrix's inverse).
         if (scene::View3d* view = sceneView(s); view != nullptr && world != nullptr) {
             const Mat34& m = view->camera().world();
-            world->manager().setListenerData({m[3], m[7], m[11], 0.0f}, m.data());
+            world->manager().setListenerData({m[3], m[7], m[11], 0.0f}, view->camera().view().data());
         }
     }
     if (!m_cars.empty() && m_cars.front()->sound) {

@@ -143,24 +143,29 @@ public:
     uint32_t rate2 = 0;
     float bytesPerFrame = 0.0f;
     int priority = 0;  // +0x18 (read by the slot strategy 0x005BF630)
-    uint32_t users = 0;  // +0x24: the virtual voices playing it this frame (0x005BE490 .. 0x005BE4C0)
+    // +0x24 (0x005BE490 .. 0x005BE4C0): the instances given or keeping one of its voices this frame (the manager's
+    // start and refresh); as many as its voices, acquire gives no other.
+    uint32_t users = 0;
+
+    // A voice's bit in the masks below: the x86's shifts take their count modulo 32 (a 33rd voice shares the first's).
+    static uint32_t bit(uint32_t i) { return 1u << (i & 31); }
 
     bool allBusy() const { return m_busyCount == instances(); }  // +0x30 (0x005BE3E0)
-    bool busy(uint32_t i) const { return (m_busy >> i) & 1; }   // +0x34
+    bool busy(uint32_t i) const { return (m_busy & bit(i)) != 0; }  // +0x34
     void acquire(uint32_t i);                                     // +0x38 (0x005BE420): +0x1C, +0x20, +0x28
     void release(uint32_t i);                                     // +0x3C (0x005BE450)
     uint32_t owner(uint32_t i) const { return m_owner[i]; }      // +0x54: the handle playing the voice
     void setOwner(uint32_t i, uint32_t handle) { m_owner[i] = handle; }  // +0x58
-    void markPlaying(uint32_t i) { m_playing |= 1u << i; }       // +0x5C
-    void clearPlaying(uint32_t i) { m_playing &= ~(1u << i); }   // +0x60
-    bool playing(uint32_t i) const { return (m_playing >> i) & 1; }  // +0x64
+    void markPlaying(uint32_t i) { m_playing |= bit(i); }        // +0x5C
+    void clearPlaying(uint32_t i) { m_playing &= ~bit(i); }      // +0x60
+    bool playing(uint32_t i) const { return (m_playing & bit(i)) != 0; }  // +0x64
     void setStart(uint32_t i, uint32_t seconds) { m_start[i] = seconds; }  // +0x30 array
     void setVolume(uint32_t i, float volume) { m_volume[i] = volume; }     // +0x34 array
 
     // +0xB8 (0x005C1B10): the first voice not busy, taken (0); 4 when all are.
     int findFree(uint32_t& voice);
-    // +0xBC (0x005C1B60): the quietest voice (the lowest of +0x34, scanned from the last) unless all are as quiet as
-    // their mean (1); else 4.
+    // +0xBC (0x005C1B60): the quietest voice (the lowest of +0x34, scanned from the last) unless as quiet as the
+    // unrolled loop's sums give (below four voices their mean) (1); else 4.
     int stealQuietest(uint32_t& voice) const;
     // +0xC0 (0x005C1C90): the voice started first (the lowest nonzero start, +0x30) (2); else 4.
     int stealOldest(uint32_t& voice) const;

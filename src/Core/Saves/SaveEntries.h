@@ -86,8 +86,13 @@ struct Settings {
     // The fields in the stock order (offset, size): 781 bytes in all.
     static const std::vector<std::pair<uint32_t, uint32_t>>& layout();
 
-    // The values of a new driver (0x004097F0); languageIndex: the game's language (+0x40 is 1 for English only).
+    // The values of a new driver (the constructor 0x00409750, then 0x004097F0); languageIndex: the game's language
+    // (+0x40 is 1 for English only).
     static Settings defaults(int languageIndex);
+    // 0x004097F0: a new driver's values over these (the title's enter, 0x00467060: going back to the start forgets
+    // the driver's volumes and the rest); the scheme's first five values (the constructor's) and the bytes it does
+    // not write stay as they are.
+    void reset(int languageIndex);
 
     uint32_t u32(uint32_t offset) const;
     void setU32(uint32_t offset, uint32_t value);

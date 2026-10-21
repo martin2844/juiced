@@ -232,7 +232,8 @@ public:
         std::array<Vec4, 4> places{};
     };
     Listeners& listeners() { return m_listeners; }
-    // A listener's place and the rows of its matrix (the first's by default).
+    // A listener's place and the rows of its matrix (the first's by default): the camera's view matrix (the world
+    // matrix's inverse, the camera's +0x48), whose rows give an offset in the listener's axes.
     void setListenerData(const Vec4& place, const float rows[12], size_t index = 0) {
         m_listeners.places[index] = place;
         for (int k = 0; k < 12; ++k) m_listeners.matrices[index][static_cast<size_t>(k)] = rows[k];

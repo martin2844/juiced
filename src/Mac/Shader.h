@@ -21,7 +21,7 @@ class Shader {
     const MOJOSHADER_parseData *parsed = nullptr;
     unsigned slots = 0;
     int attribute(MOJOSHADER_usage, int) const;
-    void uniforms(SDL_GPUCommandBuffer *, const Registers &) const;
+    void uniforms(SDL_GPUCommandBuffer *, const Registers &, float lightGain = 1.0f) const;
     SDL_GPUShader *forCubeSamplers(uint32_t mask);
 
   private:

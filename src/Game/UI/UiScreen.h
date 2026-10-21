@@ -214,6 +214,8 @@ public:
     size_t menuSize(const std::string& menu) const;
     // keepPosition: the highlight glides to the item instead of jumping (0x005AF8A0).
     void selectMenuItem(const std::string& menu, size_t index, bool keepPosition = false);
+    // The highlight's place (+0x148): the item it is at, or between two while it glides; 0 without the menu.
+    float menuPosition(const std::string& menu) const;
     // The menu's +0x178 (1 when made): a menu at 0 takes no window events (0x005B11A0).
     void setMenuActive(const std::string& menu, bool active);
     // The code's settings of a menu: its alignment (+0x158: 0 centre, 1 left, 2 right; the Align property's until

@@ -29,10 +29,11 @@ inline std::string format(const char* f, int v) {
     return buffer;
 }
 
-// The race types whose HUD keeps the records' panels (and leaves out the local and world times).
+// The race types whose HUD keeps the records' panels, as the HUD comes in and at each new lap (0x00448E01, 0x0044C6E0:
+// types 1, 2, 6, 4, 3 and 0, the lap time challenge's target among them); the others' fade.
 inline bool keepsPanels(RaceType type) {
     return type == RaceType::PerfectLap || type == RaceType::Speed || type == RaceType::Sprint ||
-           type == RaceType::Cruise || type == RaceType::Solo;
+           type == RaceType::Cruise || type == RaceType::Solo || type == RaceType::TimedLap;
 }
 
                                        // TARGET SPEED NOT REACHED

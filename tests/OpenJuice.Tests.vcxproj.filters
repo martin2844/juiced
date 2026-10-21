@@ -13,11 +13,17 @@
     <Filter Include="Integration\Audio">
       <UniqueIdentifier>{ECBB2303-8E59-51A1-98D9-2380B254828D}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Integration\Cars">
+      <UniqueIdentifier>{86A9301E-44DD-598D-9268-8918B352A8D6}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Integration\Frontend">
       <UniqueIdentifier>{66F5F269-E63F-52E4-8646-6D3CFDE96757}</UniqueIdentifier>
     </Filter>
     <Filter Include="Integration\GameData">
       <UniqueIdentifier>{3E2CD07F-3434-5754-95FD-A78CAAE2A394}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Integration\JuicedConfig">
+      <UniqueIdentifier>{1C7E5A93-4D28-5B61-A0F3-8E2D6B9C4F15}</UniqueIdentifier>
     </Filter>
     <Filter Include="Integration\Platform">
       <UniqueIdentifier>{78343DCC-B939-5F91-BBCF-82141D95D887}</UniqueIdentifier>
@@ -33,6 +39,9 @@
     </Filter>
     <Filter Include="Unit">
       <UniqueIdentifier>{7CB88817-9640-5D29-AC20-EEE63527310D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Unit\Audio">
+      <UniqueIdentifier>{4E8A2C61-3B7D-5F19-9A2E-6D0C1B5F7A34}</UniqueIdentifier>
     </Filter>
     <Filter Include="Unit\Base">
       <UniqueIdentifier>{C5991E1F-1179-56FE-BAE2-C893D66D9769}</UniqueIdentifier>
@@ -51,6 +60,9 @@
     </Filter>
     <Filter Include="Unit\Input">
       <UniqueIdentifier>{38AB6953-E512-525C-BF91-A498EB9ADF74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Unit\JuicedConfig">
+      <UniqueIdentifier>{9D3F6B42-7E15-5A8C-B6D4-2C8E0F1A3B57}</UniqueIdentifier>
     </Filter>
     <Filter Include="Unit\Network">
       <UniqueIdentifier>{AE405641-9751-5562-8327-3C88DC49B792}</UniqueIdentifier>
@@ -87,7 +99,28 @@
     <ClCompile Include="Integration\Audio\DirectSoundTests.cpp">
       <Filter>Integration\Audio</Filter>
     </ClCompile>
+    <ClCompile Include="Integration\Audio\SoundListenerTests.cpp">
+      <Filter>Integration\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Audio\VoiceManagerTests.cpp">
+      <Filter>Integration\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Cars\CarModelPartsTests.cpp">
+      <Filter>Integration\Cars</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Cars\CarViewTests.cpp">
+      <Filter>Integration\Cars</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Frontend\AudioOptionsTests.cpp">
+      <Filter>Integration\Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Frontend\InstantSelTypeTests.cpp">
+      <Filter>Integration\Frontend</Filter>
+    </ClCompile>
     <ClCompile Include="Integration\Frontend\MainMenuTests.cpp">
+      <Filter>Integration\Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Frontend\MenuPictureTests.cpp">
       <Filter>Integration\Frontend</Filter>
     </ClCompile>
     <ClCompile Include="Integration\Frontend\MessageWindowTests.cpp">
@@ -132,6 +165,9 @@
     <ClCompile Include="Integration\GameData\TracksTests.cpp">
       <Filter>Integration\GameData</Filter>
     </ClCompile>
+    <ClCompile Include="Integration\JuicedConfig\SystemChecksTests.cpp">
+      <Filter>Integration\JuicedConfig</Filter>
+    </ClCompile>
     <ClCompile Include="Integration\Network\HttpTests.cpp">
       <Filter>Integration\Network</Filter>
     </ClCompile>
@@ -159,6 +195,9 @@
     <ClCompile Include="Integration\Network\TransportTests.cpp">
       <Filter>Integration\Network</Filter>
     </ClCompile>
+    <ClCompile Include="Integration\Platform\DirectInputKeyboardTests.cpp">
+      <Filter>Integration\Platform</Filter>
+    </ClCompile>
     <ClCompile Include="Integration\Platform\Windows7Tests.cpp">
       <Filter>Integration\Platform</Filter>
     </ClCompile>
@@ -173,6 +212,9 @@
     </ClCompile>
     <ClCompile Include="Integration\Saves\UserSavesTests.cpp">
       <Filter>Integration\Saves</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Audio\SoundSetTests.cpp">
+      <Filter>Unit\Audio</Filter>
     </ClCompile>
     <ClCompile Include="Unit\Base\CpuInfoTests.cpp">
       <Filter>Unit\Base</Filter>
@@ -216,6 +258,9 @@
     <ClCompile Include="Unit\Input\UiInputTests.cpp">
       <Filter>Unit\Input</Filter>
     </ClCompile>
+    <ClCompile Include="Unit\JuicedConfig\ConfigDataTests.cpp">
+      <Filter>Unit\JuicedConfig</Filter>
+    </ClCompile>
     <ClCompile Include="Unit\Network\GameSpyPresenceTests.cpp">
       <Filter>Unit\Network</Filter>
     </ClCompile>
@@ -237,6 +282,9 @@
     <ClCompile Include="Unit\Platform\LanguageChoiceTests.cpp">
       <Filter>Unit\Platform</Filter>
     </ClCompile>
+    <ClCompile Include="Unit\Platform\SystemCommandTests.cpp">
+      <Filter>Unit\Platform</Filter>
+    </ClCompile>
     <ClCompile Include="Unit\Race\DriverControlTests.cpp">
       <Filter>Unit\Race</Filter>
     </ClCompile>
@@ -247,6 +295,12 @@
       <Filter>Unit\Race</Filter>
     </ClCompile>
     <ClCompile Include="Unit\Race\RaceWindowIdTests.cpp">
+      <Filter>Unit\Race</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Race\RaceHudTests.cpp">
+      <Filter>Unit\Race</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Race\StartingGridTests.cpp">
       <Filter>Unit\Race</Filter>
     </ClCompile>
     <ClCompile Include="Unit\Race\TrackViewEndTests.cpp">

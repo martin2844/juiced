@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.24)
-project(JuicedMac VERSION 0.2.1 LANGUAGES C CXX OBJCXX)
+project(JuicedMac VERSION 0.3.0 LANGUAGES C CXX OBJCXX)
 if(NOT APPLE)
   message(FATAL_ERROR "This target requires macOS")
 endif()
@@ -49,19 +49,20 @@ set_target_properties(juiced_app PROPERTIES
   OUTPUT_NAME "Juiced"
   MACOSX_BUNDLE_GUI_IDENTIFIER "org.openjuice.macos"
   MACOSX_BUNDLE_BUNDLE_NAME "Juiced"
-  MACOSX_BUNDLE_BUNDLE_VERSION "0.2.1"
-  MACOSX_BUNDLE_SHORT_VERSION_STRING "0.2.1")
+  MACOSX_BUNDLE_BUNDLE_VERSION "0.3.0"
+  MACOSX_BUNDLE_SHORT_VERSION_STRING "0.3.0")
 
 include(CTest)
 if(BUILD_TESTING)
   file(GLOB_RECURSE TESTS CONFIGURE_DEPENDS tests/Unit/*.cpp)
-  list(FILTER TESTS EXCLUDE REGEX "CpuInfoTests\\.cpp$|VoiceTests\\.cpp$")
+  list(FILTER TESTS EXCLUDE REGEX "CpuInfoTests\\.cpp$|VoiceTests\\.cpp$|SystemCommandTests\\.cpp$")
   file(GLOB_RECURSE INTEGRATION CONFIGURE_DEPENDS
     tests/Integration/GameData/*.cpp tests/Integration/Frontend/*.cpp
-    tests/Integration/Race/*.cpp tests/Integration/Saves/*.cpp)
+    tests/Integration/Race/*.cpp tests/Integration/Saves/*.cpp
+    tests/Integration/Cars/*.cpp tests/Integration/Audio/SoundListenerTests.cpp tests/Integration/Audio/VoiceManagerTests.cpp)
   # Binary-comparison tests require the original Windows executable, not just game assets.
   list(FILTER INTEGRATION EXCLUDE REGEX "ExeTablesTests\\.cpp$")
-  add_executable(juiced_tests ${TESTS} ${INTEGRATION} tests/Framework/TestMain.cpp tests/Framework/Fixtures.cpp src/Mac/TestMain.cpp)
+  add_executable(juiced_tests ${TESTS} ${INTEGRATION} tests/Framework/TestMain.cpp tests/Framework/Fixtures.cpp src/Mac/TestMain.cpp src/JuicedConfig/ConfigData.cpp)
   target_include_directories(juiced_tests PRIVATE tests)
   target_link_libraries(juiced_tests PRIVATE juice_game)
   add_test(NAME core_regression COMMAND juiced_tests --unit)

@@ -90,7 +90,12 @@ The race is set up on the loading thread (`0x00424270`, after the track), its ra
    competitor (`0x0049FCE0`, reset by `0x0049B5D0`, 4 values);
 3. every competitor's neighbours (`0x004A0030`);
 4. the cars to the grid (`0x004975A0`): the race's state reset, then each car settled (`16-physics.md`, "The race
-   start"), the world's grid made anew for each.
+   start"), the world's grid made anew for each. Car i of the race's cars (in the order made) takes the route's grid
+   point (`0x004976A5`): on the network the session's grid place it was made with (`+0x4F0`); in a career race (mode 2)
+   the i-th; else (an arcade, custom, split screen or attract race) the count less i less 1, so the first cars made
+   (the players') start at the back (arcade 1-1's player, its first entry, on the sixth point, the second row); a
+   sprint's (type 6) moved on by its heat (`[G+0x6C]+0x08`, -1 as 0) within the count. The cars' own places at their
+   making (`0x00485530`, the k-th point) are not where they start.
 
 The race runs from there: through the fly-by the count stands at 99 (set on its first frame) and falls, the cars'
 physics, the competitors' frames and the grid throttles go on; at the fly-by's end the count is 6

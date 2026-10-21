@@ -27,9 +27,10 @@ Both read the same installation and the same saves; they differ only where the p
 The releases are on the project's [Releases](https://gitlab.com/sidecr3w/openjuice/-/releases) page. Each release
 has, for each version:
 
-- the release build: `OpenJuice.exe` (32-bit) and `OpenJuice64.exe` (64-bit);
-- the debug build: `OpenJuice_d.exe` and `OpenJuice64_d.exe` with their `.pdb` files, slower, for tracking problems
-  down;
+- the release build: `OpenJuice.exe` (32-bit) and `OpenJuice64.exe` (64-bit), and the settings tool
+  `OpenJuiceConfig.exe` and `OpenJuiceConfig64.exe`;
+- the debug build: `OpenJuice_d.exe`, `OpenJuice64_d.exe`, `OpenJuiceConfig_d.exe` and `OpenJuiceConfig64_d.exe`
+  with their `.pdb` files, slower, for tracking problems down;
 - the source of that version.
 
 Either the 32-bit or the 64-bit executable will do. The 32-bit one plays the game's movies with the game's own
@@ -48,8 +49,8 @@ MSBuild OpenJuice.slnx -p:Configuration=Release -p:Platform=x64
 MSBuild OpenJuice.slnx -p:Configuration=Release -p:Platform=x86
 ```
 
-The executables land in `bin\x64\Release\` and `bin\Win32\Release\` (`Debug` for the debug builds), with
-`OpenJuice.Tests.exe` beside them.
+The executables land in `bin\x64\Release\` and `bin\Win32\Release\` (`Debug` for the debug builds), the settings
+tool's and `OpenJuice.Tests.exe` beside them.
 
 ## First start
 
@@ -60,6 +61,16 @@ start there either. The first start writes `OpenJuice.ini` next to the executabl
 
 The game's own settings (resolution, windowed, antialiasing, ..) are those of the game's `JuicedConfig.exe`; when
 none are saved yet, OpenJuice starts `JuicedConfig.exe` first, as the stock game does.
+
+## The settings tool
+
+`OpenJuiceConfig.exe` (and `OpenJuiceConfig64.exe`) is OpenJuice's copy of `JuicedConfig.exe`, the same window
+writing the same settings (`docs/spec/30-juiced-config.md`). Put it in the game's folder too; renamed
+`JuicedConfig.exe` (keep the original under another name), it is the one the game starts. Its texts are in the
+game's language, picked as the game picks it (`[Game] Language` of `OpenJuice.ini` too). As the original, it opens
+only where DxDiag reports DirectX 9.0c or later by its version letter; Windows 11 reports DirectX 12 with a blank
+letter, so there it shows that DirectX 9.0c is needed, as the original does there. The debug builds (`_d`) take
+`--skip-directx-check`, which opens the window anyway.
 
 ## OpenJuice.ini
 

@@ -53,13 +53,16 @@ public:
     bool busy() const { return m_job != nullptr; }
     // The view's model object (+0x00) made.
     bool hasModel() const { return m_shown && m_shown->model; }
+    // The car shown's model; none without one.
+    CarModel* model() const { return m_shown ? m_shown->model.get() : nullptr; }
     // 0x0045AE90: the load dropped and the view emptied.
     void clear();
     // 0x0045A6F0: the car shown painted again (0x0048BF90), then the gen_neon material (the model object's +0xF0,
     // 0x0048A3AC) its colour (parameter 0, the car's +0x2C) and its parameter 4 1, then its mirror image painted.
     void repaint(const Car& car);
-    // 0x0045A8A0 after the car's parts changed: the parts of the model and its mirror image, their wheel colour, decal
-    // colour, tint and sponsor decals made again at once. The stock code puts the model's parts again and loads the
+    // 0x0045A8A0 after the car's parts changed: the parts of the model and its mirror image (CarModel::refitParts: a
+    // part taken off, as the decal of the parts cleared, empties its slots), their wheel colour, decal colour, tint and
+    // sponsor decals made again at once. The stock code puts the model's parts again and loads the
     // car anew on the loading thread (+0x40), the windows showing MODDING meanwhile; here no second load is busy.
     // Its last job's main-thread part (0x0045A790, the job's slot 2): with a neon (+0x0D over -1) the element's
     // gen_neon shown and the car's neon colour (+0x2C) a random one of [NeonColour] (the defs' +0x20: rand() % their

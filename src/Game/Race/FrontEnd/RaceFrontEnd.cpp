@@ -101,6 +101,7 @@ void RaceFrontEnd::windowsFrame(float dt) {
     }
     windowOpened = false;
     openAskedWindow();
+    windowsHidden = false;
     const uint32_t e = std::exchange(uiEvent, 0u);
     const uint32_t e2 = uiEvent2;
     const uint32_t windowEvent = windowOpened ? 0u : e;
@@ -153,7 +154,10 @@ void RaceFrontEnd::windowFrame(float dt, uint32_t event, uint32_t event2) {
     case RaceWindowId::HudSprint:
     case RaceWindowId::HudCruise:
     case RaceWindowId::HudSplit:
-        if (hudShown()) hud->update(m_host.hudRace(), dt);
+        if (hudShown()) {
+            hud->update(m_host.hudRace(), dt);
+            if (hud->hidesWindows()) windowsHidden = true;
+        }
         break;
     case RaceWindowId::RaceComplete:
         if (complete != nullptr) {
@@ -447,7 +451,7 @@ void RaceFrontEnd::draw(render::IRenderDevice& device, float seconds, float dt, 
                                                netMessage == nullptr
                                            ? ui::Screen::Under::kFramesOnly
                                            : ui::Screen::Under::kAll);
-    drawWindow(seconds, dt);
+    if (!windowsHidden) drawWindow(seconds, dt);
     ui::Screen::setDrawingUnderMessage(ui::Screen::Under::kAll);
     if (message != nullptr) message->draw(seconds, dt);
     // The race front end's black over its windows, clearing by the frame time.

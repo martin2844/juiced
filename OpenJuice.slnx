@@ -9,6 +9,8 @@
     <Project Path="src/Audio/OpenJuice.Audio.vcxproj" Id="7a3c2e51-6b0d-4f8e-9c1a-3d5e7f902b14" />
     <Project Path="src/Game/OpenJuice.Game.vcxproj" Id="8b2e4c71-3d5a-4f96-a1c8-6e0b9d7f2a43" />
     <Project Path="src/Game/OpenJuice.vcxproj" Id="4f993d45-2f52-4d97-a850-6e25859ccd7f" />
+    <Project Path="src/JuicedConfig/OpenJuice.JuicedConfig.vcxproj" Id="be571cd2-f93e-421b-9ffb-25fc8c7144a0" />
+    <Project Path="src/JuicedConfig/OpenJuiceConfig.vcxproj" Id="b2a071bc-3baa-4a3a-8caa-0dd3789b68a4" />
   </Folder>
   <Folder Name="/third_party/">
     <Project Path="third_party/speex-1.0.3/OpenJuice.Speex.vcxproj" Id="5c2d8e14-7a31-4b6f-9e08-2f4a6b1c3d95" />

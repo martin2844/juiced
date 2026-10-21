@@ -203,6 +203,9 @@ public:
     int closedownFrames = 0;    // closedown's +0x0C: frames left before the race unloads
     bool unloadAsked = false;   // closedown made the game phase "load" with 1 (0x00462C30)
     bool windowOpened = false;  // a window came in this frame (it takes the frame's event from the next one)
+    // The window manager's +0x50: cleared as its frame starts (0x005A6B41), set by the HUD's frame (RaceHud::
+    // hidesWindows); while set the windows are not drawn that frame (0x005A6BB5), the messages and notes are.
+    bool windowsHidden = false;
     RaceWindowShown window;                       // the window shown (None before any)
     RaceWindowId hudWindow = RaceWindowId::None;  // the HUD's window (0x004563E0)
     std::string windowAsked;                      // the window manager's +0xC0 while +0xBC is 2

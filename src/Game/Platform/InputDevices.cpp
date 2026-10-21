@@ -9,11 +9,51 @@
 #include <array>
 #include <cstring>
 #include <format>
+#include <memory>
 #include <string>
+#include <utility>
+#include <vector>
 
 namespace oj {
 
 namespace {
+
+// A map's DIACTIONFORMAT (0x005954D0): the device's DIACTIONs (guidInstance GUID_NULL, dwObjID and dwHow 0 as made),
+// the map's GUID and name, its genre, buffer and axes; the actions' names kept with it.
+struct DiFormat {
+    std::vector<std::string> labels;
+    std::vector<DIACTIONA> actions;
+    DIACTIONFORMATA format{};
+
+    explicit DiFormat(const input::MapFormat& f) {
+        actions.assign(f.actions.size(), DIACTIONA{});
+        for (const input::MapAction& a : f.actions) labels.push_back(a.label);
+        for (size_t i = 0; i < f.actions.size(); ++i) {
+            DIACTIONA& d = actions[i];
+            d.uAppData = f.actions[i].appData;
+            d.dwSemantic = f.actions[i].semantic;
+            d.dwFlags = f.actions[i].flags;
+            d.lptszActionName = labels[i].c_str();
+            d.guidInstance = GUID_NULL;
+            d.dwObjID = 0;
+            d.dwHow = 0;
+        }
+        format.dwSize = sizeof(format);
+        format.dwActionSize = sizeof(DIACTIONA);
+        format.dwDataSize = static_cast<DWORD>(f.actions.size() * 4);
+        format.dwNumActions = static_cast<DWORD>(f.actions.size());
+        format.rgoAction = actions.empty() ? nullptr : actions.data();
+        std::memcpy(&format.guidActionMap, f.guid.data(), sizeof(GUID));
+        format.dwGenre = f.genre;
+        format.dwBufferSize = f.bufferSize;
+        format.lAxisMin = f.axisMin;
+        format.lAxisMax = f.axisMax;
+        format.hInstString = nullptr;
+        strncpy_s(format.tszActionMap, f.name.c_str(), _TRUNCATE);
+    }
+    DiFormat(const DiFormat&) = delete;
+    DiFormat& operator=(const DiFormat&) = delete;
+};
 
 // A device's game controller (its +0x3C): an IDirectInputDevice8 of the input manager's DirectInput.
 class DiController final : public input::ControllerPort {
@@ -31,38 +71,12 @@ public:
         if (m_device != nullptr) m_device->Unacquire();
     }
 
-    // 0x005954D0: the device's DIACTIONs (guidInstance GUID_NULL, dwObjID and dwHow 0 as made) in a DIACTIONFORMAT of
-    // the map: BuildActionMap, then SetActionMap.
+    // 0x005954D0: the map's DIACTIONFORMAT: BuildActionMap, then SetActionMap.
     void setActionMap(const input::MapFormat& f) override {
         if (m_device == nullptr) return;
-        m_labels.clear();
-        m_actions.assign(f.actions.size(), DIACTIONA{});
-        for (const input::MapAction& a : f.actions) m_labels.push_back(a.label);
-        for (size_t i = 0; i < f.actions.size(); ++i) {
-            DIACTIONA& d = m_actions[i];
-            d.uAppData = f.actions[i].appData;
-            d.dwSemantic = f.actions[i].semantic;
-            d.dwFlags = f.actions[i].flags;
-            d.lptszActionName = m_labels[i].c_str();
-            d.guidInstance = GUID_NULL;
-            d.dwObjID = 0;
-            d.dwHow = 0;
-        }
-        DIACTIONFORMATA format{};
-        format.dwSize = sizeof(format);
-        format.dwActionSize = sizeof(DIACTIONA);
-        format.dwDataSize = static_cast<DWORD>(f.actions.size() * 4);
-        format.dwNumActions = static_cast<DWORD>(f.actions.size());
-        format.rgoAction = m_actions.empty() ? nullptr : m_actions.data();
-        std::memcpy(&format.guidActionMap, f.guid.data(), sizeof(GUID));
-        format.dwGenre = f.genre;
-        format.dwBufferSize = f.bufferSize;
-        format.lAxisMin = f.axisMin;
-        format.lAxisMax = f.axisMax;
-        format.hInstString = nullptr;
-        strncpy_s(format.tszActionMap, f.name.c_str(), _TRUNCATE);
-        const HRESULT built = m_device->BuildActionMap(&format, nullptr, 0);
-        const HRESULT set = m_device->SetActionMap(&format, nullptr, 0);
+        m_format = std::make_unique<DiFormat>(f);
+        const HRESULT built = m_device->BuildActionMap(&m_format->format, nullptr, 0);
+        const HRESULT set = m_device->SetActionMap(&m_format->format, nullptr, 0);
         log::info("input: controller map {} ({} actions): BuildActionMap 0x{:08X}, SetActionMap 0x{:08X}", f.name,
                   f.actions.size(), static_cast<uint32_t>(built), static_cast<uint32_t>(set));
     }
@@ -125,8 +139,40 @@ private:
     IDirectInputDevice8A* m_device = nullptr;
     GUID m_instance{};
     HWND m_window = nullptr;
-    std::vector<std::string> m_labels;
-    std::vector<DIACTIONA> m_actions;
+    std::unique_ptr<DiFormat> m_format;
+};
+
+// The input manager's keyboard (its +0x40, GUID_SysKeyboard) as far as the maps go: 0x005954D0's BuildActionMap and
+// SetActionMap on it give each action its key, DirectInput's own map of the user's (the controls' mapping window's,
+// kept by DirectInput) when there is one. The keys themselves are read from the window's messages.
+class DiKeyboard final : public input::KeyboardPort {
+public:
+    explicit DiKeyboard(IDirectInputDevice8A* device) : m_device(device) {}
+    ~DiKeyboard() override {
+        if (m_device != nullptr) m_device->Release();
+    }
+
+    std::vector<std::pair<uint8_t, uint32_t>> setActionMap(const input::MapFormat& f) override {
+        std::vector<std::pair<uint8_t, uint32_t>> keys;
+        if (m_device == nullptr) return keys;
+        DiFormat d(f);
+        const HRESULT built = m_device->BuildActionMap(&d.format, nullptr, 0);
+        m_device->SetActionMap(&d.format, nullptr, 0);
+        size_t user = 0;
+        for (const DIACTIONA& a : d.actions) {
+            if (a.dwHow == DIAH_UNMAPPED || a.guidInstance != GUID_SysKeyboard) continue;
+            // A key's object ID holds its DIK code as the instance.
+            keys.emplace_back(static_cast<uint8_t>(DIDFT_GETINSTANCE(a.dwObjID) & 0xFF),
+                              static_cast<uint32_t>(a.uAppData));
+            if ((a.dwHow & DIAH_USERCONFIG) != 0) ++user;
+        }
+        log::info("input: keyboard map {}: BuildActionMap 0x{:08X}, {} keys ({} of the user's map)", f.name,
+                  static_cast<uint32_t>(built), keys.size(), user);
+        return keys;
+    }
+
+private:
+    IDirectInputDevice8A* m_device = nullptr;
 };
 
 
@@ -272,6 +318,7 @@ struct InputDevices::State {
     std::vector<GUID> instances;               // +0x60
     std::vector<IDirectInputDevice8A*> forceFeedback;  // +0x50
     std::vector<std::unique_ptr<DiController>> controllers;  // the devices' +0x3C
+    std::unique_ptr<DiKeyboard> keyboard;                    // the input manager's +0x40, for the maps
     bool comInitialized = false;
     // The FF manager's DirectInput ([0x0075F748]) and its channels' devices ([0x0075D9AC]) with their kinds
     // ([0x0075D9B4] a joystick, [0x0075D9A8] a gamepad, [0x0075D9A4] a wheel, by DI8DEVTYPE; read by nothing) and
@@ -333,6 +380,7 @@ InputDevices::~InputDevices() {
     stopWheels();
     State& s = *m_state;
     s.controllers.clear();
+    s.keyboard.reset();
     if (s.mouse != nullptr) {
         s.mouse->Unacquire();
         s.mouse->Release();
@@ -359,6 +407,11 @@ bool InputDevices::start(HWND window) {
         s.mouse->SetDataFormat(&c_dfDIMouse);
         s.mouse->SetCooperativeLevel(window, 0x0A);
     }
+    // The keyboard (GUID_SysKeyboard), for the maps only: never acquired, its keys come from the window.
+    IDirectInputDevice8A* keyboard = nullptr;
+    if (SUCCEEDED(s.di->CreateDevice(GUID_SysKeyboard, &keyboard, nullptr)) && keyboard != nullptr) {
+        s.keyboard = std::make_unique<DiKeyboard>(keyboard);
+    }
     // A device for each controller (0x00594950 holds its own reference; the list's is let go).
     for (size_t i = 0; i < s.found.size(); ++i) {
         if (s.found[i] == nullptr) continue;
@@ -374,6 +427,37 @@ std::vector<input::ControllerPort*> InputDevices::controllers() const {
     std::vector<input::ControllerPort*> out;
     for (const auto& c : m_state->controllers) out.push_back(c.get());
     return out;
+}
+
+input::KeyboardPort* InputDevices::keyboard() const {
+    return m_state->keyboard.get();
+}
+
+bool InputDevices::configure(const input::MapFormat& f) {
+    State& s = *m_state;
+    if (s.di == nullptr) return false;
+    DiFormat d(f);
+    DICONFIGUREDEVICESPARAMSA p{};
+    p.dwSize = sizeof(p);
+    p.dwcUsers = 0;
+    p.lptszUserNames = nullptr;
+    p.dwcFormats = 1;
+    p.lprgFormats = &d.format;
+    p.hwnd = GetDesktopWindow();
+    p.dics.dwSize = sizeof(DICOLORSET);
+    p.dics.cTextFore = 0xFF9CC4CE;
+    p.dics.cTextHighlight = 0xFFECEC01;
+    p.dics.cCalloutLine = 0xFFECEC01;
+    p.dics.cCalloutHighlight = 0xFFECEC01;
+    p.dics.cBorder = 0xFFECEC01;
+    p.dics.cControlFill = 0xFF18536D;
+    p.dics.cHighlightFill = 0xFF18536D;
+    p.dics.cAreaFill = 0xFF253E4A;
+    p.lpUnkDDSTarget = nullptr;
+    const HRESULT hr = s.di->ConfigureDevices(nullptr, &p, DICD_EDIT, nullptr);
+    log::info("input: the controls' mapping window (ConfigureDevices, {}): 0x{:08X}", f.name,
+              static_cast<uint32_t>(hr));
+    return hr == DI_OK;
 }
 
 namespace {

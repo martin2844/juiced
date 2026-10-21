@@ -77,17 +77,17 @@ void SoundSet::setInstances(uint32_t count) {
 }
 
 void SoundSet::acquire(uint32_t i) {
-    const uint32_t bit = 1u << i;
-    if ((m_busy & bit) != 0) return;
+    const uint32_t b = bit(i);
+    if ((m_busy & b) != 0) return;
     ++m_busyCount;
-    m_busy |= bit;
+    m_busy |= b;
     markPlaying(i);
 }
 
 void SoundSet::release(uint32_t i) {
-    const uint32_t bit = 1u << i;
-    if ((m_busy & bit) != 0) {
-        m_busy &= ~bit;
+    const uint32_t b = bit(i);
+    if ((m_busy & b) != 0) {
+        m_busy &= ~b;
         if (m_busyCount != 0) --m_busyCount;
     }
     clearPlaying(i);
@@ -105,20 +105,35 @@ int SoundSet::findFree(uint32_t& voice) {
 }
 
 int SoundSet::stealQuietest(uint32_t& voice) const {
-    // Scanned from the last voice down; the first of the lowest kept; the mean against the count as a float.
+    // Scanned from the last voice down; the first of the lowest (below 1) kept. The volumes summed as the stock's
+    // unrolled loop sums them (single precision): four at a time while four are left, into the slot that holds 1 / n,
+    // the rest (n % 4, the first voices) into the sum; the lowest then compared with the two multiplied. Stock
+    // problem: only below four voices is that the mean; with a multiple of four the sum stays 0, so the quietest is
+    // taken unless it is silent.
     const uint32_t n = instances();
     if (n == 0) return 4;
     float lowest = 1.0f;
     int found = -1;
+    float slot = 1.0f / static_cast<float>(n);
     float sum = 0.0f;
-    for (int i = static_cast<int>(n) - 1; i >= 0; --i) {
+    int i = static_cast<int>(n) - 1;
+    for (; i >= 3; i -= 4) {
+        for (int k = i; k > i - 4; --k) {
+            if (m_volume[k] < lowest) {
+                lowest = m_volume[k];
+                found = k;
+            }
+            slot += m_volume[k];
+        }
+    }
+    for (; i >= 0; --i) {
         if (m_volume[i] < lowest) {
             lowest = m_volume[i];
             found = i;
         }
         sum += m_volume[i];
     }
-    if (lowest != (1.0f / static_cast<float>(n)) * sum && found != -1) {
+    if (lowest != slot * sum && found != -1) {
         voice = static_cast<uint32_t>(found);
         return 1;
     }

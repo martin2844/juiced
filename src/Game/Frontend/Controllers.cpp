@@ -79,25 +79,28 @@ void Frontend::watchSecondController(bool connected, int32_t device, bool opens)
 
 // 0x004080D0 with 1 (then 0x00407FB0, the controller let go): the first player's controller made again with the
 // DirectInput mapping window (the input manager's method +0x04: IDirectInput8::ConfigureDevices with DICD_EDIT,
-// 0x00595717, [0x0075F770] set while it runs, the cursor shown for it). Windows has had no such window since Vista: the
-// call fails and the message box (MB_ICONHAND | MB_SETFOREGROUND | MB_TOPMOST) of scripts\jettext<letter>.txt's texts
-// 111 and 112 ("There is a problem with your DirectInput registry settings." / "Please see the ReadMe file for
-// further assistance."), titled with 113 ("DirectInput problem detected"), shows. OpenJuice does not call the mapping
-// window: the message box shows. Either way the devices' controllers are made again (0x005957D1: 0x00590EE0) and the
-// map registered again.
+// 0x00595717, [0x0075F770] set while it runs, the cursor shown for it; the game loop's, InputDevices::configure).
+// Either way the devices' controllers are made again (0x005957D1: 0x00590EE0) and the map registered again.
 void Frontend::controlsSetUp() {
 #ifdef OJ_MACOS
     mac::requestControlsEditor();
 #else
-    TextTable jet;
-    jet.load(std::filesystem::path("scripts") / (std::string("jettext") + m_language.controlsLetter + ".txt"));
-    const auto at = [&](size_t i) { return i < jet.size() ? jet.at(i) : std::wstring(); };
-    log::info("frontend: the controls' set up: DirectInput's mapping window is not in Windows; its message box");
+    log::info("frontend: the controls' set up: DirectInput's mapping window");
     m_inputConfigure = true;
-    errorBox(at(kJetDirectInputProblem) + L"\n" + at(kJetSeeReadMe), at(kJetDirectInputTitle));
     // 0x00480612 then 0x0048062C: the device made again with DRIVER1, then with the UI map.
     m_inputUi = true;
 #endif
+}
+
+// 0x0059571E: the mapping window not given (Windows has had no such window since Vista: ConfigureDevices fails): the
+// message box (MB_ICONHAND | MB_SETFOREGROUND | MB_TOPMOST, over the desktop) of scripts\jettext<letter>.txt's texts
+// 111, a line's end and 112 ("There is a problem with your DirectInput registry settings." / "Please see the ReadMe
+// file for further assistance."), titled with 113 ("DirectInput problem detected").
+void Frontend::directInputProblem() {
+    TextTable jet;
+    jet.load(std::filesystem::path("scripts") / (std::string("jettext") + m_language.controlsLetter + ".txt"));
+    const auto at = [&](size_t i) { return i < jet.size() ? jet.at(i) : std::wstring(); };
+    errorBox(at(kJetDirectInputProblem) + L"\n" + at(kJetSeeReadMe), at(kJetDirectInputTitle), true);
 }
 
 }  // namespace oj

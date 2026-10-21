@@ -1636,7 +1636,8 @@ change COLOURMENU with the price 1000; a colour: the car's own "You already have
 
 `hudcolourmenu` (`0x0043ED70`, update `0x0043F120`, leave `0x00440320`): the price 100 with its box; the car's dial
 colours (`+0x30`, `+0x34`) kept; COLOURMENU each [DialColour] of the CarDefs in its first colour (`ui_dials_off`,
-`ui_dial_choose`), the car's highlighted; MPH "MPH" or "KPH" (1494, 1495) by the settings' units. Update: the
+`ui_dial_choose`: not in the game's files, so the highlighted dial is drawn with `ui_dials_off`, 04-interface.md),
+the car's highlighted; MPH "MPH" or "KPH" (1494, 1495) by the settings' units. Update: the
 highlighted pair goes on REVSBG and TIME_BG (the first, made opaque) and the fonts of TIME, SPEED and GEAR (the
 second); bought puts them on the car and goes to `stylingmenu`. BACK (CLICK): `stylingmenu`, the colours back.
 SELECT (CLICK): the car's own "You already have this mod", another `buymod`.

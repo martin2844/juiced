@@ -278,6 +278,7 @@ exactly; the entry says what OpenJuice does instead. The code marks each place w
 |---|---|---|
 | UVScroll (`0x005185D0`) | the scroll less its whole sixteenths (v x 1/16 cut toward zero, x 16) is loaded back as unsigned: a negative scroll gains 2^32 and its texture coordinates leave any useful range | the same |
 | the screenshot's name (`0x00513C60`) | a file of the name holding no bytes counts as free and is written over | the same |
+| hudcolourmenu's dials (`0x0043ED70`) | the highlighted dial asks for `ui_dial_choose`, a texture the game's files do not have (they have `ui_dials_choose`): the highlighted dial is drawn with `ui_dials_off` | the same |
 | the second player's lost controller in the front end (`0x0046C228`) | its note keeps the PS2's text "To continue, please reconnect the DUALSHOCK®2 analog controller into controller port " (1632) and the number; the first player's is emptied before it opens | the same |
 
 ## Movies (`25-movies.md`)
@@ -308,7 +309,7 @@ exactly; the entry says what OpenJuice does instead. The code marks each place w
 | gp.info's `sex=` (`0x00576349`) | "Female" is read as Pat (the second letter compared with 'F') | the same |
 | the online setups' nick (`0x00473F84`) | a nick of 16 characters or more puts its 0 at the setup's +0x24 | the same |
 
-## The sound library's EAX (`26-sound.md`)
+## The sound library (`26-sound.md`)
 
 | where | what | OpenJuice |
 |---|---|---|
@@ -317,6 +318,8 @@ exactly; the entry says what OpenJuice does instead. The code marks each place w
 | the occlusion's step (`0x005C2321` .. `0x005C2353`) | the voice's occlusion moves by 0.25 toward the value without being held at it: a value between two steps makes it go back and forth by 0.25 each call | the same |
 | a stream set's occlusion | its table ends before the entry `+0x88`; called, it would be the next table's destructor (never reached: streams are not 3D voices) | nothing |
 | a 3D voice's place (`0x005C211E`) | asks for the min distance `[0x0079E9C8]`, never set: 0. Windows refuses it (the buffer keeps 1); Wine takes it and silences every 3D voice (the stock game under Proton: no cars, no world) | not asked for: 1 everywhere |
+| the quietest voice (`0x005C1B60`) | the unrolled loop adds the last 4 × (n / 4) volumes to the slot holding 1 / n and only the first n % 4 to the sum: below four voices the quietest is compared with their mean, from four on with that product (0 for a multiple of four: the quietest taken unless silent) | the same |
+| a new slot still used (`0x005BCF45`) | the voice the set's free search took stays busy as the instance gets none that frame: a set of one voice never played (its start 0, so the oldest search finds nothing) can give no voice for the rest of the race | the same |
 
 ## The startup's texts and code nobody calls
 
@@ -370,3 +373,21 @@ exactly; the entry says what OpenJuice does instead. The code marks each place w
 | a crew race's FinishedRace (`0x00453420`, hud_race_results' leave) | not sent: it waits for the next report's send | the same |
 | a rating against a racer in our own place (`0x004EC980` with 0) | its step is added | the same |
 | online_stats' highlight without our nick in the table (`0x0047EA67`) | the sixth row is highlighted | the same |
+
+## The configuration tool (`30-juiced-config.md`)
+
+| where | what | OpenJuiceConfig |
+|---|---|---|
+| the DirectX check (`0x0040543B`) | DirectX 9.0c or later by DxDiag's letter (`'c'` or later): DirectX 12 on Windows 11 reports a space, so the tool shows "DirectX 9.0c needed" and never its window | the same; the debug builds' `--skip-directx-check` opens the window anyway |
+| the start without DirectX 9.0c (`0x004054A2`) | Direct3D's interface is not released, nor the class unregistered | the same |
+| the window class's count (`0x004020B0`) | raised also when the registration fails or the game's window is found | the same |
+| eax.dll's EAX (`0x004058D0`) | each question loads the library again and makes a device never released; the window asks as it is filled and on each turning of the controls with All Audio | the same |
+| the texts (the string table) | the French, Italian, German and Spanish texts went in through the Cyrillic code page: accented letters read as Cyrillic ones | their own letters back, the texts through the wide functions (each language whole on any system) |
+| the registry's reading (`0x00402ADC`) | a missing `threading` takes the defaults over every value read, and the antialiasing's list is made as by Reset To Defaults | the same |
+| the threading's box (`0x00402532`) | checked by the processors' flag ANDed with the registry's value: a `threading` of 2 leaves it clear | the same |
+| a saved `Shaders` of the list's count or more (`0x0040288B`) | the selection is set past the last item: none, and OK keeps the window until one is picked | the same |
+| the modes' keys | widths from 4096 lose their high bits (5120 reads as 1024) | the same |
+| the registry's values' sizes (`0x004027AE` ..) | one size slot for every read, set to 4 or 16 before some only: a value bigger than 4 bytes can be read past its 4-byte variable | each read with its own size |
+| the adapters' identifiers (`0x00401201`, `0x0040294D`) | without a saved `Adapter`, the stack's bytes are compared | zeros compared |
+| the caps (`0x00401000`) | a failed `GetDeviceCaps` leaves the stack's bytes as the caps | zeros |
+| a text that does not load (`0x004012C0`, `0x00401950`) | `sprintf` is given a null format | an empty text |

@@ -86,6 +86,10 @@ public:
     // The body parts, the wheels and the exhaust of the car in the model's slots (as the model is made); the body
     // parts' indices fitted written back to the record (0x0048BC30).
     void fitParts(Car& car, const PartCatalogue& catalogue);
+    // The same after the car's parts changed (0x0045A8A0): each body part as 0x0048BC30 takes the record's value, a
+    // category of no parts passed over: -1, 0x7F or one past the list name no part (0x00447690), its slots emptied
+    // (a decal taken off goes); then the wheels and the exhaust.
+    void refitParts(Car& car, const PartCatalogue& catalogue);
 
     // The wheels' mesh in the four wheel slots (0x0048ABC0, 0x0048B3C0); its blurred mesh <mesh>_BLUR, else
     // RX7_WHEEL_BLUR, kept for the race's fast wheels (the model object's +0x28, +0x2C). The CarDef's standard wheels
@@ -93,11 +97,15 @@ public:
     void fillWheels(const std::string& meshName, Folders folders);
     // The wheel slot of a race wheel (0 WHEEL_FL, 1 WHEEL_FR, 2 WHEEL_RL, 3 WHEEL_RR).
     render::ModelNode* wheelNode(size_t i);
+    // The mesh in a slot (none for a slot the model has not or an empty one).
+    const render::Mesh* slotMesh(Slot slot) const { return m_slots[slot] != nullptr ? m_slots[slot]->mesh : nullptr; }
     // 0x00555290 on a wheel slot: the wheel's mesh, or its blurred one.
     void blurWheel(size_t i, bool blurred);
     // A body part's mesh in its category's slots (0x0048BC30): the first four categories theirs, the skirt SSKIRT_L and
     // SSKIRT_R as <mesh>_L and <mesh>_R, the decal DECAL; the others none.
     void fillBody(int category, const std::string& meshName);
+    // The wheels and the exhaust of fitParts and refitParts.
+    void fitWheelsAndExhaust(const Car& car, const PartCatalogue& catalogue);
 
     // The exhaust's mesh, read from the shared folders, in the slots the car has of EXHAUST_S, EXHAUST_C and EXHAUST_O
     // (0x0048BB00 with the slots 7, 6 and 8; the model object's +0x4C, +0x48, +0x50); none empties them.

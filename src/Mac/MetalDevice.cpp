@@ -133,6 +133,7 @@ struct MetalDevice::Impl {
     SDL_GPUTexture *backDepth = nullptr;
     SDL_GPUTextureFormat swapFormat = SDL_GPU_TEXTUREFORMAT_B8G8R8A8_UNORM;
     uint32_t w = 800, h = 600, depthW = 0, depthH = 0;
+    uint32_t materialClass = UINT32_MAX;
     struct Texture {
         SDL_GPUTexture *gpu = nullptr;
         SDL_GPUTexture *depth = nullptr;
@@ -487,10 +488,15 @@ fragment float4 ff_ps(V v [[stage_in]],texture2d<float> tex [[texture(0)]],sampl
             std::vector<SDL_GPUTextureSamplerBinding> vertexBinds(vertexSlots, {textures.at(white).gpu, sampler(0)});
             if (vertexSlots)
                 SDL_BindGPUVertexSamplers(pass, 0, vertexBinds.data(), vertexSlots);
-            shaders.at(vs)->uniforms(cb, vertexRegisters);
+            // Paint needs more fill light on the native renderer. Keep the scene,
+            // decals' source colours, and specular power unchanged.
+            shaders.at(vs)->uniforms(cb, vertexRegisters, materialClass == 0 ? 1.65f : 1.0f);
             if (ps) {
                 shaders.at(ps)->uniforms(cb, pixelRegisters);
-
+                // Reduce reflected RGB on car glass, retaining the reflection alpha
+                // used by the original shader for opacity and Fresnel calculations.
+                const float material[4] = {materialClass == 49 ? 0.35f : 1.0f, 0, 0, 0};
+                SDL_PushGPUFragmentUniformData(cb, 2, material, sizeof material);
             } else
                 fixedUniforms();
             float alpha[4] = {(float)states[15], states[24] / 255.f, (float)states[25], 0};
@@ -603,7 +609,10 @@ std::string MetalDevice::adapterName() const {
 std::string MetalDevice::description() const {
     return "SDL GPU / Metal, native ARM64";
 }
-bool MetalDevice::beginFrame(const Color &c) {
+void MetalDevice::setMaterialClass(uint32_t id) {
+    p->materialClass = id;
+}
+bool MetalDevice::beginFrame() {
     p->target = 0;
     p->face = 0;
     int w = 0, h = 0;
@@ -612,7 +621,8 @@ bool MetalDevice::beginFrame(const Color &c) {
         return false;
     p->w = w;
     p->h = h;
-    if (p->depthW != p->w || p->depthH != p->h) {
+    bool resized = p->depthW != p->w || p->depthH != p->h;
+    if (resized) {
         p->endPass();
         if (p->backDepth)
             SDL_ReleaseGPUTexture(p->gpu, p->backDepth);
@@ -633,7 +643,8 @@ bool MetalDevice::beginFrame(const Color &c) {
         p->depthH = p->h;
     }
     p->viewport = {0, 0, p->w, p->h, 0, 1};
-    p->beginPass(7, {c.r, c.g, c.b, c.a});
+    // Keep prior colour for menu fades; new backing textures start black.
+    p->beginPass(resized ? 7 : 6, {0, 0, 0, 1});
     return true;
 }
 void MetalDevice::endFrame() {

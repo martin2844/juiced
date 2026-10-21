@@ -188,7 +188,10 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
     // none, so that a controller attached does not change them), the keyboard read from the window's messages.
     oj::InputDevices inputDevices;
     oj::input::Input input;
-    if (!options.test && inputDevices.start(platform.window())) input.setControllers(inputDevices.controllers());
+    if (!options.test && inputDevices.start(platform.window())) {
+        input.setControllers(inputDevices.controllers());
+        input.setKeyboard(inputDevices.keyboard());
+    }
     // Then its FF manager (0x00591DF0; a test run opens no channel).
     inputDevices.startWheels(options.test ? nullptr : platform.window());
     input.setWheels(&inputDevices.wheels());
@@ -268,7 +271,7 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
     if (data.race.mode != oj::RaceMode::Attract) {
         frontend->showStartup();
         for (int i = 0; i < 3 && platform.pumpMessages(); ++i) {
-            if (!device->beginFrame({0.0f, 0.0f, 0.0f, 1.0f})) continue;
+            if (!device->beginFrame()) continue;
             frontend->draw();
             device->endFrame();
         }
@@ -424,7 +427,7 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
         RECT client{};
         GetClientRect(platform.window(), &client);
         device->resize(static_cast<uint32_t>(client.right), static_cast<uint32_t>(client.bottom));
-        if (!device->beginFrame({0.0f, 0.0f, 0.0f, 1.0f})) {
+        if (!device->beginFrame()) {
             Sleep(16);
             continue;
         }
@@ -665,6 +668,15 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
             if (frontend->takeSecondPlayerTake()) input.takePlayer(1);
             if (frontend->takeInputConfigure()) {
                 input.useDriver();
+                // 0x0059563F (0x004080D0 with 1): the controls' mapping window with DRIVER1's format, the game's
+                // window hidden round it; failing, the message box.
+                if (const oj::input::MapFormat* format = input.playerFormat(); format != nullptr) {
+                    platform.beginControlsWindow();
+                    if (!inputDevices.configure(*format)) frontend->directInputProblem();
+                    platform.endControlsWindow();
+                } else {
+                    frontend->directInputProblem();
+                }
                 // 0x00590F40: the FF manager stopped and made anew (its response table not copied again until the
                 // next DRIVER1, 0x004080D0), then the maps registered again.
                 inputDevices.stopWheels();

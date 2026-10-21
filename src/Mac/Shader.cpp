@@ -96,8 +96,28 @@ Shader::Shader(SDL_GPUDevice *d, const uint32_t *code, uint32_t cubeMask) : devi
         auto close = source.find(") {", fn);
         auto last = source.find_last_not_of(" \t\r\n", close - 1);
         std::string arg = (source[last] == ',' || source[last] == '(') ? "" : ",";
-        arg += "\nconstant float4& oj_alpha [[buffer(1)]]\n";
+        arg += "\nconstant float4& oj_alpha [[buffer(1)]],\nconstant float4& oj_material [[buffer(2)]]\n";
         source.insert(close, arg);
+        // Apply glass reflection calibration to cube samples before the original
+        // shader mixes them with lit glass. Ordinary 2D textures are untouched.
+        for (int i = 0; i < parsed->sampler_count; ++i) {
+            const auto &s = parsed->samplers[i];
+            if (s.type != MOJOSHADER_SAMPLER_CUBE) continue;
+            const std::string sample = "s" + std::to_string(s.index) + "_texture.sample(";
+            size_t at = 0;
+            while ((at = source.find(sample, at)) != std::string::npos) {
+                size_t end = at + sample.size();
+                int depth = 1;
+                while (end < source.size() && depth) {
+                    if (source[end] == '(') ++depth;
+                    if (source[end] == ')') --depth;
+                    ++end;
+                }
+                source.insert(end, " * float4(oj_material.xxx, 1.0))");
+                source.insert(at, "(");
+                at = end + 1 + strlen(" * float4(oj_material.xxx, 1.0))");
+            }
+        }
         auto ret = source.rfind("return output;");
         source.insert(
             ret,
@@ -116,7 +136,7 @@ Shader::Shader(SDL_GPUDevice *d, const uint32_t *code, uint32_t cubeMask) : devi
     ci.stage =
         parsed->shader_type == MOJOSHADER_TYPE_VERTEX ? SDL_GPU_SHADERSTAGE_VERTEX : SDL_GPU_SHADERSTAGE_FRAGMENT;
     ci.num_samplers = slots;
-    ci.num_uniform_buffers = parsed->shader_type == MOJOSHADER_TYPE_PIXEL ? 2 : (parsed->uniform_count ? 1 : 0);
+    ci.num_uniform_buffers = parsed->shader_type == MOJOSHADER_TYPE_PIXEL ? 3 : (parsed->uniform_count ? 1 : 0);
     gpu = SDL_CreateGPUShader(device, &ci);
     if (!gpu) {
         std::string error = SDL_GetError();
@@ -151,16 +171,28 @@ int Shader::attribute(MOJOSHADER_usage usage, int index) const {
         }
     return -1;
 }
-void Shader::uniforms(SDL_GPUCommandBuffer *cb, const Registers &r) const {
+void Shader::uniforms(SDL_GPUCommandBuffer *cb, const Registers &r, float lightGain) const {
     std::vector<uint32_t> bytes;
     for (int i = 0; i < parsed->uniform_count; i++) {
         auto &u = parsed->uniforms[i];
         int count = std::max(u.array_count, 1);
         size_t start = bytes.size();
         bytes.resize(start + count * 4);
-        if (u.type == MOJOSHADER_UNIFORM_FLOAT)
+        if (u.type == MOJOSHADER_UNIFORM_FLOAT) {
             memcpy(bytes.data() + start, r.floats.data() + u.index * 4, count * 16);
-        else if (u.type == MOJOSHADER_UNIFORM_INT)
+            if (lightGain != 1.0f && parsed->shader_type == MOJOSHADER_TYPE_VERTEX) {
+                for (int j = 0; j < count; ++j) {
+                    const int reg = u.index + j;
+                    if (reg != 25 && reg != 26 && reg != 28 && reg != 30) continue;
+                    for (int k = 0; k < 3; ++k) {
+                        float value;
+                        memcpy(&value, &bytes[start + j * 4 + k], sizeof value);
+                        value *= lightGain;
+                        memcpy(&bytes[start + j * 4 + k], &value, sizeof value);
+                    }
+                }
+            }
+        } else if (u.type == MOJOSHADER_UNIFORM_INT)
             memcpy(bytes.data() + start, r.ints.data() + u.index * 4, count * 16);
         else
             for (int j = 0; j < count; j++)

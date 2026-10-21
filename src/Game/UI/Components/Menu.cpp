@@ -313,6 +313,11 @@ size_t Screen::selectedMenuItem(const std::string& menu) const {
     return i < 0 ? 0 : m_states[static_cast<size_t>(i)].menu.selected;
 }
 
+float Screen::menuPosition(const std::string& menu) const {
+    const int i = indexOf(menu);
+    return i < 0 ? 0.0f : m_states[static_cast<size_t>(i)].menu.position;
+}
+
 float Screen::menuItemValue(const std::string& menu, size_t index) const {
     const int i = indexOf(menu);
     if (i < 0 || index >= m_states[static_cast<size_t>(i)].menu.items.size()) {
@@ -481,8 +486,12 @@ void Screen::drawMenu(const Element& e, State& s) {
             y += t->offsetY;
         }
 
-        // The item's picture: across the menu (vertical) or down it (horizontal), the item height wide.
-        if (!item.texture.empty() || !item.highTexture.empty()) {
+        // The item's picture: across the menu (vertical) or down it (horizontal), the item height wide. The pictures
+        // are those that loaded (the item's +0x48 and +0x4C, 0x005AF480): with neither none is drawn (0x005B06D2), the
+        // highlighted item takes its high picture, else its own (0x005B0964), another only its own (0x005B0AE0).
+        const render::TextureId own = item.texture.empty() ? 0 : texture(item.texture);
+        const render::TextureId high = item.highTexture.empty() ? 0 : texture(item.highTexture);
+        if (own != 0 || high != 0) {
             float ix0, iy0, ix1, iy1;
             if (vertical) {
                 ix0 = x0, ix1 = x1;
@@ -505,15 +514,16 @@ void Screen::drawMenu(const Element& e, State& s) {
                 const float dx = (ix1 - ix0) * away * 0.15f;
                 const float dy = (iy1 - iy0) * away * 0.15f;
                 ix0 += dx, iy0 += dy, ix1 -= dx, iy1 -= dy;
-                const std::string& name = item.highTexture.empty() ? item.texture : item.highTexture;
-                // The driver window of the Russian, Polish and Czech games lifts its orange bars by 4 pixels.
-                if (m_language.index >= 5 && m_language.index <= 7 && name.find("ui_pan5_") != std::string::npos &&
+                // The driver window of the Russian, Polish and Czech games lifts its orange bars (a high picture
+                // ui_pan5_*, 0x005B090A) by 4 pixels.
+                if (m_language.index >= 5 && m_language.index <= 7 && high != 0 &&
+                    item.highTexture.find("ui_pan5_") != std::string::npos &&
                     _stricmp(m_name.c_str(), "driver") == 0) {
                     iy0 -= 4.0f, iy1 -= 4.0f;
                 }
                 const uint32_t c[4] = {colour, colour, colour, colour};
-                quad(ix0, iy0, ix1, iy1, c, texture(name), 0.0f, 1.0f, 0.0f, 1.0f, item.additive);
-            } else if (!item.texture.empty()) {
+                quad(ix0, iy0, ix1, iy1, c, high != 0 ? high : own, 0.0f, 1.0f, 0.0f, 1.0f, item.additive);
+            } else if (own != 0) {
                 const float dx = (ix1 - ix0) * 0.15f;
                 const float dy = (iy1 - iy0) * 0.15f;
                 ix0 += dx, iy0 += dy, ix1 -= dx, iy1 -= dy;
@@ -527,7 +537,7 @@ void Screen::drawMenu(const Element& e, State& s) {
                     colour = withAlpha(colour, 127);
                 }
                 const uint32_t c[4] = {colour, colour, colour, colour};
-                quad(ix0, iy0, ix1, iy1, c, texture(item.texture), 0.0f, 1.0f, 0.0f, 1.0f, item.additive);
+                quad(ix0, iy0, ix1, iy1, c, own, 0.0f, 1.0f, 0.0f, 1.0f, item.additive);
             }
         }
 

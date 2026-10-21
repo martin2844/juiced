@@ -171,12 +171,17 @@ void CarView::refit(Car& car, const CarDefs& defs, CrtRandom& random) {
     for (CarModel* model : {m_shown->model.get(), m_shown->mirror.get()}) {
         if (model == nullptr) continue;
         model->paint(car);
-        model->fitParts(car, m_catalogue);
+        model->refitParts(car, m_catalogue);
         model->colourWheels(car);
         model->colourDecal(car);
         model->tint(car);
         model->sponsorDecals(car, m_catalogue);
     }
+    // The view's frame puts the chassis of the model and of its mirror image at the car's lowering once the parts' load
+    // is over (0x0045A027, as after a car is attached, 0x00459F82): the automatic modification's 0.8 (1.0 for a
+    // prototype) and the parts cleared's 0 show.
+    if (m_shown->model) dropHeight(*m_shown->model, car);
+    if (m_setup.mirror && m_shown->mirror) dropHeight(*m_shown->mirror, car);
     if (!m_shown->neon) return;
     if (static_cast<int8_t>(car.body[9]) > -1) {
         showNeon(true);

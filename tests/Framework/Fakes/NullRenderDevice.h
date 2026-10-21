@@ -15,7 +15,7 @@ public:
     render::Backend backend() const override { return render::Backend::D3D9; }
     std::string adapterName() const override { return "null"; }
     std::string description() const override { return "null"; }
-    bool beginFrame(const render::Color&) override { return true; }
+    bool beginFrame() override { return true; }
     void endFrame() override {}
     void resize(uint32_t, uint32_t) override {}
     void drawDebugTriangles(const render::DebugVertex*, uint32_t) override {}

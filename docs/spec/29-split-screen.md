@@ -48,7 +48,7 @@ shown, the director, the camera (its controls by the player's controller), the d
 the player's controller; PAUSE pauses while some player has not finished, `0x00420570`, and makes the player the race
 track's pausing player `+0x10`), the finish (`0x0041FB60`: the controller let go only with one player), the car its
 camera follows hidden under the views on the car, and the view drawn in its part of the screen (`0x00511CA0`).
-Then the 3D world's listeners (its `+0x28`: the players' count, each camera's matrix and place); each emitter takes
+Then the 3D world's listeners (its `+0x28`: the players' count, each camera's view matrix and place); each emitter takes
 the nearest listener (`0x005C2890`) unless its instance names one (`+0xF0`).
 
 The race front end makes the second player's frame too (`0x00457BB4`) and watches its controller: lost, the note

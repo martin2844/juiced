@@ -222,6 +222,8 @@ public:
     // The options' controls set up (0x00480612): DRIVER1 registered with the mapping window, the controllers made
     // again (0x00590EE0).
     bool takeInputConfigure() { return std::exchange(m_inputConfigure, false); }
+    // 0x0059571E: the controls' mapping window not given, its message box.
+    void directInputProblem();
     // The second player's device let go (the input manager's +0x2C -1: 0x0046CAA0, 0x0045E490).
     bool takeSecondPlayerRelease() { return std::exchange(m_secondPlayerRelease, false); }
     // The second player's device asked for (the input manager's vt+0x3C with 1: split_selcar, 0x0046DA60).

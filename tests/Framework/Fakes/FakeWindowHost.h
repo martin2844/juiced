@@ -39,6 +39,8 @@ public:
     std::vector<std::pair<std::string, frontend::SwitchMode>> requests;  // (state, mode)
     std::vector<Message> messages;
     std::vector<std::string> sounds;
+    std::vector<uint32_t> soundMasks;  // each sound's masks of its slot and voice (0xF the one-name call's)
+    float musicVolume = -1.0f;         // the front end's music volume set last
     int closedMessages = 0;
 
     // What the windows read.
@@ -79,8 +81,14 @@ public:
     bool messageTransitionsDone() const override { return true; }
     const std::wstring& jetText(size_t) const override { return m_empty; }
     void setCrewNameTexts(const std::wstring&) override {}
-    void sound(const char* name) override { sounds.emplace_back(name); }
-    void sound(const char* name, float, uint32_t) override { sounds.emplace_back(name); }
+    void sound(const char* name) override {
+        sounds.emplace_back(name);
+        soundMasks.push_back(0xF);
+    }
+    void sound(const char* name, float, uint32_t mask) override {
+        sounds.emplace_back(name);
+        soundMasks.push_back(mask);
+    }
 
     GameData* gameData() override { return data; }
     const TextTable& gameTexts() const override { return texts; }
@@ -102,7 +110,7 @@ public:
         return *settings;
     }
     float settingsMusic() override { return std::bit_cast<float>(settingsValue(save::Settings::kMusicVolume)); }
-    void setMusicVolume(float, bool) override {}
+    void setMusicVolume(float volume, bool) override { musicVolume = volume; }
     void startMusic() override {}
     UiSound& uiSounds() override { return m_uiSounds; }
 

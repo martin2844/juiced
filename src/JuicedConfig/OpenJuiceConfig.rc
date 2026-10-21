@@ -1,0 +1,363 @@
+// OpenJuiceConfig's resources: the stock JuicedConfig.exe's window (DIALOGEX 102), its two pictures, its icon and
+// its texts (the string ids 110 .. 360, eight a text: docs/spec/30-juiced-config.md), with their languages; the version
+// is OpenJuice's.
+//
+// The region build's French, Italian, German and Spanish texts went into its string table through the Cyrillic code
+// page (1251), so their accented letters are Cyrillic ones ("Paramиtres", "Qualitдtsstufe"); here they have their
+// own letters back ("Paramètres", "Qualitätsstufe"), the rest of the table as the stock's.
+
+#pragma code_page(65001)
+
+#include <winres.h>
+#include <winver.h>
+
+#include "resource.h"
+#include "../Game/App/Version.h"
+
+#if defined(OJ_RC_X64)
+#if defined(OJ_RC_DEBUG)
+#define OJ_FILE_NAME "OpenJuiceConfig64_d.exe"
+#else
+#define OJ_FILE_NAME "OpenJuiceConfig64.exe"
+#endif
+#else
+#if defined(OJ_RC_DEBUG)
+#define OJ_FILE_NAME "OpenJuiceConfig_d.exe"
+#else
+#define OJ_FILE_NAME "OpenJuiceConfig.exe"
+#endif
+#endif
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION OJ_GAME_VERSION_MAJOR, OJ_GAME_VERSION_MINOR, 0, OJ_RELEASE
+ PRODUCTVERSION OJ_GAME_VERSION_MAJOR, OJ_GAME_VERSION_MINOR, 0, OJ_RELEASE
+ FILEFLAGSMASK VS_FFI_FILEFLAGSMASK
+#if defined(OJ_RC_DEBUG)
+ FILEFLAGS VS_FF_DEBUG
+#else
+ FILEFLAGS 0
+#endif
+ FILEOS VOS_NT_WINDOWS32
+ FILETYPE VFT_APP
+ FILESUBTYPE 0
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "040904b0"
+    BEGIN
+      VALUE "ProductName", "OpenJuice"
+      VALUE "ProductVersion", OJ_VERSION_TEXT " (Juiced " OJ_GAME_VERSION_TEXT ", " OJ_RELEASE_NAME ")"
+      VALUE "FileDescription", "OpenJuiceConfig, the settings of Juiced " OJ_GAME_VERSION_TEXT " (" OJ_BUILD_TEXT ")"
+      VALUE "FileVersion", OJ_VERSION_TEXT
+      VALUE "InternalName", "OpenJuiceConfig"
+      VALUE "OriginalFilename", OJ_FILE_NAME
+      VALUE "LegalCopyright", "Copyright 2026 Sidewinder. PolyForm Noncommercial License 1.0.0"
+      VALUE "Comments", "https://gitlab.com/sidecr3w/openjuice"
+    END
+  END
+  BLOCK "VarFileInfo"
+  BEGIN
+    VALUE "Translation", 0x409, 1200
+  END
+END
+
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_UK
+
+IDB_PUBLISHER BITMAP "res\\publisher.bmp"
+IDB_LOGO BITMAP "res\\juicegames.bmp"
+IDI_ICON1 ICON "res\\juiced.ico"
+
+IDD_CONFIG DIALOGEX 0, 0, 454, 207
+STYLE 0x80c808cc
+EXSTYLE 0x00040000
+CAPTION "Juiced Config"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL "", IDC_ADAPTER, "ComboBox", 0x50230103, 184, 41, 119, 132, 0x0
+    CONTROL "Display Adapter", IDC_ADAPTER_LABEL, "Static", 0x50000000, 184, 28, 91, 8, 0x0
+    CONTROL "", IDC_MODE, "ComboBox", 0x50230003, 184, 79, 120, 132, 0x0
+    CONTROL "Display Mode", IDC_MODE_LABEL, "Static", 0x50000000, 184, 65, 82, 8, 0x0
+    CONTROL "Windowed", IDC_WINDOWED, "Button", 0x50030003, 184, 136, 119, 8, 0x0
+    CONTROL "Display", IDC_DISPLAY_GROUP, "Button", 0x50020007, 180, 15, 127, 151, 0x20
+    CONTROL "Antialiasing", IDC_ANTIALIASING_LABEL, "Static", 0x50020000, 184, 98, 88, 8, 0x0
+    CONTROL IDB_PUBLISHER, IDC_PUBLISHER, "Static", 0x5000100e, 46, 156, 87, 41, 0x20
+    CONTROL IDB_LOGO, IDC_LOGO, "Static", 0x5000100e, 5, 19, 172, 80, 0x20
+    CONTROL "OK", IDC_OK, "Button", 0x50010000, 9, 102, 79, 23, 0x0
+    CONTROL "", IDC_ANTIALIASING, "ComboBox", 0x50230103, 184, 111, 119, 132, 0x0
+    CONTROL "", IDC_SHADERS, "ComboBox", 0x50210003, 315, 41, 106, 132, 0x0
+    CONTROL "Shaders", IDC_SHADERS_LABEL, "Static", 0x50000000, 313, 29, 100, 8, 0x0
+    CONTROL "Cancel", IDC_CANCEL, "Button", 0x50010000, 9, 129, 169, 23, 0x0
+    CONTROL "Reset To Defaults", IDC_RESET, "Button", 0x50010300, 94, 102, 84, 23, 0x0
+    CONTROL "", IDC_TABS, "SysTabControl32", 0x50008000, 5, 1, 439, 200, 0x10
+    CONTROL "Hardware Mixing", IDC_HARDWARE_MIXING, "Button", 0x50010003, 318, 111, 100, 8, 0x0
+    CONTROL "Audio", IDC_AUDIO_GROUP, "Button", 0x50000007, 310, 68, 122, 97, 0x0
+    CONTROL "All Audio", IDC_ALL_AUDIO, "Button", 0x50010003, 318, 137, 96, 8, 0x0
+    CONTROL "Video", IDC_VIDEO_GROUP, "Button", 0x50000007, 310, 15, 122, 51, 0x0
+    CONTROL "Muisc", IDC_MUSIC, "Button", 0x50010003, 318, 99, 103, 8, 0x0
+    CONTROL "Speech", IDC_SPEECH, "Button", 0x50010003, 318, 86, 104, 8, 0x0
+    CONTROL "Widescreen", IDC_WIDESCREEN, "Button", 0x50030003, 184, 153, 122, 8, 0x0
+    CONTROL "Input", IDC_INPUT_GROUP, "Button", 0x50000007, 310, 166, 122, 31, 0x0
+    CONTROL "Multi-turn wheel", IDC_MULTI_TURN, "Button", 0x50010003, 318, 178, 104, 10, 0x0
+    CONTROL "EAX", IDC_EAX, "Button", 0x50010003, 318, 124, 96, 8, 0x0
+    CONTROL "MultiThreading", IDC_THREADING, "Button", 0x50010003, 184, 178, 104, 10, 0x0
+    CONTROL "", IDC_THREADING_GROUP, "Button", 0x50020007, 180, 166, 127, 31, 0x20
+END
+
+
+// The texts' block language as the stock tags it (0x0815).
+LANGUAGE 0x15, 0x02
+
+STRINGTABLE
+BEGIN
+    110 "Settings"
+    111 "Paramètres"
+    112 "Impostazioni"
+    113 "Einstellungen"
+    114 "Configuración"
+    115 "Nastavení"
+    116 "Ustawienia"
+    117 "Настройки"
+    118 "Troubleshooting"
+    119 "Dépannage"
+    120 "Risoluzione problemi"
+    121 "Fehlerbehebung"
+    122 "Resolución de problemas"
+    123 "Řešení problémů"
+    124 "Problemy"
+    125 "Решение проблем"
+    126 "Display"
+    127 "Affichage"
+    128 "Schermo"
+    129 "Anzeige"
+    130 "Pantalla"
+    131 "Zobrazení"
+    132 "Grafika"
+    133 "Экран"
+    134 "Display Adapter"
+    135 "Carte graphique"
+    136 "Scheda video"
+    137 "Anzeige-Adapter"
+    138 "Adaptador de pantalla"
+    139 "Grafická karta"
+    140 "Dostosowanie grafiki"
+    141 "Адаптер дисплея"
+    142 "Display Mode"
+    143 "Mode d'affichage"
+    144 "Modalità visualizzazione"
+    145 "Anzeige-Modus"
+    146 "Modo de pantalla"
+    147 "Rozlišení"
+    148 "Tryb wyświetlania"
+    149 "Режим экрана"
+    150 "Antialiasing"
+    151 "Anticrénelage"
+    152 "Antialiasing"
+    153 "Antialiasing"
+    154 "Antialias"
+    155 "Antialiasing"
+    156 "Antyaliasing"
+    157 "Сглаживание"
+    158 "Quality Level %d"
+    159 "Degré de qualité %d"
+    160 "Livello di qualità %d"
+    161 "Qualitätsstufe %d"
+    162 "Nivel de calidad %d"
+    163 "Úroveň kvality %d"
+    164 "Poziom szczegółów %d"
+    165 "Уровень качества %d"
+    166 "Windowed"
+    167 "Fenêtre"
+    168 "Con finestra"
+    169 "Fenster"
+    170 "Ventana"
+    171 "Okno"
+    172 "W oknie"
+    173 "Окно"
+    174 "Widescreen"
+    175 "Grand écran"
+    176 "16:9"
+    177 "Widescreen"
+    178 "Pantalla 16:9"
+    179 "Celá obrazovka"
+    180 "Panorama"
+    181 "Широкий экран"
+    182 "OK"
+    183 "OK"
+    184 "OK"
+    185 "OK"
+    186 "Aceptar"
+    187 "OK"
+    188 "OK"
+    189 "Ок"
+    190 "Reset To Defaults"
+    191 "Rétablir par défaut"
+    192 "Impostazioni predefinite"
+    193 "Standardwerte"
+    194 "Predeterminados"
+    195 "Nastavit defaultní"
+    196 "Ustaw domyślne"
+    197 "По умолчанию"
+    198 "Cancel"
+    199 "Annuler"
+    200 "Annulla"
+    201 "Abbrechen"
+    202 "Cancelar"
+    203 "Zrušit"
+    204 "Anuluj"
+    205 "Отмена"
+    206 "Video"
+    207 "Vidéo"
+    208 "Video"
+    209 "Video"
+    210 "Vídeo"
+    211 "Video"
+    212 "Wideo"
+    213 "Видео"
+    214 "Shaders"
+    215 "Shaders"
+    216 "Shader"
+    217 "Shader"
+    218 "Sombreado"
+    219 "Shadery"
+    220 "Shadery"
+    221 "Шейдеры"
+    222 "Audio"
+    223 "Audio"
+    224 "Audio"
+    225 "Audio"
+    226 "Sonido"
+    227 "Audio"
+    228 "Audio"
+    229 "Аудио"
+    230 "Speech"
+    231 "Voix"
+    232 "Dialoghi"
+    233 "Sprache"
+    234 "Diálogos"
+    235 "Řeč"
+    236 "Mowa"
+    237 "Речь"
+    238 "Music"
+    239 "Musique"
+    240 "Musica"
+    241 "Musik"
+    242 "Música"
+    243 "Hudba"
+    244 "Muzyka"
+    245 "Музыка"
+    246 "Hardware Mixing"
+    247 "Mixage matériel"
+    248 "Combinazione Hardware"
+    249 "Hardware als Mixer"
+    250 "Mezcla por hardware"
+    251 "Hardwerový mix"
+    252 "Sprzętowy miks"
+    253 "Аппар. микширование"
+    254 "All Audio"
+    255 "Tout Audio"
+    256 "Attiva audio"
+    257 "Alle Audioptionen"
+    258 "Todo sonido"
+    259 "Komplet audio"
+    260 "Całe audio"
+    261 "Весь звук"
+    262 "Shader 1.0"
+    263 "Shader 1.0"
+    264 "Shader 1.0"
+    265 "Shader 1.0"
+    266 "Sombreado 1.0"
+    267 "Shader 1.0"
+    268 "Shader 1.0"
+    269 "Шейдеры 1.0"
+    270 "Shader 2.0"
+    271 "Shader 2.0"
+    272 "Shader 2.0"
+    273 "Shader 2.0"
+    274 "Sombreado 2.0"
+    275 "Shader 2.0"
+    276 "Shader 2.0"
+    277 "Шейдеры 2.0"
+    278 "Shader 3.0"
+    279 "Tous Shaders"
+    280 "Tutti gli shader"
+    281 "Alle Shader"
+    282 "Todos sombreados"
+    283 "Komplet shadery"
+    284 "Wszystkie Shadery"
+    285 "Все шейдеры"
+    286 "No Shaders"
+    287 "Aucun Shaders, fonction fixe seule"
+    288 "Nessuno shader"
+    289 "Keine Shader"
+    290 "Sin sombreado"
+    291 "Žádné shadery"
+    292 "Brak Shaderów"
+    293 "Без шейдеров"
+    294 "Your selection needs to be validated, press OK to proceed."
+    295 "Votre choix doit être validé, appuyez sur OK pour continuer."
+    296 "La selezione deve essere convalidata, premi OK per continuare."
+    297 "Einstellungen bitte mit OK bestätigen."
+    298 "Es necesario validar la selección, pulsar Aceptar para continuar."
+    299 "Váše nastavení je nutné ověřit, stiskněte OK pro pokračování."
+    300 "Twoje ustawienia muszą zostać zweryfikowany. Naciśnij OK, by kontynuować"
+    301 "Требуется проверка настроек. Нажмите Ок."
+    302 "Unable to validate your selection. Please select a smaller resolution."
+    303 "Impossible de valider le choix. Sélectionnez une résolution inférieure."
+    304 "Impossibile convalidare la selezione. Scegli una risoluzione inferiore."
+    305 "Einstellungen unzulässig. Bitte kleinere Auflösung wählen."
+    306 "No se ha podido validar la selección. Seleccionar una resolución menor."
+    307 "Nelze ověřit váše nastavení, vyberte prosím nižší rozlišení."
+    308 "Nie można zweryfikować ustawień. Wybierz mniejszą rozdzielczość."
+    309 "Проверка показала необходимость уменьшить разрешение."
+    310 "Your selection was validated successfully."
+    311 "Votre choix a été validé."
+    312 "La selezione è stata convalidata."
+    313 "Einstellungen übernommen."
+    314 "La selección se ha validado correctamente."
+    315 "Vaše nastavení bylo úspěšně ověřeno."
+    316 "Ustawienia zweryfikowane pomyślnie."
+    317 "Проверка прошла успешно."
+    318 "You need to install DirectX9.0c runtime or better  on this computer\nin order for Juiced to work. You can download this from\nhttp://www.microsoft.com/directx"
+    319 "Il est nécessaire d'installer l'exécutable de DirectX9.0c ou ultérieur sur l'ordinateur\npour que Juiced puisse fonctionner. Vous pourrez le télécharger depuis\nhttp://www.microsoft.com/directx"
+    320 "Devi installare il runtime di DirectX9.0c o versione successiva su questo computer\nper permettere a Juiced di funzionare. Puoi scaricarlo dall'indirizzo Internet\nhttp://www.microsoft.com/directx"
+    321 "Auf diesem PC muss DirectX9.0c oder besser installiert sein \ndamit Juiced gespielt werden kann. Bezugsadresse:\nhttp://www.microsoft.com/directx"
+    322 "Es necesario instalar DirectX9.0c o superior en este ordenador\n para que Juiced pueda ejecutarse. Se puede descargar en\nhttp://www.microsoft.com/directx"
+    323 "Aby hra Juiced fungovala, \nje nutné nainstalovat DirectX9.0c nebo vyšší.\nMůžete si ho stáhnout ze stránky\nhttp://www.microsoft.com/directx"
+    324 "Musisz zainstalować DirectX9.0c lub nowszy\nby móc zagrać. Możesz go znaleźć na stronie\nhttp://www.microsoft.com/directx"
+    325 "Для правильной работы игры необходимо установить DirectX верии не ниже 9.0c.\nВы можете найти эту версию на сайте\nhttp://www.microsoft.com/directx"
+    326 "Input"
+    327 "Entrée"
+    328 "Input"
+    329 "Eingabe"
+    330 "Entrada"
+    331 "Vstup"
+    332 "Kontroler zewnętrzny"
+    333 "Ввод"
+    334 "Multi-turn wheel"
+    335 "Volant multi-rotations"
+    336 "Volante a giro multiplo"
+    337 "Volldrehungs-Lenkrad"
+    338 "Volante multigiro"
+    339 "Vícekolový volant"
+    340 "Kierownica"
+    341 "Мульти-руль"
+    342 "MultiThreading"
+    343 "MultiThreading"
+    344 "MultiThreading"
+    345 "MultiThreading"
+    346 "MultiThreading"
+    347 "MultiThreading"
+    348 "MultiThreading"
+    349 "MultiThreading"
+    350 "a"
+    351 "a"
+    352 "a"
+    353 "a"
+    354 "a"
+    355 "a"
+    356 "a"
+    357 "a"
+    358 "a"
+    359 "a"
+    360 "a"
+END

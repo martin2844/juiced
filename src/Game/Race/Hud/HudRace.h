@@ -106,6 +106,11 @@ struct HudRace {
     std::vector<HudCar> players;            // [G+0x6C]+0x58 of them
     int32_t pausing = -1;                   // the number of the player who paused (the race track's +0x10), -1 none
     const RaceCar* cameraCar = nullptr;     // the first player's camera's car (P+0x0C, +0x08): the map's
+    // The first player's camera (P+0x0C): its view (+0x18, a RaceCamera::Mode), looking back (+0xA8) and its pan
+    // (+0xCC), by which the HUD hides the windows (0x0044D827).
+    int cameraMode = 0;
+    bool cameraLookBack = false;
+    float cameraPan = 0.0f;
     // The online statistics' lap time of the player with the best lap, sent (the game's, 0x004EC6D0): the pause's
     // (0x0044F199: not a replay's race, a race of type 5, 3, 6 or 9) and the sprint's results' (0x00454EDF, `pause`
     // 0: neither checked); nothing without the statistics.

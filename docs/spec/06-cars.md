@@ -136,12 +136,15 @@ box's edges, a wide cone of a beam, a fuller shadow).
   `carmesh\mats\`, `cartextures\`), as are the garage's changes of the exhaust (`0x0048BE30`, the slot job
   `0x0048BA80`) and of a catalogue wheel. Most cars' own `mesh\` folders keep older exhausts under the shared ones'
   names (`exhaust_s8` of the NSX has both pipes in one mesh, 119 cm apart); they are never read.
-- The body parts (`0x0048C2E0`, `0x0048BC30`): per category the car's part (`+0x04`): 0xFF takes the first part when
-  the list has one and its `+0x14` is not 0; 0x7F a part without a mesh; another value a part of the list. The part's
-  mesh (`0x00447690`, the part's `+0x10`) goes to the category's slot: categories 0 .. 3 to the first four slots, the
-  skirt to `SSKIRT_L` and `SSKIRT_R` as `<mesh>_L` and `<mesh>_R`, the decal to `DECAL`; the lights and mirrors
-  categories have no slot. `0x0048BC30` writes the index it fits back into the car's record (the model's `+0x8C`,
-  `+0x04 + category`): a new car with none chosen keeps part 0 (its decal coloured, its own part in the workshop).
+- The body parts (`0x0048C2E0` as the model is made): per category the car's part (`+0x04`): 0xFF takes the first
+  part when the list has one and its `+0x14` is not 0 (else none: the decals are CUSTOM parts alone); 0x7F a part
+  without a mesh; another value a part of the list; each given to `0x0048BC30`, which writes it into the car's record
+  (the model's `+0x8C`, `+0x04 + category`; a category of no parts and the neon passed over) and puts the part's mesh
+  (`0x00447690`, the part's `+0x10`; none for -1, 0x7F or one past the list) in the category's slot, none emptying
+  it: categories 0 .. 3 to the first four slots, the skirt to `SSKIRT_L` and `SSKIRT_R` as `<mesh>_L` and `<mesh>_R`,
+  the decal to `DECAL`; the lights and mirrors categories have no slot. A new car with none chosen keeps part 0 (its
+  decal coloured, its own part in the workshop). After the parts changed (`0x0045A8A0`) `0x0048BC30` takes the
+  record's values as they are: the parts cleared (`0x004600C0`, the decal -1) take the decal off.
 - The wheels (`0x0048ABC0`): the catalogue wheel's mesh (the car's wheel kind `+0x12`; past the list the wheels as
   they were), else the CarDef's `STANDARDWHEELS`, front and rear alike, with `<mesh>_blur` for speed; the exhaust
   likewise from the catalogue (the car's exhaust `+0x0F`, its SHAPE; none past the list) or `STANDARDEXHAUST`, the one

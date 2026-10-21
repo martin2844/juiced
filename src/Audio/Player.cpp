@@ -124,13 +124,13 @@ int Player::findSlot(uint32_t mask, uint32_t& id, int& how) {
         switch (strategy) {
             case 0:  // 0x005BF3E0: the first slot not held whose state is below 3
                 for (uint32_t i = 1; i < n && found == 0; ++i) {
-                    if ((m_held & (1u << i)) == 0 && m_slots[i].state < 3) found = i;
+                    if ((m_held & bit(i)) == 0 && m_slots[i].state < 3) found = i;
                 }
                 break;
             case 1: {  // 0x005BF630: the slot whose set has the highest priority (the last of equals)
                 uint32_t best = 0;
                 for (uint32_t i = 1; i < n; ++i) {
-                    if ((m_held & (1u << i)) == 0 && m_slots[i].set != nullptr &&
+                    if ((m_held & bit(i)) == 0 && m_slots[i].set != nullptr &&
                         best <= static_cast<uint32_t>(m_slots[i].set->priority)) {
                         best = static_cast<uint32_t>(m_slots[i].set->priority);
                         found = i;
@@ -142,7 +142,7 @@ int Player::findSlot(uint32_t mask, uint32_t& id, int& how) {
                 float lowest = 1.0f;
                 float sum = 0.0f;
                 for (uint32_t i = 1; i < n; ++i) {
-                    if ((m_held & (1u << i)) == 0 && m_slots[i].volume < lowest) {
+                    if ((m_held & bit(i)) == 0 && m_slots[i].volume < lowest) {
                         lowest = m_slots[i].volume;
                         found = i;
                     }
@@ -154,7 +154,7 @@ int Player::findSlot(uint32_t mask, uint32_t& id, int& how) {
             case 3: {  // 0x005BF430: the slot started first
                 uint32_t oldest = 0xFFFFFFFF;
                 for (uint32_t i = 1; i < n; ++i) {
-                    if ((m_held & (1u << i)) == 0 && m_slots[i].started < oldest) {
+                    if ((m_held & bit(i)) == 0 && m_slots[i].started < oldest) {
                         oldest = m_slots[i].started;
                         found = i;
                     }
@@ -321,7 +321,7 @@ int Player::hold(uint32_t handle) {
     int r;
     Slot* s = slotOf(handle, r);
     if (s == nullptr) return r;
-    m_held |= 1u << (handle % m_slots.size());
+    m_held |= bit(handle % m_slots.size());
     s->set->markPlaying(static_cast<uint32_t>(s->voice));
     return 0;
 }
@@ -330,7 +330,7 @@ int Player::unhold(uint32_t handle) {
     int r;
     Slot* s = slotOf(handle, r);
     if (s == nullptr) return r;
-    m_held &= ~(1u << (handle % m_slots.size()));
+    m_held &= ~bit(handle % m_slots.size());
     if (s->state != 5) s->set->clearPlaying(static_cast<uint32_t>(s->voice));
     return 0;
 }
@@ -339,7 +339,7 @@ void Player::unholdAll() {
     for (uint32_t i = 1; i < m_slots.size(); ++i) {
         Slot& s = m_slots[i];
         if (s.state == 5) continue;
-        m_held &= ~(1u << i);
+        m_held &= ~bit(i);
         if (s.set != nullptr) s.set->clearPlaying(static_cast<uint32_t>(s.voice));
     }
 }
@@ -504,7 +504,7 @@ int Player::fadeOut(uint32_t handle) {
     if (s == nullptr) return r;
     setVolume(handle, 0.0f);
     s->state = 5;
-    m_held |= 1u << (handle % m_slots.size());
+    m_held |= bit(handle % m_slots.size());
     return 0;
 }
 
@@ -549,7 +549,7 @@ void Player::update() {
             s.set->release(voice);
             s.set->clearPlaying(voice);
             s.set->setOwner(voice, 0);
-            m_held &= ~(1u << i);
+            m_held &= ~bit(i);
             s.user = 0;
             s.set = nullptr;
             s.voice = -1;
@@ -563,7 +563,7 @@ void Player::update() {
                 s.set->clearPlaying(voice);
                 s.set->setOwner(voice, 0);
                 s.state = 1;
-                m_held &= ~(1u << i);
+                m_held &= ~bit(i);
                 s.set = nullptr;
                 s.user = 0;
                 s.voice = -1;

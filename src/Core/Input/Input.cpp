@@ -378,14 +378,8 @@ void Input::registerMap(const std::string& name, Device& d) {
         d.controller->setActionMap(f);
     }
     m_keyboard.mapped = true;
-    m_keyboard.appData.fill(-1);
     m_keyboard.buffer.clear();
-    for (const MapAction& a : d.format) {
-        if ((a.semantic & 0xFFFFFF00u) == 0x81000400u) {
-            int64_t& slot = m_keyboard.appData[a.semantic & 0xFF];
-            if (slot == -1) slot = a.appData;
-        }
-    }
+    mapKeyboard(f);
     const size_t at = static_cast<size_t>(&d - m_devices.data());
     if (at < m_formats.size()) m_formats[at] = f;
     d.mapped = true;
@@ -778,6 +772,32 @@ void Input::recreateControllers() {
             d.controller->setActionMap(m_formats[i]);
         }
     }
+    if (const MapFormat* f = playerFormat(0); f != nullptr && m_keyboard.mapped) mapKeyboard(*f);
+}
+
+// 0x005954D0's keyboard: the keys its map gives the actions (the first action of a key keeps it). Without the
+// platform's keyboard each DIKEYBOARD_ action (0x81000400 | the key) on its key, as DirectInput's default map gives them.
+void Input::mapKeyboard(const MapFormat& f) {
+    m_keyboard.appData.fill(-1);
+    if (m_keyboardPort != nullptr) {
+        for (const auto& [key, appData] : m_keyboardPort->setActionMap(f)) {
+            int64_t& slot = m_keyboard.appData[key];
+            if (slot == -1) slot = appData;
+        }
+        return;
+    }
+    for (const MapAction& a : f.actions) {
+        if ((a.semantic & 0xFFFFFF00u) == 0x81000400u) {
+            int64_t& slot = m_keyboard.appData[a.semantic & 0xFF];
+            if (slot == -1) slot = a.appData;
+        }
+    }
+}
+
+const MapFormat* Input::playerFormat(int player) const {
+    const Controller* c = const_cast<Input*>(this)->playerController(player);
+    if (c == nullptr || c->device < 0 || static_cast<size_t>(c->device) >= m_formats.size()) return nullptr;
+    return &m_formats[static_cast<size_t>(c->device)];
 }
 
 }  // namespace oj::input

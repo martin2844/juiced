@@ -212,8 +212,10 @@ acquired nor read). A device object (`0x00594950`, vtable `0x006FC5BC`, 0x3B8 by
 each controller in the list's order, each holding the DirectInput (`+0x38`), its controller (`+0x3C`), the keyboard
 (`+0x40`, one object all the devices share) and the mouse (`+0x44`); with no controller one device without one. Then
 the force feedback manager (`0x00591DF0`, `[0x0075F5F8]`; below) and its response table (`0x005914D0`). OpenJuice reads
-the keyboard from the game window's messages (the scan codes are DirectInput's keyboard codes) and makes the rest
-(`Game/Platform/InputDevices`); a test run (`--test`) lists no controller.
+the keyboard's keys from the game window's messages (the scan codes are DirectInput's keyboard codes) and makes the rest
+(`Game/Platform/InputDevices`); its keyboard of `GUID_SysKeyboard` serves the maps alone (`0x005954D0`'s
+BuildActionMap and SetActionMap on it give each action its key, a user's map kept by DirectInput included); a test run
+(`--test`) lists no controller and puts each `DIKEYBOARD_` action on its key.
 
 Each frame the input manager's update (`0x0040CCF0` -> `0x005918C0` -> `0x0058FE50`, by the frame's time) first takes
 the first player's device when it has none (`+0x28` -1, `0x005918E0`: each device with input by its last poll that
@@ -830,10 +832,19 @@ bit turned over (`0x00408CC0`) and its pictures ui_yes when it came on, else ui_
 `control` of the options' menu (`0x004080D0` with 1, then `0x00407FB0`): the first player's controller is made again
 with DirectInput's mapping window (the input manager's method `+0x04`: `IDirectInput8::ConfigureDevices` with
 `DICD_EDIT`, `0x00595717`; `[0x0075F770]` set while it runs, the cursor shown for it). Windows has had no such window
-since Vista: the call fails and a message box (`MB_ICONHAND | MB_SETFOREGROUND | MB_TOPMOST`) shows the texts 111 and
-112 of `scripts\jettext<letter>.txt` ("There is a problem with your DirectInput registry settings." / "Please see the
-ReadMe file for further assistance.") under the title 113 ("DirectInput problem detected"). OpenJuice shows the same
-message box without calling the mapping window. Either way the devices are made again after it (`0x005957D1`:
+since Vista: the call fails (anything but `DI_OK`) and a message box (`MB_ICONHAND | MB_SETFOREGROUND | MB_TOPMOST`,
+over the desktop) shows the texts 111 and 112 of `scripts\jettext<letter>.txt` ("There is a problem with your
+DirectInput registry settings." / "Please see the ReadMe file for further assistance.") under the title 113
+("DirectInput problem detected"); Wine's DirectInput and DIMapper on Windows 7 give the window. Its parameters
+(`0x0059563F`): no user names, the one format of the map just registered (DRIVER1 of the first player's device), the
+desktop as its window, the colours text `0xFF9CC4CE`, highlight, callouts and border `0xFFECEC01`, the control and
+highlight fills `0xFF18536D`, the area `0xFF253E4A`, no target; round it the game's window hidden and the messages
+pumped, the cursor given back, then hidden again, the window shown and made active (`SetActiveWindow`), the messages
+pumped. The map the user made there is DirectInput's: BuildActionMap gives it to the controller and the keyboard
+from then on. DirectInput keeps the users' maps in `Common Files\DirectX\DirectInput\User Maps` (`<user>_<device>.ini`):
+the 32-bit one's under `Program Files (x86)`, where the stock game leaves them (it has no manifest: its writes there go
+to `%LOCALAPPDATA%\VirtualStore`); the 64-bit one's under `Program Files`, so the 64-bit OpenJuice does not see the maps
+the stock game saved. Either way the devices are made again after it (`0x005957D1`:
 `0x00590EE0` for every input manager, `0x00590F40`: each device's controller released and made again from its
 instance GUID with `c_dfDIJoystick2` and the cooperative level `0x16` (`0x00596210`; `DISCL_NOWINKEY` is a keyboard's,
 so DirectInput refuses it), the keyboard made again (the old one not released) and the force feedback manager made

@@ -663,6 +663,8 @@ void RaceCamera::chase(const CameraTarget& target, const CameraRace& race, rende
 
 void RaceCamera::beforeStart(const CameraTarget& target, const CameraRace& race, render::Camera& camera) {
     if (m_reset) {
+        // 0x0040533C: the stock's camera without a car (+0x08) only clears its fly-by here, asking no window and
+        // setting no sweep; this camera is never stepped without one (TrackView::cameraTarget).
         m_windowAsks.push_back(0);
         clearIntro();  // 0x00405317
         // Across the front of the grid: 400 cm ahead of the farthest place along the first place's heading, from

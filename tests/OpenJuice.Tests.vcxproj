@@ -47,7 +47,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>shell32.lib;dbghelp.lib;d3d9.lib;dinput8.lib;dsound.lib;dxguid.lib;strmiids.lib;ole32.lib;user32.lib;gdi32.lib;advapi32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>shell32.lib;dbghelp.lib;d3d9.lib;dinput8.lib;dsound.lib;dxguid.lib;strmiids.lib;ole32.lib;oleaut32.lib;user32.lib;gdi32.lib;advapi32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -63,6 +63,9 @@
     <ProjectReference Include="..\src\Core\OpenJuice.Core.vcxproj">
       <Project>{4940519A-A764-4AA2-B9F2-707CAB229C54}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\src\JuicedConfig\OpenJuice.JuicedConfig.vcxproj">
+      <Project>{BE571CD2-F93E-421B-9FFB-25FC8C7144A0}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\third_party\speex-1.0.3\OpenJuice.Speex.vcxproj">
       <Project>{5C2D8E14-7A31-4B6F-9E08-2F4A6B1C3D95}</Project>
     </ProjectReference>
@@ -77,7 +80,14 @@
     <ClCompile Include="Framework\Fixtures.cpp" />
     <ClCompile Include="Framework\TestMain.cpp" />
     <ClCompile Include="Integration\Audio\DirectSoundTests.cpp" />
+    <ClCompile Include="Integration\Audio\SoundListenerTests.cpp" />
+    <ClCompile Include="Integration\Audio\VoiceManagerTests.cpp" />
+    <ClCompile Include="Integration\Cars\CarModelPartsTests.cpp" />
+    <ClCompile Include="Integration\Cars\CarViewTests.cpp" />
+    <ClCompile Include="Integration\Frontend\AudioOptionsTests.cpp" />
+    <ClCompile Include="Integration\Frontend\InstantSelTypeTests.cpp" />
     <ClCompile Include="Integration\Frontend\MainMenuTests.cpp" />
+    <ClCompile Include="Integration\Frontend\MenuPictureTests.cpp" />
     <ClCompile Include="Integration\Frontend\MessageWindowTests.cpp" />
     <ClCompile Include="Integration\Frontend\StartupTests.cpp" />
     <ClCompile Include="Integration\GameData\CarDefsTests.cpp" />
@@ -92,6 +102,7 @@
     <ClCompile Include="Integration\GameData\ReplayTests.cpp" />
     <ClCompile Include="Integration\GameData\SceneObjectsTests.cpp" />
     <ClCompile Include="Integration\GameData\TracksTests.cpp" />
+    <ClCompile Include="Integration\JuicedConfig\SystemChecksTests.cpp" />
     <ClCompile Include="Integration\Network\HttpTests.cpp" />
     <ClCompile Include="Integration\Network\LeaderboardTests.cpp" />
     <ClCompile Include="Integration\Network\MatchmakingTests.cpp" />
@@ -101,11 +112,13 @@
     <ClCompile Include="Integration\Network\SessionTests.cpp" />
     <ClCompile Include="Integration\Network\TcpTests.cpp" />
     <ClCompile Include="Integration\Network\TransportTests.cpp" />
+    <ClCompile Include="Integration\Platform\DirectInputKeyboardTests.cpp" />
     <ClCompile Include="Integration\Platform\Windows7Tests.cpp" />
     <ClCompile Include="Integration\Race\RaceFrontEndTests.cpp" />
     <ClCompile Include="Integration\Saves\ReplaysDeviceTests.cpp" />
     <ClCompile Include="Integration\Saves\SaveDeviceTests.cpp" />
     <ClCompile Include="Integration\Saves\UserSavesTests.cpp" />
+    <ClCompile Include="Unit\Audio\SoundSetTests.cpp" />
     <ClCompile Include="Unit\Base\CpuInfoTests.cpp" />
     <ClCompile Include="Unit\Base\ScriptTests.cpp" />
     <ClCompile Include="Unit\Career\DealerTests.cpp" />
@@ -120,6 +133,7 @@
     <ClCompile Include="Unit\Input\GameControllerTests.cpp" />
     <ClCompile Include="Unit\Input\KeyboardSteeringTests.cpp" />
     <ClCompile Include="Unit\Input\UiInputTests.cpp" />
+    <ClCompile Include="Unit\JuicedConfig\ConfigDataTests.cpp" />
     <ClCompile Include="Unit\Network\GameSpyPresenceTests.cpp" />
     <ClCompile Include="Unit\Network\GameSpyTests.cpp" />
     <ClCompile Include="Unit\Network\OnlineRecordsTests.cpp" />
@@ -127,10 +141,13 @@
     <ClCompile Include="Unit\Physics\DynamicsTests.cpp" />
     <ClCompile Include="Unit\Physics\RigidBodyTests.cpp" />
     <ClCompile Include="Unit\Platform\LanguageChoiceTests.cpp" />
+    <ClCompile Include="Unit\Platform\SystemCommandTests.cpp" />
     <ClCompile Include="Unit\Race\DriverControlTests.cpp" />
     <ClCompile Include="Unit\Race\RaceStartTests.cpp" />
     <ClCompile Include="Unit\Race\RaceStateTests.cpp" />
     <ClCompile Include="Unit\Race\RaceWindowIdTests.cpp" />
+    <ClCompile Include="Unit\Race\RaceHudTests.cpp" />
+    <ClCompile Include="Unit\Race\StartingGridTests.cpp" />
     <ClCompile Include="Unit\Race\TrackViewEndTests.cpp" />
     <ClCompile Include="Unit\Render\MeshTests.cpp" />
     <ClCompile Include="Unit\Saves\ArchiveTests.cpp" />

@@ -50,7 +50,8 @@ void messageFont(Screen& s, bool small);
 enum class MessageClose { None, Message, Network };
 
 // 0x005A9200: nothing until the window's transitions are over (0x005AA120); MSG_MENU_BACK follows MSG_MENU's
-// highlight (entered: msgbox only); then by the type, with the event of the player the state reads (+0x24):
+// highlight (entered: msgbox only), jumping to it (0x005AF8A0 with 0: the brackets do not glide as a menu's highlight
+// does); then by the type, with the event of the player the state reads (+0x24):
 //   Continue: SELECT writes 1 to the answer; closes the window it is (msgbox_network: its own +0x40, else +0x48);
 //   ContinueModeless: SELECT writes 1 to the answer; closes the message (+0x48) even from msgbox_network, whose note
 //      stays up for the one who reads the answer to close;

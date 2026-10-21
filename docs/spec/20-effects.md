@@ -126,8 +126,9 @@ else with EXHAUST_S and EXHAUST_O (`+0x4C`, `+0x50`) the nodes of both; else the
 
 Each frame of the car (`0x004924A0`, after its motion, see `19-damage.md`):
 
-- the tyres (`0x004907D0`): a wheel whose surface changed (and is known) is cleared of the change and takes the skid
-  and the WHEELSPIN of its surface: of sand for sand and grass (`+0xAC`, `+0xCC`), else of tarmac (`+0x98`, `+0xA8`);
+- the tyres (`0x004907D0`): a wheel whose surface changed (and is known) is cleared of the change, puts the skid it
+  had and the car's squeal (`+0x90`) to level 0 (`0x004908A1`, `0x004908B3`) and takes the skid and the WHEELSPIN of
+  its surface: of sand for sand and grass (`+0xAC`, `+0xCC`), else of tarmac (`+0x98`, `+0xA8`);
   `+0xBC` of each wheel falls by 0.05 to 0; for each wheel not on the ground (or the car out of the race,
   `+0x4EC`, or a replay playing) the squeal's pitch (`+0x94`) is 0; once the wheels are done, with a squeal and a
   pitch of 0 the pitch is drawn: (`rand()` / 32767 - 0.5) x 8000;

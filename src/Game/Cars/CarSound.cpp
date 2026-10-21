@@ -309,7 +309,10 @@ void CarSound::rebuildKnots() {
 
 void CarSound::frame(const Frame& f, CrtRandom& random) {
     CarBody& body = *m_veh.body;
-    if (!m_focus) {
+    // 0x00494644: another machine's car whose race is paused (+0x4EC) silent.
+    if (m_veh.netPaused) {
+        m_master = 0.0f;
+    } else if (!m_focus) {
         m_master = 1.5f;  // [0x007178FC]
     } else {
         m_master = 1.0f;  // [0x00717910]

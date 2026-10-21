@@ -97,15 +97,15 @@ won, "Completed" in green. SELECT on an open one goes to `Arcade_Race`, BACK to 
 a completed race, the cross until the fifth opens; locked ones disabled; the first open one not completed
 highlighted), the city map at its first place with each race's route model, the car view of the race's car (all made
 by `0x0042AD40`), the race's details (`0x0042CE80`: laps, time, weather, opponents, place, route, the car and its
-rating, the championship, the challenge's target). Each frame with the view idle the map goes to the place named as
+rating, the championship, the challenge's target; Car and Challenge over several lines, their `+0x128` 1). Each frame with the view idle the map goes to the place named as
 the route's location (the nine names at `0x00767DC0` against the location's text) with the route's model shown and
 coming down, and the car shows turned 2.64. SELECT on an open race (a showoff first asks "VIEW SHOWOFF TUTORIAL?" once)
 starts it (`0x0042D7D0`: the race's type by its kind, its laps, track, route, time and weather, one player,
 `loading`); BACK `Arcade_Championship`. After a race the front end opens `Arcade_Results` when any news is set, else
 `Arcade_Race`.
 
-`Arcade_Results` (`0x0042E150`, `0x0042E330`): Title2 and Comment by the news (Comment emptied for the developers' and
-the extreme nitrous); SELECT or BACK to `Arcade_Championship` after a series completed, else `Arcade_Race`.
+`Arcade_Results` (`0x0042E150`, `0x0042E330`): Title2 and Comment by the news (Comment over several lines, its `+0x128`
+1; emptied for the developers' and the extreme nitrous); SELECT or BACK to `Arcade_Championship` after a series completed, else `Arcade_Race`.
 
 The race (`0x00495DE0` for mode 0): the session of the race's entries (`0x004B93C0`: crew 0 for the player's, else the
 entry's number), the challenge's outcome 0, the cars made (`0x0042B000`), each on its grid place, named by the first

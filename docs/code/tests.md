@@ -21,7 +21,8 @@ also checks the game's executable of its own configuration beside it (`Windows7.
 import fails it with its name; one of Windows 7 gets its entry in the test's list (the compiler checks the name
 against the SDK's headers for Windows 7), one of a later Windows a way round (`app.md`, "The platform"). The
 `DirectSound` suite needs a sound device: it checks the values Windows' DirectSound refuses that the stock's 3D voices
-ask for (`docs/spec/26-sound.md`).
+ask for (`docs/spec/26-sound.md`). The `DirectInputKeyboard` suite checks that DirectInput's default
+keyboard map gives the controls file's keys (no user's map on the machine).
 
 ## Writing one
 
