@@ -1,5 +1,6 @@
 #ifdef OJ_MACOS
 #include "Mac/ControlsOverlay.h"
+#include "Mods/CreativeMenu.h"
 #endif
 // The game's main function and its loop: the platform, the front end, the race and the frames between them
 // (docs/spec/01-startup.md).
@@ -235,6 +236,9 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
         if (!data.load(oj::gameRandom(), &why)) {
             oj::log::warning("game data not loaded: {}", why);
         }
+#ifdef OJ_MACOS
+        oj::mods::addLogoSlots(data.defs);
+#endif
         oj::log::info("game data loaded, {} rand() values drawn", oj::gameRandom().draws());
     }
     // 0x0040C56E: the second save system object's start driver named by the game's text line 168.
@@ -429,6 +433,7 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
     bool frontendUi = false;  // the front end's +0x18: the UI map registered
 #ifdef OJ_MACOS
     std::unique_ptr<oj::mac::ControlsOverlay> controlsEditor;
+    std::unique_ptr<oj::mods::CreativeMenu> creativeMenu;
     oj::input::Input::Map controlsPreviousMap = oj::input::Input::Map::None;
 #endif
     while (platform.pumpMessages()) {
@@ -440,6 +445,20 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
             continue;
         }
 #ifdef OJ_MACOS
+        if (!creativeMenu) {
+            if (auto request=oj::mods::takeRequest()) creativeMenu=std::make_unique<oj::mods::CreativeMenu>(*device,language,std::move(*request));
+        }
+        if (creativeMenu) {
+            oj::audio::setActive(false);
+            auto keys=platform.takeKeyEvents();
+            for(const auto& p:options.presses){if(p.down==rendered)keys.push_back({p.code,true});if(p.up==rendered)keys.push_back({p.code,false});}
+            const bool open=creativeMenu->update(keys);creativeMenu->draw();
+            if(options.frames && rendered+1>=options.frames && !options.capture.empty()) device->capture(oj::toWide(options.capture));
+            device->endFrame();++rendered;
+            if(!open){creativeMenu.reset();std::vector<oj::input::KeyEvent> released;for(int k=1;k<256;++k)released.push_back({static_cast<uint8_t>(k),false});input.poll(released,false,0.f);oj::audio::setActive(true);}
+            LARGE_INTEGER now{};QueryPerformanceCounter(&now);start.QuadPart+=now.QuadPart-previousUpdate.QuadPart;previousUpdate=last=now;
+            if(options.frames&&rendered>=options.frames)break;Sleep(16);continue;
+        }
         if (oj::mac::takeControlsRequest() && !controlsEditor) {
             controlsPreviousMap = input.map();
             controlsEditor = std::make_unique<oj::mac::ControlsOverlay>(*device, language, oj::mac::bindingsPath());

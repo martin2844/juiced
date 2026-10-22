@@ -31,6 +31,8 @@ public:
     void update(GarageHost& host, ui::Screen& s, uint32_t event);
 
 private:
+    bool m_custom = false;
+    int m_effect = 0, m_speed = 2;
     uint32_t m_own = 0;  // +0x0C: the car's neon colour
     int32_t m_had = 0;   // +0x10: the car had a neon
 };

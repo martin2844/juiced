@@ -1,3 +1,6 @@
+#ifdef OJ_MACOS
+#include "Mods/Creative.h"
+#endif
 // The accessories: the windows' tint, the neon, the dials' colours, the ICE and the horn.
 
 #include "Game/Frontend/Garage/Customise/Accessories.h"
@@ -58,6 +61,7 @@ void TintsMenu::update(GarageHost& host, ui::Screen& s, uint32_t event) {
 // in its colour (ui_neon_off, ui_neon_choose; valued -1 under the profile's neon level 0 for the model, +0x26B), the
 // car's colour highlighted; the price 0.
 void NeonMenu::enter(GarageHost& host, ui::Screen& s) {
+    m_custom=false;
     GameData* data = host.gameData();
     Garage& garage = host.garage();
     host.baseEnter(s, "neonmenu");
@@ -90,6 +94,15 @@ void NeonMenu::enter(GarageHost& host, ui::Screen& s) {
             s.setMenuItemColour("COLOURMENU", i, neons[i]);
             if (m_own == neons[i]) own = i;
         }
+#ifdef OJ_MACOS
+        if(mods::enabled()) {
+            s.addMenuItem("COLOURMENU",L"CUSTOM RGB + EFFECTS",unlocked?0.f:-1.f,"ui_neon_off","ui_neon_choose");
+            s.setMenuItemHelp("COLOURMENU",s.menuSize("COLOURMENU")-1,L"Choose exact RGB values and animated effects.");
+        }
+#endif
+#ifdef OJ_MACOS
+        if(mods::enabled() && std::find(neons.begin(),neons.end(),m_own)==neons.end())own=neons.size();
+#endif
         if (s.menuSize("COLOURMENU") != 0) {
             s.selectMenuItem("COLOURMENU", own > s.menuSize("COLOURMENU") - 1 ? 0 : own);
         }
@@ -111,7 +124,12 @@ void NeonMenu::update(GarageHost& host, ui::Screen& s, uint32_t event) {
     if (car == nullptr) return;
     const bool menuShown = s.find("MENU") >= 0 && !s.hidden("MENU");
     const bool coloursShown = s.find("COLOURMENU") >= 0 && !s.hidden("COLOURMENU");
+    if(coloursShown && (event==input::kLeft || event==input::kRight))m_custom=false;
     if (garage.texts.bought != 0) {
+#ifdef OJ_MACOS
+        if(!menuShown && mods::enabled() && !mods::saveNeon(*car,{car->neon&0xffffff,m_custom?m_effect:0,m_custom?m_speed:2}))
+            host.message(MessageType::Continue,L"Neon purchased, but the effect settings could not be saved.",false,nullptr);
+#endif
         if (menuShown) {
             car->body[9] = 0xFF;
             if (garage.view) garage.view->hideNeon();
@@ -122,7 +140,7 @@ void NeonMenu::update(GarageHost& host, ui::Screen& s, uint32_t event) {
     if (coloursShown && s.menuSize("COLOURMENU") != 0) {
         const size_t item = s.selectedMenuItem("COLOURMENU");
         const std::vector<uint32_t>& neons = data->defs.neons;
-        if (item < neons.size()) car->neon = neons[item];
+        if (item < neons.size() && !m_custom) car->neon = neons[item];
         if (garage.view) garage.view->colourNeon(car->neon);
         car->body[9] = 1;
         garage.price(host, 1000);
@@ -131,6 +149,17 @@ void NeonMenu::update(GarageHost& host, ui::Screen& s, uint32_t event) {
     } else {
         s.setHidden("locked", true);
     }
+#ifdef OJ_MACOS
+    if(event==input::kSelect && coloursShown && mods::enabled() &&
+       s.selectedMenuItem("COLOURMENU")==data->defs.neons.size()) {
+        if(value==-1.f){host.sound("NO");return;}
+        mods::requestNeon(*car,[this,car,&host](const mods::Neon& n){
+            m_custom=true;m_effect=n.effect;m_speed=n.speed;car->neon=0xff000000|n.rgb;
+            if(host.garage().view)host.garage().view->colourNeon(car->neon);
+            host.request("buymod",SwitchMode::Push);
+        });return;
+    }
+#endif
     if (event == input::kBack) {
         host.sound("CLICK");
         host.request("stylingmenu", SwitchMode::Swap);
@@ -152,7 +181,7 @@ void NeonMenu::update(GarageHost& host, ui::Screen& s, uint32_t event) {
                 garage.priceShown(host, true);
                 garage.price(host, 1000);
             }
-        } else if (m_had != 0 && car->neon == m_own) {
+        } else if (!m_custom && m_had != 0 && car->neon == m_own) {
             host.message(MessageType::Continue, texts.at(kTextHaveMod), false, nullptr);
         } else if (value == -1.0f) {
             host.sound("NO");

@@ -1,3 +1,6 @@
+#ifdef OJ_MACOS
+#include "Mods/Creative.h"
+#endif
 // Boxes and lines: an element's colours, picture and texture coordinates, and its quad drawn.
 
 #include "Game/UI/UiScreen.h"
@@ -86,6 +89,9 @@ void Screen::setBoxColour(const std::string& element, uint32_t argb) {
 }
 
 render::TextureId Screen::texture(const std::string& name) {
+#ifdef OJ_MACOS
+    auto custom=mods::uiTexture(name);if(custom!=name)return texture(custom);
+#endif
     const auto found = m_textures.find(name);
     if (found != m_textures.end()) {
         return found->second;
@@ -101,6 +107,9 @@ render::TextureId Screen::loadTexture(const std::string& name) {
     // Localized pictures (button hints) exist as <name>_<language letter>.ddt only: the file system looks for them
     // when the name is not there (0x004F9DB3).
     auto bytes = files.read(std::filesystem::path("ui") / "textures" / (name + ".ddt"));
+#ifdef OJ_MACOS
+    if(auto image=mods::imageBytes(name))bytes=std::move(image);
+#endif
     Ddt ddt;
     if (bytes && ddt.parse(*bytes)) {
         render::TextureData data;

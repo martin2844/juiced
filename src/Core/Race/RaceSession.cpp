@@ -1,3 +1,6 @@
+#ifdef OJ_MACOS
+#include "Mods/Creative.h"
+#endif
 #include "Core/Race/RaceSession.h"
 
 #include "Core/Career/CareerEvents.h"
@@ -86,9 +89,13 @@ void applyCrewScheme(Career& career, const Crew& crew, const CarDefs& defs, cons
             case 8: less = 6; break;
             default: break;
         }
-        const size_t decals = car.def != nullptr ? car.def->parts[kDecal].parts.size() : 0;
+        size_t decals = car.def != nullptr ? car.def->parts[kDecal].parts.size() : 0;
+#ifdef OJ_MACOS
+        if (car.def != nullptr) decals = mods::decalCount(*car.def, decals);
+#endif
         car.decalColour = 0;
-        car.body[8] = static_cast<uint8_t>(decals - static_cast<size_t>(less));
+        // Add-on cars need not supply the retail eight crew liveries.
+        car.body[8] = decals >= 8 ? static_cast<uint8_t>(decals - static_cast<size_t>(less)) : 0x7F;
     }
 }
 

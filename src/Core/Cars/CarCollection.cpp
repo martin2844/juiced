@@ -1,3 +1,6 @@
+#ifdef OJ_MACOS
+#include "Mods/Creative.h"
+#endif
 #include "Core/Cars/CarCollection.h"
 
 #include "Core/Base/Script.h"
@@ -65,7 +68,16 @@ void autoModify(Car& car, bool prototype, int level, CarMaking& making) {
             car.body[c] = static_cast<uint8_t>(next(making.random) % 1 + 1);
             continue;
         }
-        const auto count = static_cast<uint32_t>(car.def != nullptr ? car.def->parts[c].parts.size() : 0);
+        auto count = static_cast<uint32_t>(car.def != nullptr ? car.def->parts[c].parts.size() : 0);
+#ifdef OJ_MACOS
+        if (c == kDecal && car.def != nullptr) {
+            count = static_cast<uint32_t>(mods::decalCount(*car.def, count));
+            // Small add-on catalogues may already include a final user-image slot.
+            // AI/auto-mod must not select the active player's personal artwork.
+            const int custom = mods::logoIndex(car.modelName());
+            if (mods::enabled() && count <= 9 && custom >= 0 && custom == int(count) - 1) --count;
+        }
+#endif
         const uint32_t choices = count > 1 ? count - 1 : count;
         if (choices == 0) {
             continue;
@@ -74,8 +86,15 @@ void autoModify(Car& car, bool prototype, int level, CarMaking& making) {
             // Stock problem: (choices - 8) is not checked (0x0048F392, unsigned): a list of 9 decals divides by zero
             // and the game stops (0 here); a list of 1 .. 8 gives an unsigned wrap, so the decal is rand() + 1 cut
             // to a byte. The game's cars have 31 decals each.
-            const uint32_t span = choices - 8;
-            car.body[c] = prototype || span == 0 ? 0 : static_cast<uint8_t>(next(making.random) % span + 1);
+            if (count <= 9) {
+                // Add-on cars need not carry the retail prototype + eight crew decals.
+                // Small catalogues contain ordinary selectable parts: never wrap an
+                // unsigned subtraction and write an out-of-range index into the save.
+                car.body[c] = prototype ? 0 : static_cast<uint8_t>(next(making.random) % count);
+            } else {
+                const uint32_t span = choices - 8;
+                car.body[c] = prototype ? 0 : static_cast<uint8_t>(next(making.random) % span + 1);
+            }
         } else if (count > 1) {
             car.body[c] = static_cast<uint8_t>(next(making.random) % choices + 1);
         } else {

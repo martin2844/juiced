@@ -10,6 +10,7 @@ import re
 import struct
 import numpy as np
 from retail import Retail
+from ferrari_audio import build_audio
 
 
 def pack(fmt, *v):
@@ -63,13 +64,38 @@ def subset(p, mask):
 
 
 def box(lo, hi, material):
-    """Closed accessory with flat normals and independent UVs on each face."""
+    """Closed chamfered accessory; bevels catch light instead of razor-box edges."""
     pos=[]; normals=[]; uv=[]; tris=[]
-    corners=np.array([[x,y,z] for x in (lo[0],hi[0]) for y in (lo[1],hi[1]) for z in (lo[2],hi[2])])
-    for ids in [(0,1,3,2),(4,6,7,5),(0,4,5,1),(2,3,7,6),(0,2,6,4),(1,5,7,3)]:
-        pts=corners[list(ids)]; n=np.cross(pts[1]-pts[0],pts[2]-pts[0]);n=n/np.linalg.norm(n)
-        base=len(pos);pos.extend(pts);normals.extend([n]*4);uv.extend([(0,0),(1,0),(1,1),(0,1)])
-        tris.extend([(base,base+1,base+2),(base,base+2,base+3)])
+    center=(np.array(lo)+hi)/2;half=(np.array(hi)-lo)/2;b=min(half)*.3
+    def face(pts):
+        pts=np.array(pts);n=np.cross(pts[1]-pts[0],pts[2]-pts[0]);n/=np.linalg.norm(n)
+        if n@pts.mean(0)<0:pts=pts[::-1];n=-n
+        base=len(pos);pos.extend(pts+center);normals.extend([n]*len(pts))
+        axes=np.argsort(abs(n))[:2];uv.extend((pts+center)[:,axes]/12)
+        tris.extend((base,base+i,base+i+1) for i in range(1,len(pts)-1))
+    for axis in range(3):
+        a,c=[i for i in range(3) if i!=axis]
+        for sign in (-1,1):
+            pts=[]
+            for sa,sc in [(-1,-1),(1,-1),(1,1),(-1,1)]:
+                p=np.zeros(3);p[axis]=sign*half[axis];p[a]=sa*(half[a]-b);p[c]=sc*(half[c]-b);pts.append(p)
+            face(pts)
+    for a,c in [(0,1),(0,2),(1,2)]:
+        axis=3-a-c
+        for sa in (-1,1):
+            for sc in (-1,1):
+                pts=[]
+                for end,outer in [(-1,a),(-1,c),(1,c),(1,a)]:
+                    p=np.zeros(3);p[axis]=end*(half[axis]-b)
+                    p[a]=sa*(half[a]-(0 if outer==a else b));p[c]=sc*(half[c]-(0 if outer==c else b));pts.append(p)
+                face(pts)
+    for sx in (-1,1):
+        for sy in (-1,1):
+            for sz in (-1,1):
+                signs=np.array([sx,sy,sz]);pts=[]
+                for axis in range(3):
+                    p=half-b;p[axis]+=b;pts.append(p*signs)
+                face(pts)
     return dict(mat=material,pos=np.array(pos),norm=np.array(normals),uv=np.array(uv),tri=np.array(tris))
 
 
@@ -130,6 +156,7 @@ def build(args):
                 norm/=np.maximum(np.linalg.norm(norm,axis=1)[:,None],1e-12)
                 uv=pos[:,[0,2]]/100 # deterministic projected scratch coordinates
                 material=prim['material'];mat='ferrari_458_body' if material==14 else ('ferrari_458_glass' if material==9 else f'f458_mat{material}')
+                if wheel=='wheel_fl' and n['name'] in ('rim_fl','wheel'):mat='f458_wheel'
                 p=dict(mat=mat,pos=pos,norm=norm,uv=uv,tri=np.array(a['indices']).reshape(-1,3)[:,[0,2,1]])
                 p=subset(p,np.ones(len(p['tri']),dtype=bool))
                 if wheel=='wheel_fl':wheelparts.append(p)
@@ -190,8 +217,43 @@ def build(args):
                 carbon.append(part)
             save_mesh('f458_sport_'+k,carbon)
         else:save_mesh('f458_sport_'+k,(stockspoiler if k=='SPOILER' else zones[k])+extra)
+    # Decals are a fitted duplicate of the actual paint surface, not floating quads.
+    # Native DECAL/SPONS damage zones deform these together with the body underneath.
+    paint=[p for _,p in parts if p['mat']=='ferrari_458_body']
+    def skin(material, region, project):
+        result=[]
+        for p in paint:
+            centre=p['pos'][p['tri']].mean(1)
+            normal=p['norm'][p['tri']].mean(1)
+            q=subset(p,region(centre,normal))
+            if q is None:continue
+            q['mat']=material
+            q['uv']=project(q['pos'])
+            q['pos']+=q['norm']*.16
+            result.append(q)
+        return result
+    stripes=skin('decal_f458_stripes',lambda p,n:(n[:,1]>.45)&(p[:,1]>60),
+                 lambda p:np.c_[(p[:,0]+110)/220,(p[:,2]+235)/470])
+    side=skin('decal_f458_sides',lambda p,n:(abs(n[:,0])>.55)&(p[:,1]<85)&(p[:,1]>30),
+              lambda p:np.c_[(p[:,2]+235)/470,(p[:,1]-25)/65])
+    save_mesh('DECAL_F458_STRIPES',stripes)
+    save_mesh('DECAL_F458_SIDES',side)
+    custom=skin('decal_f458_customlogo',lambda p,n:(n[:,1]>.7)&(abs(p[:,0])<43)&(p[:,2]>95)&(p[:,2]<172),
+                lambda p:np.c_[np.clip((p[:,0]+43)/86,0,1),np.clip((172-p[:,2])/77,0,1)])
+    custom+=skin('decal_f458_customlogo',lambda p,n:(abs(n[:,0])>.7)&(p[:,2]>-55)&(p[:,2]<60)&(p[:,1]>38)&(p[:,1]<78),
+                 lambda p:np.c_[np.clip((60-p[:,2])/115,0,1),np.clip((78-p[:,1])/40,0,1)])
+    save_mesh('DECAL_F458_CUSTOMLOGO',custom)
+    sponsors=[]
+    # Three-by-three group on each door: every performance sponsor has its own slot.
+    for i in range(9):
+        z0=-49+(i%3)*32;y0=41+(i//3)*11
+        sponsors+=skin(f'decal_spons_{i+1}',
+            lambda p,n,z=z0,y=y0:(abs(n[:,0])>.7)&(p[:,2]>z)&(p[:,2]<z+30)&(p[:,1]>y)&(p[:,1]<y+10),
+            lambda p,z=z0,y=y0:np.c_[np.clip((p[:,2]-z)/30,0,1),np.clip(1-(p[:,1]-y)/10,0,1)])
+    save_mesh('f458_sponsors',sponsors)
     children=[node('F458_'+k,'f458_'+k) for k in ['BRKLIGHT','LIGHTSON']]
-    children += [node(k) for k in ['FBUMP','RBUMP','BONNET','SPOILER','SSKIRT_L','SSKIRT_R']]
+    children += [node(k) for k in ['FBUMP','RBUMP','BONNET','SPOILER','SSKIRT_L','SSKIRT_R','DECAL']]
+    children += [node('F458_SPONS','f458_sponsors')]
     # The source includes three exhaust tips; centre upgrade meshes replace their position.
     children += [node('EXHAUST_C',pos=(0,42,-220)),node('DRIVER',pos=(-35,83,9)),node('BONNET_CAM',pos=(0,82,140))]
     for side,x in [('L',-69),('R',69)]:
@@ -211,6 +273,35 @@ def build(args):
             pixels[:,:,3]=np.where(mask,180,0)
         carfile('textures/'+n+'.ddt',pack('9IfI',21,size,size,1,2,2,0,1,1,0.,1)+pixels[:,:,[2,1,0,3]].tobytes())
     tex('f458_paint',(255,255,255,0));tex('f458_scratch',(150,150,150,0),128)
+    tex('f458_rim',(235,235,235,255))
+    carfile('mesh/mats/f458_wheel.pmd','''Material Program = Coloured Spec Opaque
+Colour = 190 190 190
+Specular Colour = 180 180 180
+Specular Highlight = 80
+Shininess = 64
+Z-Bias = 0
+Texture = f458_rim.ptd
+''')
+    def decal_material(material,texture):
+        carfile('mesh/mats/'+material+'.pmd',f'''Material Program = Coloured Spec ABlend
+Colour = 255 255 255
+Specular Colour = 130 130 130
+Specular Highlight = 64
+Shininess = 32
+Additive = FALSE
+Texture = {texture}.ptd
+''')
+    for style in ('stripes','sides'):
+        yy,xx=np.indices((512,512));u=(xx+.5)/512;v=(yy+.5)/512
+        if style=='stripes':mask=(abs(u-.5)>.018)&(abs(u-.5)<.065)
+        else:mask=(abs(v-.35)<.045)|((abs(v-.49)<.018)&(u>.15)&(u<.85))
+        pixels=np.full((512,512,4),255,dtype=np.uint8);pixels[:,:,3]=np.where(mask,255,0)
+        n='decal_f458_'+style
+        carfile('textures/'+n+'.ddt',pack('9IfI',21,512,512,1,2,2,0,1,1,0.,1)+pixels[:,:,[2,1,0,3]].tobytes())
+        decal_material(n,n)
+    tex('f458_no_logo',(255,255,255,0))
+    decal_material('decal_f458_customlogo','f458_no_logo')
+    for i in range(1,10):decal_material(f'decal_spons_{i}','f458_no_logo')
     carfile('mesh/mats/ferrari_458_body.pmd', '''Material Program = Car Body
 Car Colour = 220 12 8
 Side Fresnel = 0.18
@@ -241,13 +332,21 @@ Scratch = f458_scratch.ptd
         c=m['pbrMetallicRoughness']['baseColorFactor'];rgba=[round(x*255) for x in c[:3]]+[255]
         if i==12:rgba=[35,38,40,255] # carbon: source material lacks its original weave map
         if i==11:rgba=[28,28,30,255]
-        tex(f'f458_mat{i}',rgba)
+        if i==12:
+            yy,xx=np.indices((128,128));warp=((xx//4+yy//4)%2)==0
+            weave=24+np.where(warp,12*np.sin((xx%4+.5)*np.pi/4),12*np.sin((yy%4+.5)*np.pi/4))
+            pixels=np.zeros((128,128,4),dtype=np.uint8);pixels[:,:,:3]=weave[:,:,None];pixels[:,:,3]=255
+            carfile('textures/f458_mat12.ddt',pack('9IfI',21,128,128,1,2,2,0,1,1,0.,1)+pixels.tobytes())
+        else:tex(f'f458_mat{i}',rgba)
         carfile(f'mesh/mats/f458_mat{i}.pmd',f'Material Program = Standard Opaque\nDouble-sided = FALSE\nZ-Bias = 0\nOpaque Texture = f458_mat{i}.ptd\n')
     defs=r.read('scripts/cardefs.txt').decode('latin1')
     block=['[BeginCar] FERRARI_458 "FERRARI 458 SPIDER"','MANUFACTURER NONE EUROPE','VALUE 185000','STATE NEW']
     for category,part in [('FBUMP','FBUMP'),('RBUMP','RBUMP'),('BONNET','BONNET'),('SPOILER','SPOILER'),('SKIRT','SSKIRT')]:
         block += [f'STANDARD {category} "f458_{part}"',f'CUSTOM {category} "f458_sport_{part}" AERO']
-    block += ['ALLOW_NONE SPOILER','STANDARDWHEELS "f458_wheel"','STANDARDEXHAUST "f458_exhaust"','ENGINE_SOUND z06','MAXDROPHEIGHT 4','[EndCar]']
+    block += ['CUSTOM DECAL "DECAL_F458_STRIPES" AERO','CUSTOM DECAL "DECAL_F458_SIDES" AERO',
+              'CUSTOM DECAL "DECAL_F458_CUSTOMLOGO" AERO',
+              'ALLOW_NONE DECAL','ALLOW_NONE SPOILER','STANDARDWHEELS "f458_wheel"',
+              'STANDARDEXHAUST "f458_exhaust"','ENGINE_SOUND f458','MAXDROPHEIGHT 4','[EndCar]']
     # Skirts use the native _L / _R suffix. The other names are case-insensitive.
     defs += '\n' + '\n'.join(block) + '\n'
     write('scripts/cardefs.txt',defs.encode('latin1'))
@@ -283,6 +382,8 @@ Scratch = f458_scratch.ptd
     write('import-report.json',json.dumps(report,indent=2)+'\n')
     attribution=Path(__file__).parent/'assets/ATTRIBUTION.txt';write('ATTRIBUTION.txt',attribution.read_bytes())
     write('CC-BY-4.0.txt',(attribution.parent/'CC-BY-4.0.txt').read_bytes())
+    report['audio']=build_audio(root)
+    write('import-report.json',json.dumps(report,indent=2)+'\n')
     print(json.dumps(report,indent=2))
 
 if __name__=='__main__':

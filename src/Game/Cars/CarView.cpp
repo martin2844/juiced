@@ -1,3 +1,6 @@
+#ifdef OJ_MACOS
+#include "Mods/Creative.h"
+#endif
 #include "Game/Cars/CarView.h"
 
 #include "Core/Base/Log.h"
@@ -175,6 +178,13 @@ void CarView::frame(float dt, CrtRandom& random) {
         if (!(m_fade <= 1.0f)) m_fade = 1.0f;
     }
     if (refitting()) putRefit(random);
+#ifdef OJ_MACOS
+    if(m_shown && m_shown->car && mods::enabled()) {
+        colourNeon(mods::neonColour(*m_shown->car,mods::seconds()));
+        auto name=mods::neonTexture(*m_shown->car);
+        if(m_shown->neon)for(auto& node:m_shown->neon->meshNodes)if(node->mesh)for(auto& part:node->mesh->parts())if(part.material)part.material->setTexture(0,m_engine.texture(name.empty()?"gen_neon":name,"textures"));
+    }
+#endif
 }
 
 void CarView::setCameraPlace(const oj::Vec4& place) {
@@ -432,6 +442,8 @@ void GarageView::clear() {
     m_carMirror.reset();
     m_shadow.reset();
     m_neon.reset();
+    m_neonCar = nullptr;
+    m_neonShown = false;
     m_plinth = nullptr;
     m_sign = nullptr;
     m_garage = false;
@@ -684,6 +696,13 @@ void GarageView::listNeon() {
     Model* neon = m_neon.get();
     v->worldDraws.push_back([this, neon](render::Renderer3d& r, render::Camera& c, uint32_t mode) {
         if (!m_neonShown) return;
+#ifdef OJ_MACOS
+        if(m_neonCar && mods::enabled()) {
+            colourNeon(mods::neonColour(*m_neonCar,mods::seconds()));
+            auto name=mods::neonTexture(*m_neonCar);
+            for(auto& node:neon->meshNodes)if(node->mesh)for(auto& part:node->mesh->parts())if(part.material)part.material->setTexture(0,m_engine.texture(name.empty()?"gen_neon":name,"textures"));
+        }
+#endif
         for (auto& node : neon->meshNodes) node->draw(r, c, mode);
     });
     v->listNode(neon->root, false);
@@ -692,12 +711,13 @@ void GarageView::listNeon() {
 void GarageView::showNeon(const Car& car, CrtRandom& loading) {
     if (!m_neon) {
         const CarFolders folders(m_engine);
-        m_neon = m_engine.loadModel("gen_neon", loading);
+        m_neon = m_engine.loadModel("gen_neon", loading, true);
         if (!m_neon) return;
         listNeon();
     }
     fitToChassis(*m_neon, 1.25f, 1.0f);
     m_neonShown = true;
+    m_neonCar = &car;
     colourNeon(car.neon);
 }
 

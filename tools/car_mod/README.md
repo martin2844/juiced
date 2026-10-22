@@ -1,4 +1,4 @@
-# Ferrari 458 Spider — first native car import
+# Ferrari 458 Spider — additional native car
 
 A real car absent from Juiced's original roster. This opt-in mod adds
 **FERRARI 458 SPIDER** as model ID 53, alongside all 52 retail cars. The Falcon
@@ -24,7 +24,7 @@ applies to the importer and engine changes.
 
 ## Build
 
-Requires Node.js and Python with NumPy support. From the repository root:
+Requires Node.js, FFmpeg and Python with NumPy support. From the repository root:
 
 ```sh
 tools/car_mod/build.sh /path/to/Juiced /path/to/Ferrari458
@@ -50,9 +50,15 @@ Space handbrake use the port's current editable bindings.
 - Detailed exterior and interior, animated wheels, working paint and glass tint.
 - Separate front/rear bumper, bonnet and left/right skirt damage zones, using the
   native dent/scratch grid. Collision and repair operate on the imported vertices.
-- Authored sport splitter, rear diffuser, carbon bonnet, skirts and rear wing,
+- Authored sport splitter, rear diffuser, woven carbon bonnet, skirts and rear wing,
   fitted through the existing body-part slots. These are custom test parts, not
-  replicas of a named real-world aftermarket kit.
+  replicas of a named real-world aftermarket kit. Accessory edges are chamfered.
+- Two native tintable decal designs (twin longitudinal stripes and side graphics),
+  plus a custom-image option with fitted bonnet and door surfaces. Sponsor decals
+  show all nine installed performance brands. Both decal shells use native damage.
+- Native neon purchase, colour, lowering, glass tint and wheel upgrades.
+- Independent standard/sport engine banks built from a licensed real Ferrari 458
+  recording, with native RPM crossfades and processed overrun/exhaust variants.
 - Native performance catalogue support: engine/induction/exhaust, nitrous,
   gearbox, suspension, brakes, tyres and replacement wheels.
 - Authored collision cage and wheel contacts; 2.65 m wheelbase, rear-wheel drive,
@@ -62,11 +68,10 @@ Space handbrake use the port's current editable bindings.
 - Garage and race meshes, and a matching high-speed wheel mesh.
 
 The game currently displays about **567 bhp** stock. Published 458 specifications
-inform the engine and dimensions; the model's sound uses Juiced's Corvette V8
-bank. It does **not** contain an authentic Ferrari recording. Wheels use one
+inform the engine and dimensions. Wheels use one
 shared native wheel mesh, as the stock game does. High-speed wheels retain this
-mesh instead of a donor's unrelated blur geometry. No new decal kit or detachable
-panels are claimed; damage uses the game's existing deformation system.
+mesh instead of a donor's unrelated blur geometry. Damage uses the game's existing
+deformation system; detachable panels are not implemented by the original game.
 
 ## Implementation and validation
 
@@ -78,7 +83,8 @@ lowercase. `retail.py` reads DAT archives without modifying them.
 
 `mac_car_mod_check` verifies both garage and race loading, all four wheels,
 wheelbase, collision meshes, vertex deformation/repair, each sport-part swap,
-and increased power with fitted performance parts. Runtime captures exercise the
+independent engine-bank PCM loading, decal fitting/removal/damage, safe Auto-Mod
+with a small decal catalogue, and increased power with fitted performance parts. Runtime captures exercise the
 stock selector, native Auto-Mod (567 → 1,018 bhp), a 1,800-frame dry driving run
 and a 900-frame wet/night run. Regular CTest checks cover the file
 overlay and the port's existing regressions.
@@ -90,7 +96,15 @@ build the mod against their own copy.
 
 For a local standalone test app, use `install_macos.py --base-app /Applications/Juiced.app --exe out/juiced --mod /path/to/Ferrari458 --output "/Applications/Juiced Ferrari 458 Added.app"`. This preserves the base app and uses a separate save directory under Application Support/Juiced Mods/Ferrari458-Added.
 
-Sound sourcing: [Edvvc's Ferrari 458 recording](https://commons.wikimedia.org/wiki/File:Ferrari_458_Italia.ogg)
-is available under CC BY-SA 3.0, but is a short exterior drive-away recording,
-not a complete idle/on-load/overrun sample bank. It has not been integrated.
-The current Corvette audio remains a documented placeholder.
+Sound source: [Edvvc's Ferrari 458 recording](https://commons.wikimedia.org/wiki/File:Ferrari_458_Italia.ogg),
+CC BY-SA 3.0. `ferrari_audio.py` crops, filters and loops four RPM layers, resamples
+them for the native 48 kHz playback ceiling, and generates standard/sport `.cfg`,
+`.rev`, `.vol` and PCM WAV banks. Source and derivative audio retain CC BY-SA 3.0;
+see `assets/AUDIO-ATTRIBUTION.txt`. This is an exterior drive-away recording,
+not a studio multi-load library. Overrun and sport exhaust are processed variants,
+not separate recordings of an upgraded Ferrari. RPM estimates and pitch shifts
+are approximate. No Corvette sample remains in the Ferrari engine banks.
+
+The third decal option is a transparent custom-logo shell until an image is
+provided by the optional creative mod. Its mesh is `DECAL_F458_CUSTOMLOGO`, material
+`decal_f458_customlogo`, texture slot 0; the default remains clean paint.

@@ -1,3 +1,6 @@
+#ifdef OJ_MACOS
+#include "Mods/Creative.h"
+#endif
 // The options' menu (opts_menu).
 
 #include "Game/Frontend/Options/OptionsMenu.h"
@@ -23,6 +26,12 @@ void OptionsMenu::enter(OptionsHost& host, ui::Screen& s) {
     if (s.find("Menu") >= 0) {
         s.restoreMenu("Menu");
         s.restoreMenu("BackMenu");
+#ifdef OJ_MACOS
+        if(mods::enabled()) {
+            s.insertCommandItem("Menu",int(s.menuSize("Menu"))-1,L"MOD GARAGE",0,"creative");
+            s.addMenuItem("BackMenu",L"",0,"","ui_pan5_ora");
+        }
+#endif
         for (size_t i = 0; i < s.menuSize("Menu"); ++i) {
             if (_stricmp(s.menuItemCommand("Menu", i).c_str(), "control") == 0) {
 #ifdef OJ_MACOS
@@ -102,6 +111,14 @@ void OptionsMenu::update(OptionsHost& host, ui::Screen& s, uint32_t event) {
             if (s.menuSize("Menu") == 0) continue;
             const std::string item = s.menuItemCommand("Menu", s.selectedMenuItem("Menu"));
             const auto named = [&](const char* name) { return _stricmp(item.c_str(), name) == 0; };
+#ifdef OJ_MACOS
+            if(named("creative")){mods::requestMenu([&host]{
+                if(mods::hasImage(false)) {
+                    host.optionSettings().setU32(save::Settings::kLogo,0);
+                    if(auto* data=host.gameData();data&&data->career)data->career->flyers.crews[0].logo="ui_chooselogo_01";
+                }
+            });continue;}
+#endif
             if (named("audio")) {
                 host.request(host.racePause() ? "opts_ingame_audio" : "opts_audio", SwitchMode::Swap);
             } else if (named("game")) {

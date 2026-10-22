@@ -1,4 +1,5 @@
 #include "Core/Base/GameFiles.h"
+#include "Audio/Bank.h"
 #include "Core/Cars/CarDamage.h"
 #include "Core/Cars/CarPhysics.h"
 #include "Core/Career/CareerInit.h"
@@ -36,7 +37,27 @@ int main(int argc, char** argv) {
     check(falcon && falcon->name == "FALCON" && falcon->displayName.find("FERRARI") == std::string::npos,
           "original Falcon retains its own ID and definition");
     check(found->value == 185000, "Ferrari base price is 185000 credits");
+    check(found->engineSound == "f458", "Ferrari uses its own engine bank, not a donor car");
+    for (const char* bankName : {"f458", "f458b"}) {
+        auto bank = oj::audio::Bank::load(data.files(), std::filesystem::path("audio/cars") / bankName, bankName, nullptr);
+        check(bank && bank->count() == 7 && bank->samples().size() == 7,
+              "stock and upgraded Ferrari audio banks load all seven samples");
+        if (bank) for (const auto& sample : bank->samples()) {
+            check(sample.data && sample.size > 1000 && sample.rate() == 48000,
+                  "engine sample contains playable 48 kHz PCM audio");
+        }
+    }
+    check(found->parts[8].parts.size() == 3 && found->parts[8].allowNone,
+          "decal catalogue offers stripes, side graphics, custom logo and removal");
+    check(!found->parts[9].parts.empty(), "native neon purchase is available");
     oj::CarMaking making{data.defs, data.catalogue, random, data.autoModifyCounter};
+    bool validAutoDecals=true;
+    for (int i=0;i<32;++i) {
+        auto candidate=oj::makeCar(&*found);
+        oj::autoModify(candidate,false,-1,making);
+        validAutoDecals &= candidate.body[8] < found->parts[8].parts.size();
+    }
+    check(validAutoDecals, "Auto-Mod keeps small additional-car decal catalogues in bounds");
     oj::CareerContext context{data.tables, making, *data.dynamics, data.files(), data.currentCrewmate};
     data.career->profile.respectLevel = 36;
     oj::stockDealer(*data.career, context);
@@ -108,6 +129,18 @@ int main(int argc, char** argv) {
             auto* fitted=model->slotMesh(static_cast<oj::scene::CarModel::Slot>(k));
             check(fitted && stock[k] && fitted != stock[k], "sport body part replaces stock mesh");
         }
+        for (uint8_t decal=0;decal<3;++decal) {
+            car.body[8]=decal;
+            model->refitParts(car,data.catalogue);
+            check(model->slotMesh(oj::scene::CarModel::kDecal) != nullptr, "selected decal has a real fitted mesh");
+            const auto points=model->damagePoints("DECAL");
+            check(points && points->size()>20, "decal shell participates in native damage deformation");
+        }
+        const auto sponsorPoints=model->damagePoints("SPONS");
+        check(sponsorPoints && sponsorPoints->size()>20, "sponsor logos have a fitted deformable shell");
+        car.body[8]=0x7f;
+        model->refitParts(car,data.catalogue);
+        check(model->slotMesh(oj::scene::CarModel::kDecal) == nullptr, "removing decal clears its mesh");
         auto uprated=*dynamics;
         for (auto kind : {oj::kTurbo,oj::kInduction,oj::kExhaust}) {
             const auto& list=data.catalogue.lists[kind].parts;

@@ -1,3 +1,6 @@
+#ifdef OJ_MACOS
+#include "Mods/Creative.h"
+#endif
 // The front end's side of the save device (docs/spec/03-saves.md, "The save device"): what a driver's and the
 // records' files hold, and the texts of the device's messages.
 
@@ -39,6 +42,9 @@ void Frontend::setUpDriverName(const std::wstring& text) {
     k.checkName = true;
     k.accept = [this](const std::wstring& name) {
         m_profile = save::Profile::create(name, m_language.index, gameRandom());
+#ifdef OJ_MACOS
+        mods::profileName(toUtf8(name));mods::requestPortrait();
+#endif
         log::info("frontend: new driver {}", toUtf8(name));
         return true;
     };
@@ -94,6 +100,9 @@ bool Frontend::applyProfile(const save::SaveSlot& slot, const save::SaveSource& 
     for (const auto& [name, data] : archive.entries) names += " " + name;
     log::info("frontend: driver {} loaded:{}", toUtf8(slot.name), names);
     if (m_data) m_data->profileName = slot.name;
+#ifdef OJ_MACOS
+    mods::profileName(toUtf8(slot.name));mods::requestPortrait();
+#endif
     driverSettings().reset();
     if (const auto found = archive.entries.find("settings.dat"); found != archive.entries.end()) {
         save::Settings settings;
