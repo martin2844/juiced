@@ -68,7 +68,7 @@ void makeOpponentCars(Career& career, CareerContext& context) {
     CarMaking& making = context.making;
     career.opponentCars.clear();
     for (int group = 0; group < 5; ++group) {
-        for (size_t i = 1; i < 53 && i < making.defs.cars.size(); ++i) {
+        for (size_t i = 1; i < making.defs.cars.size(); ++i) {
             Car car = makeCar(&making.defs.cars[i]);
             switch (group) {
                 case 0: car.mods[kNitro] = 1; break;
@@ -245,11 +245,12 @@ void startProfile(Career& career, const ExeTables& tables) {
     p.winsByLocation.fill(0);
     p.crewsBeaten.fill(0);
     startCrews(career, tables);
-    for (size_t car = 0; car < 53; ++car) {
-        p.unlockStep[car] = 0;
-        p.partsA[car].fill(-1);
-        p.partsB[car].fill(-1);
-        p.carLevel[car] = -1;
+    p.modCount = static_cast<uint32_t>(tables.carModels.size() - 53);
+    for (size_t car = 0; car < tables.carModels.size(); ++car) {
+        p.unlockIndex(car) = 0;
+        p.performance(car).fill(-1);
+        p.bodyParts(car).fill(-1);
+        p.paintLevel(car) = -1;
         unlockSteps(p, car, 9, tables);
     }
     p.moneySpent = p.prizesWon = p.garageWorth = p.garageWorthBest = p.bestCarWorthTold = p.bestCarWorth = 0;
@@ -276,7 +277,7 @@ void offerCar(DealerOffer& offer, int model, CareerContext& context) {
         offer.price = static_cast<int32_t>(static_cast<float>(lowered) - static_cast<float>(offer.mileage) * 0.1f);
     }
     offer.condition = offer.mileage > 20000 ? 1 : 0;
-    offer.modelClass = def->id >= 0 && def->id <= 52 ? context.tables.modelClasses[static_cast<size_t>(def->id)] : 0;
+    offer.modelClass = def->id >= 0 && static_cast<size_t>(def->id) < context.tables.modelClasses.size() ? context.tables.modelClasses[static_cast<size_t>(def->id)] : 0;
     offer.prototypeParts = 0;
     offer.modified = 0;
     offer.damage = 0;
@@ -532,10 +533,11 @@ void stockDealer(Career& career, CareerContext& context) {
     bool raised = false;
     dealer.offerCount = 0;
     auto offer = [&](int model) {
+        if (dealer.offerCount >= static_cast<int32_t>(dealer.offers.size())) return;
         offerCar(dealer.offers[static_cast<size_t>(dealer.offerCount)], model, context);
         ++dealer.offerCount;
     };
-    for (int model = 1; model < 53; ++model) {
+    for (int model = 1; model < static_cast<int>(context.tables.carModels.size()); ++model) {
         const int threshold = context.tables.dealerThresholds[static_cast<size_t>(model)];
         if (career.profile.respectLevel < threshold * 3) continue;
         if (threshold > dealer.level) {
@@ -647,18 +649,18 @@ void applyCheat(Career& career, Cheat cheat, CareerContext& context) {
         clearNotes(career, career.respectChanges);
         return;
     case Cheat::CarsAndParts: {
-        for (size_t m = 0; m < 53; ++m) {
+        for (size_t m = 0; m < context.tables.carModels.size(); ++m) {
             respectLevelUp(career);
             unlockSteps(p, m, 100, context.tables);
-            p.partsA[m].fill(10);
-            p.partsB[m].fill(10);
-            p.carLevel[m] = 10;
+            p.performance(m).fill(10);
+            p.bodyParts(m).fill(10);
+            p.paintLevel(m) = 10;
         }
-        for (auto& parts : p.partsA) parts.fill(3);
+        for (size_t m = 0; m < context.tables.carModels.size(); ++m) p.performance(m).fill(3);
         clearNotes(career, career.meeting);
         clearNotes(career, career.respectChanges);
         const std::vector<CarPaint>& paints = making.defs.paints;
-        for (size_t m = 1; m < 53; ++m) {
+        for (size_t m = 1; m < context.tables.carModels.size(); ++m) {
             if (career.garage.size() == 55) return;
             Car car = makeCar(findCarDef(making.defs, context.tables.carModels[m]));
             const CarPaint& paint = paints[static_cast<uint32_t>(making.random.next()) % paints.size()];
@@ -707,24 +709,24 @@ bool unlockSteps(CareerProfile& p, size_t car, int changes, const ExeTables& tab
         }
         return false;
     };
-    size_t at = p.unlockStep[car];
+    size_t at = p.unlockIndex(car);
     while (at < steps.size()) {
         const ExeTables::UnlockStep& s = steps[at];
-        ++p.unlockStep[car];
+        ++p.unlockIndex(car);
         ++at;
         const auto index = static_cast<size_t>(s.index);
         if (s.kind == ExeTables::UnlockKind::Part) {
-            if (raise(p.partsA[car][index], s.value)) --changes;
+            if (raise(p.performance(car)[index], s.value)) --changes;
         } else if (s.kind == ExeTables::UnlockKind::BodyPart) {
             if (index != 0) {
-                if (raise(p.partsB[car][index], s.value)) --changes;
+                if (raise(p.bodyParts(car)[index], s.value)) --changes;
             } else {
-                if (raise(p.partsB[car][0], s.value)) --changes;
-                raise(p.partsB[car][1], s.value);
-                raise(p.partsB[car][4], s.value);
+                if (raise(p.bodyParts(car)[0], s.value)) --changes;
+                raise(p.bodyParts(car)[1], s.value);
+                raise(p.bodyParts(car)[4], s.value);
             }
         } else if (s.kind == ExeTables::UnlockKind::CarLevel) {
-            if (raise(p.carLevel[car], s.value)) --changes;
+            if (raise(p.paintLevel(car), s.value)) --changes;
         }
         if (changes == 0) return true;
     }

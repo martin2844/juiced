@@ -79,8 +79,8 @@ void NeonMenu::enter(GarageHost& host, ui::Screen& s) {
         s.setHidden("MENU", false);
         m_own = car->neon;
     }
-    const auto model = static_cast<size_t>(std::clamp(car->def->id, 0, 52));
-    const bool unlocked = data->career->profile.partsB[model][9] >= 0;
+    const auto model = static_cast<size_t>(std::clamp(car->def->id, 0, int(CareerProfile::kModelCapacity - 1)));
+    const bool unlocked = data->career->profile.bodyParts(model)[9] >= 0;
     if (s.find("COLOURMENU") >= 0) {
         s.clearMenu("COLOURMENU");
         size_t own = 0;

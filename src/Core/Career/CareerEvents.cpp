@@ -303,7 +303,7 @@ const Car* pickSpecialCar(const Career& career, CrtRandom& random) {
         for (int inner = 0; inner < 50; ++inner) {
             const Car& car = garage[draw(random) % garage.size()];
             if (carClass(car) != cls || car.def == nullptr) continue;
-            for (int8_t v : career.profile.partsA[static_cast<size_t>(car.def->id)]) {
+            for (int8_t v : career.profile.performance(static_cast<size_t>(car.def->id))) {
                 if (v == 2) return &car;
             }
         }
@@ -337,7 +337,7 @@ void specialCarEvent(Career& career, CareerContext& context, CalendarEvent& e) {
     e.prototypeKind = static_cast<int32_t>(draw(random) % 10);
     int tries = 0;
     while (prototypeSuppliers(catalogue, static_cast<size_t>(e.prototypeKind)).empty() ||
-           career.profile.partsA[static_cast<size_t>(car->def->id)][static_cast<size_t>(e.prototypeKind)] != 2) {
+           career.profile.performance(static_cast<size_t>(car->def->id))[static_cast<size_t>(e.prototypeKind)] != 2) {
         ++tries;
         e.prototypeKind = static_cast<int32_t>(draw(random) % 10);
         if (tries > 50) return;

@@ -264,6 +264,8 @@ bool Arcade::finished() const {
 }
 
 void Arcade::openCar(int32_t id) {
+    // Added models are always available in custom races; do not overwrite route flags.
+    if (id < 0 || id >= 53) return;
     const size_t flag = kCarFlags + static_cast<size_t>(id) * 4;
     if (i32(flag) == 0) return;
     put(flag, 0);

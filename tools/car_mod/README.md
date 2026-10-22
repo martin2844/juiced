@@ -1,9 +1,19 @@
 # Ferrari 458 Spider — first native car import
 
-A real car absent from Juiced's original roster. This opt-in test mod occupies the
-Falcon's internal slot, while showing **FERRARI 458 SPIDER** in the game. The normal
-game stays unchanged when launched without `--mod`. This is a replacement-slot
-prototype, not a 54th save-compatible vehicle ID.
+A real car absent from Juiced's original roster. This opt-in mod adds
+**FERRARI 458 SPIDER** as model ID 53, alongside all 52 retail cars. The Falcon
+keeps ID 46 and its original assets. Launch without `--mod` for the retail roster.
+
+Base price: **185,000 credits**; dealer prices include the normal condition,
+mileage and small price variations. It unlocks at respect level 36, alongside
+the retail supercars, and is immediately available in custom races.
+
+Additional-car upgrades use independent progress in a versioned career-save
+extension. Retail-only saves retain their original format. The installer uses
+`Juiced Mods/Ferrari458-Added` saves, separate from the earlier replacement
+prototype; do not reuse that prototype's saves as if its Falcon were a Ferrari.
+The added roster uses explicit sequential IDs from `scripts/mod_cars.txt` (up to
+59). Keep those IDs stable when updating a mod.
 
 The open-roof source is distributed by Three.js under the title “Ferrari 458 Italia”,
 credited to **vicent091036**. We label its visible open-roof configuration Spider.
@@ -23,11 +33,10 @@ out/mac_car_mod_check /path/to/Juiced /path/to/Ferrari458
 out/juiced --game /path/to/Juiced --mod /path/to/Ferrari458 --screen instant_selcar
 ```
 
-`--mod` defaults to a separate `Saves` directory inside the mod. Do not point
-`--saves` at an existing vanilla career: the Falcon slot has different parts.
+`--mod` defaults to a separate `Saves` directory inside the mod. Keep modded
+careers separate so the retail-only game is never asked to load an added car.
 The mod unlocks this car in Custom Race, including after loading or creating a
-profile. In the normal menu, it is under the donor's **Class C** category; its
-actual performance is much higher. It also appears in the career dealer pool,
+profile. In the normal menu, it is under **Class B** and **All Cars**. It also appears in the career dealer pool,
 with the normal purchase, upgrade, damage and repair flows.
 
 At Car Select, press Enter once if the keyboard has not yet been assigned.
@@ -74,9 +83,14 @@ stock selector, native Auto-Mod (567 → 1,018 bhp), a 1,800-frame dry driving r
 and a 900-frame wet/night run. Regular CTest checks cover the file
 overlay and the port's existing regressions.
 
-Generated `scripts/cardefs.txt`, `dynamic_falcon.txt` and `arcadecollection.txt`
+Generated `scripts/cardefs.txt`, `dynamic_ferrari_458.txt` and `arcadecollection.txt`
 contain locally derived retail data. Do not include those files in a public
 source release. Share this importer and its licensed model so each owner can
 build the mod against their own copy.
 
-For a local standalone test app, use `install_macos.py --base-app /Applications/Juiced.app --exe out/juiced --mod /path/to/Ferrari458 --output "/Applications/Juiced Ferrari 458.app"`. This preserves the base app and uses a separate save directory under Application Support/Juiced Mods/Ferrari458.
+For a local standalone test app, use `install_macos.py --base-app /Applications/Juiced.app --exe out/juiced --mod /path/to/Ferrari458 --output "/Applications/Juiced Ferrari 458 Added.app"`. This preserves the base app and uses a separate save directory under Application Support/Juiced Mods/Ferrari458-Added.
+
+Sound sourcing: [Edvvc's Ferrari 458 recording](https://commons.wikimedia.org/wiki/File:Ferrari_458_Italia.ogg)
+is available under CC BY-SA 3.0, but is a short exterior drive-away recording,
+not a complete idle/on-load/overrun sample bank. It has not been integrated.
+The current Corvette audio remains a documented placeholder.

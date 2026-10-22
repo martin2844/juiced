@@ -8,6 +8,7 @@
 #include "Core/Base/Script.h"
 #include "Core/Base/Text.h"
 
+#include <algorithm>
 #include <optional>
 #include <string_view>
 #include <utility>
@@ -28,6 +29,23 @@ GameData::GameData(std::filesystem::path gameFolder) : m_files(std::move(gameFol
 
 bool GameData::load(CrtRandom& random, std::string* error) {
     tables = ExeTables::stock();  // built in: no Juiced.exe is read
+    if (const auto mods = scriptText(m_files, "mod_cars.txt")) {
+        for (const auto& line : parseScript(*mods)) {
+            if (_stricmp(line.keyword.c_str(), "Car") != 0) continue;
+            const auto name = line.word(0);
+            const int id = line.integer(1);
+            if (id != static_cast<int>(tables.carModels.size()) || id >= int(CareerProfile::kModelCapacity) ||
+                name.empty() || std::any_of(tables.carModels.begin(), tables.carModels.end(), [&](const auto& existing) {
+                    return _stricmp(existing.c_str(), name.c_str()) == 0;
+                })) {
+                if (error) *error = "invalid or duplicate added-car ID in mod_cars.txt";
+                return false;
+            }
+            tables.carModels.push_back(name);
+            tables.dealerThresholds.push_back(line.integer(2));
+            tables.modelClasses.push_back(line.integer(3));
+        }
+    }
     const auto cardefs = scriptText(m_files, "cardefs.txt");
     if (!cardefs) {
         if (error) *error = "no scripts\\cardefs.txt";

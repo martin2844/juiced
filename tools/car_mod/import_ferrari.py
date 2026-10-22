@@ -117,7 +117,7 @@ def build(args):
         p=root/path.lower();p.parent.mkdir(parents=True,exist_ok=True)
         p.write_bytes(data.encode() if isinstance(data,str) else data)
     def carfile(path,data):
-        for folder in ('falcon','falcon_ui'):write('cars/'+folder+'/'+path,data)
+        for folder in ('ferrari_458','ferrari_458_ui'):write('cars/'+folder+'/'+path,data)
     parts=[]; worlds={}; wheelparts=[]
     def walk(i,parent,wheel=None):
         n=j['nodes'][i];world=parent@transform(n);worlds[i]=world
@@ -129,7 +129,7 @@ def build(args):
                 norm=np.array(a['NORMAL']).reshape(-1,3)@np.linalg.inv(world[:3,:3]);norm*= [1,1,-1]
                 norm/=np.maximum(np.linalg.norm(norm,axis=1)[:,None],1e-12)
                 uv=pos[:,[0,2]]/100 # deterministic projected scratch coordinates
-                material=prim['material'];mat='falcon_body' if material==14 else ('falcon_glass' if material==9 else f'f458_mat{material}')
+                material=prim['material'];mat='ferrari_458_body' if material==14 else ('ferrari_458_glass' if material==9 else f'f458_mat{material}')
                 p=dict(mat=mat,pos=pos,norm=norm,uv=uv,tri=np.array(a['indices']).reshape(-1,3)[:,[0,2,1]])
                 p=subset(p,np.ones(len(p['tri']),dtype=bool))
                 if wheel=='wheel_fl':wheelparts.append(p)
@@ -155,7 +155,7 @@ def build(args):
         if source in ('chrome','interior_dark','metal','plastic_gray'):
             keys[(abs(x)<31)&(z<-217)&(y>28)&(y<58)]='EXHAUST'
         for key in np.unique(keys):zones[key].append(subset(p,keys==key))
-    report={'car':'Ferrari 458 Spider','slot':'FALCON','wheels':{k:v.tolist() for k,v in wheels.items()},'meshes':{}}
+    report={'car':'Ferrari 458 Spider','model':'FERRARI_458','id':53,'wheels':{k:v.tolist() for k,v in wheels.items()},'meshes':{}}
     def save_mesh(n,ps):
         carfile('mesh/'+n+'.d8m',mesh_bytes(ps));report['meshes'][n]=sum(p['tri'].size//3 for p in ps)
     for k,ps in zones.items():
@@ -170,7 +170,7 @@ def build(args):
     save_mesh('f458_wheel_blur',wheelparts)
     # Stock 458 has an integrated lip, not a standing wing. This slot's small flush lip
     # and the authored sport wing are both specific to this car's rear deck.
-    stockspoiler=[box((-65,83,-214),(65,85,-209),'falcon_body')]
+    stockspoiler=[box((-65,83,-214),(65,85,-209),'ferrari_458_body')]
     save_mesh('f458_spoiler',stockspoiler)
     kit={
       'FBUMP':[box((-82,20,187),(82,24,223),'f458_mat12')],
@@ -186,7 +186,7 @@ def build(args):
             carbon=[]
             for part in zones[k]:
                 part=part.copy()
-                if part['mat']=='falcon_body':part['mat']='f458_mat12'
+                if part['mat']=='ferrari_458_body':part['mat']='f458_mat12'
                 carbon.append(part)
             save_mesh('f458_sport_'+k,carbon)
         else:save_mesh('f458_sport_'+k,(stockspoiler if k=='SPOILER' else zones[k])+extra)
@@ -201,9 +201,9 @@ def build(args):
             props=(f'LIGHTFLARE={texture}\nLIGHTFLARE_SIZE=380\nLIGHTFLARE_BRIGHTNESS=0.7\n'
                    'LIGHTFLARE_FALLOFF_MIN=0\nLIGHTFLARE_FALLOFF_MAX=60\nLIGHTFLARE_OFFSET=5\n').encode()
             children.append(name('F458_'+tag+'_'+side)+pack('16f',*m.ravel())+pack('II',2,len(props))+props+pack('I',0))
-    carfile('models/falcon_stock.boh',node('F458_ROOT',children=[node('F458_CHASS','f458_CHASS',children=children)]+[node(k,pos=v) for k,v in wheels.items()]))
-    carfile('mesh/falcon_chass_shad.ocd',collision_mesh())
-    carfile('mesh/falcon_chass_collidee.ocd',collision_mesh())
+    carfile('models/ferrari_458_stock.boh',node('F458_ROOT',children=[node('F458_CHASS','f458_CHASS',children=children)]+[node(k,pos=v) for k,v in wheels.items()]))
+    carfile('mesh/ferrari_458_chass_shad.ocd',collision_mesh())
+    carfile('mesh/ferrari_458_chass_collidee.ocd',collision_mesh())
     def tex(n,rgba,size=1):
         pixels=np.tile(np.array(rgba,dtype=np.uint8),(size,size,1))
         if n=='f458_scratch':
@@ -211,7 +211,7 @@ def build(args):
             pixels[:,:,3]=np.where(mask,180,0)
         carfile('textures/'+n+'.ddt',pack('9IfI',21,size,size,1,2,2,0,1,1,0.,1)+pixels[:,:,[2,1,0,3]].tobytes())
     tex('f458_paint',(255,255,255,0));tex('f458_scratch',(150,150,150,0),128)
-    carfile('mesh/mats/falcon_body.pmd', '''Material Program = Car Body
+    carfile('mesh/mats/ferrari_458_body.pmd', '''Material Program = Car Body
 Car Colour = 220 12 8
 Side Fresnel = 0.18
 Front Fresnel = 0.02
@@ -226,7 +226,7 @@ Paint Work = f458_paint.ptd
 Scratch & Reflect = f458_scratch.ptd
 ''')
     tex('f458_glass',(60,70,80,85))
-    carfile('mesh/mats/falcon_glass.pmd','''Material Program = Car Glass
+    carfile('mesh/mats/ferrari_458_glass.pmd','''Material Program = Car Glass
 Side Fresnel = 0.12
 Front Fresnel = 0.02
 Base Opacity = 0.25
@@ -244,15 +244,14 @@ Scratch = f458_scratch.ptd
         tex(f'f458_mat{i}',rgba)
         carfile(f'mesh/mats/f458_mat{i}.pmd',f'Material Program = Standard Opaque\nDouble-sided = FALSE\nZ-Bias = 0\nOpaque Texture = f458_mat{i}.ptd\n')
     defs=r.read('scripts/cardefs.txt').decode('latin1')
-    block=['[BeginCar] FALCON "FERRARI 458 SPIDER"','MANUFACTURER NONE EUROPE','VALUE 185000','STATE NEW']
+    block=['[BeginCar] FERRARI_458 "FERRARI 458 SPIDER"','MANUFACTURER NONE EUROPE','VALUE 185000','STATE NEW']
     for category,part in [('FBUMP','FBUMP'),('RBUMP','RBUMP'),('BONNET','BONNET'),('SPOILER','SPOILER'),('SKIRT','SSKIRT')]:
         block += [f'STANDARD {category} "f458_{part}"',f'CUSTOM {category} "f458_sport_{part}" AERO']
     block += ['ALLOW_NONE SPOILER','STANDARDWHEELS "f458_wheel"','STANDARDEXHAUST "f458_exhaust"','ENGINE_SOUND z06','MAXDROPHEIGHT 4','[EndCar]']
     # Skirts use the native _L / _R suffix. The other names are case-insensitive.
-    defs,n=re.subn(r'\[BeginCar\]\s+FALCON\b.*?\[EndCar\]','\n'.join(block),defs,flags=re.I|re.S)
-    assert n==1
+    defs += '\n' + '\n'.join(block) + '\n'
     write('scripts/cardefs.txt',defs.encode('latin1'))
-    dynamics=r.read('scripts/dynamic_falcon.txt').decode('latin1')
+    dynamics=r.read('scripts/dynamic_falcon.txt').decode('latin1').replace('falcon', 'ferrari_458')
     changes={'Name':'Ferrari458Spider','Mass':'1535','CentreOfGravity':'0 0.32 -0.25','FrontWeightDistribution':'0.42',
       'TorqueCurveX':'1000 2000 3250 4500 6000 7500 9000 9400','TorqueCurveY':'0.50 0.67 0.82 0.94 1.0 0.98 0.825 0.0',
       'MaxTorque':'540','ForwardGearRatios':'3.077 2.185 1.626 1.286 1.028 0.839 0.693',
@@ -264,19 +263,22 @@ Scratch = f458_scratch.ptd
         replacement=f'[BeginLineCollider]\nID {i}\nPoint {x:.4f} {y+12:.4f} {z:.4f}\nEnd {x:.4f} -6 {z:.4f}\n[EndLineCollider]'
         dynamics=re.sub(r'\[BeginLineCollider\]\s*ID '+str(i)+r'\b.*?\[EndLineCollider\]',replacement,dynamics,flags=re.S)
     dynamics=dynamics.replace('WeightDistribution 0.26','WeightDistribution 0.21').replace('WeightDistribution 0.24','WeightDistribution 0.29')
-    write('scripts/dynamic_falcon.txt',dynamics)
+    write('scripts/dynamic_ferrari_458.txt',dynamics)
     for mat,c in [('f458_stop','255 45 25'),('f458_head','220 235 255')]:
         carfile('mesh/mats/'+mat+'.pmd','Material Program = Constant Colour\nColour = '+c+'\n')
     # The shared exhaust loader searches carmesh/mats and cartextures.
     for mat in ('f458_mat10','f458_mat13','f458_mat3','f458_mat2'):
-        write('carmesh/mats/'+mat+'.pmd',(root/'cars/falcon/mesh/mats'/ (mat+'.pmd')).read_bytes())
-        write('cartextures/'+mat+'.ddt',(root/'cars/falcon/textures'/ (mat+'.ddt')).read_bytes())
+        write('carmesh/mats/'+mat+'.pmd',(root/'cars/ferrari_458/mesh/mats'/ (mat+'.pmd')).read_bytes())
+        write('cartextures/'+mat+'.ddt',(root/'cars/ferrari_458/textures'/ (mat+'.ddt')).read_bytes())
     arcade=r.read('scripts/arcadecollection.txt').decode('latin1')
-    arcade,n=re.subn(r'BeginCar falcon\b.*?EndCar','BeginCar falcon\nBaseColour 220 12 8\nMetallicColour 0 0 0\nEndCar',arcade,flags=re.I|re.S)
-    assert n==1
+    arcade += '\nBeginCar ferrari_458\nBaseColour 220 12 8\nMetallicColour 0 0 0\nEndCar\n'
     write('scripts/arcadecollection.txt',arcade.encode('latin1'))
-    write('scripts/mod_unlocks.txt','Car FALCON\n')
-    # All arcade/custom-race menus now have a selectable stock instance in the Falcon slot.
+    write('scripts/mod_unlocks.txt','Car FERRARI_458\n')
+    write('scripts/mod_cars.txt','; Name, stable ID, dealer respect threshold, model class\nCar FERRARI_458 53 12 1\n')
+    groups=r.read('scripts/ArcadeUnlock.txt').decode('latin1')
+    groups=groups.replace('Car   viper', 'Car FERRARI_458\nCar   viper')
+    write('scripts/arcadeunlock.txt',groups)
+    # All arcade/custom-race menus now have a selectable stock instance alongside all retail cars.
     source=Path(__file__).parent/'assets/ferrari.glb';report['source_sha256']=hashlib.sha256(source.read_bytes()).hexdigest()
     write('import-report.json',json.dumps(report,indent=2)+'\n')
     attribution=Path(__file__).parent/'assets/ATTRIBUTION.txt';write('ATTRIBUTION.txt',attribution.read_bytes())

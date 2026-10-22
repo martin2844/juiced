@@ -1,6 +1,7 @@
 #include "Core/Base/GameFiles.h"
 #include "Core/Cars/CarDamage.h"
 #include "Core/Cars/CarPhysics.h"
+#include "Core/Career/CareerInit.h"
 #include "Core/Data/GameData.h"
 #include "Game/Cars/CarModel.h"
 #include "Framework/Fakes/NullRenderDevice.h"
@@ -25,11 +26,45 @@ int main(int argc, char** argv) {
     oj::GameData data(game);
     std::string error;
     if (!data.load(random, &error)) { std::cerr << error; return 1; }
-    const auto found = std::find_if(data.defs.cars.begin(), data.defs.cars.end(), [](const auto& d) {return d.name == "FALCON";});
+    const auto found = std::find_if(data.defs.cars.begin(), data.defs.cars.end(), [](const auto& d) {return d.name == "FERRARI_458";});
     if (found == data.defs.cars.end()) return 1;
-    check(found->displayName.find("FERRARI 458") != std::string::npos, "mod car definition overrides archived Falcon");
+    check(found->displayName.find("FERRARI 458") != std::string::npos, "added Ferrari has its own definition");
     check(!oj::carLocked(data.arcade, found->id), "imported car unlocked in custom race");
     check(data.arcadeGroups.current()==found->id, "custom-race selector starts on imported car");
+    check(found->id == 53 && data.tables.carModels.size() == 54, "Ferrari added after all 52 retail cars");
+    const auto* falcon = data.defs.byId(46);
+    check(falcon && falcon->name == "FALCON" && falcon->displayName.find("FERRARI") == std::string::npos,
+          "original Falcon retains its own ID and definition");
+    check(found->value == 185000, "Ferrari base price is 185000 credits");
+    oj::CarMaking making{data.defs, data.catalogue, random, data.autoModifyCounter};
+    oj::CareerContext context{data.tables, making, *data.dynamics, data.files(), data.currentCrewmate};
+    data.career->profile.respectLevel = 36;
+    oj::stockDealer(*data.career, context);
+    const auto& offers = data.career->dealer.offers;
+    const auto offerEnd = offers.begin() + data.career->dealer.offerCount;
+    const auto offer = std::find_if(offers.begin(), offerEnd, [](const auto& item) {return item.model == 53;});
+    check(offer != offerEnd, "Ferrari appears in dealership at supercar respect threshold");
+    if (offer != offerEnd) {
+        data.career->dealer.mode = oj::DealerMode::Offers;
+        oj::dealerTake(*data.career, static_cast<int32_t>(offer - offers.begin()), context);
+        data.career->dealer.deal = 1;
+        oj::dealerFinish(*data.career);
+        check(!data.career->garage.empty() && data.career->garage.back().def == &*found,
+              "dealer transfers the additional Ferrari into the garage");
+    }
+    auto& progress = data.career->profile;
+    progress.performance(53)[0] = 2;
+    progress.bodyParts(53)[0] = 1;
+    progress.paintLevel(53) = 1;
+    const auto saved = data.career->write();
+    oj::Career restored;
+    restored.profile.modCount = 1;
+    check(restored.read(saved, &error), "extended career save reloads");
+    check(!restored.garage.empty() && oj::findCarDef(data.defs, restored.garage.back().modelName()) == &*found,
+          "owned Ferrari model identity survives save/load");
+    check(restored.profile.performance(53)[0] == 2 && restored.profile.bodyParts(53)[0] == 1 &&
+          restored.profile.paintLevel(53) == 1, "added-car upgrade progress survives save/load");
+    check(progress.performance(46)[0] != 2, "Ferrari upgrades do not unlock Falcon upgrades");
     const auto* dynamics = data.dynamics->of(*found);
     if (!dynamics) return 1;
     check(dynamics->forwardRatios.size() == 7, "seven forward gears");
@@ -81,7 +116,7 @@ int main(int argc, char** argv) {
         oj::fitParts(uprated,car,data.catalogue);
         check(oj::peakPower(uprated)>power, "purchased performance parts raise engine power");
         auto stockBody=*dynamics;
-        oj::loadShapes(stockBody.body,oj::GameFiles(game),"cars/FALCON");
+        oj::loadShapes(stockBody.body,oj::GameFiles(game),"cars/FERRARI_458");
         check(stockBody.body.collision.colliderShape && stockBody.body.collision.collideeShape, "collision meshes load");
         check(model->hasNode("_BRKLIGHT") && model->hasNode("LIGHTSON"), "brake and headlight switching nodes exist");
     }

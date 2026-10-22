@@ -209,8 +209,8 @@ void ModMenu::update(GarageHost& host, ui::Screen& s, uint32_t event) {
     Garage& garage = host.garage();
     Car* car = garage.car(host);
     if (car == nullptr || car->def == nullptr || data == nullptr || !data->career) return;
-    const auto model = static_cast<size_t>(std::clamp(car->def->id, 0, 52));
-    const int level = data->career->profile.partsB[model][static_cast<size_t>(std::clamp(garage.styleCategory, 0, 9))];
+    const auto model = static_cast<size_t>(std::clamp(car->def->id, 0, int(CareerProfile::kModelCapacity - 1)));
+    const int level = data->career->profile.bodyParts(model)[static_cast<size_t>(std::clamp(garage.styleCategory, 0, 9))];
     float value = -1.0f;
     bool hasItem = false;
     if (s.find("Menu") >= 0 && s.menuSize("Menu") != 0) {

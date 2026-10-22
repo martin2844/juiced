@@ -35,12 +35,12 @@ void CarStats::parts(WindowHost& host, ui::Screen& s) {
     GameData* data = host.gameData();
     Car& car = *g_statsCar;
     const CareerProfile& p = data->career->profile;
-    const auto model = static_cast<size_t>(std::clamp(m_model, 0, 52));
+    const auto model = static_cast<size_t>(std::clamp(m_model, 0, int(CareerProfile::kModelCapacity - 1)));
     m_blink.clear();
     m_blink.push_back(s.find("KeyIcon3"));
     for (size_t kind = 0; kind < 10; ++kind) {
         if (kPartIcons[kind] < 0) continue;
-        const int unlocked = p.partsA[model][kind];
+        const int unlocked = p.performance(model)[kind];
         for (int level = 0; level < 4; ++level) {
             const std::string name = std::format("{}{}-{}", kind == kWheel ? "V" : "P", kPartIcons[kind], level + 1);
             const int e = s.find(name);
@@ -65,7 +65,7 @@ void CarStats::parts(WindowHost& host, ui::Screen& s) {
     }
     for (size_t kind = 0; kind < 10; ++kind) {
         if (kBodyIcons[kind] < 0) continue;
-        const int unlocked = p.partsB[model][kind];
+        const int unlocked = p.bodyParts(model)[kind];
         const std::string box = std::format("VB{}", kBodyIcons[kind]);
         for (int level = 0; level < 3; ++level) {
             const CarPartList* list = car.def != nullptr ? &car.def->parts[kind] : nullptr;
@@ -92,7 +92,7 @@ void CarStats::parts(WindowHost& host, ui::Screen& s) {
     }
     car.metallicBought = (car.base & 0xFFFFFF) != (car.metallic & 0xFFFFFF) ? 1 : 0;
     car.pearlBought = (car.base & 0xFFFFFF) != (car.pearl & 0xFFFFFF) ? 1 : 0;
-    const int paints = p.carLevel[model];
+    const int paints = p.paintLevel(model);
     for (int k = 0; k < 2; ++k) {
         const int e = s.find(std::format("V7-{}", k + 1));
         if (e < 0) continue;

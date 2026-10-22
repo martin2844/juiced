@@ -114,8 +114,8 @@ void ColourMenu::update(GarageHost& host, ui::Screen& s, uint32_t event) {
             m_askedLose = 0;
         }
     }
-    const auto model = static_cast<size_t>(std::clamp(car->def != nullptr ? car->def->id : 0, 0, 52));
-    const int level = career.profile.carLevel[model];
+    const auto model = static_cast<size_t>(std::clamp(car->def != nullptr ? car->def->id : 0, 0, int(CareerProfile::kModelCapacity - 1)));
+    const int level = career.profile.paintLevel(model);
     if (event == input::kLeft || event == input::kRight || m_first != 0) {
         m_first = 0;
         if (s.find("Menu") >= 0 && s.menuSize("Menu") != 0) {
