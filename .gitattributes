@@ -3,3 +3,7 @@
 *.slnx text eol=crlf
 *.vcxproj text eol=crlf
 *.props text eol=crlf
+
+# Preserve imported/generated game assets and third-party notices byte-for-byte.
+mods/*/assets/** -text -whitespace
+mods/*/tools/assets/** -text -whitespace

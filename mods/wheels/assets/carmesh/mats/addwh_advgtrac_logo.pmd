@@ -1,0 +1,8 @@
+Material Program = Coloured Spec ABlend
+Colour = 245 245 245
+Specular Colour = 0 0 0
+Specular Highlight = 0
+Shininess = 0
+Additive = FALSE
+Texture = AddWH_AdvGTRac
+

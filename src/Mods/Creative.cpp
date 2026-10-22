@@ -202,6 +202,9 @@ void requestMenu(std::function<void()> finished) {
     if (enabled())
         pending = Request{false, std::move(finished)};
 }
+void requestManager() {
+    pending = Request{false, {}, true};
+}
 void requestPortrait() {
     if (feature("portrait") &&
         runtime::call("profile_prompt", {portraitAsked, hasImage(true)}, false) == runtime::Value(true)) {

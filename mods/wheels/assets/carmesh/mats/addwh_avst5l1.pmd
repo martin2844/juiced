@@ -1,0 +1,4 @@
+Material Program = Shiny Opaque
+Side Fresnel = 0.5
+Front Fresnel = 0.3
+Texture = AddWH_AVST5_a.ptd

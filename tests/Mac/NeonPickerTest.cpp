@@ -81,6 +81,8 @@ int main(int argc, char **argv) {
             });
         garage.load("carsel");
         h.base = &garage;
+        h.g.texts.priceText = "Price";
+        h.g.texts.boxText = "PriceBox";
         if (scene) {
             h.g.view = std::make_unique<scene::GarageView>(*scene, garage, "FRAME_CAR3D", data.catalogue);
             h.g.view->enterSel(live, random);
@@ -150,6 +152,40 @@ int main(int argc, char **argv) {
         }
         picker.update(h, chart, input::kBack);
         check(live.neon == original && mods::neon(live).effect == 0, "cancel restores original colour and effect");
+        // Frontend::leavePopup calls this when colourchoose is popped/swapped.
+        auto leavePicker = [&] {
+            h.g.leavePriced(h, chart, "colourchoose");
+            garage.finishTransitions();
+        };
+        auto priceVisible = [&] {
+            garage.finishTransitions();
+            return !garage.hidden("Price") && !garage.hidden("PriceBox");
+        };
+        leavePicker();
+        check(!priceVisible(), "leaving priced popup hides its price");
+        neon.update(h, palette, 0);
+        check(priceVisible(), "cancelled picker restores palette price");
+        neon.update(h, palette, input::kSelect);
+        picker.enter(h, chart);
+        picker.update(h, chart, input::kSelect);
+        leavePicker();
+        frontend::BuyMod declined;
+        declined.enter(h, palette);
+        *h.messages.back().answer = 0;
+        declined.update(h);
+        neon.update(h, palette, 0);
+        check(priceVisible() && data.career->profile.money == 5000,
+              "declined purchase restores price without charging");
+        data.career->profile.money = 0;
+        neon.update(h, palette, input::kSelect);
+        picker.enter(h, chart);
+        picker.update(h, chart, input::kSelect);
+        leavePicker();
+        frontend::BuyMod insufficient;
+        insufficient.enter(h, palette);
+        neon.update(h, palette, 0);
+        check(priceVisible() && data.career->profile.money == 0, "insufficient cash restores palette price");
+        data.career->profile.money = 5000;
         neon.update(h, palette, input::kSelect);
         picker.enter(h, chart);
         picker.update(h, chart, input::kSelect2);
@@ -165,10 +201,11 @@ int main(int argc, char **argv) {
               "purchase charges exactly once and stores effect");
         mods::profile(0);
         check(mods::neon(live).effect == 1, "purchased effect survives profile reload");
-        h.g.paintMode=frontend::PaintMode::Base;
-        picker.enter(h,chart);
-        float x,y,w,height;chart.placeOf(chart.find("GRIDX"),x,y,w,height);
-        check(x<.3f && w<.46f,"ordinary paint keeps its original label layout");
+        h.g.paintMode = frontend::PaintMode::Base;
+        picker.enter(h, chart);
+        float x, y, w, height;
+        chart.placeOf(chart.find("GRIDX"), x, y, w, height);
+        check(x < .3f && w < .46f, "ordinary paint keeps its original label layout");
         h.g.view.reset();
         std::filesystem::remove_all(saves);
         return 0;

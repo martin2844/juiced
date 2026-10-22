@@ -1,0 +1,13 @@
+Material Program = Car Body
+Car Colour = 195 0 30 
+Side Fresnel = 0.15000
+Front Fresnel = 0.00000
+Metallic Colour = 120 120 120
+Pearlescent Colour = 32 32 32
+Metallic Shininess = 45.000000
+Pearlescent Shininess = 1.40000
+Metallic = false
+Double-sided = TRUE
+Z-Bias = 0.000000
+Paint Work = AddWH_DSADVTC4D
+Scratch & Reflect = AddWH_DSADVTC4D

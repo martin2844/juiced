@@ -3,6 +3,9 @@
 #include "Game/Frontend/Garage/Customise/Paint.h"
 #ifdef OJ_MACOS
 #include "Mods/Creative.h"
+#include "Mods/Runtime.h"
+#include "Mods/Packages.h"
+#include "Core/Base/Text.h"
 #endif
 
 #include "Core/Data/GameTexts.h"
@@ -76,7 +79,7 @@ void ColourMenu::update(GarageHost& host, ui::Screen& s, uint32_t event) {
         m_showBuy = 0;
         if (s.find("BUY_TEST") >= 0) {
 #ifdef OJ_MACOS
-            s.setText("BUY_TEST", L"[0] " + texts.at(kTextBuyPaint));
+            s.setText("BUY_TEST", toWide(mods::runtime::text("paint_buy_label", {}, mods::packages::available() ? "" : "[0] ")) + texts.at(kTextBuyPaint));
 #else
             s.setText("BUY_TEST", texts.at(kTextBuyPaint));
 #endif

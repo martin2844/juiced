@@ -1,0 +1,4 @@
+Material Program = Shiny Opaque
+Side Fresnel = 0.70
+Front Fresnel = 0.50
+Texture = AddWH_RRRWB_A.ptd

@@ -1,6 +1,7 @@
 #include "Mods/CreativeMenu.h"
 #include "Core/Base/Text.h"
 #include "Game/UI/MessageWindow.h"
+#include "Mods/Packages.h"
 #include <algorithm>
 namespace oj::mods {
 CreativeMenu::CreativeMenu(render::IRenderDevice &d, const Language &l, Request r)
@@ -14,7 +15,11 @@ void CreativeMenu::fill() {
     m_menu.clearMenu("Menu");
     m_menu.clearMenu("BackMenu");
     m_menu.setMenuActive("BackMenu", false);
-    m_menu.setText("TITLE", m_request.onboarding ? L"YOUR DRIVER PHOTO" : L"MOD GARAGE");
+    const bool pending = std::any_of(packages::list().begin(), packages::list().end(),
+                                     [](const auto &p) { return p.active != p.enabled; });
+    m_menu.setText("TITLE", m_request.management   ? (pending ? L"MODS - RESTART REQUIRED" : L"MODS")
+                            : m_request.onboarding ? L"YOUR DRIVER PHOTO"
+                                                   : L"MOD GARAGE");
     auto add = [&](std::string label, std::string help) {
         auto i = m_menu.menuSize("Menu");
         m_menu.addMenuItem("Menu", toWide(label));
@@ -22,7 +27,18 @@ void CreativeMenu::fill() {
         m_menu.addMenuItem("BackMenu", L"", 0, "", "ui_pan5_ora");
         m_menu.setMenuItemAdditive("BackMenu", i, true);
     };
-    m_items = runtime::imageMenu(hasImage(true), hasImage(false), m_request.onboarding);
+    m_items.clear();
+    if (m_request.management) {
+        for (const auto &p : packages::list()) {
+            const bool pending = p.enabled != p.active;
+            m_items.push_back({p.name + (p.enabled ? " : ON" : " : OFF") + (pending ? " *" : ""),
+                               pending ? "Restart the game to apply this change."
+                                       : "Enter: toggle. Changes apply after restarting the game.",
+                               p.id});
+        }
+    } else {
+        m_items = runtime::imageMenu(hasImage(true), hasImage(false), m_request.onboarding);
+    }
     for (const auto &item : m_items)
         add(item.label, item.help);
     add(m_request.onboarding ? "CONTINUE" : "BACK", "Return to the game.");
@@ -60,7 +76,12 @@ bool CreativeMenu::update(const std::vector<input::KeyEvent> &keys) {
             if (m_focus >= int(m_items.size()))
                 return false;
             const auto action = m_items[m_focus].action;
-            if (action == "import_portrait" || action == "import_logo") {
+            if (m_request.management) {
+                const auto error = packages::toggle(action);
+                fill();
+                if (!error.empty())
+                    notice(error);
+            } else if (action == "import_portrait" || action == "import_logo") {
                 auto error = importImage(action == "import_portrait");
                 fill();
                 notice(error.empty() ? "IMAGE SAVED FOR THIS DRIVER" : error);

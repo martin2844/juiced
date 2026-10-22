@@ -13,20 +13,27 @@ Assembly preserves the newest Ferrari car definitions, adds wheel colours, and t
 
 The output must be absent or empty. Existing saves are never copied into a bundle. These scripts and the source repository contain no extracted wheel-pack or retail assets.
 
-Package a separate Mac application without duplicating the large assets:
+## Package-based app (current)
+
+The independent packages now live in `mods/`. They are loaded and combined by the
+native host at startup; the legacy assembly command above is only for old overlays.
 
 ```sh
 python3 tools/mod_bundle/install_macos.py \
   --base-app /Applications/Juiced.app --exe out/juiced \
-  --mod ~/JuicedMods/PolishedGarage \
-  --output '/Applications/Juiced Mod Garage.app' --creative-mods
+  --output '/Applications/Juiced Mod Garage.app' --creative-mods --replace
 ```
 
-Only pass `--creative-mods` with a build implementing that optional feature. The launcher uses separate `Juiced Mods/ModGarage` saves and does not open the mod menu automatically. The app's asset hardlinks remain valid if source overlays are deleted, but editing source assets in place also edits the app; rebuild into a fresh directory instead.
+Do not pass `--mod` with `--creative-mods`. Each package's assets and Lua script are
+bundled; the launcher copies missing files into `~/JuicedMods/mods`, preserving
+edits and toggle markers. The game builds its selected overlay without external
+build tools. See [packages and toggles](../../mods/README.md).
 
-With `--creative-mods`, the packager includes the runtime Lua interpreter build and
-copies `mods/` (or `--scripts PATH`) as bundled defaults. On first launch the app
-seeds `~/JuicedMods/mods`, then loads scripts from there with `--mods`. Existing
-user scripts are preserved when rebuilding or reinstalling the app. Edit scripts
-and restart the game to apply changes; no compilation is needed. See
-[the runtime API](../../mods/README.md).
+`package_overlay.py` converts a freshly validated legacy overlay into assets and
+retail-script recipes. Use a fresh output package and copy its `mod.ini` separately.
+For wheels, `--wheel-colours` extracts only the wheel-colour additions, avoiding a
+dependency on whichever car overlay was used during the original import.
+
+The generic retail reader lives in `tools/mod_bundle/retail.py`. Ferrari and wheel
+authoring tools live in their own package's `tools/` folder. They are excluded from
+the installed app, which only needs manifests, scripts, assets and recipes.

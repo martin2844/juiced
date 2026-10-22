@@ -1,0 +1,7 @@
+Material Program = Coloured Spec ABlend
+Colour = 250 250 250
+Specular Colour = 255 255 255
+Specular Highlight = 255.000000
+Shininess = 128.000000
+Additive = FALSE
+Texture = AddWH_NFSHBBSLMD_logo

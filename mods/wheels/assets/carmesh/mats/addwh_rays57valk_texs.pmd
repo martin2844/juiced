@@ -1,0 +1,4 @@
+Material Program = Shiny Opaque
+Side Fresnel = 0.7
+Front Fresnel = 0.5
+Texture = AddWH_Rays57Valk

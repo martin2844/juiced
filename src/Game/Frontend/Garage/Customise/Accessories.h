@@ -32,6 +32,7 @@ public:
 
 private:
     bool m_custom = false;
+    bool m_restorePrice = false;
     uint32_t m_own = 0;  // +0x0C: the car's neon colour
     int32_t m_had = 0;   // +0x10: the car had a neon
 };

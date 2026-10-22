@@ -63,6 +63,22 @@ To open the same in-game editor directly:
 ./out/juiced --controls
 ```
 
+## Optional mod packages
+
+All six mods live in their own folders under [`mods/`](mods/README.md): controls,
+RGB neon, driver photo, custom logo, Ferrari 458 Spider and Eagle Ultimate Wheels.
+Car/wheel assets and authoring tools are included. Start with:
+
+```sh
+out/juiced --game /path/to/Juiced --mods /absolute/path/to/this/repo/mods
+```
+
+Use **Options → Mods** to toggle packages, then restart. Script/asset edits do not
+require compiling the game. Car, wheel and custom-logo catalogue combinations use
+separate careers; re-enabling a combination resumes its saves. The installed Mod
+Garage app uses editable packages at `~/JuicedMods/mods` and preserves user edits.
+See [packaging instructions](tools/mod_bundle/README.md) to rebuild that app.
+
 ## Source and license
 
 Based on upstream branch `retail/1.01/dx9`, commit `bd7e638b187e999c13f85a608d007108a228a05b` (see the exact revision in [provenance](docs/macos-port.md)). The original source import is kept as the repository's first commit. Native adapters are in `src/Mac/`; Windows source and upstream engine documentation remain available.

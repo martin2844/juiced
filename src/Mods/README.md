@@ -4,13 +4,16 @@ The native host loads Lua scripts from `--mods /path/to/mods`. See
 [the runtime API](../../mods/README.md) for installing, disabling and editing mods.
 `--creative-mods` is a compatibility shorthand for loading
 `~/Library/Application Support/Juiced/mods`; the installed Mod Garage app explicitly
-loads `~/JuicedMods/mods`. `--mods-menu` also opens the image menu for testing.
+loads `~/JuicedMods/mods`. `--mods-menu` opens the enable/disable manager for testing.
 
 Menus reuse retail widgets. AppKit is used only for selecting image files;
 ImageIO makes bounded 512px textures. Feature policies, image menu entries,
 texture aliases and neon animation formulas live in external scripts.
 
 ## In the game
+
+- **Options → Mods**: toggle any installed package; restart to apply. See the
+  [package/save compatibility rules](../../mods/README.md).
 
 - **Options → Mod Garage**: choose/change/remove a driver photo or crew logo.
   The first crew-logo choice becomes the imported logo; importing from Options
@@ -44,8 +47,7 @@ in the game's own car save. Damage, daylight fading and neon failures still appl
 
 Custom-logo choices are appended, preserving every existing saved decal index.
 Crew livery selection and automatic modification use the original part count and
-never pick personal artwork. Saves containing these appended choices should stay
-with the mod-enabled installation. Images aren't embedded into replays or sent
+never pick personal artwork. The package manager isolates careers when the custom-logo catalogue is disabled. Images aren't embedded into replays or sent
 through multiplayer.
 
 The host implementation lives in `src/Mods`, with small guarded hooks at the

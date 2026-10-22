@@ -1,30 +1,62 @@
-#include "Mac/Controls.h"
-#include "Mods/Creative.h"
-#include "Mods/Runtime.h"
 #include "Core/Base/Config.h"
 #include "Core/Base/GameFiles.h"
 #include "Core/Base/Log.h"
 #include "Game/App/GameLoop.h"
 #include "Game/Platform/CommandLine.h"
+#include "Mac/Controls.h"
+#include "Mods/Creative.h"
+#include "Mods/Packages.h"
+#include "Mods/Runtime.h"
 #include <csignal>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
 std::filesystem::path chooseGameFolder();
+namespace {
+struct GeneratedOverlay {
+    std::filesystem::path path;
+    ~GeneratedOverlay() {
+        std::error_code ec;
+        if (!path.empty())
+            std::filesystem::remove_all(path, ec);
+    }
+};
+} // namespace
 int main(int argc, char **argv) {
+    GeneratedOverlay generated;
     signal(SIGPIPE, SIG_IGN);
     std::filesystem::path game;
-    std::filesystem::path mod, scripts;
+    std::filesystem::path mod, scripts, defaults;
     std::string command;
-    bool creative=false, modsMenu=false;
+    bool creative = false, modsMenu = false, controlsMenu = false;
     for (int i = 1; i < argc; i++) {
         std::string arg = argv[i];
-        if (arg == "--mods") {
-            if(i+1==argc){std::cerr << "--mods requires a folder path\n";return 2;}
-            scripts=std::filesystem::absolute(argv[++i]);creative=true;continue;
+        if (arg == "--mod-defaults") {
+            if (i + 1 == argc) {
+                std::cerr << "--mod-defaults requires a folder path\n";
+                return 2;
+            }
+            defaults = std::filesystem::absolute(argv[++i]);
+            continue;
         }
-        if (arg == "--creative-mods") {creative=true;continue;}
-        if (arg == "--mods-menu") {creative=true;modsMenu=true;continue;}
+        if (arg == "--mods") {
+            if (i + 1 == argc) {
+                std::cerr << "--mods requires a folder path\n";
+                return 2;
+            }
+            scripts = std::filesystem::absolute(argv[++i]);
+            creative = true;
+            continue;
+        }
+        if (arg == "--creative-mods") {
+            creative = true;
+            continue;
+        }
+        if (arg == "--mods-menu") {
+            creative = true;
+            modsMenu = true;
+            continue;
+        }
         if (arg == "--mod") {
             if (i + 1 == argc) {
                 std::cerr << "--mod requires a folder path\n";
@@ -38,7 +70,7 @@ int main(int argc, char **argv) {
             continue;
         }
         if (arg == "--controls") {
-            oj::mac::requestControlsEditor();
+            controlsMenu = true;
             continue;
         }
         if (arg == "--game") {
@@ -51,7 +83,8 @@ int main(int argc, char **argv) {
         }
         if (arg == "--help") {
             std::cout << "Juiced for macOS\nUsage: juiced --game /path/to/Juiced [--frames N] [--capture image.bmp] "
-                         "[-i] [--autopilot] [--controls] [--mod /path/to/mod] [--creative-mods] [--mods-menu] [--mods /path/to/mods]\n";
+                         "[-i] [--autopilot] [--controls] [--mod /path/to/mod] [--creative-mods] [--mods-menu] [--mods "
+                         "/path/to/mods]\n";
             return 0;
         }
         command += '"' + arg + '"';
@@ -84,16 +117,36 @@ int main(int argc, char **argv) {
         auto config = oj::Config::load(support / "OpenJuice.ini");
         config.skipIntroMovies = true;
         auto options = oj::parseCommandLine(command.c_str());
+        if (creative) {
+            if (scripts.empty())
+                scripts = support / "mods";
+            if (!defaults.empty())
+                oj::mods::packages::seedMissing(defaults, scripts);
+            oj::mods::packages::discover(scripts);
+            if (oj::mods::packages::available()) {
+                if (!mod.empty())
+                    throw std::runtime_error("Use --mods packages or --mod legacy overlay, not both");
+                generated.path = oj::mods::packages::assemble(game);
+                mod = generated.path;
+                const auto saves = options.saves.empty() ? support / "ModSaves" : std::filesystem::path(options.saves);
+                options.saves = oj::mods::packages::saveDirectory(saves).string();
+            }
+        }
         oj::GameFiles::setOverrideRoot(mod);
         if (!mod.empty() && options.saves.empty()) {
             options.saves = (mod / "Saves").string();
         }
         if (creative) {
-            if(scripts.empty()) scripts = support / "mods";
+            if (scripts.empty())
+                scripts = support / "mods";
             oj::mods::runtime::load(scripts);
-            oj::mods::configure((options.saves.empty()?support:std::filesystem::path(options.saves))/"CreativeMods");
-            if(modsMenu)oj::mods::requestMenu();
+            oj::mods::configure((options.saves.empty() ? support : std::filesystem::path(options.saves)) /
+                                "CreativeMods");
+            if (modsMenu)
+                oj::mods::requestManager();
         }
+        if (controlsMenu)
+            oj::mac::requestControlsEditor();
         int result = app::gameMain(options, config);
         oj::log::close();
         return result;

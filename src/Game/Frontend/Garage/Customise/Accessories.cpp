@@ -62,6 +62,7 @@ void TintsMenu::update(GarageHost& host, ui::Screen& s, uint32_t event) {
 // car's colour highlighted; the price 0.
 void NeonMenu::enter(GarageHost &host, ui::Screen &s) {
     m_custom = false;
+    m_restorePrice = false;
     GameData *data = host.gameData();
     Garage &garage = host.garage();
     host.baseEnter(s, "neonmenu");
@@ -129,6 +130,12 @@ void NeonMenu::update(GarageHost &host, ui::Screen &s, uint32_t event) {
         return;
     const bool menuShown = s.find("MENU") >= 0 && !s.hidden("MENU");
     const bool coloursShown = s.find("COLOURMENU") >= 0 && !s.hidden("COLOURMENU");
+    if (m_restorePrice) {
+        // A nested priced popup hides these on leaving; restore once when the palette resumes.
+        m_restorePrice = false;
+        if (coloursShown && garage.texts.bought == 0)
+            garage.priceShown(host, true);
+    }
     if (coloursShown && (event == input::kLeft || event == input::kRight)) {
         m_custom = false;
 #ifdef OJ_MACOS
@@ -173,6 +180,7 @@ void NeonMenu::update(GarageHost &host, ui::Screen &s, uint32_t event) {
             return;
         }
         m_custom = true;
+        m_restorePrice = true;
         garage.paintMode = PaintMode::Neon;
         host.request("colourchoose", SwitchMode::Push);
         return;

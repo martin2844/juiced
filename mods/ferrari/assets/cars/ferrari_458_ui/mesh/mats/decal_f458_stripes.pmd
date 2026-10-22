@@ -1,0 +1,7 @@
+Material Program = Coloured Spec ABlend
+Colour = 255 255 255
+Specular Colour = 130 130 130
+Specular Highlight = 64
+Shininess = 32
+Additive = FALSE
+Texture = decal_f458_stripes.ptd

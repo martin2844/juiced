@@ -1,6 +1,7 @@
 #ifdef OJ_MACOS
 #include "Mac/ControlsOverlay.h"
 #include "Mods/CreativeMenu.h"
+#include "Mods/Packages.h"
 #endif
 // The game's main function and its loop: the platform, the front end, the race and the frames between them
 // (docs/spec/01-startup.md).
@@ -216,7 +217,8 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
             controlMaps =
                 oj::parseControls(std::string_view(reinterpret_cast<const char*>(bytes->data()), bytes->size()));
 #ifdef OJ_MACOS
-            oj::mac::applyBindings(controlMaps, oj::mac::loadBindings(oj::mac::bindingsPath()));
+            if (!oj::mods::packages::available() || oj::mods::runtime::feature("controls"))
+                oj::mac::applyBindings(controlMaps, oj::mac::loadBindings(oj::mac::bindingsPath()));
 #endif
             input.load(controlMaps);
         }

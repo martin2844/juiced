@@ -1,0 +1,7 @@
+Material Program = Coloured Spec ABlend
+Colour = 200 200 200
+Specular Colour = 10 10 10
+Specular Highlight = 0.000000
+Shininess = 0.000000
+Additive = FALSE
+Texture = AddWH_XXAdvTC3D_logo

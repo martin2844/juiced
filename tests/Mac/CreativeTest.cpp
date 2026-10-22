@@ -36,7 +36,7 @@ int main(int argc, char **argv) {
         require(mods::neonTexture(car).empty(), "effects isolated between drivers");
         mods::profileName("test driver");
         require(mods::neon(car).effect == 2, "effect reloads from sidecar");
-        // A two-by-two uncompressed BMP, red left and blue right. No external image dependencies.
+        // A two-by-one uncompressed BMP, red left and blue right. No external image dependencies.
         std::vector<uint8_t> bmp(62);
         bmp[0] = 'B';
         bmp[1] = 'M';

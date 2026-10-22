@@ -1,0 +1,16 @@
+Ferrari 458 Italia (2010), recorded by Edvvc (Ed Pond), 3 July 2010.
+Source: https://commons.wikimedia.org/wiki/File:Ferrari_458_Italia.ogg
+Original: https://upload.wikimedia.org/wikipedia/commons/5/5a/Ferrari_458_Italia.ogg
+Source SHA-256: d98951caaa3de712e59b13d4d1eb0472795a3cbfbf9d990b28711cd8c93891da
+
+We choose the Creative Commons Attribution-ShareAlike 3.0 Unported licence
+explicitly offered by the author on the Commons description page.
+https://creativecommons.org/licenses/by-sa/3.0/
+Full licence: CC-BY-SA-3.0.txt
+
+Adaptation: cropped four RPM layers, mono conversion, filtering, level matching,
+loop crossfades, softer processed off-throttle samples and a lightly saturated
+sport exhaust variant. Original recording and all derived audio are CC BY-SA 3.0.
+These are adapted exterior drive-away samples, not a complete dynamometer or
+interior recording library. The sport/off-throttle variants are processed, not
+separate authentic exhaust recordings. No endorsement by Ferrari or Edvvc implied.

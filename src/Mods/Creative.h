@@ -19,6 +19,7 @@ struct Neon {
 struct Request {
     bool onboarding = false;
     std::function<void()> finished;
+    bool management = false;
 };
 void configure(std::filesystem::path folder);
 bool enabled();
@@ -41,6 +42,7 @@ std::string neonTexture(const Car &car);
 uint64_t profileId();
 void requestMenu(std::function<void()> finished = {});
 void requestPortrait();
+void requestManager();
 std::optional<Request> takeRequest();
 Neon neon(const Car &car);
 bool saveNeon(const Car &car, const Neon &value);

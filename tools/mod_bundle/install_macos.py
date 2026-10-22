@@ -21,7 +21,7 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--base-app', type=Path, required=True)
     p.add_argument('--exe', type=Path, required=True)
-    p.add_argument('--mod', type=Path, required=True)
+    p.add_argument('--mod', type=Path, help='Legacy single overlay; omit for package-based --creative-mods')
     p.add_argument('--output', type=Path, required=True)
     p.add_argument('--replace', action='store_true', help='Replace only an existing Mod Garage app after staging and verifying the new build')
     p.add_argument('--scripts', type=Path, default=Path(__file__).resolve().parents[2] / 'mods', help='Runtime Lua mods to bundle as first-launch defaults')
@@ -31,7 +31,14 @@ def main():
         existing_info = a.output / 'Contents/Info.plist'
         if not a.replace or not existing_info.is_file() or plistlib.loads(existing_info.read_bytes()).get('CFBundleIdentifier') != 'org.openjuice.macos.modgarage':
             p.error('Output exists; --replace is permitted only for an existing Mod Garage app')
-    for required in (a.base_app / 'Contents/Info.plist', a.exe, a.mod / 'scripts/cardefs.txt'):
+    if not a.creative_mods and not a.mod:
+        p.error('Use --creative-mods packages or provide --mod')
+    if a.creative_mods and a.mod:
+        p.error('--creative-mods loads package assets; do not also supply --mod')
+    required_inputs = [a.base_app / 'Contents/Info.plist', a.exe]
+    if a.mod:
+        required_inputs.append(a.mod / 'scripts/cardefs.txt')
+    for required in required_inputs:
         if not required.is_file():
             p.error('Missing input: ' + str(required))
     a.output.parent.mkdir(parents=True, exist_ok=True)
@@ -58,21 +65,23 @@ def main():
                 path = commands[i + 2].strip().split(' (')[0][5:]
                 if path.startswith('/'):
                     subprocess.run(['install_name_tool', '-delete_rpath', path, str(exe)], check=True)
-        assets = contents / 'Resources/CarMod'
-        shutil.copytree(a.mod, assets, copy_function=link_or_copy,
-                        ignore=shutil.ignore_patterns('Saves', 'saves'))
+        if a.mod:
+            assets = contents / 'Resources/CarMod'
+            shutil.copytree(a.mod, assets, copy_function=link_or_copy,
+                            ignore=shutil.ignore_patterns('Saves', 'saves'))
         launcher = contents / 'MacOS/LaunchModGarage'
-        extra = ' --mods "$mod_scripts"' if a.creative_mods else ''
+        extra = ' --mods "$mod_scripts" --mod-defaults "$mod_bin_dir/../Resources/RuntimeMods"' if a.creative_mods else ' --mod "$mod_bin_dir/../Resources/CarMod"'
         setup = ''
         if a.creative_mods:
             if not a.scripts.is_dir():
                 raise RuntimeError('Missing runtime scripts: ' + str(a.scripts))
-            shutil.copytree(a.scripts, contents / 'Resources/RuntimeMods')
-            setup = 'mod_scripts="$HOME/JuicedMods/mods"\nif [ ! -d "$mod_scripts" ]; then\n  mkdir -p "$HOME/JuicedMods"\n  cp -R "$mod_bin_dir/../Resources/RuntimeMods" "$mod_scripts"\nfi\n'
+            shutil.copytree(a.scripts, contents / 'Resources/RuntimeMods', copy_function=link_or_copy,
+                            ignore=shutil.ignore_patterns('tools', '.cache', '__pycache__', 'disabled', 'disabled.tmp', '.DS_Store'))
+            setup = 'mod_scripts="$HOME/JuicedMods/mods"\n'
         launcher.write_text('''#!/bin/sh
 set -eu
 mod_bin_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
-''' + setup + '''exec "$mod_bin_dir/Juiced" --mod "$mod_bin_dir/../Resources/CarMod" --saves "$HOME/Library/Application Support/Juiced Mods/ModGarage" --screen menu''' + extra + ''' "$@"
+''' + setup + '''exec "$mod_bin_dir/Juiced" --saves "$HOME/Library/Application Support/Juiced Mods/ModGarage" --screen menu''' + extra + ''' "$@"
 ''')
         launcher.chmod(0o755)
         info = contents / 'Info.plist'
