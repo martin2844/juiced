@@ -525,6 +525,9 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
         movies.setActive(platform.active());
         // 0x0040CCF0: the input manager's update (0x005918C0) by the frame's time; [0x0075F780] the window's
         // activation (a test run's hidden window counts as active).
+#ifdef OJ_MACOS
+        for(const auto& key:keys)if(key.down)oj::mods::neonKey(key.code);
+#endif
         input.poll(keys, platform.active() || options.test, dt);
         oj::FrontendInput in;
         in.typed = input.typed();

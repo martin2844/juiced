@@ -24,6 +24,7 @@ def main():
     p.add_argument('--mod', type=Path, required=True)
     p.add_argument('--output', type=Path, required=True)
     p.add_argument('--replace', action='store_true', help='Replace only an existing Mod Garage app after staging and verifying the new build')
+    p.add_argument('--scripts', type=Path, default=Path(__file__).resolve().parents[2] / 'mods', help='Runtime Lua mods to bundle as first-launch defaults')
     p.add_argument('--creative-mods', action='store_true', help='Enable the optional creative mod UI in a supporting build')
     a = p.parse_args()
     if a.output.exists():
@@ -37,7 +38,7 @@ def main():
     with tempfile.TemporaryDirectory(prefix='.juiced-mods-', dir=a.output.parent) as stage:
         app = Path(stage) / a.output.name
         def ignore(path, names):
-            return [n for n in names if n in ('CarMod', '_CodeSignature')]
+            return [n for n in names if n in ('CarMod', 'RuntimeMods', '_CodeSignature')]
         shutil.copytree(a.base_app, app, symlinks=True, ignore=ignore)
         contents = app / 'Contents'
         exe = contents / 'MacOS/Juiced'
@@ -61,18 +62,24 @@ def main():
         shutil.copytree(a.mod, assets, copy_function=link_or_copy,
                         ignore=shutil.ignore_patterns('Saves', 'saves'))
         launcher = contents / 'MacOS/LaunchModGarage'
-        extra = ' --creative-mods' if a.creative_mods else ''
+        extra = ' --mods "$mod_scripts"' if a.creative_mods else ''
+        setup = ''
+        if a.creative_mods:
+            if not a.scripts.is_dir():
+                raise RuntimeError('Missing runtime scripts: ' + str(a.scripts))
+            shutil.copytree(a.scripts, contents / 'Resources/RuntimeMods')
+            setup = 'mod_scripts="$HOME/JuicedMods/mods"\nif [ ! -d "$mod_scripts" ]; then\n  mkdir -p "$HOME/JuicedMods"\n  cp -R "$mod_bin_dir/../Resources/RuntimeMods" "$mod_scripts"\nfi\n'
         launcher.write_text('''#!/bin/sh
 set -eu
 mod_bin_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
-exec "$mod_bin_dir/Juiced" --mod "$mod_bin_dir/../Resources/CarMod" --saves "$HOME/Library/Application Support/Juiced Mods/ModGarage" --screen menu''' + extra + ''' "$@"
+''' + setup + '''exec "$mod_bin_dir/Juiced" --mod "$mod_bin_dir/../Resources/CarMod" --saves "$HOME/Library/Application Support/Juiced Mods/ModGarage" --screen menu''' + extra + ''' "$@"
 ''')
         launcher.chmod(0o755)
         info = contents / 'Info.plist'
         pl = plistlib.loads(info.read_bytes())
         pl.update(CFBundleExecutable='LaunchModGarage', CFBundleIdentifier='org.openjuice.macos.modgarage',
                   CFBundleName='Juiced Mod Garage', CFBundleDisplayName='Juiced Mod Garage',
-                  CFBundleVersion='0.3.4.1', CFBundleShortVersionString='0.3.4')
+                  CFBundleVersion='0.3.5.0', CFBundleShortVersionString='0.3.5')
         info.write_bytes(plistlib.dumps(pl))
         subprocess.run(['codesign', '--force', '--sign', '-', str(exe)], check=True)
         subprocess.run(['codesign', '--force', '--deep', '--sign', '-', str(app)], check=True)

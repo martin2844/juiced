@@ -36,6 +36,8 @@ public:
     void update(GarageHost& host, ui::Screen& s, uint32_t event);
 
 private:
+    bool m_chartPlacesSaved = false;
+    std::array<std::array<float,4>,2> m_chartPlaces{};
     uint32_t m_original = 0;  // +0x10
     int32_t m_answer = -1;    // +0x1C
     int32_t m_asked = 0;      // +0x20

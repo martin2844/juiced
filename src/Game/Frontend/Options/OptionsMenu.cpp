@@ -27,7 +27,7 @@ void OptionsMenu::enter(OptionsHost& host, ui::Screen& s) {
         s.restoreMenu("Menu");
         s.restoreMenu("BackMenu");
 #ifdef OJ_MACOS
-        if(mods::enabled()) {
+        if(mods::feature("portrait") || mods::feature("logo")) {
             s.insertCommandItem("Menu",int(s.menuSize("Menu"))-1,L"MOD GARAGE",0,"creative");
             s.addMenuItem("BackMenu",L"",0,"","ui_pan5_ora");
         }

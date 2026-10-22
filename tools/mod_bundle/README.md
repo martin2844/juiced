@@ -23,3 +23,10 @@ python3 tools/mod_bundle/install_macos.py \
 ```
 
 Only pass `--creative-mods` with a build implementing that optional feature. The launcher uses separate `Juiced Mods/ModGarage` saves and does not open the mod menu automatically. The app's asset hardlinks remain valid if source overlays are deleted, but editing source assets in place also edits the app; rebuild into a fresh directory instead.
+
+With `--creative-mods`, the packager includes the runtime Lua interpreter build and
+copies `mods/` (or `--scripts PATH`) as bundled defaults. On first launch the app
+seeds `~/JuicedMods/mods`, then loads scripts from there with `--mods`. Existing
+user scripts are preserved when rebuilding or reinstalling the app. Edit scripts
+and restart the game to apply changes; no compilation is needed. See
+[the runtime API](../../mods/README.md).

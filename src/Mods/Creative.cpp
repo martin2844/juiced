@@ -1,6 +1,7 @@
 #include "Mods/Creative.h"
 #include "Core/Cars/Car.h"
 #include "Core/Cars/CarDefs.h"
+#include "Mods/Runtime.h"
 #include <algorithm>
 #include <chrono>
 #include <cmath>
@@ -17,9 +18,12 @@ uint64_t active = 0;
 std::string portraitName, logoName;
 bool portraitAsked = false;
 std::map<std::string, Neon> neons;
+std::optional<std::pair<std::string, Neon>> preview;
 std::map<std::string, int> logoSlots;
 std::map<std::string, size_t> originalDecalCounts;
 std::optional<Request> pending;
+bool editingNeon = false;
+uint32_t neonEvent = 0;
 std::recursive_mutex mutex;
 std::filesystem::path folder() {
     return root / std::to_string(active);
@@ -45,11 +49,49 @@ bool save() {
 void configure(std::filesystem::path folder) {
     std::lock_guard lock(mutex);
     root = std::move(folder);
+    logoSlots.clear();
+    originalDecalCounts.clear();
+    preview.reset();
+    neonEditor(false);
     profile(0);
 }
 bool enabled() {
     std::lock_guard lock(mutex);
     return !root.empty();
+}
+bool feature(const char *name) {
+    return enabled() && runtime::feature(name);
+}
+int effectCount() {
+    return int(std::clamp(runtime::number("effect_count", {}, 1), 1., 64.));
+}
+std::string effectName(int index) {
+    return runtime::text("effect_name", {double(index)}, "GLOW");
+}
+void previewNeon(const Car &car, const Neon &n) {
+    std::lock_guard lock(mutex);
+    preview = std::pair{car.modelName(), n};
+}
+void neonEditor(bool value) {
+    editingNeon = value;
+    neonEvent = 0;
+}
+void neonKey(uint8_t key) {
+    if (editingNeon) {
+        if (key == 16)
+            neonEvent = 6;
+        else if (key == 18)
+            neonEvent = 7;
+    }
+}
+uint32_t takeNeonEvent() {
+    auto event = neonEvent;
+    neonEvent = 0;
+    return event;
+}
+void clearNeonPreview() {
+    std::lock_guard lock(mutex);
+    preview.reset();
 }
 uint64_t profileId() {
     std::lock_guard lock(mutex);
@@ -61,6 +103,7 @@ void profile(uint64_t id) {
         return;
     active = id;
     neons.clear();
+    preview.reset();
     portraitName.clear();
     logoName.clear();
     portraitAsked = false;
@@ -80,7 +123,7 @@ void profile(uint64_t id) {
             Neon n;
             f >> std::quoted(model) >> n.rgb >> n.effect >> n.speed;
             n.rgb &= 0xffffff;
-            n.effect = std::clamp(n.effect, 0, 3);
+            n.effect = std::clamp(n.effect, 0, 63);
             n.speed = std::clamp(n.speed, 1, 5);
             neons[model] = n;
         } else {
@@ -98,7 +141,7 @@ void profileName(const std::string &name) {
     profile(key);
 }
 void addLogoSlots(CarDefs &defs) {
-    if (!enabled())
+    if (!feature("logo"))
         return;
     std::lock_guard lock(mutex);
     for (auto &def : defs.cars) {
@@ -108,10 +151,14 @@ void addLogoSlots(CarDefs &defs) {
         originalDecalCounts.try_emplace(def.model, parts.size());
         auto it = std::find_if(parts.begin(), parts.end(),
                                [](const auto &p) { return p.model.find("CUSTOMLOGO") != std::string::npos; });
-        if (it != parts.end())
-            logoSlots[def.model] = int(it - parts.begin());
-        else if (parts.size() < 126) {
-            logoSlots[def.model] = int(parts.size());
+        const int existing = it == parts.end() ? -1 : int(it - parts.begin());
+        const int selected =
+            int(std::clamp(runtime::number("logo_slot", {def.model, double(parts.size()), double(existing)}, -1), -1.,
+                           double(parts.size())));
+        if (selected >= 0 && selected < int(parts.size()))
+            logoSlots[def.model] = selected;
+        else if (selected == int(parts.size()) && parts.size() < 126) {
+            logoSlots[def.model] = selected;
             parts.push_back(parts.front());
         }
     }
@@ -128,34 +175,40 @@ int logoIndex(const std::string &model) {
     return it == logoSlots.end() ? -1 : it->second;
 }
 bool customLogo(const Car &car) {
-    return enabled() && int(car.body[8]) == logoIndex(car.modelName());
+    return feature("logo") && int(car.body[8]) == logoIndex(car.modelName());
 }
 std::string neonTexture(const Car &car) {
     std::lock_guard lock(mutex);
-    if (!enabled() || neons.find(car.modelName()) == neons.end())
+    if (!feature("neon") ||
+        (neons.find(car.modelName()) == neons.end() && (!preview || preview->first != car.modelName())))
         return {};
     auto n = neon(car);
     if ((car.neon & 0xffffff) != n.rgb)
         return {};
-    if (n.effect != 2)
-        return "mod_neon_glow";
-    int frame = int(std::fmod(seconds() * .25 * n.speed, 1.) * 32);
-    return "mod_neon_scan_" + std::to_string(frame);
+    auto texture = runtime::text("neon_texture", {double(n.rgb), double(n.effect), double(n.speed), seconds()});
+    if (texture == "mod_neon_glow")
+        return texture;
+    if (texture.starts_with("mod_neon_scan_")) {
+        try {
+            int frame = std::stoi(texture.substr(14));
+            if (frame >= 0 && frame < 32)
+                return "mod_neon_scan_" + std::to_string(frame);
+        } catch (...) {
+        }
+    }
+    return {};
 }
 void requestMenu(std::function<void()> finished) {
     if (enabled())
-        pending = Request{nullptr, {}, false, std::move(finished)};
+        pending = Request{false, std::move(finished)};
 }
 void requestPortrait() {
-    if (enabled() && !portraitAsked && !hasImage(true)) {
+    if (feature("portrait") &&
+        runtime::call("profile_prompt", {portraitAsked, hasImage(true)}, false) == runtime::Value(true)) {
         portraitAsked = true;
         save();
-        pending = Request{nullptr, {}, true};
+        pending = Request{true};
     }
-}
-void requestNeon(Car &car, std::function<void(const Neon &)> apply) {
-    if (enabled())
-        pending = Request{&car, std::move(apply), false};
 }
 std::optional<Request> takeRequest() {
     auto r = std::move(pending);
@@ -164,6 +217,8 @@ std::optional<Request> takeRequest() {
 }
 Neon neon(const Car &car) {
     std::lock_guard lock(mutex);
+    if (preview && preview->first == car.modelName())
+        return preview->second;
     auto it = neons.find(car.modelName());
     return it != neons.end() ? it->second : Neon{car.neon & 0xffffff, 0, 2};
 }
@@ -180,29 +235,15 @@ double seconds() {
     return std::chrono::duration<double>(std::chrono::steady_clock::now().time_since_epoch()).count();
 }
 uint32_t neonColour(const Car &car, double time) {
-    if (!enabled())
+    if (!feature("neon"))
         return car.neon;
     const auto n = neon(car);
     if ((car.neon & 0xffffff) != n.rgb)
         return car.neon;
-    const double phase = time * (.25 * n.speed);
-    uint32_t rgb = n.rgb;
-    float gain = 1;
-    if (n.effect == 1)
-        gain = .15f + .85f * float(.5 + .5 * std::sin(phase * 6.2831853));
-
-    if (n.effect == 3) {
-        rgb = 0;
-        for (int i = 0; i < 3; ++i) {
-            double h = phase + double(i) / 3;
-            float v = float(.5 + .5 * std::cos(h * 6.2831853));
-            rgb |= uint32_t(v * 255) << (16 - i * 8);
-        }
-    }
-    uint32_t out = car.neon & 0xff000000;
-    for (unsigned shift : {0u, 8u, 16u})
-        out |= uint32_t(((rgb >> shift) & 255) * gain) << shift;
-    return out;
+    double result =
+        runtime::number("neon_colour", {double(n.rgb), double(n.effect), double(n.speed), time}, double(n.rgb));
+    auto rgb = uint32_t(std::clamp(result, 0., 16777215.));
+    return (car.neon & 0xff000000) | rgb;
 }
 std::string imageName(bool portrait) {
     std::lock_guard lock(mutex);
@@ -231,12 +272,9 @@ bool clearImage(bool portrait) {
 std::string uiTexture(const std::string &name) {
     if (!enabled())
         return name;
-    auto image = imageName(name == "ui_crewmember_00");
-    if (name == "ui_crewmember_00" && !image.empty())
-        return image;
-    if ((name == "ui_chooselogo_01" || name == "mod_custom_logo") && hasImage(false))
-        return imageName(false);
-    return name;
+    return runtime::text("image_alias",
+                         {name, feature("portrait") ? imageName(true) : "", feature("logo") ? imageName(false) : ""},
+                         name);
 }
 std::optional<std::vector<std::byte>> imageBytes(const std::string &name) {
     if (enabled() && name.starts_with("mod_neon_")) {

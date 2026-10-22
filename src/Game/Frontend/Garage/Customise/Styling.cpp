@@ -228,7 +228,7 @@ void ModMenu::update(GarageHost& host, ui::Screen& s, uint32_t event) {
         hasItem = true;
         value = s.menuItemValue("Menu", item);
 #ifdef OJ_MACOS
-        if(event==input::kSelect && mods::enabled() && int(value)==mods::logoIndex(car->modelName()) && !mods::hasImage(false)) {mods::requestMenu();return;}
+        if(event==input::kSelect && mods::feature("logo") && int(value)==mods::logoIndex(car->modelName()) && !mods::hasImage(false)) {mods::requestMenu();return;}
 #endif
         if (static_cast<int32_t>(item) != m_shown) {
             garage.fitBodyPart(*car, garage.styleCategory, x87::chop(value));
@@ -421,7 +421,7 @@ void DecalMenu::enter(GarageHost& host, ui::Screen& s) {
                 s.addMenuItem("Menu", L"", static_cast<float>(i), picture, picture);
             }
 #ifdef OJ_MACOS
-            if(mods::enabled() && int(i)==mods::logoIndex(car->modelName())) {
+            if(mods::feature("logo") && int(i)==mods::logoIndex(car->modelName())) {
                 s.setMenuItemText("Menu",s.menuSize("Menu")-1,L"CUSTOM LOGO");
             }
 #endif

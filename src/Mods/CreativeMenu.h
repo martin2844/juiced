@@ -2,6 +2,7 @@
 #include "Core/Input/Input.h"
 #include "Game/UI/UiScreen.h"
 #include "Mods/Creative.h"
+#include "Mods/Runtime.h"
 namespace oj::mods {
 class CreativeMenu {
   public:
@@ -17,7 +18,7 @@ class CreativeMenu {
     render::IRenderDevice &m_device;
     ui::Screen m_background, m_menu, m_message;
     Request m_request;
-    Neon m_draft;
+    std::vector<runtime::MenuItem> m_items;
     int m_focus = 0;
     bool m_notice = false;
     double m_last = 0;

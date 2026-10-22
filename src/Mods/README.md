@@ -1,9 +1,14 @@
 # Creative mods (optional macOS module)
 
-Enable with `--creative-mods`. The ordinary game stays on the stock code paths when
-this flag is absent. `--mods-menu` also opens the image menu at startup for testing.
-Menus reuse the retail `opts_bg`, `opts_menu`, and `msgbox` widgets. AppKit is used
-only for selecting image files; ImageIO makes bounded 512px native textures.
+The native host loads Lua scripts from `--mods /path/to/mods`. See
+[the runtime API](../../mods/README.md) for installing, disabling and editing mods.
+`--creative-mods` is a compatibility shorthand for loading
+`~/Library/Application Support/Juiced/mods`; the installed Mod Garage app explicitly
+loads `~/JuicedMods/mods`. `--mods-menu` also opens the image menu for testing.
+
+Menus reuse retail widgets. AppKit is used only for selecting image files;
+ImageIO makes bounded 512px textures. Feature policies, image menu entries,
+texture aliases and neon animation formulas live in external scripts.
 
 ## In the game
 
@@ -12,11 +17,12 @@ only for selecting image files; ImageIO makes bounded 512px native textures.
   also selects it. PNG transparency is preserved, JPEG is supported, portraits
   are square-cropped, and logos are fitted without stretching.
 - Creating or first loading a driver asks for a photo once. Continue skips it.
-- **Garage → Styling → Neon → Change → Custom RGB + Effects**: left/right changes
-  RGB channels by one; Enter adds ten. Choose Glow, Pulsating, Back and Forth, or
-  RGB Cycle and speed 1–5. Apply uses the normal 1,000-credit purchase confirmation
-  and the original unlock rules. Back and Forth moves a glow band under the car.
-  Buying a standard palette colour resets the effect to Glow.
+- **Garage → Styling → Neon → Change → Custom RGB + Effects** opens the existing
+  paint colour chart with the car and garage still visible. Arrow keys select the
+  colour, **Q** cycles effects, **E** cycles speed, and the underglow previews live.
+  **Enter** opens the standard 1,000-credit confirmation; **Esc** restores the
+  previous neon. Controller SELECT2/SELECT3 also cycle effects/speed. The original
+  unlock rules apply. Standard palette purchases reset the effect to Glow.
 - **Garage → Styling → Decals → Custom Logo**: uses the imported image. Selecting
   this without an image opens the import menu. The Ferrari has fitted bonnet and
   door shells. Original cars reuse their native prototype-decal geometry/UVs, so
@@ -42,14 +48,18 @@ never pick personal artwork. Saves containing these appended choices should stay
 with the mod-enabled installation. Images aren't embedded into replays or sent
 through multiplayer.
 
-The implementation lives in `src/Mods`. Small guarded hooks handle menu requests,
-profile changes, native image loading, decal textures and neon drawing. The
-renderer exposes a read-only texture accessor so temporarily replaced decal
-textures can be restored. This is not a general third-party code/plugin loader.
+The host implementation lives in `src/Mods`, with small guarded hooks at the
+engine boundaries. Scripts live outside the executable in `mods`. Persistence,
+image decoding and rendering remain native services. This is an API-based Lua
+mod system, not arbitrary executable patching.
 
 ## Checks
 
 `mac_creative_check` tests import, persistence, transparent padding, channel order,
-profile isolation, editor apply/cancel, animation and path confinement. Supplying
+profile isolation, preview rollback, animation and path confinement. Supplying
 `GAME MOD` additionally fits custom images to every available car's decal material
 and verifies restoration after changing back to the original decal.
+
+`mac_mod_runtime_check` verifies script edits, disable markers, error isolation and
+execution limits. `mac_neon_picker_check GAME MOD [capture.bmp]` exercises the real
+paint chart, live effects, cancellation and native purchase with game assets.

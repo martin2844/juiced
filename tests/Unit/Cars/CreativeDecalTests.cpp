@@ -3,6 +3,7 @@
 #include "Core/Race/RaceSession.h"
 #include "Framework/Test.h"
 #include "Mods/Creative.h"
+#include "Mods/Runtime.h"
 
 OJ_UNIT_TEST(CreativeDecals, PreserveCrewIndices) {
     using oj::test::check;
@@ -15,6 +16,7 @@ OJ_UNIT_TEST(CreativeDecals, PreserveCrewIndices) {
     addon.model = "TEST_ADDON_DECALS";
     addon.parts[oj::kDecal].parts.resize(3);
     addon.parts[oj::kDecal].parts.back().model = "TEST_DECAL_CUSTOMLOGO";
+    oj::mods::runtime::load(JUICED_TEST_MODS);
     oj::mods::configure(std::filesystem::temp_directory_path() / "juiced-creative-decal-unit");
     oj::mods::addLogoSlots(defs);
     check(stock.parts[oj::kDecal].parts.size() == 32 && oj::mods::decalCount(stock, 32) == 31,
@@ -39,6 +41,7 @@ OJ_UNIT_TEST(CreativeDecals, PreserveCrewIndices) {
         personalLogo |= car.body[8] == 2;
     }
     check(!personalLogo, "automatic upgrades never select an addon's personal-image slot");
+    oj::mods::runtime::load(JUICED_TEST_MODS);
     oj::mods::configure({});
 }
 #endif

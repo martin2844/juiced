@@ -29,7 +29,7 @@ void ChooseLogo::enter(ProfileHost& host, ui::Screen& s) {
         s.addMenuItem("Menu", L"", static_cast<float>(i), name, name);
     }
 #ifdef OJ_MACOS
-    if(mods::enabled())s.addMenuItem("Menu",L"IMPORT YOUR LOGO",19,"ui_chooselogo_01","ui_chooselogo_01");
+    if(mods::feature("logo"))s.addMenuItem("Menu",L"IMPORT YOUR LOGO",19,"ui_chooselogo_01","ui_chooselogo_01");
 #endif
 }
 
@@ -39,7 +39,7 @@ void ChooseLogo::update(ProfileHost& host, ui::Screen& s, uint32_t event) {
     std::optional<save::Profile>& profile = host.profile();
     if (event == input::kSelect) {
 #ifdef OJ_MACOS
-        if(mods::enabled() && s.selectedMenuItem("Menu")==19){mods::requestMenu();s.selectMenuItem("Menu",0);return;}
+        if(mods::feature("logo") && s.selectedMenuItem("Menu")==19){mods::requestMenu();s.selectMenuItem("Menu",0);return;}
 #endif
         if (profile) {
             const size_t selected = s.selectedMenuItem("Menu");

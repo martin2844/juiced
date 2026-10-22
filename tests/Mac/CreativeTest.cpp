@@ -4,6 +4,7 @@
 #include "Core/Formats/Ddt.h"
 #include "Game/Cars/CarModel.h"
 #include "Mods/CreativeMenu.h"
+#include "Mods/Runtime.h"
 #include <cstring>
 #include <fstream>
 #include <iostream>
@@ -17,6 +18,7 @@ void require(bool value, const char *label) {
 int main(int argc, char **argv) {
     const auto folder = std::filesystem::temp_directory_path() / ("juiced-creative-" + std::to_string(getpid()));
     try {
+        mods::runtime::load(JUICED_TEST_MODS);
         mods::configure(folder);
         mods::profileName("test driver");
         Car car;
@@ -76,21 +78,11 @@ int main(int argc, char **argv) {
         require(!mods::imageBytes("mod_image_../../outside"), "image lookup cannot escape profile directory");
         test::NullRenderDevice device;
         const auto language = *Language::byIndex(0);
-        bool applied = false;
-        {
-            mods::CreativeMenu menu(device, language, {&car, [&](const mods::Neon &) { applied = true; }, false});
-            menu.update({{205, true}});
-            menu.update({{1, true}});
-            require(!applied, "cancel discards neon editor draft");
-        }
-        {
-            mods::CreativeMenu menu(device, language,
-                                    {&car, [&](const mods::Neon &n) { applied = n.rgb == 0x214080; }, false});
-            menu.update({{205, true}});
-            for (int i = 0; i < 5; ++i)
-                menu.update({{208, true}});
-            require(!menu.update({{28, true}}) && applied, "RGB editor applies exact value only on confirmation");
-        }
+        const auto savedNeon=mods::neon(car);
+        mods::previewNeon(car,{0x214080,1,4});
+        require(mods::neon(car).rgb==0x214080,"draft previews without saving");
+        mods::clearNeonPreview();
+        require(mods::neon(car).rgb==savedNeon.rgb,"cancel restores saved neon");
         if (argc == 3) {
             auto game = std::filesystem::absolute(argv[1]), overlay = std::filesystem::absolute(argv[2]);
             std::filesystem::current_path(game);

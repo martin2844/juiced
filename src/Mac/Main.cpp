@@ -1,5 +1,6 @@
 #include "Mac/Controls.h"
 #include "Mods/Creative.h"
+#include "Mods/Runtime.h"
 #include "Core/Base/Config.h"
 #include "Core/Base/GameFiles.h"
 #include "Core/Base/Log.h"
@@ -13,11 +14,15 @@ std::filesystem::path chooseGameFolder();
 int main(int argc, char **argv) {
     signal(SIGPIPE, SIG_IGN);
     std::filesystem::path game;
-    std::filesystem::path mod;
+    std::filesystem::path mod, scripts;
     std::string command;
     bool creative=false, modsMenu=false;
     for (int i = 1; i < argc; i++) {
         std::string arg = argv[i];
+        if (arg == "--mods") {
+            if(i+1==argc){std::cerr << "--mods requires a folder path\n";return 2;}
+            scripts=std::filesystem::absolute(argv[++i]);creative=true;continue;
+        }
         if (arg == "--creative-mods") {creative=true;continue;}
         if (arg == "--mods-menu") {creative=true;modsMenu=true;continue;}
         if (arg == "--mod") {
@@ -46,7 +51,7 @@ int main(int argc, char **argv) {
         }
         if (arg == "--help") {
             std::cout << "Juiced for macOS\nUsage: juiced --game /path/to/Juiced [--frames N] [--capture image.bmp] "
-                         "[-i] [--autopilot] [--controls] [--mod /path/to/mod] [--creative-mods] [--mods-menu]\n";
+                         "[-i] [--autopilot] [--controls] [--mod /path/to/mod] [--creative-mods] [--mods-menu] [--mods /path/to/mods]\n";
             return 0;
         }
         command += '"' + arg + '"';
@@ -84,6 +89,8 @@ int main(int argc, char **argv) {
             options.saves = (mod / "Saves").string();
         }
         if (creative) {
+            if(scripts.empty()) scripts = support / "mods";
+            oj::mods::runtime::load(scripts);
             oj::mods::configure((options.saves.empty()?support:std::filesystem::path(options.saves))/"CreativeMods");
             if(modsMenu)oj::mods::requestMenu();
         }
