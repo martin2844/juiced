@@ -187,14 +187,15 @@ void ColourMenu::update(GarageHost& host, ui::Screen& s, uint32_t event) {
     garage.lowerChassis(host);
 }
 
-// 0x0043DB90: the base enter; the camera to the garage's place; HELP shown; SELCOLOUR looks for the paint's colour
-// (base, metallic, pearl; for the decal (3) the pearl's: Stock problem, the decal's own colour is not looked for)
-// and +0x10 keeps the paint (the decal's colour, the car's +0x4C, for 3); the price and its box come in; no question,
-// the answer -1.
+// 0x0043DB90: the base enter; the camera to the garage's place; the primer of the car's slots made the body's
+// (0x0048C210, the car's folders pushed); HELP shown; SELCOLOUR looks for the paint's colour (base, metallic, pearl;
+// for the decal (3) the pearl's: Stock problem, the decal's own colour is not looked for) and +0x10 keeps the paint
+// (the decal's colour, the car's +0x4C, for 3); the price and its box come in; no question, the answer -1.
 void ColourChoose::enter(GarageHost& host, ui::Screen& s) {
     Garage& garage = host.garage();
     host.baseEnter(s, "colourchoose");
     if (garage.view) garage.view->cameraTo(kCameraGarage);
+    if (garage.view && garage.view->car() != nullptr) garage.view->car()->primerToBody();
     s.show("HELP", false);
     Car* car = garage.car(host);
     if (car != nullptr && s.find("SELCOLOUR") >= 0) {
@@ -327,12 +328,14 @@ void ColourChoose::update(GarageHost& host, ui::Screen& s, uint32_t event) {
     garage.repaint(host);
 }
 
-// 0x0043E2D0: the base enter; the camera to the garage's place; FOCUSSLIDER at the metallic amount (paint 1) or the
-// pearl amount x 5; the price and its box come in; the answer -1, no question.
+// 0x0043E2D0: the base enter; the camera to the garage's place; the primer of the car's slots made the body's
+// (0x0048C210); FOCUSSLIDER at the metallic amount (paint 1) or the pearl amount x 5; the price and its box come in;
+// the answer -1, no question.
 void ColourFocus::enter(GarageHost& host, ui::Screen& s) {
     Garage& garage = host.garage();
     host.baseEnter(s, "colourfocus");
     if (garage.view) garage.view->cameraTo(kCameraGarage);
+    if (garage.view && garage.view->car() != nullptr) garage.view->car()->primerToBody();
     if (Car* car = garage.car(host); car != nullptr && s.find("FOCUSSLIDER") >= 0) {
         s.setSliderValue("FOCUSSLIDER", garage.paintMode == PaintMode::Metallic
                                             ? Car::asFloat(car->metallicAmount)
@@ -390,8 +393,8 @@ void ColourFocus::update(GarageHost& host, ui::Screen& s, uint32_t event) {
 }
 
 // 0x0043F3F0: the base enter; the price and its box come in; the price 500; COLOURMENU emptied and an item for each
-// wheel colour of the CarDefs ([WheelColour]): ui_wheel_off and _on in the colour, its place; the car's own colour
-// (its +0x40 set) is +0x10 (2 without) and highlighted (the first past the list).
+// wheel colour of the CarDefs ([WheelColour]): ui_wheel_off and _on in the colour, its place; the car's own colour (its
+// +0x40 set) is +0x10 (2 without), kept as the wheels' (0x0048C5D0) and highlighted (the first past the list).
 void WheelColourMenu::enter(GarageHost& host, ui::Screen& s) {
     GameData* data = host.gameData();
     Garage& garage = host.garage();
@@ -409,6 +412,7 @@ void WheelColourMenu::enter(GarageHost& host, ui::Screen& s) {
         s.setMenuItemColour("COLOURMENU", i, wheels[i]);
         if (car->wheelsColoured != 0 && car->wheelColour == wheels[i]) {
             m_own = static_cast<int32_t>(i);
+            if (garage.view && garage.view->car() != nullptr) garage.view->car()->keepWheelColours(*car);
             own = i;
         }
     }
@@ -417,8 +421,9 @@ void WheelColourMenu::enter(GarageHost& host, ui::Screen& s) {
 
 // 0x0043F600: [0x0075F108] 2. A colour bought: colourmenu (the model's colours kept, 0x0048C5D0). The highlighted
 // colour on the car (+0x3C, +0x40 1) and its wheels (0x0048C440). SELECT (CLICK): the car's own (+0x10) "You already
-// have this mod" (type 1), another buymod. BACK (CLICK): colourmenu and the colour +0x10 back on the car (0x0048C530,
-// 0x0048C4F0). Stock problem: a car without a wheel colour of the list gets the third one (+0x10 2).
+// have this mod" (type 1), another buymod. BACK (CLICK): colourmenu, the wheels' kept colours back (0x0048C530) and the
+// colour +0x10 back on the car (0x0048C4F0). Stock problem: a car without a wheel colour of the list gets the third one
+// (+0x10 2).
 void WheelColourMenu::update(GarageHost& host, ui::Screen& s, uint32_t event) {
     GameData* data = host.gameData();
     const TextTable& texts = host.gameTexts();
@@ -429,7 +434,10 @@ void WheelColourMenu::update(GarageHost& host, ui::Screen& s, uint32_t event) {
     const auto colourOf = [&](int i) {
         return i >= 0 && static_cast<size_t>(i) < wheels.size() ? wheels[static_cast<size_t>(i)] : car->wheelColour;
     };
-    if (garage.texts.bought != 0) host.request("colourmenu", SwitchMode::Swap);
+    if (garage.texts.bought != 0) {
+        host.request("colourmenu", SwitchMode::Swap);
+        if (garage.view && garage.view->car() != nullptr) garage.view->car()->keepWheelColours(*car);
+    }
     const size_t item = s.selectedMenuItem("COLOURMENU");
     car->wheelColour = colourOf(x87::chop(s.menuItemValue("COLOURMENU", item)));
     car->wheelsColoured = 1;
@@ -444,6 +452,7 @@ void WheelColourMenu::update(GarageHost& host, ui::Screen& s, uint32_t event) {
     } else if (event == input::kBack) {
         host.sound("CLICK");
         host.request("colourmenu", SwitchMode::Swap);
+        if (garage.view && garage.view->car() != nullptr) garage.view->car()->restoreWheelColours();
         car->wheelColour = colourOf(m_own);
         car->wheelsColoured = 1;
         if (garage.view && garage.view->car() != nullptr) garage.view->car()->colourWheels(*car);

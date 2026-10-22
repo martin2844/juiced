@@ -6,11 +6,11 @@
 #define OJ_GAME_VERSION_MINOR 1
 #define OJ_GAME_VERSION_TEXT "1.01"
 
-#define OJ_RELEASE 2
-#define OJ_RELEASE_TEXT "2"
+#define OJ_RELEASE 4
+#define OJ_RELEASE_TEXT "4"
 #define OJ_RELEASE_NAME "Bug fixes"
 
-// The resource's version: the game's build, then the release ("1.01.2": Juiced 1.01, OpenJuice's release 2).
+// The resource's version: the game's build, then the release ("1.01.4": Juiced 1.01, OpenJuice's release 4).
 #define OJ_VERSION_TEXT OJ_GAME_VERSION_TEXT "." OJ_RELEASE_TEXT
 
 #if defined(_WIN64) || defined(OJ_RC_X64)

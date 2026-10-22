@@ -309,6 +309,9 @@ struct RaceRules {
     bool spectator = false;
     std::function<net::SessionStage()> netStage;
     std::function<void(const Competitor&)> netFinished;
+    // 0x004BEA60 on the race HUD's crew orders (Game/Race/Hud): the racer's lines flashed and, the orders closed,
+    // the orders opened, at once (the frame's time for their lines).
+    std::function<void(int32_t racer, float frameTime)> ordersFlash;
 
     // [ctx+0x64]+0xA0: the game options' A.I. DIFFICULTY (the settings' +0x4C; the options window gives 0 NORMAL and
     // 1 HARD). The stock code tests it against 0 in some places and against 1 in others.
@@ -425,7 +428,7 @@ private:
     int32_t crewLine(ChatterEntry& p, float t, CrtRandom& random);
     Competitor* competitorOf(int32_t racer) const;
     Competitor* atPlace(int32_t place) const;  // 0x0049FD90
-    void ordersFlash(int32_t racer);           // 0x004BEA60
+    void ordersFlash(int32_t racer, float frameTime);  // 0x004BEA60
     void events(float frameTime);  // 0x004A0130
 
     const Route* m_route;

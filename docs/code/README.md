@@ -40,8 +40,9 @@ JuicedConfig  the settings tool's parts apart from      oj::config            ->
 - `OpenJuiceConfig.exe` (`src/JuicedConfig/OpenJuiceConfig.vcxproj`) is the port of the game's `JuicedConfig.exe`
   (`docs/spec/30-juiced-config.md`): its window (`ConfigDialog.cpp`) and `WinMain` over the JuicedConfig library,
   with the stock's resources (`OpenJuiceConfig.rc`, `res\`). It shares no code with the game but the EAX
-  property sets' ids. Its debug builds take `--skip-directx-check` (the window without the stock's DirectX 9.0c
-  check, which Windows 11's DxDiag never passes).
+  property sets' ids. Its DirectX 9.0c check takes any DirectX past 9 (the stock's, by DxDiag's letter alone,
+  never passes on Windows Vista and later); its debug builds take `--skip-directx-check` (the window whatever the
+  check finds).
 
 ## From the start to a frame
 

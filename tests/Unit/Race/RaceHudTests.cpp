@@ -4,10 +4,15 @@
 #include "Framework/Test.h"
 #include "Framework/Fakes/NullRenderDevice.h"
 
+#include "Core/Career/Career.h"
 #include "Core/Data/Language.h"
+#include "Core/Race/Racer.h"
 #include "Game/Race/Hud/HudInternal.h"
 #include "Game/Race/Hud/RaceHud.h"
 #include "Game/Race/RaceCamera.h"
+
+#include <array>
+#include <memory>
 
 namespace {
 
@@ -61,4 +66,38 @@ OJ_UNIT_TEST(RaceHudPanels, Kept) {
     check(!keepsPanels(RaceType::Circuit) && !keepsPanels(RaceType::PointToPoint) &&
               !keepsPanels(RaceType::Unused8) && !keepsPanels(RaceType::TestTrack),
           "the circuit, point to point, type 8 and test track races fade them");
+}
+
+// The crew's orders asked for by the drivers' levels (0x004BEA60, a member's nerves crossing 1.9) open at once, so the
+// same frame's state (0x004BDF00) runs the open orders' keys: a tactics key of that frame moves the member's level. A
+// tactics key alone only opens them (0x004BE290).
+OJ_UNIT_TEST(RaceHudOrders, OpenedAtOnce) {
+    oj::test::NullRenderDevice device;
+    const oj::Language language = *oj::Language::byName("english");
+    oj::TextTable texts;
+    const auto level = [&](bool asked) {
+        oj::RaceHud hud(device, language, texts);
+        auto career = std::make_unique<oj::Career>();
+        career->drivers.ordersShown = 1;
+        career->session.count = 1;
+        career->session.racers[0].crew = 0;
+        career->session.racers[0].member = 1;
+        career->session.racers[0].level = 1;
+        auto car = std::make_unique<oj::RaceCar>();
+        oj::Competitor competitor;
+        competitor.place = 1;
+        car->record = 0;
+        car->competitor = &competitor;
+        oj::HudRace race;
+        race.mode = oj::RaceMode::Career;
+        race.career = career.get();
+        race.cars = {car.get()};
+        hud.enter(race);
+        const float dt = 1.0f / 60.0f;
+        if (asked) hud.ordersFlash(race, -1, dt);
+        hud.crewOrders(race, {true, false, false, false, false, false}, dt);
+        return career->session.racers[0].level;
+    };
+    check(level(true) == 2, "asked for by the drivers' levels: open, the frame's DRIVER_TACTICS_UP takes the level up");
+    check(level(false) == 1, "a tactics key alone: the orders opened, the level kept");
 }

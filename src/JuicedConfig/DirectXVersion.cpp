@@ -3,6 +3,8 @@
 #include <dxdiag.h>
 #include <oleauto.h>
 
+#include <cctype>
+
 namespace oj::config {
 
 HRESULT directXVersion(uint32_t* major, uint32_t* minor, char* letter) {
@@ -48,6 +50,12 @@ HRESULT directXVersion(uint32_t* major, uint32_t* minor, char* letter) {
     }
     if (com) CoUninitialize();
     return gotMajor && gotMinor && gotLetter ? S_OK : E_FAIL;
+}
+
+bool directX9cOrLater(HRESULT read, uint32_t major, char letter) {
+    if (read != S_OK) return true;
+    const char lower = static_cast<char>(std::tolower(static_cast<unsigned char>(letter)));
+    return major > 9 || (major == 9 && lower >= 'c' && lower <= 'z');
 }
 
 }  // namespace oj::config

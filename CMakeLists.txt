@@ -55,7 +55,7 @@ set_target_properties(juiced_app PROPERTIES
 include(CTest)
 if(BUILD_TESTING)
   file(GLOB_RECURSE TESTS CONFIGURE_DEPENDS tests/Unit/*.cpp)
-  list(FILTER TESTS EXCLUDE REGEX "CpuInfoTests\\.cpp$|VoiceTests\\.cpp$|SystemCommandTests\\.cpp$")
+  list(FILTER TESTS EXCLUDE REGEX "CpuInfoTests\\.cpp$|VoiceTests\\.cpp$|SystemCommandTests\\.cpp$|DirectXCheckTests\\.cpp$")
   file(GLOB_RECURSE INTEGRATION CONFIGURE_DEPENDS
     tests/Integration/GameData/*.cpp tests/Integration/Frontend/*.cpp
     tests/Integration/Race/*.cpp tests/Integration/Saves/*.cpp

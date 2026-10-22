@@ -661,6 +661,12 @@ void RaceCamera::chase(const CameraTarget& target, const CameraRace& race, rende
     m_reset = false;
 }
 
+std::vector<Vec4> gridPlaces(const Spl& lines) {
+    std::vector<Vec4> places;
+    for (const Spl::GridPoint& p : lines.grid) places.push_back({p.x, p.y, p.z, p.heading});
+    return places;
+}
+
 void RaceCamera::beforeStart(const CameraTarget& target, const CameraRace& race, render::Camera& camera) {
     if (m_reset) {
         // 0x0040533C: the stock's camera without a car (+0x08) only clears its fly-by here, asking no window and

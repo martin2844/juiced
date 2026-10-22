@@ -132,7 +132,7 @@ void InstantSelCar::setParts(CustomRaceHost& host, int clear, int prototype) {
         CarMaking making{d.defs, d.catalogue, gameRandom(), d.autoModifyCounter};
         autoModify(car, prototype != 0, prototype != 0 ? -1 : 2, making);
     }
-    m_view->refit(car, d.defs, gameRandom());
+    m_view->refit(car, d.defs);
 }
 
 // 0x0045F340. The question's answer (+0x54): yes, the automatic modification (0x0045A8A0, level 2); no, a car not
@@ -185,6 +185,19 @@ void InstantSelCar::update(CustomRaceHost& host, ui::Screen& s, uint32_t event) 
         if (m_fade) {
             if (const int e = s.find("CARFADE"); e >= 0) s.setAlpha(e, 1.0f - m_view->shown());
         }
+    }
+    // 0x0045F508: while the view's parts are changed and not put in (+0x40) MODDING comes in (once) and nothing more
+    // is done this frame; after, it goes out (once).
+    if (m_view && m_view->refitting()) {
+        if (!m_modding) {
+            s.showContaining("MODDING", true);
+            m_modding = true;
+        }
+        return;
+    }
+    if (m_modding) {
+        s.hideContaining("MODDING", true);
+        m_modding = false;
     }
     host.netCountdown();
     if (host.netWait(net::SessionStage::Cars, true)) return;

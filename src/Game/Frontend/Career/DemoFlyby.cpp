@@ -9,7 +9,7 @@
 
 namespace oj::frontend {
 
-// The map of the career (0x0045B6B0, 0x0045BE00): the MAP3D view's camera from 4000 to 5 000 000, the rig's pitch
+// The map of the career (0x0045B6B0, 0x0045BE00): the MAP3D view's camera from 3999 to 5 000 000, the rig's pitch
 // within -1.5 .. -0.15, the atmosphere "map"; the camera looks at the city place 4 and goes into the map mode on an
 // arm of 2400 m, pitch -0.4 with the yaw it had; the rig turns 0.1 rad a second by itself and the stick waits 100 s.
 // Then (0x0043514C) the front end's music at a fifth of the settings' volume under the narration.
@@ -24,7 +24,7 @@ void DemoFlyby::enter(CareerHost& host, ui::Screen& s) {
     host.setMusicVolume(std::bit_cast<float>(host.settingsValue(save::Settings::kMusicVolume)) * 0.2f, false);  // [0x006FF934]
     auto* view = dynamic_cast<scene::View3d*>(s.view("MAP3D"));
     if (view == nullptr) return;
-    view->camera().setNear(4000.0f);
+    view->camera().setNear(3999.0f);  // 0x4579F000 (0x0045B6CC)
     view->camera().setFar(5000000.0f);
     view->buildSky();
     view->pitchLimits[0] = -1.5f;

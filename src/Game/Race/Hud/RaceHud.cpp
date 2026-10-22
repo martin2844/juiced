@@ -373,12 +373,13 @@ void RaceHud::enter(const HudRace& race) {
         s.setFixedAdvance(e, advance);
         s.setFontColour(e, dialTextColour);
     }
-    // The challenges' targets in the first player's local record.
+    // The challenges' targets in the first player's local record (0x00449C77): the speed challenge's in miles an hour,
+    // or x 1.6093 ([0x006FFE94]) in kilometres an hour by the settings' units, cut.
     const int lrTime = m_players[0].lrTime;
     if (race.type == RaceType::Speed) {
         const float speed = race.challengeSpeed;
         const bool mphUnits = race.settings != nullptr && race.settings->u32(save::Settings::kMph) != 0;
-        const int shown = static_cast<int>(mphUnits ? speed : speed * 3.6f);
+        const int shown = static_cast<int>(mphUnits ? speed : speed * 1.6093f);
         if (lrTime >= 0) s.setText(lrTime, widen(format(" %d ", shown)) + line(mphUnits ? kTextMph : kTextKph));
         if (const int target = s.find("LR_LAPTIME1"); target >= 0) s.setText(target, line(kTextTarget));
     } else if (race.type == RaceType::TimedLap || race.type == RaceType::PerfectLap) {

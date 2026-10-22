@@ -85,9 +85,9 @@ void createEvent(Career& career, CareerContext& context, int month, int day, int
 
 // 0x004A2DC0 (host: the host rights race, the event's +0x02, the crew's +0x2C0 set) and 0x004A2F80 (the pink slip
 // race, +0x03) from a phone call: none when a used event is on that day; a race of the crew (attended by it and the
-// player) of type 4, 3 (rand() / 32767 under the crew's P2P) or 5 (under its sprint), the class of the best car of the
-// crew's list (0x004A9A70; the opponents' list for crews other than the player's), its round (0x004A33E0) and teams
-// (0x004A4410) into the calendar's first free slot.
+// player) of type 4, 3 (rand() / 32767 under the crew's P2P) or 5 (under its sprint), the class of the player's best
+// car (0x004A9A70 on the career's first crew, the player's: the garage), its round (0x004A33E0), time of day and
+// weather (0x004A4410) into the calendar's first free slot.
 void phoneEvent(Career& career, CareerContext& context, int crew, int month, int day, bool host);
 
 // 0x004A3130: the crew's challenge k as an event on that day (+0x05, +0x06 the challenge, +0x68 its car, class 8, type

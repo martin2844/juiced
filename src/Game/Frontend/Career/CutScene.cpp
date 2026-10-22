@@ -87,7 +87,8 @@ std::unique_ptr<CutCar> makeSceneCar(WindowHost& host, scene::View3d& view, Car&
     car->reverseLight = car->model->meshNode("_REVLIGHT");
     if (car->reverseLight != nullptr) car->reverseLight->flags |= 4u;
     scene::CarModel* model = car->model.get();
-    view.worldDraws.push_back([model](render::Renderer3d& r, render::Camera& cam) { model->draw(r, cam, 0); });
+    view.worldDraws.push_back(
+        [model](render::Renderer3d& r, render::Camera& cam, uint32_t mode) { model->draw(r, cam, mode); });
     return car;
 }
 
@@ -380,7 +381,7 @@ void cutCarFrame(WindowHost& host, CutCar& car, float step, ContactPools& pools)
 
 // 0x004C7870: the camera by its stage: 1 looks at (0, 0, 0) at once and moves 450 cm a second along x, the front
 // end's black 1 - the stage's time while under 1 s; 2 looks at (0, 50, 100), 25 cm a second back along x, the black
-// likewise; 3 looks at (0, 0, 0), 150 cm a second along z, the black likewise (and the music told, not made); 4 the
+// likewise; 3 looks at (0, 0, 0), 150 cm a second along z, the black likewise and the 3D world's sounds paused; 4 the
 // black 1. Its time runs down by the window's step; below 0 the next stage: 1 at (-3800, 150, 3000) for 5 s, 2 at
 // (600, 70, 250) for 5 s, 3 at (250, 75, 700) for 8 s with the black 1, 4 the test track's race (0x004A4060) when the
 // career's +0xA8 is set, else CMSAtMeeting (mode 3), and +0xA8 cleared. The view's camera goes to the place.
@@ -402,7 +403,11 @@ void CutScene::camera(CareerHost& host, ui::Screen& s) {
     case CutCameraShot::Follow:
         view->lookAt({0.0f, 0.0f, 0.0f, 0.0f}, true);
         m_place[2] = host.frameTime() * 150.0f + m_place[2];
-        if (m_timer < 1.0f) host.setScreenFade(1.0f - m_timer);
+        if (m_timer < 1.0f) {
+            host.setScreenFade(1.0f - m_timer);
+            // 0x004C7A45: the 3D world's ([G+0x50]) sounds paused (its manager's +0x20).
+            if (audio::World* world = gameSounds().world; world != nullptr) world->manager().pauseAll(true);
+        }
         break;
     case CutCameraShot::End: host.setScreenFade(1.0f); break;
     default:

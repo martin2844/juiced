@@ -513,6 +513,21 @@ OJ_INTEGRATION_TEST(Windows7, Executable) { checkStartsOnWindows7(executable(L"O
 // The settings tool's executable starts on Windows 7.
 OJ_INTEGRATION_TEST(Windows7, ConfigTool) { checkStartsOnWindows7(executable(L"OpenJuiceConfig"), 50); }
 
+// The game's executable names neither file function of Windows 8 its C++ library calls: not imported, and not looked
+// up by name as it runs (its own slots hold Windows 7's ways on every Windows, Game/Platform/Win7Imports.cpp). The
+// clocks' GetSystemTimePreciseAsFileTime stays a name in the C runtime's own list of the functions it asks the system
+// for (beside GetLocaleInfoEx, GetTimeFormatEx, ..), as in every executable the toolset builds.
+OJ_INTEGRATION_TEST(Windows7, NothingLookedUp) {
+    const std::filesystem::path file = executable(L"OpenJuice");
+    std::ifstream in(file, std::ios::binary);
+    check(in.good(), "the executable beside the tests: " + file.filename().string());
+    if (!in) return;
+    const std::string bytes((std::istreambuf_iterator<char>(in)), {});
+    for (const char* name : {"CreateFile2", "CopyFile2"}) {
+        check(bytes.find(name) == std::string::npos, std::string("no ") + name + " in the executable");
+    }
+}
+
 // CreateFile2 without Windows 8: CreateFileW with its parameters' attributes and flags.
 OJ_INTEGRATION_TEST(Windows7, CreateFile2) {
     const std::wstring name = temporaryFile(L"create");

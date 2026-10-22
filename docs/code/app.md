@@ -74,9 +74,10 @@ Each frame, in the stock order:
 - Windows 7: the build targets it (`_WIN32_WINNT` 0x0601), but the toolset's C++ library calls three functions of
   Windows 8 directly (`CreateFile2`, `CopyFile2`, `GetSystemTimePreciseAsFileTime`), and an executable importing
   them does not start on Windows 7. `Platform/Win7Imports.cpp` (with `Win7Imports32.asm` for the 32-bit names),
-  built in the executable's own project, defines their import slots: each calls the system's function where there is
-  one, else its Windows 7 way (`Platform/Windows7.h`). The test `Windows7.Executable` (`tests.md`) checks every
-  import of the executable against Windows 7's functions.
+  built in the executable's own project, defines their import slots, read-only as the system's: each holds the
+  function that does the same with Windows 7's (`Platform/Windows7.h`: `CreateFileW`, `CopyFileExW`,
+  `GetSystemTimeAsFileTime`), on every Windows alike, nothing looked up as the game runs. The test
+  `Windows7.Executable` (`tests.md`) checks every import of the executable against Windows 7's functions.
 
 ## The command line and `OpenJuice.ini`
 

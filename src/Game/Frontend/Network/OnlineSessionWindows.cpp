@@ -906,7 +906,7 @@ void OnlineResults::enter(NetworkHost& host, ui::Screen& s) {
     m_joining = 0;
     m_highlighted.reset();
     details(host, s);
-    s.showContaining("GAMESPY", false);
+    s.show("GAMESPY", false);  // 0x00478B14: 0x005A9BB0 with 0, the logo fades in with the window
 }
 
 // 0x00478B30: "Menu"'s highlight kept, the rows' addresses let go, M_HOST_NAME emptied, the highlighted address let go.

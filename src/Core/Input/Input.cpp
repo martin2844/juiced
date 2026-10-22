@@ -614,7 +614,8 @@ UiFrame Input::uiFrame(float dt, int player) {
     const Device& d = m_devices[static_cast<size_t>(c->device)];
     const auto on = [&](int slot) { return slotValue(d, c->ui[static_cast<size_t>(slot)]) != 0; };
 
-    // Directions: one event, then again after 0.25 s and every 0.1 s while held.
+    // Directions (0x00408260): one event, then again after 0.25 s and every 0.075 s while held (0x004082F0,
+    // 0x00408333: 0x3D99999A).
     if (!on(kActionLeft) && !on(kActionRight) && !on(kActionUp) && !on(kActionDown)) {
         c->repeat = 0.0f;
         c->lastDirection = kNone;
@@ -629,7 +630,7 @@ UiFrame Input::uiFrame(float dt, int player) {
         else if (on(kActionDown)) direction = kDown;
         if (direction != kNone) {
             f.event = direction;
-            c->repeat = c->lastDirection == direction ? 0.1f : 0.25f;
+            c->repeat = c->lastDirection == direction ? 0.075f : 0.25f;
         }
         c->lastDirection = direction;
     }

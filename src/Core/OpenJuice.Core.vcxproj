@@ -46,6 +46,7 @@
     <ClInclude Include="Base\GameFiles.h" />
     <ClInclude Include="Base\Log.h" />
     <ClInclude Include="Base\Matrix.h" />
+    <ClInclude Include="Base\LoadingThread.h" />
     <ClInclude Include="Base\Random.h" />
     <ClInclude Include="Base\RawFields.h" />
     <ClInclude Include="Base\Script.h" />
@@ -138,6 +139,7 @@
     <ClCompile Include="Base\GameFiles.cpp" />
     <ClCompile Include="Base\Log.cpp" />
     <ClCompile Include="Base\Matrix.cpp" />
+    <ClCompile Include="Base\LoadingThread.cpp" />
     <ClCompile Include="Base\Random.cpp" />
     <ClCompile Include="Base\Script.cpp" />
     <ClCompile Include="Base\Text.cpp" />

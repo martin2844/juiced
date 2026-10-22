@@ -401,7 +401,7 @@ struct TrackView {
     oj::scene::Engine* hudEngine = nullptr;
     std::string trackName;
     std::string routeLine;
-    std::vector<oj::Vec4> places;                     // the racers' grid places (race +0x30)
+    std::vector<oj::Vec4> places;                     // the route's grid points (race +0x30: +0x4C, +0xAC)
 
     // "<Track>/<Route>[/<time of day>[/<weather>]]"
     bool start(oj::scene::Engine& engine, const std::string& what);

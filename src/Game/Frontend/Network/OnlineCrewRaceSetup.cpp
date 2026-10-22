@@ -25,8 +25,9 @@ std::wstring wide(std::u16string_view text) {
 
 }  // namespace
 
-// 0x004D6090: +0x18 0; for drivers 1 .. 4 driver<n>value the member's crewmate's short name, selection<n> hidden,
-// border<n> and crewpic<n> (its ui_crewmember_<number>) shown for a member, else hidden; the slots (+0x0C .. +0x14) -1;
+// 0x004D6090: +0x18 0; for drivers 1 .. 4 driver<n>value (found shown, 0x005A9A40) and selection<n> hidden; for each
+// member driver<n>value its crewmate's short name shown, border<n> and crewpic<n> (its ui_crewmember_<number>) shown,
+// past the members both left as they are; the slots (+0x0C .. +0x14) -1;
 // Type the team's line (491 + team); the player (member 0) taken at once (0x004D6930); Choose "SELECT DRIVERS: " and
 // the drivers left.
 void OnlineCrewRaceSetup::enter(NetworkHost& host, ui::Screen& s) {
@@ -50,10 +51,9 @@ void OnlineCrewRaceSetup::enter(NetworkHost& host, ui::Screen& s) {
             s.setTexture(std::format("crewpic{}", n), std::format("ui_crewmember_{:02}", mate.number));
             s.setHidden(std::format("crewpic{}", n), false);
         } else {
-            s.setText(value, L"");
+            // Stock problem: border<n> and crewpic<n> past the members are left as they are (the .ui's: a white
+            // crewpic box with no picture in its border), unlike the offline window's (0x004D8AC0) hidden ones.
             s.setHidden(value, true);
-            s.setHidden(std::format("border{}", n), true);
-            s.setHidden(std::format("crewpic{}", n), true);
         }
     }
     m_members.fill(-1);

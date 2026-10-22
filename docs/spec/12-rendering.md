@@ -312,6 +312,26 @@ The view's constants (`0x00511CA0`): c7 the view matrix (3 rows), c10 the projec
 camera position, c33 the camera's Z axis, c41, c42 the normalised (0, 1, 0) × Z and Z × that; FOGENABLE and ZENABLE
 on while the world draws, off after.
 
+## The loading thread and the renderer's queue
+
+The game's loading thread (`0x0059A6F0`: `CreateThread` on `0x0059AD80`, which runs `CoInitialize`, the loop
+`0x0059A7A0` and `CoUninitialize`) runs the jobs queued for it (`0x0059A930`) one at a time in the order they came: it
+waits for its event, takes the first job off the list under the list's lock (the event reset once the list is empty),
+marks it running (`+0x08` 2), runs it (vt+4), waits until the renderer's queue is empty (`0x0051D270`, 10 ms sleeps)
+and marks it done (`+0x08` 3). A job still on the list can be taken off (`0x0059A9D0`); one running goes on to its
+end. The car view's loads also hold a token (`[0x00715C3C]` under the lock `[0x00767DBC]`, 10 ms sleeps while another
+holds it): one car load at a time (`0x00459750`, the parts' load `0x0045AC91`).
+
+The renderer's queue (`[renderer+0x204]`, its thread id `+0x14`): work on the device from the loading thread is
+queued (`0x0051CF00`, which runs it at once on the main thread; from another it waits while the device is lost,
+`[renderer+0x1D0]`) and the main thread runs it at its frame (`0x00514C96`: one item after another while any are
+queued, until 0.25 s went by, `[0x006FFBEC]`, timed by `0x005A2110`) and while it waits for a job (`0x0045A35B`:
+10 ms sleeps, one item each time). OpenJuice: a frame holds the device from its begin to its end, and the loading
+thread's calls making, freeing, locking or writing resources wait for the device between frames; the main thread
+waiting for the loading thread lets the device go meanwhile (the device is not made multithreaded without
+`-mtd3d`, as the stock's). The engine's loads (the folders in use, the caches) take a lock the loading thread's jobs
+hold from start to end.
+
 ## The world (`0x0054C5C0`)
 
 The time (`+0x10`) goes to the renderer (`+0x110`, the step `+0x114`); the current material is forgotten; the
@@ -320,7 +340,12 @@ the lights: with an atmosphere its values (`0x00533B80`), else the world's own (
 light 2 (`+0x38`), light 3 (`+0x48`), the three at once, light 1 direction (`+0x68`), lights 2 and 3 directions
 (`+0x78`, `+0x88`), the ambient (`+0x58`) and no fog (FogNear and FogFar FLT_MAX). A new world (`0x00530D70`):
 ambient 17, light 1 255 from (0, −1, 0), lights 2 and 3 black from (0, −1, 0) and (0, 1, 0); the 3D element sets the
-ambient to 50 and light 1's direction to (0, −1, 1).
+ambient to 50 and light 1's direction to (0, −1, 1). Then the world's roots (`+0xD8`) are drawn as the race's
+(`0x0054C6B8`: `0x00550500`, `21-scene-objects.md`): each tree with the parts of opaque classes (mode 1), then
+again with the others (mode 2), so a car's glass is drawn over what lies behind it (a spoiler); the sponsors'
+decals (Coloured Spec ABlend) are of the late classes too and go with the glass in the parts' order, so the far
+side's decals show through the rear window (`stock-problems.md`); then the object constants of no object
+(`0x0054D8D0`) and the lens flares (`0x0054FC60`).
 
 The world's clock: the new world keeps the game's clock (`+0x08`, its time `+0x18`) and starts running (`+0x18` 0)
 with no lead (`+0x20` 0). Its time (`+0x10`) is taken again as the clock's time less the lead only when read while
@@ -609,7 +634,7 @@ moves the camera by the mode, then draws the view (`0x00511CA0`). The rig's defa
 
 ## The career's map (DemoFlyby)
 
-The map object (`0x0045B6B0`) takes the `MAP3D` view: camera near 4000, far 5 000 000, `0x005B4660`, pitch limits
+The map object (`0x0045B6B0`) takes the `MAP3D` view: camera near 3999 (`0x4579F000`), far 5 000 000, `0x005B4660`, pitch limits
 −1.5 .. −0.15, the atmosphere `map` (`0x005B4610`). The map goes to a city place (`0x0045BE00`: place 4, pitch
 −0.4): look-at the place's point, then the map mode with the arm at (0, 0, −240 000) and the rig angles (pitch, the
 yaw the rig had, 0). DemoFlyby then sets the auto speed to 0.1 and the input delay to 100 s.

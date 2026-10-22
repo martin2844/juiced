@@ -155,9 +155,8 @@ void TrackView::startIntro(const std::string& routeName, bool wide) {
     const bool two = rules.players == 2;
     for (std::unique_ptr<RacePlayer>& p : players) {
         p->camera.setAspect(wide ? (two ? 0.28125f : 0.5625f) : (two ? 0.375f : 0.75f));
-        // 0x00401E80: on the network the first mode is the sweep (10), not the fly-by (9).
-        p->introPlaying = (net == nullptr || rules.type == RaceType::Solo || rules.type == RaceType::Cruise) &&
-                          p->intro.load(routeName);
+        p->introPlaying =
+            oj::startView(rules.type, rules.heat, net != nullptr) == oj::StartView::FlyBy && p->intro.load(routeName);
         p->introStarted = false;
     }
     if (first().introPlaying) chooseWindow(false);

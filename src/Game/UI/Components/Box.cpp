@@ -54,6 +54,10 @@ void Screen::setAlpha(int element, float alpha) {
     for (uint32_t& c : m_states[static_cast<size_t>(element)].corners) c = withAlpha(c, a);
 }
 
+uint32_t Screen::colourOf(int element) const {
+    return m_states[static_cast<size_t>(element)].corners[0];
+}
+
 void Screen::setTexture(int element, const std::string& texture) {
     State& s = m_states[static_cast<size_t>(element)];
     s.hasTexture = true;

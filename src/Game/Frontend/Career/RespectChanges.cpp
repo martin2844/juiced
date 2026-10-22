@@ -125,9 +125,10 @@ void RespectChanges::take(CareerHost& /*host*/, Career& career) {
 }
 
 // 0x004D1050: the entry shown: of kinds 0 .. 19 (a rise, then a fall) the fades of the other crews' rows shown,
-// type "RESPECT INCREASE" or "RESPECT DECREASE", comment the crew's name and what it thinks (lines 277 + kind or
-// 287 + kind - 10), green or red, the crew's component highlighted (the second for kind 13); of kinds 20 .. 27 by the
-// crew of its +0x14 "GAINED PRIVILEGE" (269 + kind - 20) or "LOST PRIVILEGE" (273 + kind - 24). The crew leader's
+// type "RESPECT INCREASE" or "RESPECT DECREASE" and counter green or red (comment keeps its .ui colour), comment the
+// crew's name and what it thinks (lines 277 + kind or 287 + kind - 10), the crew's component highlighted (the second
+// for kind 13); of kinds 20 .. 27 by the crew of its +0x14 "GAINED PRIVILEGE" (269 + kind - 20) or "LOST PRIVILEGE"
+// (273 + kind - 24). The crew leader's
 // voice line said at once (the speech object's +0x14 with the crew rounded and 0x1E, 0x1F (0x20 for kind 13), or the
 // privilege's crew and the kind + 2; none for kinds 4 and 14 of crews past 1).
 void RespectChanges::show(CareerHost& host, ui::Screen& s) {
@@ -138,7 +139,7 @@ void RespectChanges::show(CareerHost& host, ui::Screen& s) {
         for (int i = 1; i < 9; ++i) s.setHidden(std::format("fade{}", i), i == crew);
         s.setText("type", texts.at(title));
         if (const int e = s.find("type"); e >= 0) s.setFontColour(e, colour);
-        if (const int e = s.find("comment"); e >= 0) s.setFontColour(e, colour);
+        if (const int e = s.find("counter"); e >= 0) s.setFontColour(e, colour);
         const size_t name = kTextCrewNames + static_cast<size_t>(std::max(crew, 0));
         s.setText("comment", texts.at(name) + texts.at(line));
         return crew;

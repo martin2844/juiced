@@ -426,7 +426,7 @@ void HostMeeting::updateRace(CareerHost& host, ui::Screen& s, uint32_t event) {
 // points and sprints, else its laps (0x00719044), Race<n>Route as in the race's set up without "Reversed" ("1", "1 R",
 // "<n> R", "<n>"), Race<n>NumCrew its team, Race<n>1st .. 3rd the prize's places in thousands "$<n>k". CostValue the
 // setup's cost ([0x00728C6C]); CashValue the money, under the cost red and reason 2; Attendance the crews coming
-// (0x004CD580), red under 2.
+// (0x004CD580), under 2 red and reason 4 (480: "You need at least 2 crews in attendance").
 void HostMeeting::summaryTexts(CareerHost& host, ui::Screen& s) {
     GameData* data = host.gameData();
     const TextTable& texts = host.gameTexts();
@@ -481,7 +481,12 @@ void HostMeeting::summaryTexts(CareerHost& host, ui::Screen& s) {
     }
     const int32_t coming = attendance(host);
     s.setText("Attendance", toWide(std::format("{}", coming)));
-    colour("Attendance", coming < 2 ? kHostRed : kHostWhite);
+    if (coming < 2) {
+        m_reason = 4;
+        colour("Attendance", kHostRed);
+    } else {
+        colour("Attendance", kHostWhite);
+    }
 }
 
 // 0x004CD6F0: the hosted event. Its day of the month and month the calendar's +0xF8C and +0xF90, the cost paid (as
@@ -492,8 +497,9 @@ void HostMeeting::summaryTexts(CareerHost& host, ui::Screen& s) {
 // +0x250 + 4 x the route), team 1, laps 1, +0x0C 3; +0x54 the rounds. For each round: +0x16 and +0x18 0, +0x08 1 for
 // a team over one, the crews (+0x0D) cleared; the crews 0 .. 8 shuffled by 50 swaps of rand() % 9 and rand() % 9,
 // then in that order, while the round has under 6 racers (+0x18) and fewer crews than +0x0C, each crew the setup has
-// coming (+0x3C + 4 x crew; also its +0x56) takes a place (+0x18 by the team, +0x16 one more, its +0x0D flag). The
-// time of day and weather (0x004A4410), the profile's +0x620 the type; the event into the calendar's first free slot
+// coming (+0x3C + 4 x crew; also its +0x56) takes a place (+0x18 by the team, +0x16 one more, its +0x0D flag); the
+// player's crew is never one (+0x3C, nothing writes it). No crew's challenge (+0x06 -1, 0x004CDAE1). The time of day
+// and weather (0x004A4410), the profile's +0x620 the type; the event into the calendar's first free slot
 // (used); the event of that day chosen ([0x00728C50], the profile's +0x610; [0x00728C5C], [0x00728C58] its day and
 // month), both note lists emptied, the days passed (0x004A6530) to it and the meeting (0x004C27A0).
 void HostMeeting::makeEvent(CareerHost& host) {
@@ -576,6 +582,8 @@ void HostMeeting::makeEvent(CareerHost& host) {
             }
         }
     }
+    // 0x004CDAE1: no crew's challenge (+0x06 -1), so the race is the round's (0x004A3CC0).
+    e.challengeIndex = -1;
     eventConditions(e, gameRandom());
     p.lastHostedType = static_cast<int32_t>(e.type);
     for (CalendarEvent& slot : calendar.events) {
@@ -637,10 +645,10 @@ void HostMeeting::enterSummary(CareerHost& host, ui::Screen& s) {
 
 // 0x004CC500: the map's frame (0x0045BC40). A "yes" to cancel (+0x0C 1): CMSMainMenu. BACK (CLICK): "Cancel event
 // setup?" and "ARE YOU SURE?" (type 3, on NO) into +0x0C. SELECT on menu's item of value 1 with no round (CLICK):
-// CMSHostMeetingSetupRace. A "yes" to create (+0x10 1): the event made (0x004CD6F0). SELECT on the item
-// of value 2 (CLICK): a reason shows its note (476 + it); no round: reason 3 and "You need at least one race" (479);
-// else the setup's +0x38 set and "Create event. Cost: " (1826), the cost and "ARE YOU SURE?" (type 3, on NO) into
-// +0x10.
+// CMSHostMeetingSetupRace. A "yes" to create (+0x10 1): the event made (0x004CD6F0), the update going on. SELECT on
+// the item of value 2 (CLICK): a reason shows its note (476 + it); no round: reason 3 and "You need at least one race"
+// (479); else the setup's +0x38 set and "Create event. Cost: " (1826), the cost and "ARE YOU SURE?" (type 3, on NO)
+// into +0x10.
 void HostMeeting::updateSummary(CareerHost& host, ui::Screen& s, uint32_t event) {
     GameData* data = host.gameData();
     const TextTable& texts = host.gameTexts();
@@ -659,10 +667,7 @@ void HostMeeting::updateSummary(CareerHost& host, ui::Screen& s, uint32_t event)
         host.sound("CLICK");
         host.request("CMSHostMeetingSetupRace", SwitchMode::Replace);
     }
-    if (m_summary.confirm == 1) {
-        makeEvent(host);
-        return;
-    }
+    if (m_summary.confirm == 1) makeEvent(host);
     if (event != input::kSelect || item != 2.0f) return;
     host.sound("CLICK");
     if (m_reason != 0) {

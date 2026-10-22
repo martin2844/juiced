@@ -78,9 +78,9 @@ player's car). Type 2: `SPEEDCHALLENGEBG` colour c30, `SPEEDCHALLENGE` `+0x230` 
 `TOPSCORETITLE` `+0x48`, `WR_TOPSCORETITLE` `+0x50`; without a world record the WR ones are hidden. `best`, `score`,
 `combo`: a fixed advance and colour c34.
 
-The challenges' targets: type 2 the first `LR_TIME` " %d " of the challenge's speed (`[G+0x6C]+0x78`, x 3.6 in KPH,
-cut toward zero) and MPH or KPH; types 0 and 1 the challenge's lap time (`+0x74`); both set `LR_LAPTIME1` to TARGET
-(line 43).
+The challenges' targets: type 2 the first `LR_TIME` " %d " of the challenge's speed (`[G+0x6C]+0x78`, in MPH; x
+1.6093 `[0x006FFE94]` in KPH, cut toward zero) and MPH or KPH; types 0 and 1 the challenge's lap time (`+0x74`); both
+set `LR_LAPTIME1` to TARGET (line 43).
 
 The turbo's dial `TURBO1` (`+0x234`) with a turbo (`V+0x180`) or the car record's `+0x68` (the turbo lost to damage):
 its needle 0xFFFF5050; else every element with `TURBO1` in its name is hidden. `RESPECT`, `RESPECT_ICON`,
@@ -233,6 +233,13 @@ Dpad3 take "High", "Medium", "Low" (`[0x007617E0]`, `[0x007617D0]`, `[0x007617C0
 0xFFECEC01; its keys (`0x004BE5C0`) give the member of `+0x34` the level 2, 1 or 0 by DRIVER_TACTICS_UP, _RIGHT, _DOWN
 (its order and the order's time 0; a changed level's time −1); one of them or _LEFT sets the time to −1; the time runs
 down by the window's step and below 0 the state is 1 again.
+
+The orders asked for (`0x004BEA60`: by the drivers' levels, `0x004BEDFF`, a member's nerves crossing 1.9, for no
+racer, -1; by the race's chatter, `0x004B1F60`, for its racer): with the window kept (`+0x38`) each line of the
+racer's car gets the flash time 1 (`0x004BEAB0`, the members' cars taken if not yet) and in state 0 the orders open
+as a tactics key opens them (state 1, ordered, shown, the lines, the time 5 s), at once. The drivers' levels come
+before the state's work in `0x004BDF00`, so that frame then runs state 1's lines and keys; the chatter comes at the
+end of the race's frame, after it.
 
 The same frame, in the career with the race's cars not chosen (the profile's `+0x614` 0: a race the player watches)
 and the camera not in the fly-by or the sweep (modes 9, 10): NEXTCAR (Page Down, `0x004BE04B`) follows the car of the
@@ -631,8 +638,8 @@ race front end watches the controllers again (`[G+0x3C]+0x38` 1).
 
 `closedown` (vtable `0x006F14E8`; the file's LOADING text). Enter (`0x0044F9C0`): three frames to wait (`+0x0C`), the
 replay stopped (`0x00426B80`, `[G+0x9C]+0x828` 0), `[G+4]`'s `+0x20`, `+0x24` and the effects' `+0x98` set, the race
-paused as by the pause (unless it is), the race's timer stopped, the HUD's `+0x38` cleared (leaving, `0x0044FAA0`,
-sets it). Each frame (`0x0044FAC0`): the frames run down; then, with no message window open, the game phase "load"
+paused as by the pause (unless it is), the race's timer stopped, the race front end's `+0x38` cleared (its players'
+controllers not watched, as restart_race's; leaving, `0x0044FAA0`, sets it). Each frame (`0x0044FAC0`): the frames run down; then, with no message window open, the game phase "load"
 (`0x00462C30`) with 1 takes the game's `+0x40`: its first frame (`0x004634B0`) lets the race's objects go and shows
 the loading front end of the race's mode (as the load: `arcade_loading`, `custom_loader` or `loader` and its
 animation) while a job (vtable `0x006F1E1C`, run `0x00461A10`) makes the front end with its first window; once the

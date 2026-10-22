@@ -31,6 +31,18 @@ enum class RaceType : int32_t {
     TestTrack = 9,     // the test track (the career's CMSCutScene window and its drive)
 };
 
+// 0x00401E80: a player's first view in a race (and again as it starts again). A solo race and a cruise start in the
+// player's kept view: no fly-by and no sweep, the count the race set (0x0049FDF0: 4 off the network). A sprint's
+// later heat starts with the sweep before the start and the count at 8; the other races with the fly-by (mode 9; a
+// route without one goes on to the sweep with the count at 6, 0x00405BE0), on the network with the sweep (mode 10).
+enum class StartView { FlyBy, Sweep, LaterHeat, Kept };
+
+inline StartView startView(RaceType type, int32_t heat, bool network) {
+    if (type == RaceType::Solo || type == RaceType::Cruise) return StartView::Kept;
+    if (type == RaceType::Sprint && heat != 0) return StartView::LaterHeat;
+    return network ? StartView::Sweep : StartView::FlyBy;
+}
+
 // A challenge's outcome ([G+0x6C]+0x7C): none yet, met (or not failed so far: a challenge race's setup), or why it
 // failed (the game's lines kTextWellDone + 2, + 1, + 3, + 4: OUT OF TIME, CAR DAMAGED, YOU ARE TOO SLOW, TARGET SPEED
 // NOT REACHED).

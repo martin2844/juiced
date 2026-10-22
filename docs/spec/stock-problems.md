@@ -23,6 +23,7 @@ exactly; the entry says what OpenJuice does instead. The code marks each place w
 | the programs made again after a reset of the device (`0x0051B620`) | each is made again until it has a usable technique: one with none (its file not read, or no technique for the device's classes) is made again for ever and the game hangs (every program of the game's files has a usable technique for any classes) | the same |
 | the fixed-function lights (`0x00546419`) | each light's diffuse green is its colour's red | the same |
 | the world's clock started again (`0x004263E0`, `12-rendering.md`) | the lead is the last pause's length, not the sum of the pauses: after a second pause the world's time (the shaders', the cubes', the particles') jumps on by the pauses before it | the same |
+| a car's tree drawn in two modes (`0x00550500`) | the sponsors' decals (Coloured Spec ABlend, flags `0x2004`) are of the late classes as the glass (Car Glass, `0x145`) and go with it in the parts' order: the far side's decals show through the rear window | the same |
 
 ## The effects' textures and sources (`11-effects.md`)
 
@@ -91,6 +92,7 @@ exactly; the entry says what OpenJuice does instead. The code marks each place w
 | the betting window's clips (`14-career-windows.md`) | movies the talk asks for that are not there: `COMMENT_CAR_NEG3`, `_NEUTRAL3`, `_POS3`, `YES3` of every leader, `CHALLENGE_INTRO1` but TK's, and others (`HOW_MUCH3`, `OKAY3`, `DECLINE_BET3`, ... of most leaders); such a clip ends at once and the talk goes on | the same |
 | a route's `.spl` with more than six `GRIDPOINT` lines (`0x004A1410`) | the seventh point's x is written over the count that follows the six slots, its y, z and heading into the slot of that new count (x's bits x 16 bytes on) and the count becomes x's bits + 1: an x of 0 (bits 0 .. 5) gives the slot of the six its y, z, heading and the count bits + 1, any other x writes far past the slots (the game stops) | the same for bits 0 .. 5; else dropped |
 | `cardefs.txt` without a `[NeonColour]` (`0x004590E0`) | the neon colour is `rand() %` 0, a division by zero (the game stops) | the colour stays |
+| a car's `<car>_PRIMER` material (`0x0048C210`, `06-cars.md`) | only the meshes in the model's slots take the body material for it: a part of the S2000's chassis and the Golf's farthest logo keep the primer's grey (128 128 128) | the same |
 
 ## Game logic
 
@@ -122,6 +124,7 @@ exactly; the entry says what OpenJuice does instead. The code marks each place w
 | DemoFlyby without the speech object | the counter `+0x20` (10, less the frame time, rounded each frame) never changes at frame times under 0.5 s, and its end is tested as an unsigned number below 0: it leads nowhere | the same |
 | the betting window, step 7 (`0x0042F910`) | the clip is picked with `rand() & 1` but compared with 1 and 2: `SUGGEST_BET3` never plays | the same |
 | the betting window, steps 27 and 29 | without a raise / lower taken BET_CASH shows the money cut, the amount keeps it rounded | the same |
+| the betting window's character test mode (cheat 5, `0x0042F140`) | the count goes through 81 clips, the list (`0x00715AE0`) has 75 names and six zeros: on those the name's length is read at address 0 (the game stops) | the leader's folder alone is played |
 | the phone's contacts (`0x004B6640`) | past 26 contacts the next one is written after the list | not added |
 | track instances (`0x005450C0`) | the fourth values of the column lengths and of the normalised rows (c3.w .. c6.w) are never written: the memory the instances were made in | 0 |
 | Unlit Sign Scroll (`0x0052B0D0`) | the whole sixteens taken off the scroll are made a float as an unsigned number: a negative scroll loses 2^32 more | the same |
@@ -378,7 +381,7 @@ exactly; the entry says what OpenJuice does instead. The code marks each place w
 
 | where | what | OpenJuiceConfig |
 |---|---|---|
-| the DirectX check (`0x0040543B`) | DirectX 9.0c or later by DxDiag's letter (`'c'` or later): DirectX 12 on Windows 11 reports a space, so the tool shows "DirectX 9.0c needed" and never its window | the same; the debug builds' `--skip-directx-check` opens the window anyway |
+| the DirectX check (`0x0040543B`) | DirectX 9.0c or later by DxDiag's letter (`'c'` or later) whatever the major: DirectX 10 .. 12 report a blank letter (Windows 11: 12.0 and a space), so the tool shows "DirectX 9.0c needed" and never its window | fixed (a departure): a major past 9 is enough, the letter counts only for 9; without DxDiag's answer the Direct3D 9 interface made with SDK version 32 answers it |
 | the start without DirectX 9.0c (`0x004054A2`) | Direct3D's interface is not released, nor the class unregistered | the same |
 | the window class's count (`0x004020B0`) | raised also when the registration fails or the game's window is found | the same |
 | eax.dll's EAX (`0x004058D0`) | each question loads the library again and makes a device never released; the window asks as it is filled and on each turning of the controls with All Audio | the same |

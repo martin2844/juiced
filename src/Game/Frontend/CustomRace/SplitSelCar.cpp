@@ -92,7 +92,7 @@ void SplitSelCar::updatePlayer(CustomRaceHost& host, ui::Screen& s, size_t i) {
     std::unique_ptr<scene::CarView>& view = m_views[i];
     uint32_t event = host.playerEvent(i);
     const char* modding = i == 0 ? "MODDING1" : "MODDING2";
-    if (!view || !view->busy()) {
+    if (!view || !view->refitting()) {
         if (m_modding[i] != 0) {
             s.hideContaining(modding, true);
             m_modding[i] = 0;
@@ -183,7 +183,7 @@ void SplitSelCar::updatePlayer(CustomRaceHost& host, ui::Screen& s, size_t i) {
                 CarMaking making{d.defs, d.catalogue, gameRandom(), d.autoModifyCounter};
                 autoModify(*car, false, 2, making);
             }
-            view->refit(*car, d.defs, gameRandom());
+            view->refit(*car, d.defs);
         }
         host.sound("CLICK");
         break;

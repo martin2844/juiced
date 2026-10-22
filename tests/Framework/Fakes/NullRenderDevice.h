@@ -4,6 +4,7 @@
 
 #include "Render/RenderDevice.h"
 
+#include <atomic>
 #include <cstdint>
 #include <string>
 #include <vector>
@@ -89,7 +90,7 @@ public:
     void clear(uint32_t, uint32_t, float, uint32_t) override {}
 
 private:
-    uint32_t m_next = 0;
+    std::atomic<uint32_t> m_next = 0;  // made from the loading thread too
 };
 
 }  // namespace oj::test

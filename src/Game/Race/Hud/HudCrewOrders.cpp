@@ -63,41 +63,15 @@ void HudCrewOrders::showOrders(ui::Screen& s, bool hidden) {
 }
 
 // The state of the crew's orders (0x004BDF00's end, with the drivers' +0x10 set): 0 (0x004BE290) any tactics key
-// opens it: state 1, the members ordered by their place (0x004BE9F0: swapped until none is ahead of the one before),
-// their pictures shown, the lines, the time 5 s; 1 the lines (0x004BE720) and the keys (0x004BE340); 2 (set by
-// nothing) the levels (0x004BE960) and their keys (0x004BE5C0).
+// opens it; 1 the lines (0x004BE720) and the keys (0x004BE340); 2 (set by nothing) the levels (0x004BE960) and their
+// keys (0x004BE5C0).
 void HudCrewOrders::frame(const HudRace& race, const std::array<bool, 6>& tactics, float dt) {
     m_ordersFlip = !m_ordersFlip;
-    // 0x004BEA60 as the race's chatter asked: with the orders' window each racer's line flashed (its slot's float 1)
-    // and, the state 0, the orders opened as a tactics key opens them.
-    std::vector<int32_t> flashes;
-    if (race.career != nullptr) flashes.swap(const_cast<Career*>(race.career)->drivers.chatterFlash);
     if (!m_ordersShown || race.career == nullptr || race.career->drivers.ordersShown == 0) return;
-    ui::Screen& s = m_screen;
-    bool open = false;
-    for (const int32_t racer : flashes) {
-        for (CrewSlot& slot : m_crewSlots) {
-            if (slot.car != nullptr && slot.car->record == racer) slot.flash = 1.0f;
-        }
-        open = open || m_ordersState == OrdersState::Closed;
-    }
     if (m_ordersState == OrdersState::Closed) {
-        bool any = open;
+        bool any = false;
         for (const bool t : tactics) any = any || t;
-        if (!any) return;
-        m_ordersState = OrdersState::Orders;
-        const auto place = [](const CrewSlot& c) {
-            return c.car != nullptr && c.car->competitor != nullptr ? c.car->competitor->place : 0;
-        };
-        for (size_t i = 0; i + 1 < m_crewSlots.size(); ++i) {
-            if (place(m_crewSlots[i + 1]) < place(m_crewSlots[i])) {
-                std::swap(m_crewSlots[i], m_crewSlots[i + 1]);
-                i = static_cast<size_t>(-1);
-            }
-        }
-        showOrders(s, false);
-        orderLines(race, dt);
-        m_ordersTime = 5.0f;
+        if (any) open(race, dt);
         return;
     }
     if (m_ordersState == OrdersState::Levels) {
@@ -107,6 +81,31 @@ void HudCrewOrders::frame(const HudRace& race, const std::array<bool, 6>& tactic
     }
     orderLines(race, dt);
     orderKeys(race, tactics);
+}
+
+void HudCrewOrders::flash(const HudRace& race, int32_t racer, float dt) {
+    if (!m_ordersShown || race.career == nullptr) return;
+    for (CrewSlot& slot : m_crewSlots) {
+        if (slot.car != nullptr && slot.car->record == racer) slot.flash = 1.0f;
+    }
+    if (m_ordersState == OrdersState::Closed) open(race, dt);
+}
+
+void HudCrewOrders::open(const HudRace& race, float dt) {
+    m_ordersState = OrdersState::Orders;
+    // 0x004BE9F0: swapped until none is ahead of the one before.
+    const auto place = [](const CrewSlot& c) {
+        return c.car != nullptr && c.car->competitor != nullptr ? c.car->competitor->place : 0;
+    };
+    for (size_t i = 0; i + 1 < m_crewSlots.size(); ++i) {
+        if (place(m_crewSlots[i + 1]) < place(m_crewSlots[i])) {
+            std::swap(m_crewSlots[i], m_crewSlots[i + 1]);
+            i = static_cast<size_t>(-1);
+        }
+    }
+    showOrders(m_screen, false);
+    orderLines(race, dt);
+    m_ordersTime = 5.0f;
 }
 
 // 0x004BE960: the lines emptied (0x004BDC50), then DPAD1 .. 3 "High", "Medium", "Low" (their effects started again)

@@ -31,7 +31,7 @@ public:
     void update(CustomRaceHost& host, ui::Screen& s, uint32_t event);
 
 private:
-    // The pages' common start: the menu shown and emptied.
+    // The pages' common start: the menu shown and emptied, its transition started again.
     void menuCleared(ui::Screen& s);
     // 0x0045C450, the location page (+0x138 1).
     void showLocations(CustomRaceHost& host, ui::Screen& s);

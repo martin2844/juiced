@@ -101,10 +101,13 @@ void InstantSetup::leave() {
     m_map.release();
 }
 
-// The pages' common start: the menu shown and emptied.
+// The pages' common start (0x0045C4BC, 0x0045C739, 0x0045CD2F, 0x0045D01F, 0x0045D300, 0x0045D5D4, 0x0045D884):
+// the menu shown and emptied (0x005AEEF0), and its transition started again, so each page's items come in from
+// black.
 void InstantSetup::menuCleared(ui::Screen& s) {
     s.setHidden("menu", false);
     s.clearMenu("menu");
+    s.restartTransition("menu");
 }
 
 // 0x0045C450, the location page (+0x138 1). Filling: the route models taken off the map (0x0045BD10), the menu

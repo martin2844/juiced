@@ -274,6 +274,11 @@ void Frontend::leavePopup(Popup& popup) {
     if (is(popup.state, "autosave")) m_autosave.leave(*this);
     if (is(popup.state, "loadhighscores")) m_loadHighScores.leave(*this);
     if (keepsMenu(popup.state)) baseLeave(*popup.screen, popup.state);
+    if (is(popup.state, "car_stats2purple")) {
+        m_carStatsPurple.leave(*popup.screen);
+    } else if (is(popup.state, "car_stats2")) {
+        m_carStats.leave(*popup.screen);
+    }
     if (is(popup.state, "CMSMobilePhoneMenu") || is(popup.state, "CMSMobilePhoneContacts")) stopSpeech();
     if (is(popup.state, "CMSRespectMsg")) m_framesUnderMessage = true;  // 0x004DCB90
     if (is(popup.state, "CMSMobilePhone")) m_mobilePhone.leave(*this);

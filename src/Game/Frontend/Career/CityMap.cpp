@@ -31,14 +31,14 @@ scene::View3d* CityMap::view3d(ui::Screen& s) const {
     return m_on ? dynamic_cast<scene::View3d*>(s.view("MAP3D")) : nullptr;
 }
 
-// 0x0045B6B0: MAP3D (+0x00) with its camera from 4000 to 5 000 000, its sky (0x005B4660), the rig's pitch within -1.5
+// 0x0045B6B0: MAP3D (+0x00) with its camera from 3999 to 5 000 000, its sky (0x005B4660), the rig's pitch within -1.5
 // .. -0.15, the atmosphere "map" (0x005B4610); the height 0 (+0x04) and the model coming down 1 (+0x08).
 void CityMap::start(ui::Screen& s) {
     m_on = s.find("MAP3D") >= 0;
     m_drop = 0.0f;
     m_dropModel = 1;
     if (scene::View3d* view = view3d(s)) {
-        view->camera().setNear(4000.0f);
+        view->camera().setNear(3999.0f);  // 0x4579F000 (0x0045B6CC)
         view->camera().setFar(5000000.0f);
         view->buildSky();
         view->pitchLimits[0] = -1.5f;

@@ -111,9 +111,10 @@ public:
     // The HUD shown: the window shown is the HUD's.
     bool hudShown() const { return hud != nullptr && window.id == hudWindow; }
     // The race front end's +0x38: cleared by restart_race's, start_replay's and restart_replay's enter, set by their
-    // leave (0x00455F50).
+    // leave (0x00455F50); closedown's the same (0x0044F9C0's end, 0x0044FAA0).
     bool watchesControllers() const {
         switch (window.id) {
+        case RaceWindowId::Closedown:
         case RaceWindowId::RestartRace:
         case RaceWindowId::StartReplay:
         case RaceWindowId::RestartReplay: return false;

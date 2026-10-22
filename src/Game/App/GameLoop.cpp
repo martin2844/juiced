@@ -11,6 +11,7 @@
 #include "Audio/SoundSystem.h"
 #include "Audio/Voices.h"
 #include "Core/Base/GameFiles.h"
+#include "Core/Base/LoadingThread.h"
 #include "Core/Base/Random.h"
 #include "Core/Base/Text.h"
 #include "Core/Base/X87.h"
@@ -156,6 +157,14 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
     }
     oj::log::info("renderer {} on {}: {}", oj::render::backendName(device->backend()), device->adapterName(),
                   device->description());
+    // The loading thread's jobs end once the main thread has run the renderer's queue again (0x0051D270), while
+    // the device lives (the windows and their loads go before it).
+    struct JobEnd {
+        explicit JobEnd(oj::render::IRenderDevice& d) {
+            oj::loadingThread().setJobEnd([&d] { d.waitForService(); });
+        }
+        ~JobEnd() { oj::loadingThread().setJobEnd(nullptr); }
+    } jobEnd(*device);
     // 0x005132AC, the renderer's start: the processors for the game ([0x0079E5C0]) to the debugger's output.
     oj::log::debugPrint("numCores %d\n", g_gameProcessors);
 
@@ -383,7 +392,6 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
             for (const oj::Spl::GridPoint& place : trackView.scene->lines().grid) {
                 oj::scene::CarModel* model = trackView.scene->addCar(
                     oj::scene::CarModel::load(*scene, car, data.catalogue, trackView.loading, false), place);
-                trackView.places.push_back({place.x, place.y, place.z, place.heading});
                 // The car of the first place is the player's, the others the AI's.
                 if (dynamics != nullptr) {
                     trackView.addCar(*dynamics, car, nullptr, data, model, place,
@@ -798,8 +806,6 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
                         auto car =
                             oj::scene::CarModel::load(*scene, racerCar, data.catalogue, trackView.loading, false);
                         oj::scene::CarModel* model = trackView.scene->addCar(std::move(car), lines.grid[place]);
-                        const oj::Spl::GridPoint& at = lines.grid[place];
-                        trackView.places.push_back({at.x, at.y, at.z, at.heading});
                         const oj::CarDynamics* dynamics =
                             data.dynamics && racerCar.def != nullptr ? data.dynamics->of(*racerCar.def) : nullptr;
                         if (dynamics != nullptr) {

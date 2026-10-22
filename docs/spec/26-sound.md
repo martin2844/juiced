@@ -188,9 +188,12 @@ the settings set, shuffled (`rand() % (k + 1)` for k = 1 ..).
 
 Callers: the garage (`0x00436C60` as carsel opens with a car neither damaged nor worn: the front end's music to 0
 and, with the settings' music volume not 0, the next song played (wait, force) and faded in; `0x00436CF0` as it is
-left: the game's music to 0, the front end's started again and faded back); the race's load done (`0x00463454`: the
-next song (wait, force) at the settings' volume at once) and unload (`0x004634B0`: stopped with wait); the audio
-options (`0x00480AD0`: in a race's pause the music plays only while MUSIC_BUT is highlighted).
+left: the game's music to 0, the front end's started again and faded back; a garage opened again before the last
+visit's song has faded out, about 27 frames at 60 a second, keeps that song, as `0x00409230` finds it playing: the
+stock's slow loads between two visits always let it stop, here the loads are short and the logic is kept); the race's
+load done (`0x00463454`: the next song (wait, force) at the settings' volume at once) and unload (`0x004634B0`:
+stopped with wait); the audio options (`0x00480AD0`: in a race's pause the music plays only while MUSIC_BUT is
+highlighted).
 
 The game's loop steps the sound system every frame (`0x0040CF0A`) after the front ends' frames, unless a job runs.
 

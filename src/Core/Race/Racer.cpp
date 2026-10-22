@@ -1439,7 +1439,7 @@ void RaceState::driverLevels(float frameTime) {
             rec.nerves = pressure * rec.nerveGain * frameTime + rec.nerves;
             // 0x004BEDFF: crossing 1.9 the orders asked for as the chatter asks (0x004BEA60) for no racer (-1): the
             // orders opened, no line flashed.
-            if (before < 1.9f && rec.nerves >= 1.9f) ordersFlash(-1);
+            if (before < 1.9f && rec.nerves >= 1.9f) ordersFlash(-1, frameTime);
         } else {
             rec.nerves = rec.nerves - frameTime * rec.nerveLoss * 3.0f;
         }
@@ -1664,8 +1664,8 @@ Competitor* RaceState::atPlace(int32_t place) const {
     return i >= 0 && static_cast<size_t>(i) < order.size() ? order[static_cast<size_t>(i)] : nullptr;
 }
 
-void RaceState::ordersFlash(int32_t racer) {
-    if (m_rules.career != nullptr) m_rules.career->drivers.chatterFlash.push_back(racer);
+void RaceState::ordersFlash(int32_t racer, float frameTime) {
+    if (m_rules.ordersFlash) m_rules.ordersFlash(racer, frameTime);
 }
 
 void RaceState::chatterFrame(float frameTime, CrtRandom& random) {
@@ -1763,7 +1763,7 @@ int32_t RaceState::crewLine(ChatterEntry& p, float t, CrtRandom& random) {
             } else {
                 s = 0x13;
             }
-            ordersFlash(p.racer);
+            ordersFlash(p.racer, t);
             p.delay = 2.0f;
         }
         p.skip = 0;
@@ -1780,7 +1780,7 @@ int32_t RaceState::crewLine(ChatterEntry& p, float t, CrtRandom& random) {
         const int32_t place = comp->place;
         const auto last = static_cast<int32_t>(session.count);
         if (place != p.lastPlace && p.delay < 0.0f) {
-            ordersFlash(p.racer);
+            ordersFlash(p.racer, t);
             if (p.lastPlace == -1 || place == 1 || place < p.lastPlace) {
                 static const int32_t kGained[5] = {0, 3, 5, 7, 9};
                 s = place >= 1 && place <= 5 ? kGained[place - 1] : 1;
@@ -1836,7 +1836,7 @@ int32_t RaceState::crewLine(ChatterEntry& p, float t, CrtRandom& random) {
     // 6. Spun: the crewmate's order 1 (0x004BF2F0).
     p.spinTimer = p.spinTimer - t;
     if (comp->spun && p.spinTimer < 0.0f && p.delay < 0.0f) {
-        ordersFlash(p.racer);
+        ordersFlash(p.racer, t);
         p.spinTimer = 20.0f;  // [0x00718A1C]
         p.delay = 2.0f;
         s = 0x0A;
@@ -1846,7 +1846,7 @@ int32_t RaceState::crewLine(ChatterEntry& p, float t, CrtRandom& random) {
     // 7. In traffic.
     p.trafficTimer = p.trafficTimer - t;
     if (comp->trafficTime > 0.5f && p.trafficTimer < 0.0f && p.delay < 0.0f) {
-        ordersFlash(p.racer);
+        ordersFlash(p.racer, t);
         s = 0x1E;
         p.trafficTimer = 20.0f;
         p.delay = 2.0f;
@@ -1854,32 +1854,32 @@ int32_t RaceState::crewLine(ChatterEntry& p, float t, CrtRandom& random) {
     // 8. Pressed.
     p.behindTimer = p.behindTimer - t;
     if ((comp->behindTime > 2.0f || racer.nerves > 1.9f) && p.behindTimer < 0.0f && p.delay < 0.0f) {
-        ordersFlash(p.racer);
+        ordersFlash(p.racer, t);
         s = 0x1D;
         p.behindTimer = 20.0f;
         p.delay = 2.0f;
     }
     // 9. The contacts, each flag cleared.
     if (racer.rammed == 1 && p.delay < 0.0f) {
-        ordersFlash(p.racer);
+        ordersFlash(p.racer, t);
         p.delay = 2.0f;
         s = 0x19;
         racer.rammed = 0;
     }
     if (racer.rammed == 2 && p.delay < 0.0f) {
-        ordersFlash(p.racer);
+        ordersFlash(p.racer, t);
         p.delay = 2.0f;
         s = 0x1A;
         racer.rammed = 0;
     }
     if (racer.crashed == 1 && p.delay < 0.0f) {
-        ordersFlash(p.racer);
+        ordersFlash(p.racer, t);
         p.delay = 2.0f;
         s = 0x0E;
         racer.crashed = 0;
     }
     if (racer.crashed == 2 && p.delay < 0.0f) {
-        ordersFlash(p.racer);
+        ordersFlash(p.racer, t);
         p.delay = 2.0f;
         s = 0x0C;
         racer.crashed = 0;

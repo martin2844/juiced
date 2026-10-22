@@ -95,15 +95,16 @@ void TrackView::drive(float dt) {
 }
 
 void TrackView::raceFrame(float dt, bool impacts) {
-    // The game's frame (0x0040CCA0): the drivers' levels (0x004BDF00) before the race's frame, with the crew's
-    // orders of a career race that is not a cruise.
-    race->driverLevels(dt);
-    // 0x004BDF00: [0x0075EF64] turned over; outside the attract replay (mode 4) and a replay's race, not only
-    // watching a network game, the racers' names' time runs down by the frame time and goes to 2 s on a tactics
-    // key (DRIVER_TACTICS_UP .. _LEFT, the controller's +0x74 .. +0x80) or, watching a career race off the network
-    // (the profile's +0x614 0), on the third driver's two keys (+0x84, +0x88); NEXTCAR and SELECT in watchedCar.
+    // The game's frame (0x0040CCA0): the drivers' frame (0x004BDF00) before the race's, with the crew's orders of a
+    // career race that is not a cruise. 0x004BDF00: [0x0075EF64] turned over; outside the attract replay (mode 4)
+    // and a replay's race, not only watching a network game, the racers' names' time runs down by the frame time
+    // and goes to 2 s on a tactics key (DRIVER_TACTICS_UP .. _LEFT, the controller's +0x74 .. +0x80) or, watching a
+    // career race off the network (the profile's +0x614 0), on the third driver's two keys (+0x84, +0x88); NEXTCAR
+    // and SELECT in watchedCar; then the drivers' levels (0x004BE242: 0x004BEAF0, which may open the crew's orders,
+    // 0x004BEA60) before the orders' state (crewOrders).
     driversParity = !driversParity;
-    if (rules.mode != RaceMode::Attract && !rules.replayRace && !(net != nullptr && rules.spectator)) {
+    const bool drivers = rules.mode != RaceMode::Attract && !rules.replayRace && !(net != nullptr && rules.spectator);
+    if (drivers) {
         float& names = namesTime();
         names = names - dt;
         const bool careerWatched = gameData != nullptr && gameData->career && gameData->career->profile.raceCarsChosen == 0;
@@ -113,6 +114,7 @@ void TrackView::raceFrame(float dt, bool impacts) {
         }
     }
     if (rules.mode == RaceMode::Career && !rules.replay) watchedCar();
+    if (drivers) race->driverLevels(dt);
     if (frontEnd.hud != nullptr && rules.mode == RaceMode::Career && rules.type != RaceType::Cruise && !rules.replay) {
         frontEnd.hud->crewOrders(hudRace(), frameActions.tactics, dt);
     }

@@ -14,6 +14,7 @@
 
 namespace oj {
 struct Competitor;
+struct Spl;
 }
 
 namespace oj::scene {
@@ -48,7 +49,7 @@ struct CameraRace {
     float count = 0.0f;                      // the count before the start (the race state's +0x38)
     int playerMode = 0;                      // the player's view (settings +0x8C per player)
     bool netSpectator = false;               // a network game only watched ([0x0075EF8C], [0x0075EF9C])
-    const std::vector<Vec4>* places = nullptr;  // the racers' grid places (race +0x30: +0x4C, +0xAC; w the heading)
+    const std::vector<Vec4>* places = nullptr;  // the route's grid points (race +0x30: +0x4C, +0xAC; w the heading)
     RaceType raceType = RaceType::TimedLap;     // [G+0x6C]+4
     bool paused = false;                     // [G+0x34]+0x20: the race paused, the camera's time 0 (0x00406322)
     bool replayFast = false;                 // [G+0x9C]: a replay playing (+0x828) fast forward (+0x7C)
@@ -63,6 +64,11 @@ struct CameraRace {
     const std::vector<Car>* cars = nullptr;
     int self = -1;  // the camera's car among them
 };
+
+// The route's grid points for CameraRace::places (its GRIDPOINT lines, 0x004A1410: the route's +0x4C, their number
+// +0xAC; w the heading): all of them whatever the cars on the grid, so the sweep before the start runs across the
+// grid's width even with one car.
+std::vector<Vec4> gridPlaces(const Spl& lines);
 
 class RaceCamera;
 class RaceIntro;

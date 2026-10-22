@@ -80,7 +80,7 @@ oj::config::Language pickLanguage() {
 
 #ifdef _DEBUG
 // The debug builds' switch --skip-directx-check (OpenJuice's; the stock reads no command line): the window opens
-// whatever DxDiag reports, to look at it where the stock's check never lets it (Windows 11).
+// whatever the DirectX check finds.
 bool skipDirectXCheck(const char* commandLine) {
     std::istringstream words(commandLine != nullptr ? commandLine : "");
     std::string word;
@@ -91,16 +91,21 @@ bool skipDirectXCheck(const char* commandLine) {
 }
 #endif
 
+// DirectX 9.0c or later as DxDiag reports it (DirectXVersion.h: a departure from the stock's check).
+bool directX9cOrLater() {
+    uint32_t major = 0, minor = 0;
+    char letter = 0;
+    const HRESULT read = oj::config::directXVersion(&major, &minor, &letter);
+    return oj::config::directX9cOrLater(read, major, letter);
+}
+
 }  // namespace
 
 // 0x004053C0: the C library's locale Russian; the language picked (OpenJuiceConfig's, pickLanguage); the class
 // registered (else nothing more); the tab control's class; the window (DIALOGEX 102) when Direct3D 9 is there and
-// DxDiag reports DirectX 9.0c or later (major 9 or more, letter 'c' or later), else the message that DirectX 9.0c is
-// needed (text 318). The class unregistered with its last user. The window and the messages take wide texts
-// (ConfigDialog.h).
-// Stock problem: the check of the letter takes no newer DirectX for one (DxDiag on Windows 11: 12.0 and the letter a
-// space), so the tool shows the message there (the debug builds' --skip-directx-check opens the window anyway);
-// without DirectX 9.0c the interface made is never released.
+// DirectX 9.0c or later (directX9cOrLater), else the message that DirectX 9.0c is needed (text 318). The class
+// unregistered with its last user. The window and the messages take wide texts (ConfigDialog.h).
+// Stock problem: without DirectX 9.0c the interface made is never released.
 int WINAPI WinMain(HINSTANCE instance, HINSTANCE, [[maybe_unused]] LPSTR commandLine, int) {
     std::setlocale(LC_ALL, "Russian");
     ToolState& t = tool();
@@ -111,12 +116,7 @@ int WINAPI WinMain(HINSTANCE instance, HINSTANCE, [[maybe_unused]] LPSTR command
     InitCommonControlsEx(&controls);
     t.d3d = Direct3DCreate9(D3D_SDK_VERSION);
     if (t.d3d != nullptr) {
-        uint32_t major = 0, minor = 0;
-        char letter = 0;
-        if (oj::config::directXVersion(&major, &minor, &letter) == S_OK && major > 8 &&
-            static_cast<signed char>(letter) > 'b') {
-            t.directX9c = true;
-        }
+        t.directX9c = directX9cOrLater();
 #ifdef _DEBUG
         if (skipDirectXCheck(commandLine)) t.directX9c = true;
 #endif

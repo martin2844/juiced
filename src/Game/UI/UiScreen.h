@@ -109,7 +109,8 @@ public:
     void hideContaining(const std::string& part, bool animate = false);
     void setHidden(const std::string& element, bool hidden);
     bool hidden(const std::string& element) const;
-    // 0x005A9BB0: a hidden element of that name (case aside) is shown; animate: its transition starts again.
+    // 0x005A9BB0: a hidden element of that name (case aside) is shown; animate: its transition starts again, else it
+    // is left as it is.
     void show(const std::string& element, bool animate);
     // The element's transition written by the code (its +0x34 record): in, shown and its transition from the start
     // (remaining its duration, the delay again, progress and alpha 0); out, unless going out already, going out with
@@ -127,6 +128,8 @@ public:
     void restartTransitions();
     // 0x0046C970 on an element's transition: its delay (+0x14), below 0 none, past 9999 10000.
     void setTransitionDelay(const std::string& element, float delay);
+    // An element's transition (its +0x34 record); none without one.
+    const Transition* transitionOf(const std::string& element) const;
     // A Meter's value (+0xF0); the shown value (+0xEC) moves 0.15 of the way to it at each draw, or jumps there.
     void setMeter(const std::string& element, float value, bool jump = false);
     // A Meter's shown value (+0xEC); 0 without the element.
@@ -267,10 +270,12 @@ public:
     void setTextAlpha(int element, float alpha);
     // +0x11C and +0x150: a text's colour in place of its Font line's.
     void setFontColour(int element, uint32_t argb);
+    uint32_t fontColourOf(int element) const;  // +0x11C: the colour the code set, 0 while the Font line's is kept
     // 0x00434D20: the four corner colours, each corner's alpha also its most.
     void setColour(int element, uint32_t argb);
     // 0x0042E4F0: each corner's alpha byte, the value held within 0 .. 1 (the most stays).
     void setAlpha(int element, float alpha);
+    uint32_t colourOf(int element) const;  // +0x10: the first corner's colour
     // The element's place and size (+0xA4, +0xA8, +0x94, +0x98; fractions of the screen) in place of its .ui line's.
     void setPlace(int element, float x, float y, float w, float h);
     void placeOf(int element, float& x, float& y, float& w, float& h) const;
@@ -429,5 +434,9 @@ private:
     View3dFactory m_viewFactory;
     std::vector<std::unique_ptr<View3d>> m_views;  // per element of m_window
 };
+
+// 0x005A9E80: an event while the window still moves (a transition short of its end) ends the transitions of every
+// window open (0x005AA160 on the manager's list) and the window's own; a window under it going out is hidden at once.
+void endTransitions(Screen& window, const std::vector<Screen*>& open);
 
 }  // namespace oj::ui

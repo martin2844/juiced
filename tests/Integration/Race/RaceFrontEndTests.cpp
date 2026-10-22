@@ -67,8 +67,9 @@ struct FrontEnd {
 
 }  // namespace
 
-// closedown (0x0044F9C0, 0x0044FAC0): its enter stops the replay and pauses the race; three frames later, with no
-// message up, the race unloads. Asked again while it is shown it does not enter again.
+// closedown (0x0044F9C0, 0x0044FAC0): its enter stops the replay and pauses the race and no longer watches the
+// controllers (the race front end's +0x38 0); three frames later, with no message up, the race unloads. Asked again
+// while it is shown it does not enter again.
 OJ_INTEGRATION_TEST(RaceFrontEnd, ClosedownUnloadsAfterThreeFrames) {
     oj::test::InGameFolder folder;
     if (!folder.valid()) return;
@@ -78,7 +79,7 @@ OJ_INTEGRATION_TEST(RaceFrontEnd, ClosedownUnloadsAfterThreeFrames) {
     f.fe.windowsFrame(0.03f);
     const bool entered = f.fe.window.id == RaceWindowId::Closedown && f.fe.window.name == "closedown" &&
                          f.host.pausedNow && f.host.replayed.playing == 0 && f.host.syncs == 1 &&
-                         f.fe.screenWindow != nullptr && f.fe.closedownFrames == 2;
+                         f.fe.screenWindow != nullptr && f.fe.closedownFrames == 2 && !f.fe.watchesControllers();
     f.fe.askWindow("CLOSEDOWN");
     f.fe.windowsFrame(0.03f);
     f.fe.windowsFrame(0.03f);

@@ -13,12 +13,14 @@
 
 #include <algorithm>
 #include <bit>
+#include <chrono>
 #include <cmath>
 #include <cstdarg>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <fstream>
+#include <thread>
 
 namespace oj::scene {
 
@@ -550,6 +552,7 @@ std::string Engine::cacheKey(const std::filesystem::path& folder, const char* ow
 }
 
 void Engine::useCarFolders() {
+    const LoadLock lock(*this);
     m_keptFolders = m_folders;
     m_folders.models = "carmodels";
     m_folders.mesh = "carmesh";
@@ -557,9 +560,22 @@ void Engine::useCarFolders() {
     m_folders.textures = "cartextures";
 }
 
-void Engine::restoreFolders() { m_folders = m_keptFolders; }
+void Engine::restoreFolders() {
+    const LoadLock lock(*this);
+    m_folders = m_keptFolders;
+}
+
+Engine::LoadLock::LoadLock(Engine& engine) : m_engine(engine) {
+    while (!engine.m_loadLock.try_lock()) {
+        engine.m_device.letLoadingRun();
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    }
+}
+
+Engine::LoadLock::~LoadLock() { m_engine.m_loadLock.unlock(); }
 
 const render::GameTexture* Engine::texture(const std::string& name) {
+    const LoadLock lock(*this);
     const std::string key = cacheKey(m_folders.textures, "textures", name);
     const auto it = m_textures.find(key);
     if (it != m_textures.end()) return it->second.get();
@@ -580,6 +596,7 @@ const render::GameTexture* Engine::texture(const std::string& name) {
 }
 
 const render::GameTexture* Engine::cubeTexture(const std::string& name) {
+    const LoadLock lock(*this);
     const auto it = m_cubeTextures.find(name);
     if (it != m_cubeTextures.end()) return it->second.get();
     const GameFiles files(std::filesystem::current_path());
@@ -620,6 +637,7 @@ render::Material* Engine::material(const std::string& part) {
 
 const render::GameTexture* Engine::texture(const std::string& name, const std::filesystem::path& folder,
                                            const std::filesystem::path& shared) {
+    const LoadLock lock(*this);
     if (folder.empty()) return shared.empty() ? texture(name) : texture(name, shared);
     const std::string key = folder.string() + "|" + name;
     const auto it = m_textures.find(key);
@@ -635,6 +653,7 @@ const render::GameTexture* Engine::texture(const std::string& name, const std::f
 std::unique_ptr<render::Material> Engine::loadMaterial(const std::filesystem::path& mats, const std::string& part,
                                                        const std::filesystem::path& textures,
                                                        const std::filesystem::path& shared) {
+    const LoadLock lock(*this);
     const GameFiles files(std::filesystem::current_path());
     const auto bytes = files.read(mats / (part + ".pmd"));
     if (!bytes) {
@@ -655,6 +674,7 @@ std::unique_ptr<render::Material> Engine::loadMaterial(const std::filesystem::pa
     }
     // The description keeps every parameter (zeros for a key the file leaves out); the object takes them in the
     // class's order.
+    std::vector<std::vector<uint8_t>> description;
     for (const ExeTables::MaterialParam& p : info->params) {
         std::vector<uint8_t> value(valueSize(p.type), 0);
         for (const auto& [key, text] : pmd.values) {
@@ -664,7 +684,9 @@ std::unique_ptr<render::Material> Engine::loadMaterial(const std::filesystem::pa
             }
         }
         if (!value.empty()) material->setParam(p.index, value.data());
+        description.push_back(std::move(value));
     }
+    material->setDescription(std::move(description));
     for (const auto& [slot, slotName] : info->textures) {
         for (const auto& [key, text] : pmd.values) {
             if (_stricmp(key.c_str(), slotName.c_str()) != 0) continue;
@@ -677,6 +699,7 @@ std::unique_ptr<render::Material> Engine::loadMaterial(const std::filesystem::pa
 }
 
 render::Mesh* Engine::mesh(const std::string& name) {
+    const LoadLock lock(*this);
     const std::string key = cacheKey(m_folders.mesh, "mesh", name);
     const auto it = m_meshes.find(key);
     if (it != m_meshes.end()) return it->second.get();
@@ -700,6 +723,7 @@ std::unique_ptr<render::Mesh> Engine::readMesh(const std::string& name) {
 }
 
 bool Engine::reloadMesh(render::Mesh& mesh, const std::string& name) {
+    const LoadLock lock(*this);
     const GameFiles files(std::filesystem::current_path());
     const auto bytes = files.read(m_folders.mesh / (name + ".d8m"));
     const auto parsed = bytes ? parseMesh(bytesOf(*bytes)) : std::nullopt;
@@ -736,7 +760,8 @@ void Model::mirror() {
     root->invalidate();
 }
 
-std::unique_ptr<Model> Engine::loadModel(const std::string& name, CrtRandom& random) {
+std::unique_ptr<Model> Engine::loadModel(const std::string& name, CrtRandom& random, bool ownMeshes) {
+    const LoadLock lock(*this);
     const GameFiles files(std::filesystem::current_path());
     const auto bytes = files.read(m_folders.models / (name + ".boh"));
     const auto tree = bytes ? parseBoh(bytesOf(*bytes)) : std::nullopt;
@@ -752,7 +777,7 @@ std::unique_ptr<Model> Engine::loadModel(const std::string& name, CrtRandom& ran
         if (b.attach == 0) {
             render::Mesh* m = nullptr;
             if (_stricmp(b.mesh.c_str(), "NONE") != 0) {
-                if (m_meshCaching) {
+                if (m_meshCaching && !ownMeshes) {
                     m = mesh(b.mesh);
                 } else if (std::unique_ptr<render::Mesh> own = readMesh(b.mesh)) {
                     m = own.get();
@@ -788,6 +813,7 @@ std::unique_ptr<Model> Engine::loadModel(const std::string& name, CrtRandom& ran
 }
 
 std::unique_ptr<render::Material> Engine::newMaterial(uint32_t classId, const ExeTables::MaterialClass** info) {
+    const LoadLock lock(*this);
     const ExeTables::MaterialClass* c = m_tables.materialClass(classId);
     if (info != nullptr) *info = c;
     if (c == nullptr) return nullptr;
@@ -795,6 +821,7 @@ std::unique_ptr<render::Material> Engine::newMaterial(uint32_t classId, const Ex
 }
 
 std::unique_ptr<render::GameTexture> Engine::makeTexture(const std::vector<std::byte>& bytes) {
+    const LoadLock lock(*this);
     Ddt ddt;
     if (!ddt.parse(bytes)) return nullptr;
     auto texture = std::make_unique<render::GameTexture>();
@@ -805,6 +832,7 @@ std::unique_ptr<render::GameTexture> Engine::makeTexture(const std::vector<std::
 }
 
 std::unique_ptr<render::Material> Engine::newMaterial(const std::string& className) {
+    const LoadLock lock(*this);
     const ExeTables::MaterialClass* info = m_tables.materialClass(className);
     if (info == nullptr) return nullptr;
     return render::createMaterial(*info, m_renderer, [this](const std::string& n) { return program(n); }, m_tables);
@@ -1259,13 +1287,21 @@ void View3d::drawView(float x0, float y0, float x1, float y1) {
     r.dynamicEnvironment = m_world.environment;
     r.environment = m_world.environment;
     if (m_world.sky) m_world.sky->draw(m_camera);
-    if (m_model) {
-        for (auto& node : m_model->meshNodes) node->draw(r, m_camera, 0);
+    // The world's roots (0x00550500, as the race's): each tree with the parts of opaque classes (mode 1), then again
+    // with the others (mode 2), so a car's glass goes over what is behind it (a spoiler). Stock problem: the sponsors'
+    // decals (Coloured Spec ABlend) are of the late classes too and drawn in the parts' order with the glass, so the
+    // far side's decals show through the rear window.
+    const auto drawTree = [&](Model& model) {
+        for (uint32_t mode = 1; mode <= 2; ++mode) {
+            for (auto& node : model.meshNodes) node->draw(r, m_camera, mode);
+        }
+    };
+    if (m_model) drawTree(*m_model);
+    for (const std::unique_ptr<Model>& model : m_models) drawTree(*model);
+    for (const auto& draw : worldDraws) {
+        draw(r, m_camera, 1);
+        draw(r, m_camera, 2);
     }
-    for (const std::unique_ptr<Model>& model : m_models) {
-        for (auto& node : model->meshNodes) node->draw(r, m_camera, 0);
-    }
-    for (const auto& draw : worldDraws) draw(r, m_camera);
     r.endMaterial();
     // The object constants of no object (0x0054D8D0), the world's lens flares (0x0054FC60).
     identityObject(r, m_camera);

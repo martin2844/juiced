@@ -31,7 +31,7 @@ constexpr oj::Vec4 kRespectPoints[9] = {
 
 }  // namespace
 
-// CMSRespect (0x004DB2F0): [game + 4]'s method +0x34 with 1; MAP3D (+0x38) and its camera's range 4000 .. 5000000,
+// CMSRespect (0x004DB2F0): [game + 4]'s method +0x34 with 1; MAP3D (+0x38) and its camera's range 3999 .. 5000000,
 // its sky (0x005B4660); Menu emptied, "OVERVIEW" (532, value 0) and the crews 1 .. 8 (118 .., values 1 .. 8); +0x0C
 // and +0x10 -1, +0x70 0; the elements whose name holds DATA hidden; the map's territories (territories); Cash
 // and Date; the front end's music at a quarter; +0x3C and +0x40 0, +0x44 the settings' speech volume.
@@ -41,7 +41,7 @@ void Respect::enter(CareerHost& host, ui::Screen& s) {
     if (data == nullptr || !data->career) return;
     m_map = s.find("MAP3D") >= 0;
     if (auto* view = dynamic_cast<scene::View3d*>(s.view("MAP3D")); view != nullptr) {
-        view->camera().setNear(4000.0f);
+        view->camera().setNear(3999.0f);  // 0x4579F000 (0x004DB332)
         view->camera().setFar(5000000.0f);
         view->buildSky();
     }

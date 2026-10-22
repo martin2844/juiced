@@ -731,9 +731,9 @@ the second is the third. Type 18 goes on into 19.
 
 The phone's events (`0x004A2DC0` host rights, `0x004A2F80` pink slip): none when a used event is on the day; the crew's
 race attended by it and the player (`+0x02` or `+0x03`; the host rights set the crew's `+0x2C0`), type 4, 3 when
-`rand()` / 32767 is under the crew's P2P, 5 under its sprint, the class of the best rating of the crew's list
-(`0x004A9A70`: the garage for the player's crew, else all the opponents' cars), `+0x06` -1, its round (`0x004A33E0`)
-and teams (`0x004A4410`), the calendar's first free slot. The challenge's event (`0x004A3130`): `+0x05` 1, `+0x06` the
+`rand()` / 32767 is under the crew's P2P, 5 under its sprint, the class of the best rating of the player's garage
+(`0x004A9A70` on the career's first crew, the player's: its list is the garage, another crew's every opponent's car),
+`+0x06` -1, its round (`0x004A33E0`), time of day and weather (`0x004A4410`), the calendar's first free slot. The challenge's event (`0x004A3130`): `+0x05` 1, `+0x06` the
 challenge, `+0x68` its car, class 8, type 0, the first place's prize the challenge's prize unless done, its round and
 teams.
 

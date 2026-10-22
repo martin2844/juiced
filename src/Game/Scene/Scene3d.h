@@ -18,6 +18,7 @@
 #include <functional>
 #include <map>
 #include <memory>
+#include <mutex>
 #include <string>
 #include <vector>
 
@@ -106,13 +107,28 @@ public:
     // 0x005596E0), each with materials of its own; the HUD's map turns it off for its markers (0x0044A100).
     void setMeshCaching(bool on) { m_meshCaching = on; }
     // <models>\<name>.boh of the folders in use: a model node for every mesh node (four rand() values each, as the
-    // stock nodes draw).
-    std::unique_ptr<Model> loadModel(const std::string& name, CrtRandom& random);
+    // stock nodes draw). ownMeshes: its meshes read anew for it, each with materials of its own, as with the mesh cache
+    // off (the car views' loads, 0x004598B3).
+    std::unique_ptr<Model> loadModel(const std::string& name, CrtRandom& random, bool ownMeshes = false);
     // The folders the managers read from: the game's (models, mesh, mesh\mats, textures) or, while cars load, the
     // cars' (0x00498610: carmodels, carmesh, carmesh\mats, cartextures). 0x00498780 sets the cars' and keeps the
     // folders before ([0x0075EF54], [0x0075EF4C], [0x0075EF50]); 0x00498840 puts the kept ones back.
     void useCarFolders();
     void restoreFolders();
+    // The loads' lock: each load holds it (CarFolders for its whole time, the cars' folders in use all the while), so
+    // that the loading thread's jobs (Core/Base/LoadingThread.h) and the main thread's loads meet neither the other's
+    // folders nor the caches half written. Taken on the device's thread it lets the device go to the job meanwhile
+    // (the job may wait for it).
+    class LoadLock {
+    public:
+        explicit LoadLock(Engine& engine);
+        ~LoadLock();
+        LoadLock(const LoadLock&) = delete;
+        LoadLock& operator=(const LoadLock&) = delete;
+
+    private:
+        Engine& m_engine;
+    };
     // A new material of a class by name (the material manager's +4), nullptr for a class past the table.
     std::unique_ptr<render::Material> newMaterial(const std::string& className);
     // The same by the class number; `info` gets the class record (nullptr for a number the game does not have).
@@ -168,6 +184,7 @@ private:
     std::map<std::string, std::unique_ptr<render::GameTexture>> m_cubeTextures;
     std::map<std::string, std::unique_ptr<render::Mesh>> m_meshes;
     bool m_meshCaching = true;
+    std::recursive_mutex m_loadLock;
     std::unique_ptr<render::Mesh> readMesh(const std::string& name);
     std::vector<std::unique_ptr<render::Material>> m_materials;
     render::GameTexture m_halfVectorCube;
@@ -180,13 +197,14 @@ private:
 // The cars' folders in use for a scope (0x00498780 at its start, 0x00498840 at its end).
 class CarFolders {
 public:
-    explicit CarFolders(Engine& engine) : m_engine(engine) { engine.useCarFolders(); }
+    explicit CarFolders(Engine& engine) : m_engine(engine), m_lock(engine) { engine.useCarFolders(); }
     ~CarFolders() { m_engine.restoreFolders(); }
     CarFolders(const CarFolders&) = delete;
     CarFolders& operator=(const CarFolders&) = delete;
 
 private:
     Engine& m_engine;
+    Engine::LoadLock m_lock;
 };
 
 // 0x00523020 (the material's serialisable interface, slot 0 of vtable 0x006F8524 through 0x00523E40; nothing calls
@@ -287,8 +305,9 @@ public:
     render::Node* listedNode(int index) { return m_listed[static_cast<size_t>(index)].node; }
     // Every listed node taken out of the list (the car view's 0x0045ACE0).
     void clearListed() { m_listed.clear(); }
-    // What the element's world draws besides its models, in the order it was loaded into the world.
-    std::vector<std::function<void(render::Renderer3d&, render::Camera&)>> worldDraws;
+    // What the element's world draws besides its models, in the order it was loaded into the world: each a tree of
+    // the world's roots, called with the mode of the parts to draw (1 the opaque classes', 2 the others').
+    std::vector<std::function<void(render::Renderer3d&, render::Camera&, uint32_t)>> worldDraws;
 
     // The rig's pitch and yaw (+0x160, +0x164) and its limits (+0x1A4 .. +0x1B0; 9999 none).
     float rig[4] = {};

@@ -192,7 +192,7 @@ void GridWalk::enter(CareerHost& host, ui::Screen& s) {
         }
         // The racer's car in Car3d<n>: the crew's scheme on its cars (0x004A9080, not for crew 0), a copy of the car
         // in the cars' list (0x00434D90), a car view (made in place as 0x0045A2C0: the zoom 0.9) showing it
-        // (0x0045A080: 2.355, 0.5, fading) with the camera at (0, 110, -560).
+        // (0x0045A080: 2.35575, 0.5, fading) with the camera at (0, 110, -560).
         m_views[i].reset();
         if (const std::string element = std::format("Car3d{}", n); s.find(element) >= 0 && i < session.count) {
             if (r.crew != 0 && static_cast<size_t>(r.crew) < career.crews.size()) {
@@ -205,8 +205,8 @@ void GridWalk::enter(CareerHost& host, ui::Screen& s) {
                 setup.element = element;
                 setup.zoom = 0.9f;
                 m_views[i] = std::make_unique<scene::CarView>(*host.engine(), s, setup, data->catalogue, data->tables);
-                m_views[i]->show(m_cars.back(), nullptr, static_cast<uint32_t>(m_cars.size() - 1), 2.355f, 0.5f,
-                                 true, host.viewLoading());
+                m_views[i]->show(m_cars.back(), nullptr, static_cast<uint32_t>(m_cars.size() - 1),
+                                 std::bit_cast<float>(0x4016C49Cu), 0.5f, true, host.viewLoading());
                 m_views[i]->setCameraPlace({0.0f, 110.0f, -560.0f, 0.0f});
             }
         }
@@ -283,8 +283,8 @@ void GridWalk::enter(CareerHost& host, ui::Screen& s) {
 }
 
 // 0x004C91B0: with +0x64 the race starts (0x004A3CC0). The bet blinking (+0x40 .., +0x58): hidden over 0.75 of each
-// second. The racers' views turned (0x00459EE0); until all are loaded nothing more; then once the loader over the
-// window goes ([0x00728C68]). Cash and Date. Quitting answered "yes" (+0x60): in the first event the main menu; else
+// second. The racers' views turned (0x00459EE0), each looked at before its frame: while one is loading nothing more
+// (a load ended by that frame counts the next); then once the loader over the window goes ([0x00728C68]). Cash and Date. Quitting answered "yes" (+0x60): in the first event the main menu; else
 // the profile's +0x630 set, the racers again (0x004B8570), the session's end (0x004BA8A0, 0x004B9E20), the round and
 // the event raced (+0x01), the bets cleared, CLICK and CMSCalendar. BACK on Go or Bet (CLICK): the first event "QUIT
 // CAREER / ARE YOU SURE?", else "QUIT RACE AND FINISH LAST?" when betting with drivers, "QUIT RACE AND LOSE BET?" with
@@ -323,8 +323,9 @@ void GridWalk::update(CareerHost& host, ui::Screen& s, uint32_t event) {
     bool loaded = true;
     for (auto& view : m_views) {
         if (!view) continue;
-        view->frame(host.frameTime(), gameRandom());
+        // Its load (+0x3C) and parts (+0x40) looked at before its frame, which may end them.
         if (view->busy()) loaded = false;
+        view->frame(host.frameTime(), gameRandom());
     }
     if (!loaded) return;
     if (g_loaderClosed == 0) {

@@ -57,6 +57,9 @@
     <ClCompile Include="Base\Matrix.cpp">
       <Filter>Base</Filter>
     </ClCompile>
+    <ClCompile Include="Base\LoadingThread.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
     <ClCompile Include="Base\Random.cpp">
       <Filter>Base</Filter>
     </ClCompile>
@@ -315,6 +318,9 @@
       <Filter>Base</Filter>
     </ClInclude>
     <ClInclude Include="Base\Matrix.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Base\LoadingThread.h">
       <Filter>Base</Filter>
     </ClInclude>
     <ClInclude Include="Base\Random.h">

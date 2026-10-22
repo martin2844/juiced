@@ -393,10 +393,15 @@ void Screen::showState(State& s, bool animate) {
     t.out = false;
 }
 
+// 0x005A9BB0: unlike 0x005A9C20 (showContaining) an element shown without its transition started again keeps the
+// transition as it is: one still coming in with the window goes on fading in.
 void Screen::show(const std::string& element, bool animate) {
     for (size_t i = 0; i < m_window.elements.size(); ++i) {
-        if (_stricmp(m_window.elements[i].name.c_str(), element.c_str()) == 0) {
-            showState(m_states[i], animate);
+        if (_stricmp(m_window.elements[i].name.c_str(), element.c_str()) != 0) continue;
+        if (animate) {
+            showState(m_states[i], true);
+        } else {
+            m_states[i].hidden = false;
         }
     }
 }

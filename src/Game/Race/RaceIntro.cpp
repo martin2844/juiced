@@ -1,5 +1,7 @@
 #include "Game/Race/RaceIntro.h"
 
+#include "Game/Race/RaceCamera.h"
+
 #include "Core/Base/GameFiles.h"
 
 #include <algorithm>
@@ -87,6 +89,7 @@ void RaceIntro::clear() {
     m_index = 0.0f;
     m_fadeLeft = 0.0f;
     m_waited = 0.0f;
+    if (m_fadeObject != nullptr) m_fadeObject->stopBlend();
 }
 
 void RaceIntro::place(const std::array<float, 4>& p, const Quaternion& q, float fov, render::Camera& camera) {
@@ -100,10 +103,19 @@ void RaceIntro::place(const std::array<float, 4>& p, const Quaternion& q, float 
     m_fov = fov;
 }
 
-bool RaceIntro::update(float dt, render::Camera& camera, bool wideScreen) {
+bool RaceIntro::update(float dt, render::Camera& camera, bool wideScreen, CameraDirector& fadeObject) {
     if (m_done || m_shots.empty()) return false;
-    // The fade of a new shot (the race's fade object: its progress 1 - left, then its end).
-    if (m_fadeLeft > 0.0f) m_fadeLeft -= dt;
+    if (m_fadeObject == nullptr) m_fadeObject = &fadeObject;
+    // The transition of a new shot: its amount 1 - the time left over the second ([0x00711A08]), stopped once the time
+    // is out.
+    if (m_fadeLeft > 0.0f) {
+        m_fadeLeft -= dt;
+        if (m_fadeLeft > 0.0f) {
+            m_fadeObject->blendAmount = 1.0f - m_fadeLeft / 1.0f;
+        } else {
+            m_fadeObject->stopBlend();
+        }
+    }
 
     bool going = true;
     const IntroShot& shot = m_shots[m_shot];
@@ -140,11 +152,15 @@ bool RaceIntro::update(float dt, render::Camera& camera, bool wideScreen) {
             m_index = 0.0f;
             m_waited = 0.0f;
             if (m_shot >= m_shots.size()) {
+                // 0x0041C72C: the fly-by's end stops the transition.
                 m_shot = 0;
                 m_fadeLeft = 0.0f;
                 m_done = true;
                 going = false;
+                m_fadeObject->stopBlend();
             } else {
+                // 0x0041C70C: the transition switched on (0x00516110), a second to run.
+                m_fadeObject->blendOn = true;
                 m_fadeLeft = 1.0f;  // [0x00711A08]
             }
         }

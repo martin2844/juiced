@@ -7,6 +7,7 @@
 #include "Core/Cars/CarDefs.h"
 #include "Core/Career/Career.h"
 #include "Core/Data/ExeTables.h"
+#include "Core/Base/LoadingThread.h"
 #include "Core/Base/Random.h"
 #include "Game/Cars/CarModel.h"
 #include "Game/Scene/Scene3d.h"
@@ -14,6 +15,7 @@
 
 #include <memory>
 #include <string>
+#include <vector>
 
 namespace oj::scene {
 
@@ -40,17 +42,27 @@ public:
 
     CarView(Engine& engine, ui::Screen& screen, const Setup& setup, const PartCatalogue& catalogue,
             const ExeTables& tables);
-    // 0x0045A340: the load dropped and the view emptied (0x0045AE90) first.
+    // 0x0045A340: the load dropped and the view emptied (0x0045AE90) first; here the loads still running (theirs
+    // or dropped ones) waited for, the device let go to them meanwhile.
     ~CarView();
 
     // 0x0045A080: the car of a list shown (the list's +0x10, `current`, takes its place): turned to `yaw`, turning by
-    // `rate` a second about Y. Without `fade` the car shown goes at once.
+    // `rate` a second about Y. A load not done is dropped (0x0045A0A7: off the loading thread's list when it has
+    // not started, else let finish unused) and the car's load queued on the loading thread (0x00463D60), `loading`
+    // its rand(). Without `fade` the car shown goes at once.
     void show(const Car& car, uint32_t* current, uint32_t place, float yaw, float rate, bool fade,
               CrtRandom& loading);
-    // 0x00459EE0, each frame: the fade and the car of the load put in the view.
+    // 0x00459EE0, each frame: with a load the car shown fades out (twice the frame time); faded out, the view is
+    // emptied each frame (0x0045ACE0) and the car put in once its load is done (+0x08 3). Without a load the car
+    // fades in. A list scrolled through faster than a car loads stays dark until it stops. Then, with the parts
+    // changed (+0x40), their work for the main thread (0x00401130: each job's slot 2) and the chassis lowered.
     void frame(float dt, CrtRandom& random);
-    // 0x0045A880: a car still loading.
-    bool busy() const { return m_job != nullptr; }
+    // 0x0045A880: a car still loading (+0x3C) or its parts changed and not put in yet (+0x40).
+    bool busy() const { return m_job != nullptr || refitting(); }
+    // +0x40: the car's parts changed (refit), put in at the view's next frame.
+    bool refitting() const { return m_refit.car != nullptr; }
+    // The car asked for loaded on the loading thread (+0x3C: +0x08 3), not put in yet.
+    bool loaded() const { return m_job != nullptr && m_job->task != nullptr && m_job->task->done(); }
     // The view's model object (+0x00) made.
     bool hasModel() const { return m_shown && m_shown->model; }
     // The car shown's model; none without one.
@@ -60,14 +72,20 @@ public:
     // 0x0045A6F0: the car shown painted again (0x0048BF90), then the gen_neon material (the model object's +0xF0,
     // 0x0048A3AC) its colour (parameter 0, the car's +0x2C) and its parameter 4 1, then its mirror image painted.
     void repaint(const Car& car);
-    // 0x0045A8A0 after the car's parts changed: the parts of the model and its mirror image (CarModel::refitParts: a
-    // part taken off, as the decal of the parts cleared, empties its slots), their wheel colour, decal colour, tint and
-    // sponsor decals made again at once. The stock code puts the model's parts again and loads the
-    // car anew on the loading thread (+0x40), the windows showing MODDING meanwhile; here no second load is busy.
-    // Its last job's main-thread part (0x0045A790, the job's slot 2): with a neon (+0x0D over -1) the element's
-    // gen_neon shown and the car's neon colour (+0x2C) a random one of [NeonColour] (the defs' +0x20: rand() % their
-    // count, the main thread's), the material coloured (0x0048BEB0); without one gen_neon hidden.
-    void refit(Car& car, const CarDefs& defs, CrtRandom& random);
+    // 0x0045A8A0 after the car's parts changed, with no load (+0x3C) nor parts (+0x40) busy and a car shown: the
+    // model's glass tinted (0x0048C040) at once, and the parts' jobs (+0x40) queued on the loading thread: the cars'
+    // folders (0x0045A750), each part's mesh read (0x0048BB00 -> 0x0048F620, its slot 2 0x0048B9D0 putting it in the
+    // slots), the primer's jobs of the model and of its mirror image (0x0048C210: the material found, 0x0048C1D0;
+    // slot 2 0x0048C200, 0x0048C090), the folders back with the decal's colour (0x0045A770, slot 2 0x0048BEF0), the
+    // neon (slot 2 0x0045A790). The view's next frame runs every job's slot 2 without waiting for the thread (0x00401130) and
+    // lowers the chassis (0x0045A027), so the parts are in a frame later. Here that frame does the work: the parts of
+    // the model and its mirror image (CarModel::refitParts: a part taken off, as the decal of the parts cleared,
+    // empties its slots), the primer of their slots made the body's (CarModel::primerToBody), their paint, wheel
+    // colour, decal colour, the mirror's tint and the sponsor decals, then 0x0045A790 with the frame's rand(): with a
+    // neon (+0x0D over -1) the element's gen_neon shown and the car's neon colour (+0x2C) a random one of [NeonColour]
+    // (the defs' +0x20: rand() % their count), the material coloured (0x0048BEB0); without one gen_neon hidden; then
+    // the chassis lowered.
+    void refit(Car& car, const CarDefs& defs);
     // +0x4C: how much the car is shown (0 .. 1).
     float shown() const { return m_fade; }
     // 0x0045B050: the camera's place (+0x18 .. +0x20) and the element's camera there at once.
@@ -80,8 +98,11 @@ private:
     // The load (0x004593A0, run 0x00459730): the car's model, its mirror image, the neon and the shadow.
     struct Job {
         const Car* car = nullptr;
+        Car loaded;         // the car as it was asked for, which the loading thread reads
         float yaw = 0.0f;   // +0x34
         float rate = 0.0f;  // +0x38
+        CrtRandom* loading = nullptr;  // the loading thread's rand() the load takes
+        std::shared_ptr<LoadJob> task;  // on the loading thread
         std::unique_ptr<CarModel> model;       // +0x1C, +0x2C
         std::unique_ptr<CarModel> mirror;      // +0x20, +0x30
         std::unique_ptr<Model> shadow;         // +0x24: arcade_shadow
@@ -89,6 +110,14 @@ private:
     };
 
     View3d* view();
+    // The parts' jobs' work for the main thread at the view's frame (0x00401130), then the chassis lowered.
+    void putRefit(CrtRandom& random);
+    // 0x00459730 on the loading thread: the job's car, its mirror image, the neon and the shadow loaded.
+    void load(Job& j);
+    // 0x0045A0A7: the load not done dropped: taken off the loading thread's list, or kept until it ends.
+    void drop();
+    // The dropped loads that have ended let go (on the main thread).
+    void freeDropped();
     // 0x0048BEB0 on the car shown: the gen_neon material's colour (parameter 0) and its parameter 4 1.
     void colourNeon(uint32_t argb);
     // The shown car's gen_neon shown or hidden (+0xC0 bit 4).
@@ -104,9 +133,15 @@ private:
     Setup m_setup;
     const PartCatalogue& m_catalogue;
     const ExeTables& m_tables;
-    std::unique_ptr<Job> m_job;            // +0x3C
+    std::shared_ptr<Job> m_job;            // +0x3C
+    std::vector<std::shared_ptr<Job>> m_dropped;  // dropped loads still running
+    // +0x40: the parts changed, put in at the next frame.
+    struct Refit {
+        Car* car = nullptr;
+        const CarDefs* defs = nullptr;
+    } m_refit;
     // The car shown (+0x00, +0x2C), the neon and the shadow.
-    std::unique_ptr<Job> m_shown;
+    std::shared_ptr<Job> m_shown;
     const Car* m_car = nullptr;
     oj::Vec4 m_camera{0.0f, 180.0f, -760.0f, 0.0f};  // +0x18 .. +0x20
     float m_fade = 0.6f;                   // +0x4C

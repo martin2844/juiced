@@ -183,8 +183,7 @@ void CarStats::enter(WindowHost& host, ui::Screen& s) {
 // 0x004C4770: the phase [0x007A2D40] on by the frame time x 8, back to 0 past 6.282. A garage car: the blinking
 // elements' alpha (sin(phase) + 1) x 0.5 (0x0042E4F0); PGDN (CLICK) takes car_StatsLogos off (the front end's +0x30
 // left and freed) or puts it over the window (mode 8) and flips [0x00728C64]. BACK (CLICK) closes the window
-// (mode 6). Leaving (0x004C4710) puts the blinking elements' alpha back to 1 and keeps a Menu element's highlighted
-// item; the window's screen goes with it here.
+// (mode 6).
 void CarStats::update(WindowHost& host, ui::Screen& s, uint32_t event) {
     m_blinkPhase = m_blinkPhase + host.frameTime() * 8.0f;
     if (static_cast<double>(m_blinkPhase) > 6.282) m_blinkPhase = 0.0f;
@@ -207,6 +206,14 @@ void CarStats::update(WindowHost& host, ui::Screen& s, uint32_t event) {
     if (event == input::kBack) {
         host.sound("CLICK");
         host.request("", SwitchMode::Pop);
+    }
+}
+
+// 0x004C4710: the window is kept from one visit to the next (0x004C5470), so an element blinking on the last visit
+// and not on the next (a part bought, another car) would stay at the alpha it was left at.
+void CarStats::leave(ui::Screen& s) {
+    for (const int e : m_blink) {
+        if (e >= 0) s.setAlpha(e, 1.0f);
     }
 }
 
