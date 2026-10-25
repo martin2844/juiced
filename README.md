@@ -1,88 +1,33 @@
-# Juiced for macOS
+# OpenJuice native ports
 
-## Platforms and downloads
-
-This repository keeps the native ports on separate branches: [macOS (`main`)](https://github.com/martin2844/juiced/tree/main) and [Android (`android`)](https://github.com/martin2844/juiced/tree/android). Each branch contains its full engine source and platform build instructions. Platform fixes are not automatically shared between branches.
-
-Download the Android development APK from [Releases](https://github.com/martin2844/juiced/releases). On first launch, choose **Import Juiced ZIP** and select your own game archive; game data is not included.
-
-A native macOS port of [OpenJuice](https://gitlab.com/sidecr3w/openjuice), the recreation of Juiced (PC, 2005). Uses SDL 3, Metal, MojoShader and FFmpeg. Runs the engine directly on Apple Silicon; Wine, Windows and the original game executable are not used.
-
-**Early development build, not yet a complete or visually faithful port.** The native build loads the game's data, displays the interface, renders a race, runs physics and AI, and decodes music. Rendering compatibility and broader gameplay validation remain work in progress. See [the port status](docs/macos-port.md).
-
-Game assets are not included. Supply your own Juiced installation or extracted data.
-
-## Build
-
-Requires a Metal-capable Mac, Xcode Command Line Tools, CMake, pkg-config and FFmpeg. Tested on Apple Silicon; Intel builds have not been tested. Install build dependencies with Homebrew:
-
-```sh
-xcode-select --install
-brew install cmake pkg-config ffmpeg
-cmake -S . -B out -DCMAKE_BUILD_TYPE=Release
-cmake --build out --target juiced juiced_app juiced_tests mac_controls_check mac_controls_overlay_check mac_reflection_check -j 8
-ctest --test-dir out --output-on-failure
-```
-
-CMake downloads pinned revisions of SDL 3 and MojoShader on the first configure. FFmpeg is dynamically linked from the local installation. `out/Juiced.app` is a local development app, not a self-contained redistributable bundle; it still needs those installed FFmpeg libraries. No signing identity is required to build locally.
-
-## Run
-
-```sh
-./out/juiced --game /absolute/path/to/Juiced
-```
-
-The data folder contains `tracks/` and `carmodels.dat`. The path is remembered. You can subsequently open `out/Juiced.app`; when no valid remembered path exists, it opens a folder picker. Intro movies are currently skipped. Keyboard input is implemented; controllers and steering wheels are not yet connected. The default driving controls are W/S for throttle/brake, A/D for steering, Left Shift for nitrous, Space for handbrake, and R for reverse. Enter selects and Escape goes back.
-
-An instant race bypasses profile creation:
-
-```sh
-./out/juiced --game /absolute/path/to/Juiced -i
-```
-
-A reproducible AI-driven race and screenshot:
-
-```sh
-./out/juiced --game /absolute/path/to/Juiced -i --autopilot \
-  --seed 1 --frames 2100 --capture "$PWD/out/race.bmp"
-```
-
-Capture paths should be absolute: the engine switches its working directory to the game folder. `--frames` and scripted input switches remain enabled in this port's release build. Logs, settings and the remembered game path live in `~/Library/Application Support/Juiced/`; stock-format saves live in `~/Library/Application Support/THQ/Juiced/`. To change data folders, pass `--game` again.
-
-## Controls editor
-
-Open **Options → Controls** in the game (also available through the race pause menu). The editor uses the original options-menu widgets, fonts, highlight animation and message box. Use Up/Down and Enter to choose Driving, Gears and Camera, or Crew Commands, then select an action and press its replacement key. Escape cancels key capture, returns from a category, or closes the root controls menu without saving. Choose **Save and Return** to apply changes. The game is frozen while the editor is open.
-
-If a key is already assigned, the two actions swap keys. **Save** applies changes immediately and stores them in `~/Library/Application Support/Juiced/controls.ini`; **Cancel** discards edits, and **Restore Defaults** resets the draft until saved. Escape and Enter remain reserved for navigation. Bindings use physical key positions, so labels follow a US layout on non-US keyboards.
-
-Defaults: WASD driving, Left Shift nitrous, Space handbrake, R reverse, Q/E manual gears, C camera, B rear view, Z/X look left/right, H horn, and 1–6 crew commands. These are keyboard bindings; gamepad and wheel support is still pending.
-
-To open the same in-game editor directly:
-
-```sh
-./out/juiced --controls
-```
-
-## Optional mod packages
-
-All six mods live in their own folders under [`mods/`](mods/README.md): controls,
-RGB neon, driver photo, custom logo, Ferrari 458 Spider and Eagle Ultimate Wheels.
-Car/wheel assets and authoring tools are included. Start with:
-
-```sh
-out/juiced --game /path/to/Juiced --mods /absolute/path/to/this/repo/mods
-```
-
-Use **Options → Mods** to toggle packages, then restart. Script/asset edits do not
-require compiling the game. Car, wheel and custom-logo catalogue combinations use
-separate careers; re-enabling a combination resumes its saves. The installed Mod
-Garage app uses editable packages at `~/JuicedMods/mods` and preserves user edits.
-See [packaging instructions](tools/mod_bundle/README.md) to rebuild that app.
-
-## Source and license
-
-Based on upstream branch `retail/1.01/dx9`, commit `bd7e638b187e999c13f85a608d007108a228a05b` (see the exact revision in [provenance](docs/macos-port.md)). The original source import is kept as the repository's first commit. Native adapters are in `src/Mac/`; Windows source and upstream engine documentation remain available.
+Native macOS, Linux/NixOS and Android ports of **[OpenJuice](https://gitlab.com/sidecr3w/openjuice), created by Sidewinder (sidecr3w)**. This repository contains platform adaptations and integration work by martin2844 and contributors. The engine reconstruction is upstream OpenJuice's work.
 
 Required Notice: Copyright 2026 Sidewinder (https://gitlab.com/sidecr3w/openjuice)
 
-[PolyForm Noncommercial 1.0.0](LICENSE.md) applies to the engine and this port. This is source-available under noncommercial terms, not a permissive open-source license. SDL, MojoShader, FFmpeg and bundled third-party code retain their respective licenses. The game's assets are separate and are not distributed here. The original README is preserved in [docs/UPSTREAM-README.md](docs/UPSTREAM-README.md).
+## Downloads
+
+Development builds. Compatibility and performance vary by device; no frame-rate target is guaranteed. Supply your own Juiced game data; game data is not bundled.
+
+| Platform | Build | Download / requirements |
+| --- | --- | --- |
+| Android ARM64 | OpenJuice 1.02.5 · android.3 | [APK and optional mods](https://github.com/martin2844/juiced/releases/tag/android-v1.02.5-3) · Android 8+ |
+| Linux x86_64 / NixOS | OpenJuice 1.02.5 · mods1 | [Nix binary package](https://github.com/martin2844/juiced/releases/tag/linux-v1.02.5-mods1) · Nix and OpenGL drivers required |
+| macOS Apple Silicon | Port 0.3.3 · OpenJuice 1.01.4 | [App bundle](https://github.com/martin2844/juiced/releases/tag/macos-v0.3.3) · Homebrew FFmpeg required |
+
+Android: install the APK and import your own `Juiced.zip` in the launcher. Import optional mods separately. Physical controllers and customizable touch controls are available; touch controls can be disabled.
+
+Linux: follow the included instructions. The download is a Nix closure, not a standalone AppImage.
+
+macOS: install FFmpeg with `brew install ffmpeg`, extract the app and select your game folder. The app is ad-hoc signed, not notarized. This build uses a different upstream base from Linux and Android.
+
+## Source and documentation
+
+- [macOS source](https://github.com/martin2844/juiced/tree/main), [build instructions](https://github.com/martin2844/juiced/blob/main/docs/macos-build-and-run.md), [port status](https://github.com/martin2844/juiced/blob/main/docs/macos-port.md).
+- [Linux and Android source](https://github.com/martin2844/juiced/tree/linux-nixos), [Linux guide](https://github.com/martin2844/juiced/blob/linux-nixos/docs/linux-port.md), [Android guide](https://github.com/martin2844/juiced/blob/linux-nixos/docs/android-port.md).
+- [Upstream source](https://gitlab.com/sidecr3w/openjuice) and [upstream releases](https://gitlab.com/sidecr3w/openjuice/-/releases).
+
+The older `android` branch and rain-fix release remain as history. Current Android development is on `linux-nixos`.
+
+## License and credits
+
+OpenJuice uses the [PolyForm Noncommercial License 1.0.0](LICENSE.md). Preserve the upstream copyright notice when redistributing. Dependencies retain their own licenses. Juiced and its game assets belong to their respective rights holders.

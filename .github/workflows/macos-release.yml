@@ -1,0 +1,37 @@
+name: Build macOS release
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  macos:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: brew install cmake ninja pkg-config ffmpeg lua
+      - name: Configure
+        run: cmake -S . -B out -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_ARCHITECTURES=arm64
+      - name: Build
+        run: cmake --build out --target juiced_app juiced_tests mac_controls_check mac_controls_overlay_check mac_reflection_check mac_creative_check mac_mod_runtime_check mac_packages_check -j 3
+      - name: Test
+        run: ctest --test-dir out --output-on-failure
+      - name: Package
+        run: |
+          mkdir -p package
+          cp -R out/Juiced.app package/
+          cp LICENSE.md package/
+          cp docs/macos-build-and-run.md package/BUILD-AND-RUN.md
+          printf '%s\n' 'OpenJuice by Sidewinder: https://gitlab.com/sidecr3w/openjuice' 'Apple Silicon development build. Install Homebrew FFmpeg: brew install ffmpeg' 'Game assets are not included. Open Juiced.app and choose your game folder.' 'Ad-hoc signed; not notarized. No performance guarantee.' > package/README.txt
+          git rev-parse HEAD > package/SOURCE-COMMIT.txt
+          otool -L package/Juiced.app/Contents/MacOS/Juiced > package/DEPENDENCIES.txt
+          codesign --force --deep --sign - package/Juiced.app
+          codesign --verify --deep --strict package/Juiced.app
+          ditto -c -k --sequesterRsrc --keepParent package OpenJuice-0.3.3-macos-arm64.zip
+          shasum -a 256 OpenJuice-0.3.3-macos-arm64.zip > SHA256SUMS-macos.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos-release
+          path: |
+            OpenJuice-0.3.3-macos-arm64.zip
+            SHA256SUMS-macos.txt
