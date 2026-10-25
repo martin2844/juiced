@@ -1,0 +1,5 @@
+Material Program = Standard Alpha Blend
+Z-Write = FALSE
+Disable Fog = FALSE
+Z-Bias = 0.40000
+Alpha Texture = AddWH_RaysRE30_A.ptd

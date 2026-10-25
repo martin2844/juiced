@@ -531,7 +531,7 @@ void CalendarWindow::enter(CareerHost& host, ui::Screen& s) {
     if (p.completeShown == 0 && !(careerCompletion(career) < 1.0f)) {
         p.completeShown = 1;
         host.message(MessageType::Continue, texts.at(kTextComplete), false, nullptr);
-        for (auto& parts : p.partsA) parts.fill(3);
+        for (size_t model = 0; model < data->tables.carModels.size(); ++model) p.performance(model).fill(3);
         data->arcade.openExtreme();
     }
     m_select = s.find("SELECT");

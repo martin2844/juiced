@@ -1,0 +1,4 @@
+Material Program = Shiny Opaque
+Side Fresnel = 0.33
+Front Fresnel = 0.20
+Texture = AddWH_R32_a.ptd

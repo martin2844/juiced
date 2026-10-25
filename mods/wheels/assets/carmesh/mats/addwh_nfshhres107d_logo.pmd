@@ -1,0 +1,7 @@
+Material Program = Coloured Spec ABlend
+Colour = 190 190 190
+Specular Colour = 220 220 220
+Specular Highlight = 120
+Shininess = 50
+Additive = FALSE
+Texture = AddWH_HRE_logo

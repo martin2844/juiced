@@ -213,6 +213,7 @@ private:
     std::unique_ptr<Model> m_shadow;
     std::unique_ptr<Model> m_neon;
     bool m_garage = false;             // carsel's scene
+    const Car* m_neonCar = nullptr;
     bool m_neonShown = false;
     void listNeon();
     render::Node* m_plinth = nullptr;  // +0x18

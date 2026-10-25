@@ -1,3 +1,6 @@
+#if defined(OJ_MACOS) || defined(OJ_LINUX)
+#include "Mods/Creative.h"
+#endif
 // The windows that choose a new driver's logo and phone.
 
 #include "Game/Frontend/Profile/ChooseWindows.h"
@@ -25,6 +28,9 @@ void ChooseLogo::enter(ProfileHost& host, ui::Screen& s) {
         const std::string& name = (*logos)[i];
         s.addMenuItem("Menu", L"", static_cast<float>(i), name, name);
     }
+#if defined(OJ_MACOS) || defined(OJ_LINUX)
+    if(mods::feature("logo"))s.addMenuItem("Menu",L"IMPORT YOUR LOGO",19,"ui_chooselogo_01","ui_chooselogo_01");
+#endif
 }
 
 // The crew logo (0x004C3BD0): SELECT keeps the logo in the settings and goes on to the phone, BACK opens the name
@@ -32,6 +38,9 @@ void ChooseLogo::enter(ProfileHost& host, ui::Screen& s) {
 void ChooseLogo::update(ProfileHost& host, ui::Screen& s, uint32_t event) {
     std::optional<save::Profile>& profile = host.profile();
     if (event == input::kSelect) {
+#if defined(OJ_MACOS) || defined(OJ_LINUX)
+        if(mods::feature("logo") && s.selectedMenuItem("Menu")==19){mods::requestMenu();s.selectMenuItem("Menu",0);return;}
+#endif
         if (profile) {
             const size_t selected = s.selectedMenuItem("Menu");
             const float value = s.menuItemValue("Menu", selected);

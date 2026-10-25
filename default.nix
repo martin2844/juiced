@@ -9,7 +9,7 @@ let
   };
 in pkgs.stdenv.mkDerivation {
   pname = "openjuice";
-  version = "1.02.5-linux";
+  version = "1.02.5-linux-mods1";
   src = pkgs.lib.cleanSourceWith {
     src = ./.;
     filter = path: type:
@@ -17,7 +17,7 @@ in pkgs.stdenv.mkDerivation {
       && pkgs.lib.cleanSourceFilter path type;
   };
   nativeBuildInputs = with pkgs; [ cmake ninja pkg-config makeWrapper ];
-  buildInputs = with pkgs; [ sdl3 ffmpeg libglvnd ];
+  buildInputs = with pkgs; [ sdl3 ffmpeg libglvnd lua5_4 gdk-pixbuf ];
   preConfigure = ''
     cp -r ${mojo} mojoshader-source
     chmod -R u+w mojoshader-source

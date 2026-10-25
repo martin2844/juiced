@@ -176,6 +176,7 @@ public:
         else if (index == 1) m_noFog = asBits(value);
         else if (index == 2) m_zBias = x87::chop(asFloat(value) * 16.0f);
     }
+    const GameTexture* texture(uint32_t slot) const override { return slot == 0 ? m_texture : nullptr; }
     bool setTexture(uint32_t slot, const GameTexture* texture) override {
         touched();
         if (slot != 0) return false;
@@ -478,6 +479,7 @@ public:
             default: break;
         }
     }
+    const GameTexture* texture(uint32_t slot) const override { return slot == 0 ? m_texture : nullptr; }
     bool setTexture(uint32_t slot, const GameTexture* texture) override {
         touched();
         if (slot != 0) return false;

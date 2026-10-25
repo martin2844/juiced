@@ -118,6 +118,14 @@ bool Career::read(const std::vector<uint8_t>& data, std::string* error) {
         }
         for (Crewmate& mate : crewmates) r.ranges(mate, kCrewmate, "crewmate");
         if (r.offset() != r.size()) {
+            if (r.u32("mod progress tag") != 0x314D4A4F) throw std::runtime_error("unknown career extension");
+            const auto count = r.u32("mod progress count");
+            if (count != profile.modCount || count > profile.modProgress.size())
+                throw std::runtime_error("career requires the same added-car roster");
+            std::memcpy(profile.modProgress.data(), r.take(count * sizeof(CareerProfile::ModProgress), "mod progress"),
+                        count * sizeof(CareerProfile::ModProgress));
+        }
+        if (r.offset() != r.size()) {
             throw std::runtime_error(std::format("{} bytes left after the career", r.size() - r.offset()));
         }
         return true;
@@ -148,6 +156,12 @@ std::vector<uint8_t> Career::write() const {
         putRanges(out, crews[i], kCrewTail);
     }
     for (const Crewmate& mate : crewmates) putRanges(out, mate, kCrewmate);
+    if (profile.modCount != 0) {
+        putU32(out, 0x314D4A4F); // OJM1: added-model progress, retail prefix unchanged.
+        putU32(out, profile.modCount);
+        const auto* p = reinterpret_cast<const uint8_t*>(profile.modProgress.data());
+        out.insert(out.end(), p, p + profile.modCount * sizeof(CareerProfile::ModProgress));
+    }
     return out;
 }
 

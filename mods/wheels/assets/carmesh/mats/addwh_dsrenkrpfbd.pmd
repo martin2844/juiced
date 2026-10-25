@@ -1,0 +1,9 @@
+Material Program = Shiny Opaque
+Side Fresnel = 0.2
+Front Fresnel = 0.0
+Z-Bias = 0.300000
+Double-sided = TRUE
+Texture = AddWH_DSREnkRPFBD
+
+
+

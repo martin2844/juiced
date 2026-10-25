@@ -195,6 +195,7 @@ private:
     render::Material* m_body = nullptr;  // +0xEC of the car's model object
     render::Mesh* m_wheelMesh = nullptr;      // +0x20, +0x24: front and rear (the same here)
     render::Mesh* m_wheelBlurMesh = nullptr;  // +0x28, +0x2C
+    std::map<render::Material*, const render::GameTexture*> m_originalDecalTextures;
     std::map<std::string, render::Material*> m_partMaterials;  // the materials by their parts' names (lower case)
     std::array<render::Material*, 5> m_wheelMaterials{};  // +0x11C .. +0x12C: the wheel's, _BS, _B, _LOD and _BL
     std::array<uint32_t, 5> m_wheelColours{};             // +0x134 .. +0x144: their colours kept

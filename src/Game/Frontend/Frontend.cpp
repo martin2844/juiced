@@ -5,6 +5,10 @@
 #include "Game/Frontend/FrontendInternal.h"
 
 #include "Core/Base/Log.h"
+#if defined(OJ_MACOS) || defined(OJ_LINUX)
+#include "Mods/Runtime.h"
+#include "Mods/Packages.h"
+#endif
 #include "Core/Data/GameTexts.h"
 
 namespace oj {
@@ -568,7 +572,8 @@ void Frontend::update(float dt, const FrontendInput& in) {
                 uint32_t popupEvent = in.ui.event;
 #if defined(OJ_MACOS) || defined(OJ_LINUX)
                 // The paint purchase shortcut must not affect text entry or other menus.
-                if (is(m_popups.back().state, "colourmenu") && in.typed == '0')
+                if (is(m_popups.back().state, "colourmenu") && in.typed != 0 &&
+                    in.typed == mods::runtime::number("paint_buy_key", {}, mods::packages::available() ? -1 : 48))
                     popupEvent = input::kSelect2;
 #endif
                 updatePopup(m_popups.back(), popupEvent);

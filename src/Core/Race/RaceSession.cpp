@@ -1,3 +1,6 @@
+#if defined(OJ_MACOS) || defined(OJ_LINUX)
+#include "Mods/Creative.h"
+#endif
 #include "Core/Race/RaceSession.h"
 
 #include "Core/Career/CareerEvents.h"
@@ -87,9 +90,13 @@ void applyCrewScheme(Career& career, const Crew& crew, const CarDefs& defs, cons
             case 8: less = 6; break;
             default: break;
         }
-        const size_t decals = car.def != nullptr ? car.def->parts[kDecal].parts.size() : 0;
+        size_t decals = car.def != nullptr ? car.def->parts[kDecal].parts.size() : 0;
+#if defined(OJ_MACOS) || defined(OJ_LINUX)
+        if (car.def != nullptr) decals = mods::decalCount(*car.def, decals);
+#endif
         car.decalColour = 0;
-        car.body[8] = static_cast<uint8_t>(decals - static_cast<size_t>(less));
+        // Add-on cars need not supply the retail eight crew liveries.
+        car.body[8] = decals >= 8 ? static_cast<uint8_t>(decals - static_cast<size_t>(less)) : 0x7F;
     }
 }
 
@@ -990,7 +997,7 @@ void sessionResults(Career& career, CareerContext& context, const RaceSetup& rac
             const int id = car->def->id;
             career.meeting.add(0x1C, static_cast<float>(event.prototypeSupplier),
                                static_cast<float>(event.prototypeKind), static_cast<float>(id));
-            if (id >= 0 && id < 53) p.partsA[static_cast<size_t>(id)][static_cast<size_t>(event.prototypeKind)] = 3;
+            if (id >= 0 && id < int(CareerProfile::kModelCapacity)) p.performance(static_cast<size_t>(id))[static_cast<size_t>(event.prototypeKind)] = 3;
         }
     }
 
@@ -1019,7 +1026,7 @@ void sessionResults(Career& career, CareerContext& context, const RaceSetup& rac
     const int32_t many = p.respectLevel > 10 ? 10 : 4;
     const auto unlock = [&](const Car& car, int changes) {
         const int id = car.def != nullptr ? car.def->id : -1;
-        if (id < 0 || id >= 53) return;
+        if (id < 0 || id >= int(CareerProfile::kModelCapacity)) return;
         if (unlockSteps(p, static_cast<size_t>(id), changes, context.tables)) {
             career.meeting.add(0x1D, static_cast<float>(id), 0.0f, 0.0f);
         }
@@ -1218,18 +1225,18 @@ void pinkSlipCar(Career& career, const PartCatalogue& catalogue) {
     const Car& won = career.garage.back();
     if (won.def == nullptr) return;
     const auto model = static_cast<size_t>(won.def->id);
-    if (model >= career.profile.partsA.size()) return;
+    if (model >= CareerProfile::kModelCapacity) return;
     for (size_t kind = 0; kind < kModKinds; ++kind) {
         const auto part = static_cast<int8_t>(won.mods[kind]);
         const std::vector<CarPart>& parts = catalogue.lists[kind].parts;
         if (part < 0 || parts.empty()) continue;
         const CarPart& p = static_cast<size_t>(part) < parts.size() ? parts[static_cast<size_t>(part)] : parts[0];
-        int8_t& known = career.profile.partsA[model][kind];
+        int8_t& known = career.profile.performance(model)[kind];
         if (known < p.level) known = static_cast<int8_t>(p.level);
     }
     for (size_t category = 0; category < 10; ++category) {
         const auto part = static_cast<int8_t>(won.body[category]);
-        int8_t& known = career.profile.partsB[model][category];
+        int8_t& known = career.profile.bodyParts(model)[category];
         if (part >= 0 && known < part) known = category == 3 ? 100 : part;
     }
 }
@@ -1288,13 +1295,13 @@ void onlineSettle(Career& career, bool won, bool tie, const PartCatalogue& catal
             career.garage.push_back(std::move(car));
             const Car& taken = career.garage.back();
             value = carValue(taken, catalogue);  // 0x0048CFE0, for the statistics
-            const auto model = taken.def != nullptr ? static_cast<size_t>(taken.def->id) : career.profile.partsA.size();
-            for (size_t kind = 0; kind < kModKinds && model < career.profile.partsA.size(); ++kind) {
+            const auto model = taken.def != nullptr ? static_cast<size_t>(taken.def->id) : CareerProfile::kModelCapacity;
+            for (size_t kind = 0; kind < kModKinds && model < CareerProfile::kModelCapacity; ++kind) {
                 const auto part = static_cast<int8_t>(taken.mods[kind]);
                 const std::vector<CarPart>& parts = catalogue.lists[kind].parts;
                 if (part < 0 || parts.empty()) continue;
                 const CarPart& p = static_cast<size_t>(part) < parts.size() ? parts[static_cast<size_t>(part)] : parts[0];
-                int8_t& known = career.profile.partsA[model][kind];
+                int8_t& known = career.profile.performance(model)[kind];
                 if (known < p.level) known = static_cast<int8_t>(p.level);
             }
         }

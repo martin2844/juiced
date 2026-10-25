@@ -1,0 +1,18 @@
+{
+  "archive": "Juiced_Ultimate_Wheels_Mod_Eagle.rar",
+  "sha256": "68d76ca50b6c59cec4791be069e59cc34a92f376e98ff44b7f6806b6ba31c615",
+  "original_wheels": 74,
+  "added_wheels": 128,
+  "total_wheels": 202,
+  "extra_colours": 40,
+  "assets": 1766,
+  "asset_bytes": 465778248,
+  "materials_checked": 375,
+  "missing_dependencies": [],
+  "original_indices_preserved": true,
+  "stock_wheels_preserved": true,
+  "tyres_changed": false,
+  "native_ui_preserved": true,
+  "normalized_colour_parts": 2462,
+  "normalized_secondary_uv_parts": 4262
+}

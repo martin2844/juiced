@@ -1,0 +1,4 @@
+Material Program = Shiny Opaque
+Side Fresnel = 0.53
+Front Fresnel = 0.30
+Texture = AddWH_AdvRac_A.ptd

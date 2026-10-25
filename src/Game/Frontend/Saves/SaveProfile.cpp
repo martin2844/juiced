@@ -112,6 +112,7 @@ void SaveProfile::update(SaveHost& host) {
             data->newCareer(gameRandom(), crewName8(data->profileName));
             log::info("frontend: the career took {} rand() values in all", gameRandom().draws());
             data->arcade.load(data->arcadeRaces, data->tables);
+            data->applyModUnlocks();
             m_career = 0;
         }
     }

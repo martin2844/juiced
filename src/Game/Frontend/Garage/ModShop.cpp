@@ -101,8 +101,8 @@ void ModShop::enter(GarageHost& host, ui::Screen& s) {
     if (car == nullptr) return;
     const PartCatalogue& catalogue = data->catalogue;
     const auto& lists = catalogue.lists;
-    const auto model = static_cast<size_t>(std::clamp(car->def != nullptr ? car->def->id : 0, 0, 52));
-    const std::array<int8_t, 10>& unlocked = data->career->profile.partsA[model];
+    const auto model = static_cast<size_t>(std::clamp(car->def != nullptr ? car->def->id : 0, 0, int(CareerProfile::kModelCapacity - 1)));
+    const std::array<int8_t, 10>& unlocked = data->career->profile.performance(model);
     const CarDynamics* dynamics = car->def != nullptr ? data->dynamics->of(*car->def) : nullptr;
     const auto rate = [&] { return rateCar(*car, dynamics, catalogue); };
 
@@ -365,8 +365,8 @@ void ModShop::update(GarageHost& host, ui::Screen& s, uint32_t event) {
         }
     }
     if (s.menuSize("menu") == 0) {
-        const auto model = static_cast<size_t>(std::clamp(car->def != nullptr ? car->def->id : 0, 0, 52));
-        const std::array<int8_t, 10>& unlocked = p.partsA[model];
+        const auto model = static_cast<size_t>(std::clamp(car->def != nullptr ? car->def->id : 0, 0, int(CareerProfile::kModelCapacity - 1)));
+        const std::array<int8_t, 10>& unlocked = p.performance(model);
         const bool maxed = std::all_of(unlocked.begin(), unlocked.end(), [](int8_t level) { return level == 3; });
         host.message(MessageType::Continue,
                      texts.at(kTextNoUpgrades) + L"\n" + texts.at(kTextNoUpgrades + (maxed ? 2 : 1)), false, nullptr);

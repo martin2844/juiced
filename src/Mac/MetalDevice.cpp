@@ -1,3 +1,6 @@
+#include <mutex>
+#include <thread>
+#include <chrono>
 #include "Mac/MetalDevice.h"
 #include "Core/Base/Log.h"
 #include "Core/Formats/Ddt.h"
@@ -123,6 +126,11 @@ std::array<float, 16> multiply(const std::array<float, 16> &a, const std::array<
 }
 } // namespace
 struct MetalDevice::Impl {
+    // Asset jobs share resource maps with rendering, but SDL command buffers stay on their creating thread.
+    std::recursive_mutex deviceLock;
+    const std::thread::id deviceThread = std::this_thread::get_id();
+    bool inFrame = false;
+    bool onDeviceThread() const { return std::this_thread::get_id() == deviceThread; }
     SDL_Window *window = nullptr;
     SDL_GPUDevice *gpu = nullptr;
     oj::mac::Registers vertexRegisters, pixelRegisters;
@@ -234,7 +242,7 @@ struct MetalDevice::Impl {
     }
     void uploadTexture(Texture &t, const uint8_t *bytes, size_t size, uint32_t level, uint32_t layer, uint32_t tw,
                        uint32_t th) {
-        endPass();
+        if (onDeviceThread()) endPass();
         SDL_GPUTransferBufferCreateInfo ti{};
         ti.usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD;
         ti.size = (uint32_t)size;
@@ -244,7 +252,9 @@ struct MetalDevice::Impl {
         check(map);
         memcpy(map, bytes, size);
         SDL_UnmapGPUTransferBuffer(gpu, transfer);
-        auto cp = SDL_BeginGPUCopyPass(commands());
+        auto upload = onDeviceThread() ? commands() : SDL_AcquireGPUCommandBuffer(gpu);
+        check(upload);
+        auto cp = SDL_BeginGPUCopyPass(upload);
         SDL_GPUTextureTransferInfo src{};
         src.transfer_buffer = transfer;
         SDL_GPUTextureRegion dst{};
@@ -256,6 +266,7 @@ struct MetalDevice::Impl {
         dst.d = 1;
         SDL_UploadToGPUTexture(cp, &src, &dst, false);
         SDL_EndGPUCopyPass(cp);
+        if (!onDeviceThread()) check(SDL_SubmitGPUCommandBuffer(upload));
         SDL_ReleaseGPUTransferBuffer(gpu, transfer);
     }
     uint32_t makeBuffer(const void *bytes, uint32_t size, bool index) {
@@ -274,7 +285,7 @@ struct MetalDevice::Impl {
     void uploadBuffer(Buffer &b, const void *bytes, uint32_t size) {
         if (!size)
             return;
-        endPass();
+        if (onDeviceThread()) endPass();
         SDL_GPUTransferBufferCreateInfo ci{};
         ci.usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD;
         ci.size = size;
@@ -284,11 +295,14 @@ struct MetalDevice::Impl {
         check(m);
         memcpy(m, bytes, size);
         SDL_UnmapGPUTransferBuffer(gpu, t);
-        auto cp = SDL_BeginGPUCopyPass(commands());
+        auto upload = onDeviceThread() ? commands() : SDL_AcquireGPUCommandBuffer(gpu);
+        check(upload);
+        auto cp = SDL_BeginGPUCopyPass(upload);
         SDL_GPUTransferBufferLocation src{t, 0};
         SDL_GPUBufferRegion dst{b.gpu, 0, size};
         SDL_UploadToGPUBuffer(cp, &src, &dst, true);
         SDL_EndGPUCopyPass(cp);
+        if (!onDeviceThread()) check(SDL_SubmitGPUCommandBuffer(upload));
         SDL_ReleaseGPUTransferBuffer(gpu, t);
     }
     SDL_GPUSampler *sampler(uint32_t slot) {
@@ -613,12 +627,15 @@ void MetalDevice::setMaterialClass(uint32_t id) {
     p->materialClass = id;
 }
 bool MetalDevice::beginFrame() {
+    p->deviceLock.lock();
     p->target = 0;
     p->face = 0;
     int w = 0, h = 0;
     SDL_GetWindowSizeInPixels(p->window, &w, &h);
-    if (w <= 0 || h <= 0)
+    if (w <= 0 || h <= 0) {
+        p->deviceLock.unlock();
         return false;
+    }
     p->w = w;
     p->h = h;
     bool resized = p->depthW != p->w || p->depthH != p->h;
@@ -645,6 +662,7 @@ bool MetalDevice::beginFrame() {
     p->viewport = {0, 0, p->w, p->h, 0, 1};
     // Keep prior colour for menu fades; new backing textures start black.
     p->beginPass(resized ? 7 : 6, {0, 0, 0, 1});
+    p->inFrame = true;
     return true;
 }
 void MetalDevice::endFrame() {
@@ -665,6 +683,15 @@ void MetalDevice::endFrame() {
     }
     p->flush();
     p->swap = nullptr;
+    p->inFrame = false;
+    p->deviceLock.unlock();
+}
+void MetalDevice::letLoadingRun() {
+    if (!p->onDeviceThread() || !p->inFrame) return;
+    p->endPass();
+    p->deviceLock.unlock();
+    std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    p->deviceLock.lock();
 }
 void MetalDevice::resize(uint32_t, uint32_t) {}
 uint32_t MetalDevice::width() const {
@@ -705,6 +732,7 @@ bool MetalDevice::textureFormatOk(uint32_t, uint32_t format) const {
            format == 0x35545844;
 }
 TextureId MetalDevice::createTexture(const TextureData &d) {
+    const std::lock_guard lock(p->deviceLock);
     if (!d.width || !d.height || !d.pixels)
         return 0;
     Impl::Texture t;
@@ -752,6 +780,7 @@ TextureId MetalDevice::createTexture(const TextureData &d) {
     return id;
 }
 TextureId MetalDevice::createCubeTexture(const TextureData &d) {
+    const std::lock_guard lock(p->deviceLock);
     if (!d.width || d.width != d.height || !d.pixels)
         return 0;
     Impl::Texture t;
@@ -790,8 +819,9 @@ TextureId MetalDevice::createCubeTexture(const TextureData &d) {
     return id;
 }
 void MetalDevice::destroyTexture(TextureId id) {
+    const std::lock_guard lock(p->deviceLock);
     if (auto it = p->textures.find(id); it != p->textures.end()) {
-        p->endPass();
+        if (p->onDeviceThread()) p->endPass();
         SDL_ReleaseGPUTexture(p->gpu, it->second.gpu);
         if (it->second.depth)
             SDL_ReleaseGPUTexture(p->gpu, it->second.depth);
@@ -799,6 +829,7 @@ void MetalDevice::destroyTexture(TextureId id) {
     }
 }
 TextureId MetalDevice::createRenderTarget(uint32_t w, uint32_t h, bool cube) {
+    const std::lock_guard lock(p->deviceLock);
     Impl::Texture t;
     t.w = w;
     t.h = h;
@@ -834,6 +865,7 @@ uint32_t MetalDevice::resets() const {
     return 0;
 }
 bool MetalDevice::readTarget(TextureId id, std::vector<uint8_t> &pixels, uint32_t *pitch) {
+    const std::lock_guard lock(p->deviceLock);
     auto tex = id ? p->textures.at(id).gpu : p->backColor;
     if (!tex)
         return false;
@@ -874,6 +906,7 @@ bool MetalDevice::readTarget(TextureId id, std::vector<uint8_t> &pixels, uint32_
     return true;
 }
 TextureId MetalDevice::createDynamicTexture(uint32_t w, uint32_t h, uint32_t format) {
+    const std::lock_guard lock(p->deviceLock);
     if (format != 21 && format != 22)
         return 0;
     std::vector<uint8_t> pixels(w * h * 4);
@@ -882,6 +915,7 @@ TextureId MetalDevice::createDynamicTexture(uint32_t w, uint32_t h, uint32_t for
     return id;
 }
 bool MetalDevice::lockTexture(TextureId id, void **bits, int32_t *pitch) {
+    const std::lock_guard lock(p->deviceLock);
     auto it = p->textures.find(id);
     if (it == p->textures.end())
         return false;
@@ -892,10 +926,12 @@ bool MetalDevice::lockTexture(TextureId id, void **bits, int32_t *pitch) {
     return true;
 }
 void MetalDevice::unlockTexture(TextureId id) {
+    const std::lock_guard lock(p->deviceLock);
     auto &t = p->textures.at(id);
     p->uploadTexture(t, t.pixels.data(), t.pixels.size(), 0, 0, t.w, t.h);
 }
 ShaderId MetalDevice::createVertexShader(const uint32_t *code) {
+    const std::lock_guard lock(p->deviceLock);
     try {
         auto shader = std::make_unique<oj::mac::Shader>(p->gpu, code);
         auto id = p->next++;
@@ -910,6 +946,7 @@ ShaderId MetalDevice::createPixelShader(const uint32_t *code) {
     return createVertexShader(code);
 }
 DeclarationId MetalDevice::createDeclaration(const VertexElement *es) {
+    const std::lock_guard lock(p->deviceLock);
     std::vector<VertexElement> v;
     for (int i = 0; i < 64 && es[i].stream != 0xff && es[i].type != 17; i++)
         v.push_back(es[i]);
@@ -918,18 +955,22 @@ DeclarationId MetalDevice::createDeclaration(const VertexElement *es) {
     return id;
 }
 BufferId MetalDevice::createVertexBuffer(const void *d, uint32_t n) {
+    const std::lock_guard lock(p->deviceLock);
     return p->makeBuffer(d, n, false);
 }
 BufferId MetalDevice::createIndexBuffer(const uint16_t *d, uint32_t n) {
+    const std::lock_guard lock(p->deviceLock);
     return p->makeBuffer(d, n * 2, true);
 }
 void MetalDevice::destroyBuffer(BufferId id) {
+    const std::lock_guard lock(p->deviceLock);
     if (auto it = p->buffers.find(id); it != p->buffers.end()) {
         SDL_ReleaseGPUBuffer(p->gpu, it->second.gpu);
         p->buffers.erase(it);
     }
 }
 void MetalDevice::updateVertexBuffer(BufferId id, const void *d, uint32_t n) {
+    const std::lock_guard lock(p->deviceLock);
     auto &b = p->buffers.at(id);
     if (n > b.bytes.size())
         throw std::runtime_error("Vertex update exceeds allocation");
@@ -1139,6 +1180,7 @@ void MetalDevice::drawUp(uint32_t type, uint32_t count, const void *data, uint32
     p->fixedDraw(out.data(), out.size(), type, matrix, screen);
 }
 bool MetalDevice::capture(const std::wstring &path) {
+    const std::lock_guard lock(p->deviceLock);
     std::vector<uint8_t> pixels;
     uint32_t pitch;
     if (!readTarget(0, pixels, &pitch))

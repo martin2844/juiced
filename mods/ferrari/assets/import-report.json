@@ -1,0 +1,127 @@
+{
+  "car": "Ferrari 458 Spider",
+  "model": "FERRARI_458",
+  "id": 53,
+  "wheels": {
+    "WHEEL_RR": [
+      82.4389457702637,
+      35.802298784255996,
+      -149.632227420807
+    ],
+    "WHEEL_RL": [
+      -82.1343064308167,
+      35.8023583889008,
+      -149.499452114105
+    ],
+    "WHEEL_FL": [
+      -84.25614237785341,
+      35.8022838830948,
+      115.531802177429
+    ],
+    "WHEEL_FR": [
+      82.8689932823181,
+      36.0654979944229,
+      115.44589996337899
+    ]
+  },
+  "meshes": {
+    "f458_CHASS": 130404,
+    "f458_FBUMP": 13711,
+    "f458_RBUMP": 12140,
+    "f458_BONNET": 804,
+    "f458_SSKIRT_L": 888,
+    "f458_SSKIRT_R": 870,
+    "f458_BRKLIGHT": 7130,
+    "f458_LIGHTSON": 636,
+    "f458_wheel": 12666,
+    "f458_wheel_blur": 12666,
+    "f458_spoiler": 44,
+    "f458_sport_FBUMP": 13755,
+    "f458_sport_RBUMP": 12184,
+    "f458_sport_BONNET": 804,
+    "f458_sport_SSKIRT_L": 932,
+    "f458_sport_SSKIRT_R": 914,
+    "f458_sport_SPOILER": 176,
+    "DECAL_F458_STRIPES": 15845,
+    "DECAL_F458_SIDES": 16646,
+    "DECAL_F458_CUSTOMLOGO": 2622,
+    "f458_sponsors": 695
+  },
+  "source_sha256": "cafe3f48da6797aa9bde75ca768bc5b57db366575fd233e90df186ae988a876e",
+  "audio": {
+    "source_sha256": "d98951caaa3de712e59b13d4d1eb0472795a3cbfbf9d990b28711cd8c93891da",
+    "banks": {
+      "f458/idle": {
+        "frames": 18939,
+        "peak": 11979,
+        "seam_delta": 0
+      },
+      "f458/low_on": {
+        "frames": 7503,
+        "peak": 18749,
+        "seam_delta": 0
+      },
+      "f458/low_off": {
+        "frames": 7503,
+        "peak": 13148,
+        "seam_delta": 0
+      },
+      "f458/mid_on": {
+        "frames": 5616,
+        "peak": 16740,
+        "seam_delta": 0
+      },
+      "f458/mid_off": {
+        "frames": 5616,
+        "peak": 11074,
+        "seam_delta": 0
+      },
+      "f458/high_on": {
+        "frames": 5508,
+        "peak": 22388,
+        "seam_delta": 0
+      },
+      "f458/high_off": {
+        "frames": 5508,
+        "peak": 15449,
+        "seam_delta": 0
+      },
+      "f458b/idle": {
+        "frames": 18939,
+        "peak": 10505,
+        "seam_delta": 0
+      },
+      "f458b/low_on": {
+        "frames": 7503,
+        "peak": 14087,
+        "seam_delta": 0
+      },
+      "f458b/low_off": {
+        "frames": 7503,
+        "peak": 9871,
+        "seam_delta": 0
+      },
+      "f458b/mid_on": {
+        "frames": 5616,
+        "peak": 13210,
+        "seam_delta": 0
+      },
+      "f458b/mid_off": {
+        "frames": 5616,
+        "peak": 8931,
+        "seam_delta": 0
+      },
+      "f458b/high_on": {
+        "frames": 5508,
+        "peak": 15337,
+        "seam_delta": 0
+      },
+      "f458b/high_off": {
+        "frames": 5508,
+        "peak": 10671,
+        "seam_delta": 0
+      }
+    },
+    "license": "CC-BY-SA-3.0"
+  }
+}

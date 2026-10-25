@@ -31,6 +31,7 @@ public:
     virtual void setParam(uint32_t index, const void* value) = 0;
     // vtable + 0x04
     virtual bool setTexture(uint32_t slot, const GameTexture* texture) = 0;
+    virtual const GameTexture* texture(uint32_t) const { return nullptr; }
     // vtable + 0x10: once per class and pass.
     virtual void setup(uint32_t pass) { (void)pass; }
     // vtable + 0x14: binds the textures, begins the program's pass, sets the constants.

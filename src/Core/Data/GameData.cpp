@@ -8,6 +8,7 @@
 #include "Core/Base/Script.h"
 #include "Core/Base/Text.h"
 
+#include <algorithm>
 #include <optional>
 #include <string_view>
 #include <utility>
@@ -28,6 +29,23 @@ GameData::GameData(std::filesystem::path gameFolder) : m_files(std::move(gameFol
 
 bool GameData::load(CrtRandom& random, std::string* error) {
     tables = ExeTables::stock();  // built in: no Juiced.exe is read
+    if (const auto mods = scriptText(m_files, "mod_cars.txt")) {
+        for (const auto& line : parseScript(*mods)) {
+            if (_stricmp(line.keyword.c_str(), "Car") != 0) continue;
+            const auto name = line.word(0);
+            const int id = line.integer(1);
+            if (id != static_cast<int>(tables.carModels.size()) || id >= int(CareerProfile::kModelCapacity) ||
+                name.empty() || std::any_of(tables.carModels.begin(), tables.carModels.end(), [&](const auto& existing) {
+                    return _stricmp(existing.c_str(), name.c_str()) == 0;
+                })) {
+                if (error) *error = "invalid or duplicate added-car ID in mod_cars.txt";
+                return false;
+            }
+            tables.carModels.push_back(name);
+            tables.dealerThresholds.push_back(line.integer(2));
+            tables.modelClasses.push_back(line.integer(3));
+        }
+    }
     const auto cardefs = scriptText(m_files, "cardefs.txt");
     if (!cardefs) {
         if (error) *error = "no scripts\\cardefs.txt";
@@ -97,8 +115,31 @@ bool GameData::load(CrtRandom& random, std::string* error) {
         }
     }
     shuffleMusic(save::Settings::defaults(0), random);
+    applyModUnlocks();
     m_loaded = true;
     return true;
+}
+
+void GameData::applyModUnlocks() {
+    const auto text = scriptText(m_files, "mod_unlocks.txt");
+    if (!text) return;
+    for (const ScriptLine& line : parseScript(*text)) {
+        if (_stricmp(line.keyword.c_str(), "Car") != 0) continue;
+        const int id = tables.carModelId(line.word(0));
+        const CarDef* def = defs.byId(id);
+        // carModelId preserves the retail fallback to RX-7 for unknown names.
+        if (id <= 0 || def == nullptr || _stricmp(def->name.c_str(), line.word(0).c_str()) != 0) continue;
+        arcade.openCar(id);
+        for (size_t g = 0; g + 1 < arcadeGroups.ids.size(); ++g) {
+            const auto& group = arcadeGroups.ids[g];
+            for (size_t i = 0; i < group.size() && group[i] != 0; ++i) {
+                if (group[i] == id) {
+                    arcadeGroups.group = static_cast<int32_t>(g);
+                    arcadeGroups.index = static_cast<int32_t>(i);
+                }
+            }
+        }
+    }
 }
 
 void GameData::newCareer(CrtRandom& random, const std::string& driverName) {

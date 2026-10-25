@@ -1,0 +1,13 @@
+Ferrari 458 Italia model by vicent091036
+Original model: https://sketchfab.com/models/57bf6cc56931426e87494f554df1dab6
+Source distribution: https://github.com/mrdoob/three.js/blob/r180/examples/models/gltf/ferrari.glb
+Attribution in example: https://github.com/mrdoob/three.js/blob/r180/examples/webgl_materials_car.html
+Licence provenance: https://github.com/mrdoob/three.js/issues/23089 (gltf/ferrari.glb: CC-BY 4.0)
+Creative Commons Attribution 4.0: https://creativecommons.org/licenses/by/4.0/
+The original Sketchfab listing is no longer available; provenance is retained in Three.js.
+
+Juiced adaptation: simplified geometry, centimetre/handedness conversion, native materials,
+damage-panel separation, collision cage, authored sport splitter/diffuser/hood insert/skirts/wing.
+These adapted mesh assets remain under CC BY 4.0. No endorsement by the model author or Ferrari.
+Retail game scripts are generated locally from the user's own installation and are not included
+in the source distribution. The importer code has the repository's code licence.

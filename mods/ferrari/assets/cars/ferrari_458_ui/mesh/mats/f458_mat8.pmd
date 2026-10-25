@@ -1,0 +1,4 @@
+Material Program = Standard Opaque
+Double-sided = FALSE
+Z-Bias = 0
+Opaque Texture = f458_mat8.ptd

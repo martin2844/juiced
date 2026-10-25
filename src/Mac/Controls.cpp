@@ -3,6 +3,8 @@
 #endif
 #include "Mac/Controls.h"
 #include "Core/Base/Log.h"
+#include "Mods/Packages.h"
+#include "Mods/Runtime.h"
 #include <algorithm>
 #include <cstdlib>
 #include <fstream>
@@ -106,7 +108,7 @@ const BindingAction actions[] = {
     {"next_car", "Next car (spectator)", "Crew commands", "NEXTCAR", false, "NEXT"}};
 } // namespace
 void requestControlsEditor() {
-    requested = true;
+    requested = !mods::packages::available() || mods::runtime::feature("controls");
 }
 bool takeControlsRequest() {
     return std::exchange(requested, false);
@@ -146,7 +148,13 @@ uint8_t gameScanCode(SDL_Scancode scan) {
 Bindings defaultBindings() {
     Bindings result;
     for (const auto &action : actions)
-        result.push_back(std::string("DIKEYBOARD_") + action.defaultKey);
+        result.push_back(mods::runtime::text("control_default", {std::string(action.id)},
+                                             std::string("DIKEYBOARD_") + action.defaultKey));
+    if (!validBindings(result)) {
+        result.clear();
+        for (const auto &action : actions)
+            result.push_back(std::string("DIKEYBOARD_") + action.defaultKey);
+    }
     return result;
 }
 bool validBindings(const Bindings &values) {

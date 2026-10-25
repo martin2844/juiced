@@ -17,7 +17,7 @@ namespace oj::frontend {
 
 // What colourchoose paints (the garage's paint mode): the base colour, the metallic or the pearl colour, the sponsor
 // decals' colour (from sponsordecalmenu).
-enum class PaintMode : int32_t { Base = 0, Metallic = 1, Pearl = 2, SponsorDecals = 3 };
+enum class PaintMode : int32_t { Base = 0, Metallic = 1, Pearl = 2, SponsorDecals = 3, Neon = 4 };
 
 // The garage's texts ([0x00767D58]): the price shown and the elements of the price, the money and the price's box,
 // the class, its meter and the rating; the car shown is a prototype ([0x0075ED0C]).

@@ -1,3 +1,6 @@
+#if defined(OJ_MACOS) || defined(OJ_LINUX)
+#include "Mods/Creative.h"
+#endif
 #include "Core/Cars/CarCollection.h"
 
 #include "Core/Base/Script.h"
@@ -65,7 +68,16 @@ void autoModify(Car& car, bool prototype, int level, CarMaking& making) {
             car.body[c] = static_cast<uint8_t>(next(making.random) % 1 + 1);
             continue;
         }
-        const auto count = static_cast<uint32_t>(car.def != nullptr ? car.def->parts[c].parts.size() : 0);
+        auto count = static_cast<uint32_t>(car.def != nullptr ? car.def->parts[c].parts.size() : 0);
+#if defined(OJ_MACOS) || defined(OJ_LINUX)
+        if (c == kDecal && car.def != nullptr) {
+            count = static_cast<uint32_t>(mods::decalCount(*car.def, count));
+            // Small add-on catalogues may already include a final user-image slot.
+            // AI/auto-mod must not select the active player's personal artwork.
+            const int custom = mods::logoIndex(car.modelName());
+            if (mods::enabled() && count <= 9 && custom >= 0 && custom == int(count) - 1) --count;
+        }
+#endif
         const uint32_t choices = count > 1 ? count - 1 : count;
         if (choices == 0) {
             continue;

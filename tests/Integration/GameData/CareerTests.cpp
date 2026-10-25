@@ -377,3 +377,49 @@ OJ_INTEGRATION_TEST(Career, PhoneEventsClass) {
           "the pink slip race: the class of the player's best car (" +
               std::to_string(pinks != nullptr ? pinks->carClass + 1 : 0) + ")");
 }
+
+// The phone's events (0x004A2DC0 the host rights race, 0x004A2F80 the pink slip race) take the class of the player's
+// best car: 0x004A9A70 on the career's first crew, the player's, whose list is the garage (not the calling crew's,
+// whose list is every opponent's car: class 1 for a new career's class 8 garage).
+OJ_INTEGRATION_TEST(Career, PhoneEventsClass) {
+    const oj::test::SharedGameData& shared = oj::test::sharedGameData();
+    if (!shared.carDefsRead) return;
+    const oj::GameFiles& game = oj::test::gameFiles();
+    if (!game.valid()) return;
+    auto career = std::make_unique<oj::Career>();
+    oj::CrtRandom random;
+    random.seed(42);
+    int counter = 1;
+    int currentMate = 0;
+    oj::CarMaking making{shared.defs, shared.catalogue, random, counter};
+    oj::CareerContext context{shared.tables, making, *shared.dynamics, game, currentMate};
+    oj::newCareer(*career, context, "Tester");
+    oj::Career& c = *career;
+    const auto bestClass = [](const std::vector<oj::Car>& cars) {
+        float best = 0.0f;
+        for (const oj::Car& car : cars) best = std::max(best, oj::Car::asFloat(car.rating));
+        return oj::ratingClass(best);
+    };
+    const int garageClass = bestClass(c.garage);
+    const int opponentsClass = bestClass(c.opponentCars);
+    const auto made = [&](int crew, bool host) -> const oj::CalendarEvent* {
+        int day = 0;
+        int month = 0;
+        oj::nextFreeDay(c.calendar, day, month);
+        oj::phoneEvent(c, context, crew, month, day, host);
+        for (const oj::CalendarEvent& e : c.calendar.events) {
+            if (e.used != 0 && e.month == month && e.dayOfMonth == day) return &e;
+        }
+        return nullptr;
+    };
+    const oj::CalendarEvent* hosted = made(1, true);
+    const oj::CalendarEvent* pinks = made(2, false);
+    check(garageClass != opponentsClass, "a new career: the garage's best class (" + std::to_string(garageClass + 1) +
+                                             ") is not the opponents' (" + std::to_string(opponentsClass + 1) + ")");
+    check(hosted != nullptr && hosted->hostedByPlayer == 1 && hosted->crew == 1 && hosted->carClass == garageClass,
+          "the host rights race: the class of the player's best car (" +
+              std::to_string(hosted != nullptr ? hosted->carClass + 1 : 0) + ")");
+    check(pinks != nullptr && pinks->pinkSlip == 1 && pinks->crew == 2 && pinks->carClass == garageClass,
+          "the pink slip race: the class of the player's best car (" +
+              std::to_string(pinks != nullptr ? pinks->carClass + 1 : 0) + ")");
+}

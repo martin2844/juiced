@@ -1,3 +1,6 @@
+#if defined(OJ_MACOS) || defined(OJ_LINUX)
+#include "Mods/Creative.h"
+#endif
 // The styling windows: stylingmenu, the body parts (modmenu), the wheels, the decals and the
 // sponsors' decals.
 
@@ -210,12 +213,12 @@ void ModMenu::update(GarageHost& host, ui::Screen& s, uint32_t event) {
     Garage& garage = host.garage();
     Car* car = garage.car(host);
     if (car == nullptr || car->def == nullptr || data == nullptr || !data->career) return;
-    const auto model = static_cast<size_t>(std::clamp(car->def->id, 0, 52));
+    const auto model = static_cast<size_t>(std::clamp(car->def->id, 0, int(CareerProfile::kModelCapacity - 1)));
     // The fixed build's wing mirrors (7) open by their own steps (mirrorLevel): the unlock schedule never raises
     // theirs.
     const auto category = static_cast<size_t>(std::clamp(garage.styleCategory, 0, 9));
     const int level = garage.styleCategory == 7 ? mirrorLevel(data->career->profile, model)
-                                                : data->career->profile.partsB[model][category];
+                                                : data->career->profile.bodyParts(model)[category];
     float value = -1.0f;
     bool hasItem = false;
     if (s.find("Menu") >= 0 && s.menuSize("Menu") != 0) {
@@ -229,6 +232,9 @@ void ModMenu::update(GarageHost& host, ui::Screen& s, uint32_t event) {
         }
         hasItem = true;
         value = s.menuItemValue("Menu", item);
+#if defined(OJ_MACOS) || defined(OJ_LINUX)
+        if(event==input::kSelect && mods::feature("logo") && int(value)==mods::logoIndex(car->modelName()) && !mods::hasImage(false)) {mods::requestMenu();return;}
+#endif
         if (static_cast<int32_t>(item) != m_shown) {
             garage.fitBodyPart(*car, garage.styleCategory, x87::chop(value));
             int32_t price = 0;
@@ -419,6 +425,11 @@ void DecalMenu::enter(GarageHost& host, ui::Screen& s) {
             } else {
                 s.addMenuItem("Menu", L"", static_cast<float>(i), picture, picture);
             }
+#if defined(OJ_MACOS) || defined(OJ_LINUX)
+            if(mods::feature("logo") && int(i)==mods::logoIndex(car->modelName())) {
+                s.setMenuItemText("Menu",s.menuSize("Menu")-1,L"CUSTOM LOGO");
+            }
+#endif
             s.setHidden("Menu", false);
         }
         if (list.allowNone) {

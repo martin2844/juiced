@@ -1,3 +1,6 @@
+#if defined(OJ_MACOS) || defined(OJ_LINUX)
+#include "Mods/Creative.h"
+#endif
 // The race's scene each frame: the lights on the cars, the textures laid on the route, the wheels, the atmosphere's
 // zones, the exhausts and the weather.
 
@@ -124,6 +127,10 @@ void TrackView::projectorsFrame(RaceSlot& s, oj::CrtRandom& random) {
             tilt = 1.0f;
         }
         colour = record.neon;
+#if defined(OJ_MACOS) || defined(OJ_LINUX)
+        colour=oj::mods::neonColour(record,oj::mods::seconds());
+        if(s.shadow){auto name=oj::mods::neonTexture(record);if(oj::mods::enabled())s.shadow->setTexture(true,scene->engine().texture(name.empty()?"gen_neon":name,"textures"),false,false);}
+#endif
         auto times = [&colour](float f) {
             // Each channel to the nearest whole number (0x005CA370).
             for (uint32_t shift : {16u, 8u, 0u}) {

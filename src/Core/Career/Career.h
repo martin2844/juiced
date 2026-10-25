@@ -71,8 +71,25 @@ struct CareerProfile {
     float betShare = 0.0f;                  // +0x62C: the money bet on a race as a percentage of the money (0x004BC2E0)
     int32_t outOfRace = 0;                  // +0x630: the race quit, or the player's crew not among the first five
     int32_t showoffTutorialShown = 0;       // +0x634
+    static constexpr size_t kModelCapacity = 60;
+    struct ModProgress {
+        std::array<int8_t, 10> performance{};
+        std::array<int8_t, 10> body{};
+        int8_t paint = -1;
+        uint8_t step = 0;
+    };
+    std::array<ModProgress, kModelCapacity - 53> modProgress{};
+    uint32_t modCount = 0;
+    auto& performance(size_t id) { return id < 53 ? partsA.at(id) : modProgress.at(id - 53).performance; }
+    const auto& performance(size_t id) const { return id < 53 ? partsA.at(id) : modProgress.at(id - 53).performance; }
+    auto& bodyParts(size_t id) { return id < 53 ? partsB.at(id) : modProgress.at(id - 53).body; }
+    const auto& bodyParts(size_t id) const { return id < 53 ? partsB.at(id) : modProgress.at(id - 53).body; }
+    auto& paintLevel(size_t id) { return id < 53 ? carLevel.at(id) : modProgress.at(id - 53).paint; }
+    const auto& paintLevel(size_t id) const { return id < 53 ? carLevel.at(id) : modProgress.at(id - 53).paint; }
+    auto& unlockIndex(size_t id) { return id < 53 ? unlockStep.at(id) : modProgress.at(id - 53).step; }
 };
-static_assert(sizeof(CareerProfile) == 0x638);
+static_assert(offsetof(CareerProfile, modProgress) == 0x638);
+static_assert(sizeof(CareerProfile::ModProgress) == 22);
 
 // One member of a crew as CMSCrews.txt describes it (0x18 bytes).
 struct CrewMemberDef {

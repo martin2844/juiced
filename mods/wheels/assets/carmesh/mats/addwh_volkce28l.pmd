@@ -1,0 +1,7 @@
+Material Program = Coloured Spec Opaque
+Colour = 224 155 51
+Specular Colour = 255 195 22
+Specular Highlight = 255.000000
+Shininess = 75.000000
+Z-Bias = 0.2
+Texture = AddWH_VolkCE28_A.ddt

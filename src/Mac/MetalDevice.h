@@ -11,6 +11,7 @@ class MetalDevice final : public IRenderDevice {
     bool beginFrame() override;
     void setMaterialClass(uint32_t id) override;
     void endFrame() override;
+    void letLoadingRun() override;
     void resize(uint32_t width, uint32_t height) override;
     void drawDebugTriangles(const DebugVertex *vertices, uint32_t count) override;
     uint32_t width() const override;

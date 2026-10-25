@@ -1,6 +1,12 @@
 // The paint windows: colourmenu, colourchoose, colourfocus and wheelcolourmenu.
 
 #include "Game/Frontend/Garage/Customise/Paint.h"
+#if defined(OJ_MACOS) || defined(OJ_LINUX)
+#include "Mods/Creative.h"
+#include "Mods/Runtime.h"
+#include "Mods/Packages.h"
+#include "Core/Base/Text.h"
+#endif
 
 #include "Core/Data/GameTexts.h"
 #include "Game/Frontend/WindowTools.h"
@@ -73,7 +79,7 @@ void ColourMenu::update(GarageHost& host, ui::Screen& s, uint32_t event) {
         m_showBuy = 0;
         if (s.find("BUY_TEST") >= 0) {
 #if defined(OJ_MACOS) || defined(OJ_LINUX)
-            s.setText("BUY_TEST", L"[0] " + texts.at(kTextBuyPaint));
+            s.setText("BUY_TEST", toWide(mods::runtime::text("paint_buy_label", {}, mods::packages::available() ? "" : "[0] ")) + texts.at(kTextBuyPaint));
 #else
             s.setText("BUY_TEST", texts.at(kTextBuyPaint));
 #endif
@@ -114,8 +120,8 @@ void ColourMenu::update(GarageHost& host, ui::Screen& s, uint32_t event) {
             m_askedLose = 0;
         }
     }
-    const auto model = static_cast<size_t>(std::clamp(car->def != nullptr ? car->def->id : 0, 0, 52));
-    const int level = career.profile.carLevel[model];
+    const auto model = static_cast<size_t>(std::clamp(car->def != nullptr ? car->def->id : 0, 0, int(CareerProfile::kModelCapacity - 1)));
+    const int level = career.profile.paintLevel(model);
     if (event == input::kLeft || event == input::kRight || m_first != 0) {
         m_first = 0;
         if (s.find("Menu") >= 0 && s.menuSize("Menu") != 0) {
@@ -189,16 +195,54 @@ void ColourMenu::update(GarageHost& host, ui::Screen& s, uint32_t event) {
 
 // 0x0043DB90: the base enter; the camera to the garage's place; the primer of the car's slots made the body's
 // (0x0048C210, the car's folders pushed); HELP shown; SELCOLOUR looks for the paint's colour (base, metallic, pearl;
-// for the decal (3) the pearl's: Stock problem, the decal's own colour is not looked for; the fixed build's the
-// decal's) and +0x10 keeps the paint
+// for the decal (3) the pearl's: Stock problem, the decal's own colour is not looked for) and +0x10 keeps the paint
 // (the decal's colour, the car's +0x4C, for 3); the price and its box come in; no question, the answer -1.
-void ColourChoose::enter(GarageHost& host, ui::Screen& s) {
-    Garage& garage = host.garage();
+void ColourChoose::enter(GarageHost &host, ui::Screen &s) {
+    Garage &garage = host.garage();
     host.baseEnter(s, "colourchoose");
-    if (garage.view) garage.view->cameraTo(kCameraGarage);
-    if (garage.view && garage.view->car() != nullptr) garage.view->car()->primerToBody();
+    for (int i = 0; i < 2; ++i) {
+        auto &p = m_chartPlaces[i];
+        const int index = s.find(i == 0 ? "GRIDX" : "GRIDY");
+        if (!m_chartPlacesSaved)
+            s.placeOf(index, p[0], p[1], p[2], p[3]);
+        else
+            s.setPlace(index, p[0], p[1], p[2], p[3]);
+    }
+    m_chartPlacesSaved = true;
+#if defined(OJ_MACOS) || defined(OJ_LINUX)
+    if (garage.paintMode == PaintMode::Neon) {
+        if (auto *car = garage.car(host)) {
+            auto n = mods::neon(*car);
+            n.rgb = car->neon & 0xffffff;
+            n.effect %= mods::effectCount();
+            m_original = car->neon;
+            s.chartFind("SELCOLOUR", car->neon);
+            mods::previewNeon(*car, n);
+            mods::neonEditor(true);
+            if (garage.view) {
+                garage.view->showNeon(*car, host.viewLoading());
+                garage.view->cameraTo({-180.f, 210.f, 580.f, 0.f});
+                garage.view->zoomTo(1.f);
+            }
+        }
+        s.setHidden("HELP", true);
+        for (auto field : {std::pair{"GRIDX", .19f}, {"GRIDY", .66f}}) {
+            const int index = s.find(field.first);
+            float x, y, w, h;
+            s.placeOf(index, x, y, w, h);
+            s.setPlace(index, field.second, y, field.second < .5f ? .46f : .32f, h);
+        }
+        garage.priceShown(host, true);
+        garage.price(host, 1000);
+        return;
+    }
+#endif
+    if (garage.view)
+        garage.view->cameraTo(kCameraGarage);
+    if (garage.view && garage.view->car() != nullptr)
+        garage.view->car()->primerToBody();
     s.show("HELP", false);
-    Car* car = garage.car(host);
+    Car *car = garage.car(host);
     if (car != nullptr && s.find("SELCOLOUR") >= 0) {
         switch (garage.paintMode) {
         case PaintMode::Metallic:
@@ -238,12 +282,47 @@ void ColourChoose::enter(GarageHost& host, ui::Screen& s) {
 // paid). The fixed build takes the money at the price as colourmenu does; under it "INSUFFICIENT CASH" (type 1) and
 // NO, the window staying (BACK puts the colour back).
 // The paint on the model (0x0048BF90) after every frame but the decal's and the ends.
-void ColourChoose::update(GarageHost& host, ui::Screen& s, uint32_t event) {
-    GameData* data = host.gameData();
-    Garage& garage = host.garage();
-    Car* car = garage.car(host);
-    if (car == nullptr || data == nullptr || !data->career) return;
-    if (garage.view) garage.view->zoomTo(1.0f);
+void ColourChoose::update(GarageHost &host, ui::Screen &s, uint32_t event) {
+    GameData *data = host.gameData();
+    Garage &garage = host.garage();
+    Car *car = garage.car(host);
+    if (car == nullptr || data == nullptr || !data->career)
+        return;
+#if defined(OJ_MACOS) || defined(OJ_LINUX)
+    if (garage.paintMode == PaintMode::Neon) {
+        if (auto shortcut = mods::takeNeonEvent())
+            event = shortcut;
+        if (garage.view)
+            garage.view->zoomTo(1.f);
+        auto n = mods::neon(*car);
+        if (s.find("SELCOLOUR") >= 0 && !s.chartFinding("SELCOLOUR"))
+            n.rgb = s.chartColour("SELCOLOUR") & 0xffffff;
+        if (event == input::kSelect2)
+            n.effect = (n.effect + 1) % mods::effectCount();
+        if (event == input::kSelect3)
+            n.speed = n.speed % 5 + 1;
+        car->neon = 0xff000000 | n.rgb;
+        mods::previewNeon(*car, n);
+        if (garage.view)
+            garage.view->colourNeon(mods::neonColour(*car, mods::seconds()));
+        s.setText("GRIDX", toWide("Q: " + mods::effectName(n.effect)));
+        s.setText("GRIDY", toWide("E: SPEED " + std::to_string(n.speed)));
+        if (event == input::kBack) {
+            car->neon = m_original;
+            mods::clearNeonPreview();
+            mods::neonEditor(false);
+            host.request("", SwitchMode::Pop);
+            host.sound("CLICK");
+        } else if (event == input::kSelect) {
+            mods::neonEditor(false);
+            host.request("buymod", SwitchMode::Swap);
+            host.sound("CLICK");
+        }
+        return;
+    }
+#endif
+    if (garage.view)
+        garage.view->zoomTo(1.0f);
     if (m_asked != 0) {
         if (m_answer == 1) {
             garage.clear(host);

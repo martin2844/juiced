@@ -1,3 +1,6 @@
+#if defined(OJ_MACOS) || defined(OJ_LINUX)
+#include "Mods/Creative.h"
+#endif
 // The front end's side of the save device (docs/spec/03-saves.md, "The save device"): what a driver's and the
 // records' files hold, and the texts of the device's messages.
 
@@ -40,6 +43,9 @@ void Frontend::setUpDriverName(const std::wstring& text) {
     k.checkName = true;
     k.accept = [this](const std::wstring& name) {
         m_profile = save::Profile::create(name, m_language.index, gameRandom());
+#if defined(OJ_MACOS) || defined(OJ_LINUX)
+        mods::profileName(toUtf8(name));mods::requestPortrait();
+#endif
         log::info("frontend: new driver {}", toUtf8(name));
         return true;
     };
@@ -106,6 +112,9 @@ bool Frontend::applyProfile(const save::SaveSlot& slot, const save::SaveSource& 
     for (const auto& [name, data] : archive.entries) names += " " + name;
     log::info("frontend: driver {} loaded:{}", toUtf8(slot.name), names);
     if (m_data) m_data->profileName = slot.name;
+#if defined(OJ_MACOS) || defined(OJ_LINUX)
+    mods::profileName(toUtf8(slot.name));mods::requestPortrait();
+#endif
     driverSettings().reset();
     if (const auto found = archive.entries.find("settings.dat"); found != archive.entries.end()) {
         save::Settings settings;
@@ -130,6 +139,7 @@ bool Frontend::applyProfile(const save::SaveSlot& slot, const save::SaveSource& 
         save::ArcadeUnlock progress;
         if (progress.read(found->second)) m_data->arcade.read(progress);
     }
+    if (m_data) m_data->applyModUnlocks();
     // CMSGlobal.sav (0x0040A9EF): the career's head, then 0x004BD790: a new career over the career objects
     // (0x004A2300, with the driver's name the save system has just taken, and its rand() draws) and the saved parts
     // read over it (the cars find their CarDefs by the model names); the phone's message slots (+0x28 each) cleared

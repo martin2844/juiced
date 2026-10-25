@@ -1,3 +1,6 @@
+#if defined(OJ_MACOS) || defined(OJ_LINUX)
+#include "Mods/Creative.h"
+#endif
 #include "Game/Scene/Scene3d.h"
 
 #include "Core/Tracks/Atmosphere.h"
@@ -580,7 +583,10 @@ const render::GameTexture* Engine::texture(const std::string& name) {
     const auto it = m_textures.find(key);
     if (it != m_textures.end()) return it->second.get();
     const GameFiles files(std::filesystem::current_path());
-    const auto bytes = files.read(m_folders.textures / (name + ".ddt"));
+    auto bytes = files.read(m_folders.textures / (name + ".ddt"));
+#if defined(OJ_MACOS) || defined(OJ_LINUX)
+    if(auto image=mods::imageBytes(name))bytes=std::move(image);
+#endif
     Ddt ddt;
     std::unique_ptr<render::GameTexture> texture;
     if (bytes && ddt.parse(*bytes)) {
@@ -643,7 +649,10 @@ const render::GameTexture* Engine::texture(const std::string& name, const std::f
     const auto it = m_textures.find(key);
     if (it != m_textures.end()) return it->second ? it->second.get() : texture(name, shared);
     const GameFiles files(std::filesystem::current_path());
-    const auto bytes = files.read(folder / (name + ".ddt"));
+    auto bytes = files.read(folder / (name + ".ddt"));
+#if defined(OJ_MACOS) || defined(OJ_LINUX)
+    if(auto image=mods::imageBytes(name))bytes=std::move(image);
+#endif
     std::unique_ptr<render::GameTexture> made = bytes ? makeTexture(*bytes) : nullptr;
     const render::GameTexture* result = made.get();
     m_textures[key] = std::move(made);

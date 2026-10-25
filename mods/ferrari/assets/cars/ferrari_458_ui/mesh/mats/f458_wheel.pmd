@@ -1,0 +1,7 @@
+Material Program = Coloured Spec Opaque
+Colour = 190 190 190
+Specular Colour = 180 180 180
+Specular Highlight = 80
+Shininess = 64
+Z-Bias = 0
+Texture = f458_rim.ptd

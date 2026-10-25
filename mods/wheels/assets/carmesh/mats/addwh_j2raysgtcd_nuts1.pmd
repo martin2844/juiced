@@ -1,0 +1,7 @@
+Material Program = Coloured Spec Opaque
+Colour = 180 180 180
+Specular Colour = 0 0 0
+Specular Highlight = 0
+Shininess = 20.000000
+Texture = AddWH_J2RaysGTCD
+Z-Bias = 0.2

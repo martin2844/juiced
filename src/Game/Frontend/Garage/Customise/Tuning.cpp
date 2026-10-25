@@ -143,8 +143,8 @@ void PerformType::enter(GarageHost& host, ui::Screen& s) {
     Car* car = garage.car(host);
     if (car == nullptr || data == nullptr || !data->career) return;
     const auto kind = static_cast<size_t>(std::clamp(garage.kind, 0, 9));
-    const auto model = static_cast<size_t>(std::clamp(car->def != nullptr ? car->def->id : 0, 0, 52));
-    const int unlocked = data->career->profile.partsA[model][kind];
+    const auto model = static_cast<size_t>(std::clamp(car->def != nullptr ? car->def->id : 0, 0, int(CareerProfile::kModelCapacity - 1)));
+    const int unlocked = data->career->profile.performance(model)[kind];
     s.clearMenu("menu");
     garage.texts.refund = 0.0f;
     if (car->mods[kind] != kNoMod) s.addCommandItem("menu", texts.at(kTextStockItem), 1.0f, "stock");

@@ -1,0 +1,9 @@
+Material Program = Car Glass
+Side Fresnel = 0.12
+Front Fresnel = 0.02
+Base Opacity = 0.25
+Start Fade = 0
+End Fade = 10000
+Colour = 100 110 120
+Texture = f458_glass.ptd
+Scratch = f458_scratch.ptd

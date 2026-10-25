@@ -1,3 +1,8 @@
+#if defined(OJ_MACOS) || defined(OJ_LINUX)
+#include "Mods/Creative.h"
+#include "Mods/Packages.h"
+#include "Mods/Runtime.h"
+#endif
 // The options' menu (opts_menu).
 
 #include "Game/Frontend/Options/OptionsMenu.h"
@@ -18,11 +23,30 @@ namespace oj::frontend {
 // again; with [0x0071E718] & 1 audio taken out (and BackMenu's first item); without a network game of more players
 // "VOICE" (1914, voice) before the last item and an orange bar (its +0x54 1); a highlight past the items back to
 // the first; +0x0C 0.
-void OptionsMenu::enter(OptionsHost& host, ui::Screen& s) {
-    const TextTable& texts = host.gameTexts();
+void OptionsMenu::enter(OptionsHost &host, ui::Screen &s) {
+    const TextTable &texts = host.gameTexts();
     if (s.find("Menu") >= 0) {
         s.restoreMenu("Menu");
         s.restoreMenu("BackMenu");
+#if defined(OJ_MACOS) || defined(OJ_LINUX)
+        if (mods::packages::available()) {
+            s.insertCommandItem("Menu", int(s.menuSize("Menu")) - 1, L"MODS", 0, "mods");
+            s.addMenuItem("BackMenu", L"", 0, "", "ui_pan5_ora");
+            if (!mods::runtime::feature("controls")) {
+                for (size_t i = 0; i < s.menuSize("Menu"); ++i) {
+                    if (s.menuItemCommand("Menu", i) == "control") {
+                        s.removeMenuItemAt("Menu", i);
+                        s.removeMenuItemAt("BackMenu", i);
+                        break;
+                    }
+                }
+            }
+        }
+        if (mods::feature("portrait") || mods::feature("logo")) {
+            s.insertCommandItem("Menu", int(s.menuSize("Menu")) - 1, L"MOD GARAGE", 0, "creative");
+            s.addMenuItem("BackMenu", L"", 0, "", "ui_pan5_ora");
+        }
+#endif
         for (size_t i = 0; i < s.menuSize("Menu"); ++i) {
             if (_stricmp(s.menuItemCommand("Menu", i).c_str(), "control") == 0) {
 #if defined(OJ_MACOS) || defined(OJ_LINUX)
@@ -56,8 +80,7 @@ void OptionsMenu::enter(OptionsHost& host, ui::Screen& s) {
         // [0x0071E718] & 1 (audio taken out): 0 here. VOICE but for the second player's pause of a race of more
         // players (the race track's pausing player +0x10, its number 1).
         if (!host.secondPlayerPaused()) {
-            s.insertCommandItem("Menu", static_cast<int>(s.menuSize("Menu")) - 1, texts.at(kTextVoice), 0.0f,
-                                "voice");
+            s.insertCommandItem("Menu", static_cast<int>(s.menuSize("Menu")) - 1, texts.at(kTextVoice), 0.0f, "voice");
             s.addMenuItem("BackMenu", L"", 0.0f, "", "ui_pan5_ora");
             s.setMenuItemAdditive("BackMenu", s.menuSize("BackMenu") - 1, true);
         }
@@ -77,14 +100,14 @@ void OptionsMenu::enter(OptionsHost& host, ui::Screen& s) {
 // with CLICK; done (CLICK) when the save system saves the autosave over the window and +0x0C set, else the main menu
 // (mode 3) with the transitions going out (a race's pause: hud_pause). BACK the same as done (CLICK only without the
 // autosave).
-void OptionsMenu::update(OptionsHost& host, ui::Screen& s, uint32_t event) {
+void OptionsMenu::update(OptionsHost &host, ui::Screen &s, uint32_t event) {
     if (s.find("Menu") >= 0 && s.find("BackMenu") >= 0) {
         s.selectMenuItem("BackMenu", s.selectedMenuItem("Menu"));
     }
     if (m_saving != 0) {
         host.request("menu", SwitchMode::ReplaceAfterTransitions);
     }
-    const GameData* data = host.gameData();
+    const GameData *data = host.gameData();
     const bool saving = data != nullptr && data->saving != 0;
     const auto leave = [&] {
         if (saving) {
@@ -99,14 +122,31 @@ void OptionsMenu::update(OptionsHost& host, ui::Screen& s, uint32_t event) {
     for (int32_t player = 0; player < players; ++player) {
         const uint32_t e = player == 0 ? event : host.secondPlayerEvent();
         if (e == input::kSelect) {
-            if (s.menuSize("Menu") == 0) continue;
+            if (s.menuSize("Menu") == 0)
+                continue;
             const std::string item = s.menuItemCommand("Menu", s.selectedMenuItem("Menu"));
-            const auto named = [&](const char* name) { return _stricmp(item.c_str(), name) == 0; };
+            const auto named = [&](const char *name) { return _stricmp(item.c_str(), name) == 0; };
+#if defined(OJ_MACOS) || defined(OJ_LINUX)
+            if (named("mods")) {
+                mods::requestManager();
+                continue;
+            }
+            if (named("creative")) {
+                mods::requestMenu([&host] {
+                    if (mods::hasImage(false)) {
+                        host.optionSettings().setU32(save::Settings::kLogo, 0);
+                        if (auto *data = host.gameData(); data && data->career)
+                            data->career->flyers.crews[0].logo = "ui_chooselogo_01";
+                    }
+                });
+                continue;
+            }
+#endif
             if (named("audio")) {
                 host.request(host.racePause() ? "opts_ingame_audio" : "opts_audio", SwitchMode::Swap);
             } else if (named("game")) {
                 // From a race's pause the first player's opts_ingame_game, the second's opts_ingame_game_ply2.
-                const char* inRace = player == 0 ? "opts_ingame_game" : "opts_ingame_game_ply2";
+                const char *inRace = player == 0 ? "opts_ingame_game" : "opts_ingame_game_ply2";
                 host.request(host.racePause() ? inRace : "opts_game_pc", SwitchMode::Swap);
             } else if (named("control")) {
                 host.controlsSetUp();
@@ -133,10 +173,11 @@ void OptionsMenu::update(OptionsHost& host, ui::Screen& s, uint32_t event) {
                 host.request("hud_pause", SwitchMode::ReplaceAfterTransitions);
                 continue;
             }
-            if (!saving) host.sound("CLICK");
+            if (!saving)
+                host.sound("CLICK");
             leave();
         }
     }
 }
 
-}  // namespace oj::frontend
+} // namespace oj::frontend

@@ -1,3 +1,6 @@
+#if defined(OJ_MACOS) || defined(OJ_LINUX)
+#include "Mods/Creative.h"
+#endif
 #include "Game/Cars/CarModel.h"
 
 #include "Core/Base/GameFiles.h"
@@ -435,6 +438,19 @@ void CarModel::keepWheelColours(const Car& car) {
 
 void CarModel::colourDecal(const Car& car) {
     if (m_slots[kDecal] == nullptr || car.def == nullptr) return;
+#if defined(OJ_MACOS) || defined(OJ_LINUX)
+    if(mods::enabled() && m_slots[kDecal]->mesh) {
+        const bool custom=mods::customLogo(car) && mods::hasImage(false);
+        const auto* imported=custom?m_engine.texture(mods::imageName(false),"cartextures"):nullptr;
+        for(const auto& p:m_slots[kDecal]->mesh->parts()) {
+            if(!p.material || (p.material->classId()!=kColouredSpecABlend && p.material->classId()!=kStandardAlphaBlend))continue;
+            auto [original,added]=m_originalDecalTextures.try_emplace(p.material,p.material->texture(0));
+            p.material->setTexture(0,imported?imported:original->second);
+            if(imported && p.material->classId()==kColouredSpecABlend){const uint32_t white=0xffffffff;p.material->setParam(0,&white);}
+        }
+        if(imported)return;
+    }
+#endif
     const auto part = static_cast<int8_t>(car.body[8]);
     const std::vector<CarPart>& parts = car.def->parts[8].parts;
     if (part < 0 || part == 0x7F || static_cast<size_t>(part) >= parts.size()) return;
@@ -444,6 +460,7 @@ void CarModel::colourDecal(const Car& car) {
     for (char& ch : key) ch = static_cast<char>(std::tolower(static_cast<unsigned char>(ch)));
     const auto it = m_partMaterials.find(key);
     if (it == m_partMaterials.end() || it->second->classId() != kColouredSpecABlend) return;
+
     it->second->setParam(0, &car.decalColour);
 }
 
