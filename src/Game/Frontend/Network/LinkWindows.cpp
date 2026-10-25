@@ -3,6 +3,8 @@
 
 #include "Game/Frontend/Network/LinkWindows.h"
 
+#include "Game/Frontend/Network/LobbyChat.h"
+
 #include "Core/Base/Random.h"
 #include "Core/Base/Text.h"
 #include "Core/Base/X87.h"
@@ -14,6 +16,7 @@
 #include "Core/Network/OnlineRecords.h"
 #include "Core/Network/VoiceChat.h"
 #include "Core/Race/RaceSession.h"
+#include "Game/Frontend/CustomRace/CustomRaceInternal.h"
 #include "Game/Frontend/WindowTools.h"
 
 #include <algorithm>
@@ -317,6 +320,12 @@ void LinkLobby::enter(WindowHost& host, ui::Screen& s) {
             hideAll(s, std::format("RATING_LABEL{}", n), true);
         }
     }
+    // The fixed build's guest: no friends' windows (F1 and F2 do nothing), their hints hidden; the chat's hint as the
+    // frames will show it.
+    if (const net::OnlineUser* u = net::onlineUser(); u != nullptr && u->guest()) {
+        for (const char* name : {"FRIENDS_BUT", "FRIENDS_TEXT", "PLAYERS_BUT", "PLAYERS_TEXT"}) hideAll(s, name, true);
+    }
+    lobbyChatHint(s);
     clearSlots(s);
     host.shared().onlineForms.gridWalked = 0;
     if (net::stats::gameStatistics() != nullptr && net != nullptr) {
@@ -336,7 +345,7 @@ void LinkLobby::enter(WindowHost& host, ui::Screen& s) {
 // not taken, SELECT of the host (CLICK): with the matchmaking the online career's stage 1 and instant_seltype, an
 // arcade session of any group ([0x00728D34] 9999) the stage 1 and instant_manu, else its group sent (0x004EA7F0) and
 // set ([G+0x84]+0x784), the stage 2 and instant_setup; on the LAN the stage 1 and instant_manu.
-void LinkLobby::update(NetworkHost& host, ui::Screen& s, uint32_t event) {
+void LinkLobby::update(OnlineHost& host, ui::Screen& s, uint32_t event) {
     GameData* data = host.gameData();
     const TextTable& texts = host.gameTexts();
     showSlots(s);
@@ -381,6 +390,12 @@ void LinkLobby::update(NetworkHost& host, ui::Screen& s, uint32_t event) {
         }
     }
     if (host.netKeys(event, net::SessionStage::Lobby, true)) return;
+    // The fixed build's lobby chat of an online session: its hint; SELECT2 opens it (Frontend/Network/LobbyChat).
+    lobbyChatHint(s);
+    if (event == input::kSelect2 && lobbyChatOn()) {
+        openLobbyChat(host);
+        return;
+    }
     if (event != input::kSelect || net == nullptr || !net->transport.hosting()) return;
     host.sound("CLICK", 1.0f, 0xF);
     if (net::matchmaking() == nullptr) {
@@ -513,6 +528,12 @@ void LinkSelCar::enter(CustomRaceHost& host, ui::Screen& s) {
                     k = c;
                     break;
                 }
+            }
+            // 0x0047052B: online outside an online career with a session of no mods ([0x00728D38] 0) the car's
+            // parts cleared (0x004600C0) before it is sent.
+            if (net::matchmaking() != nullptr && !host.onlineCareer() && net::onlineHosted().arcade.mods == 0 &&
+                k < cars.size()) {
+                customrace::clearParts(cars[k]);
             }
             if (net != nullptr && k < cars.size() && cars[k].def != nullptr) {
                 const Car& car = cars[k];

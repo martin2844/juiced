@@ -94,14 +94,21 @@ OJ_INTEGRATION_TEST(Presence, ConnectionManager) {
                          buddy.statusString == u"Playing" &&
                          buddy.locationString == u"juicedpc://1.2.3.4:8667/?session=5" &&
                          buddy.ip == 0x04030201u;
+    // The same status with its strings twice: sent once (the fixed build keeps the strings sent; the stock sent it
+    // again).
     size_t statusSent = 0;
     pump([] {}, [&] {
         statusSent = 0;
         for (const std::string& m : fake.messages()) {
             if (m == "\\status\\1\\sesskey\\4242\\statstring\\Online\\locstring\\") ++statusSent;
         }
-        return statusSent == 2;
+        return statusSent == 1;
     });
+    Sleep(50);
+    statusSent = 0;
+    for (const std::string& m : fake.messages()) {
+        if (m == "\\status\\1\\sesskey\\4242\\statstring\\Online\\locstring\\") ++statusSent;
+    }
     // An error after the login: its code to the callback, fatal: disconnected.
     if (loggedIn) {
         fake.queue("\\error\\\\err\\6\\fatal\\\\errmsg\\Forced disconnect\\final\\");
@@ -116,7 +123,7 @@ OJ_INTEGRATION_TEST(Presence, ConnectionManager) {
     const bool infoWritten = infoText.rfind("2\n[1234]\nuserid=5678\nvalid=1\nnick=Tester\n", 0) == 0 &&
                              infoText.find("sex=Female\n") != std::string::npos;
     fake.stop();
-    check(started && loggedIn && loginText && infoOk && buddyOk && statusSent == 2 && errorOk && infoWritten,
+    check(started && loggedIn && loginText && infoOk && buddyOk && statusSent == 1 && errorOk && infoWritten,
           "GameSpy Presence: the login's proofs, the profile's info, the status, a buddy's status, an error, "
           "gp.info");
 
@@ -142,7 +149,10 @@ OJ_INTEGRATION_TEST(Presence, ConnectionManager) {
     }
     const bool idsSent = second.message("\\login\\").find("\\userid\\5678\\profileid\\1234\\response\\") !=
                          std::string::npos;
-    wrongOk = wrongOk && cachedNick == u"Tester" && idsSent && answered &&
+    // "sex=Female" read back as Female (the fixed build; the stock's Pat).
+    const bool femaleRead = w != nullptr && w->findProfile(1234) != nullptr && w->findProfile(1234)->cache &&
+                            w->findProfile(1234)->cache->sex == 0x501;
+    wrongOk = wrongOk && femaleRead && cachedNick == u"Tester" && idsSent && answered &&
               wrongResult == gp::Result::ServerError && wrongErrors.size() == 1 &&
               wrongErrors[0].errorCode == gp::kLoginBadPassword && wrongErrors[0].fatal &&
               w->state() == gp::State::Disconnected;
@@ -249,7 +259,11 @@ OJ_INTEGRATION_TEST(Presence, UserObject) {
         fake.queue("\\bm\\100\\f\\777\\msg\\|s|2|ss|Playing|ls|juicedpc://1.2.3.4:8667/?session=5|ip|16909060"
                    "|p|0\\final\\");
         oj::net::OnlineFriends* friends = oj::net::onlineFriends();
-        pump(0.01f, [&] { return friends != nullptr && friends->find(777) != -1; });
+        // The nick asked not blocking (the fixed build): its answer a process later.
+        pump(0.01f, [&] {
+            return friends != nullptr && friends->find(777) != -1 &&
+                   user->userNick(friends->entries()[static_cast<size_t>(friends->find(777))].user) == u"Buddy";
+        });
         const int32_t e = friends != nullptr ? friends->find(777) : -1;
         if (e != -1) {
             const std::optional<oj::net::Address> a = friends->address(e);
@@ -262,7 +276,10 @@ OJ_INTEGRATION_TEST(Presence, UserObject) {
             friendsOk = friendsOk && friends->inviteFrom(e) == 1 && friends->entries()[static_cast<size_t>(e)].session == 9 &&
                         user->inviteNote(p) == 1;
             fake.queue("\\bm\\2\\f\\888\\msg\\please|signed|0123456789abcdef0123456789abcdef\\final\\");
-            pump(0.01f, [&] { return friends->find(888) != -1; });
+            pump(0.01f, [&] {
+                return friends->find(888) != -1 &&
+                       user->userNick(friends->entries()[static_cast<size_t>(friends->find(888))].user) == u"Asker";
+            });
             const int32_t r = friends->find(888);
             answerOk = r != -1 && friends->requestFrom(r) == 1 && friends->temporary(r) == 1 &&
                        user->friendNote(p) == 1 &&
@@ -276,11 +293,22 @@ OJ_INTEGRATION_TEST(Presence, UserObject) {
                                "\\authadd\\\\sesskey\\4242\\fromprofileid\\888\\sig\\0123456789abcdef0123456789abcdef";
             }
             friends->update();
-            answerOk = answerOk && user->friendNote(p) == 0 && user->inviteNote(p) == 0;
+            // The notes' and the refresh's player not referenced (the fixed build; the stock took a reference at each,
+            // never let go).
+            answerOk = answerOk && user->friendNote(p) == 0 && user->inviteNote(p) == 0 &&
+                       user->players()[static_cast<size_t>(p)].refs == 1;
         }
-        fake.queue("\\error\\\\err\\259\\errmsg\\Bad email\\final\\");
-        errorOk = pump(0.01f, [&] { return user->state != oj::net::UserState::None; }) &&
-                  user->state == oj::net::UserState::BadEmail && user->loggedOn == 0;
+        // After the login a non-fatal error changes nothing (the fixed build; the stock's state 10 and logged off), a
+        // fatal one ends it.
+        fake.queue("\\error\\\\err\\1537\\errmsg\\Request refused\\final\\");
+        for (int i = 0; i < 200; ++i) {
+            user->update(0.01f);
+            Sleep(1);
+        }
+        const bool kept = user->state == oj::net::UserState::None && user->loggedOn == 1;
+        fake.queue("\\error\\\\err\\6\\fatal\\\\errmsg\\Forced disconnect\\final\\");
+        errorOk = kept && pump(0.01f, [&] { return user->state != oj::net::UserState::None; }) &&
+                  user->state == oj::net::UserState::ForcedDisconnect && user->loggedOn == 0;
     }
     oj::net::endOnlineFriends(true);
     oj::net::endOnlineUser();
@@ -312,6 +340,64 @@ OJ_INTEGRATION_TEST(Presence, UserObject) {
         check(capped && moved && removed, "online: the recent players, latest first, ten at most, by profile");
     }
 }
+// The fixed build: the friends' refresh goes on after a request gone (both requests of ten refreshes gone at the
+// tenth; the stock's refresh ended there, the second gone a refresh later).
+OJ_INTEGRATION_TEST(Presence, RefreshAfterARequestGone) {
+    oj::net::makeOnlineUser();
+    oj::net::OnlineUser* u = oj::net::onlineUser();
+    oj::net::OnlineFriends* f = oj::net::referenceFriends();
+    const int32_t first = u->addUser(501, u"First");
+    const int32_t second = u->addUser(502, u"Second");
+    f->addFriend(first, 0);
+    f->addFriend(second, 0);
+    const bool listed = f->list().size() == 2;
+    for (int i = 0; i < 10; ++i) f->update();
+    const bool gone = f->list().empty();
+    f->release();
+    oj::net::endOnlineFriends(true);
+    oj::net::endOnlineUser();
+    check(listed && gone, "online friends: both requests of ten refreshes gone at the tenth");
+}
+
+// The fixed build: a user object made while an earlier one lives (held by its friends) lets the earlier connection
+// go, and the earlier object's sign-out (its friends let go as the new login makes them again) leaves the new one's
+// connection (the stock's destroyed it).
+OJ_INTEGRATION_TEST(Presence, EarlierUserLeavesTheNewConnection) {
+    namespace gp = oj::net::gp;
+    oj::net::startWinsock();
+    const std::filesystem::path info = std::filesystem::temp_directory_path() / "OpenJuice.Tests.users.gp.info";
+    std::filesystem::remove(info);
+    FakeGpcm firstServer;
+    FakeGpcm secondServer;
+    firstServer.nicks[1234] = "Tester";
+    secondServer.nicks[1234] = "Tester";
+    const bool ok = firstServer.start() && secondServer.start();
+    auto login = [&](FakeGpcm& server) {
+        oj::net::makeOnlineUser();
+        oj::net::OnlineUser* user = oj::net::onlineUser();
+        user->server = {"127.0.0.1", server.port(), info.string()};
+        user->loggedOnHook = [] { oj::net::remakeOnlineFriends(); };
+        user->setCredentials(u"Tester", u"tester@example.com", u"secret", false);
+        for (int i = 0; i < 3000 && user->loggedOn == 0 && user->state == oj::net::UserState::None; ++i) {
+            user->update(0.01f);
+            Sleep(1);
+        }
+        return user->loggedOn == 1;
+    };
+    const bool firstIn = ok && login(firstServer);
+    // The game's reference let go; its friends still hold the object.
+    if (oj::net::OnlineUser* earlier = oj::net::onlineUser(); earlier != nullptr) oj::net::endOnlineUser();
+    const bool secondIn = ok && login(secondServer);
+    const std::shared_ptr<gp::Connection> c = oj::net::gpConnection();
+    const bool kept = c != nullptr && c->state() == gp::State::LoggedIn;
+    oj::net::endOnlineFriends(true);
+    oj::net::endOnlineUser();
+    firstServer.stop();
+    secondServer.stop();
+    std::filesystem::remove(info);
+    check(firstIn && secondIn && kept, "online user: an earlier user object's sign-out leaves the new connection");
+}
+
 // GameSpy Presence's search manager (0x00571A80; nothing of the game starts a search): a profile search's two
 // pages (the second asked with \skip\ by itself) and the profiles that have us as a buddy, from a stand-in of
 // gpsp.gamespy.com answering each connection once.

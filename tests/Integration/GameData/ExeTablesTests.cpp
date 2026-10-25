@@ -292,7 +292,8 @@ OJ_UNIT_TEST(ExeTables, CareerTables) {
               tables.unlockSteps[6].kind == ExeTables::UnlockKind::BodyPart && tables.modelClasses[0] == 2 &&
               tables.modelClasses[9] == 1 && tables.modelClasses[1] == 0 && tables.challengeTypes[0] == "LapTime" &&
               tables.crewNames[1] == "Urban Maulerz" && tables.logos[0] == "ui_chooselogo_01" &&
-              tables.logos.size() == 19 && tables.logos[18] == "ui_chooselogo_20" && tables.respectSteps == respect &&
+              tables.logos.size() == 20 && tables.logos[18] == "ui_chooselogo_19" &&
+              tables.logos[19] == "ui_chooselogo_20" && tables.respectSteps == respect &&
               tables.prizeFactors[0] == 3.0f && tables.prizeFactors[7] == 1.0f && tables.prizeFactors.size() == 9 &&
               tables.prizeFactors[8] == 0.0f,
           "the career tables: routes, dealer, unlock steps, model classes, names, respect, prizes");

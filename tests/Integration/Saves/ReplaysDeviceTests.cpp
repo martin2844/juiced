@@ -192,3 +192,102 @@ OJ_INTEGRATION_TEST(ReplaysDevice, ReplayWrittenRead) {
           "replays' device: a replay written through its replays' object, listed and read back");
     std::filesystem::remove_all(save.parent_path(), ec);
 }
+
+// The fixed build's replays' folder (<My Documents>\THQ\Juiced\Replays on the PC): made with the folders above it, a
+// folder Replay_<day>-<month>-<year>_<hour>-<minute>-<second> a replay (the second of one second _2), SAVE not used;
+// both listed, the latest read back, one deleted.
+OJ_INTEGRATION_TEST(ReplaysDevice, ReplayFolderDated) {
+    struct Side : oj::save::SaveGameSide {
+        void buildProfile(oj::save::SaveSource&) override {}
+        bool applyProfile(const oj::save::SaveSlot&, const oj::save::SaveSource&) override { return false; }
+        void buildHighScores(oj::save::SaveSource&) override {}
+        bool applyHighScores(const oj::save::SaveSource&) override { return false; }
+        void writeRegCf1() override {}
+        void readRegCf1() override {}
+    } side;
+    struct Saves : oj::save::SaveReplays {
+        oj::Replay* replay = nullptr;
+        bool save(oj::save::SaveSource& source, const std::string& date) override {
+            return replay->saveTo(source, date, L"Tester");
+        }
+        bool take(const oj::save::SaveSource& source) override { return replay->loadFrom(source); }
+    } saves;
+    oj::Replay written;
+    written.header.track = "Angel SuperSpeedway";
+    written.header.route = "Speedway_r1";
+    written.header.cars = 1;
+    written.header.type = 5;
+    written.header.length = 10.0f;
+    written.header.lastBlock = 1;
+    written.written = 2;
+    oj::Car car;
+    car.write(written.carsStream);
+    wchar_t exe[MAX_PATH] = {};
+    GetModuleFileNameW(nullptr, exe, MAX_PATH);
+    const std::filesystem::path base = std::filesystem::path(exe).parent_path() / L"ReplayFolderTest";
+    const std::filesystem::path replays = base / L"THQ" / L"Juiced" / L"Replays";
+    std::error_code ec;
+    std::filesystem::remove_all(base, ec);
+    oj::save::SaveDevice device;
+    device.setFolder(base / L"SAVE");
+    device.setReplayFolder(replays);
+    saves.replay = &written;
+    device.setReplayObject(&saves);
+    oj::save::SaveRequest r;
+    const auto stepUntil = [&](oj::save::SaveFlag flag) {
+        for (int i = 0; i < 40; ++i) {
+            device.stepReplay(r, side);
+            if (r.flag(flag) != 0) return true;
+        }
+        return false;
+    };
+    const auto write = [&] {
+        r.request = oj::save::Request::Write;
+        const bool saved = stepUntil(oj::save::SaveFlag::Saved);
+        r.next = 1;
+        device.stepReplay(r, side);
+        return saved;
+    };
+    const bool saved = write() && write();
+    std::vector<std::wstring> folders;
+    for (const auto& e : std::filesystem::directory_iterator(replays, ec)) {
+        folders.push_back(e.path().filename().wstring());
+    }
+    std::sort(folders.begin(), folders.end());
+    const auto dated = [](const std::wstring& name) {
+        int day = 0, month = 0, year = 0, hour = 0, minute = 0, second = 0;
+        return name.size() >= 26 && name.compare(0, 7, L"Replay_") == 0 &&
+               swscanf_s(name.c_str() + 7, L"%2d-%2d-%4d_%2d-%2d-%2d", &day, &month, &year, &hour, &minute,
+                         &second) == 6 &&
+               name[9] == L'-' && name[12] == L'-' && name[17] == L'_';
+    };
+    const bool named = folders.size() == 2 && dated(folders[0]) && dated(folders[1]) &&
+                       (folders[1] == folders[0] + L"_2" || folders[0].size() == folders[1].size()) &&
+                       !std::filesystem::exists(base / L"SAVE", ec);
+    r.request = oj::save::Request::List;
+    const bool listed = stepUntil(oj::save::SaveFlag::Listed) && device.replays().size() == 2 &&
+                        device.replays()[0].driver == L"Tester";
+    oj::Replay read;
+    saves.replay = &read;
+    r.slot = 0;
+    r.next = 1;
+    const bool loaded = stepUntil(oj::save::SaveFlag::Loaded) && read.header.track == "Angel SuperSpeedway" &&
+                        read.replayRace == 1;
+    r.next = 1;
+    device.stepReplay(r, side);
+    r.request = oj::save::Request::List;
+    stepUntil(oj::save::SaveFlag::Listed);
+    r.slot = 1;
+    r.remove = 1;
+    device.stepReplay(r, side);
+    stepUntil(oj::save::SaveFlag::DeleteAsk);
+    r.answer = 1;
+    const bool deleted = stepUntil(oj::save::SaveFlag::Deleted);
+    size_t left = 0;
+    for (const auto& e : std::filesystem::directory_iterator(replays, ec)) left += e.is_directory() ? 1 : 0;
+    std::printf("     replays' folder: %ls, %ls\n", folders.empty() ? L"" : folders[0].c_str(),
+                folders.size() < 2 ? L"" : folders[1].c_str());
+    check(saved && named && listed && loaded && deleted && left == 1,
+          "replays' folder (fixed): two dated folders, listed, read back, one deleted");
+    std::filesystem::remove_all(base, ec);
+}

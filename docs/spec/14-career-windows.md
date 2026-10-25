@@ -22,9 +22,10 @@ frames, then asks (mode 3) for the window that `+0xA4` names:
 | 6, 7 | `carsel` |
 | 8 | `CMSOnlineGridWalk` |
 
-Its enter stops the music (`[[game + 0x38] + 0x38]` = 0) and, with `+0xA4` 0 and the dealer's `+0x00` 1, hides the
-elements whose name holds `GR_`; else shows them (at the end of their transitions). Its exit sets the front end's
-black (`+0x10C`) to 1.0 and turns the music flag on again.
+Its enter clears the front end's `+0x38` (`[[game + 0x38] + 0x38]` = 0: its players' controllers not watched) and,
+with `+0xA4` 0 and the dealer's `+0x00` 1, hides the elements whose name holds `GR_`; else shows them (at the end of
+their transitions). Its exit (`garageload`'s too: one record) sets the front end's black (`+0x10C`) to 1.0, so the
+next window comes in from black, and the front end's `+0x38` again.
 
 ## The betting window `character`
 
@@ -93,8 +94,10 @@ nor while another window lies over this one; the movie plays on in the MOVIE ele
 10. BACK (event 12) with input on: in the first event (the profile's `+0x00`) "QUIT CAREER" (line 1) + "\n" + line
     1823 + "\n" + line 86, `+0xE4`; otherwise line 86, `+0xE8`; message type 3 starting on NO, the movie paused.
 
-A movie that is not there still gets a player (`0x0055A9B0`); without a Bink it counts as finished, so its clip ends
-at once.
+A movie that is not there still gets a player (`0x0055A9B0`); a name ending in a digit is first tried with that
+digit as 1 and 2 (`0x00559B10`, in the order of `rand() & 1`), so a missing third take plays the first or the
+second; with none of them the player has no Bink, counts as finished, and its clip ends at once (the game's files:
+`CHALLENGE_INTRO1` and `CHALLENGE_OUTRO1` of every leader but TK).
 
 A clip is given to the MOVIE element as `0x005AA300` inlined (the interface's movie given back, the name, played
 once, the volume 1, then the save system's `+0x5C`; the hold taken off when it is already the interface's movie).
@@ -109,7 +112,7 @@ Clips named "1 / 2 / 3" take `rand() % 3`: 1 the second, 2 the third, else the f
 | step | function | clip and what it does |
 |---|---|---|
 | 1 | | nothing (the talk is over) |
-| 2, 5, 6 | `0x0042F140` | the movie test's clip (`+0x0C`); BOSSCAR shown |
+| 0, 2, 5, 6, past 29 | `0x0042F140` | the movie test's clip (`+0x0C` in the list `0x00715AE0`: 75 names, the six after them 0; on those the name's length is read at address 0 and the game stops, a stock problem); BOSSCAR shown (`+0x58` 0) with the clip's name as its text, its text modifier started again. The step stays |
 | 3 | `0x0042F1D0` | by the crew's last race (`+0x338`): none (-1): `GREETING1`, or in the first event `CHALLENGE_INTRO1` and the bet's racer set (session `+0x374`, `+0x370` = 1); won (1): `GREETING_WON_LAST1 / 2 / 3`; lost: `GREETING_LOST_LAST1 / 2 / 3`. Step 4 |
 | 4 | `0x0042F490` | `sel_but`, `sel_text`, `back_but`, `back_text` shown, input on; the rating of the player's leader's car less the crew leader's: above 20 `COMMENT_CAR_NEG1 / 2 / 3`, below -20 `COMMENT_CAR_POS…`, else `COMMENT_CAR_NEUTRAL…`; the leader's car becomes the car of the car statistics window (`0x00728C60`). Step 7; the car views, `carbox`, the names and cars shown |
 | 7 | `0x0042F910` | kind 1: `SUGGEST_PINKSLIP1 / 2 / 3`, step 8; kind 2: `HOW_MUCH1 / 2 / 3`, step 10; else `SUGGEST_BET2` when `rand() & 1` is 1, else `SUGGEST_BET1`, step 8 |
@@ -125,7 +128,7 @@ Clips named "1 / 2 / 3" take `rand() % 3`: 1 the second, 2 the third, else the f
 | 18 | `0x00431CC0` | `PLAYER_DECLINE_BET1 / 2 / 3`; unless a higher bet was turned down (`+0x28`) respect kind 2. Step 21 |
 | 20 | | the window `autosave` (mode 5) when the save system's method `+0x24` answers non-zero; `+0x18` = 1 for a pink slip; step 19, `+0xD4` = 0, SKIPFADE 1.0, `+0x64` = `+0x68` and BET_CASH; the MOVIE element gets "`<leader>\<leader>`" (no such movie) |
 | 21 | | pink slip: the event lost (`0x004A3A60`: the byte `+0x1D` + the event's `+0x55` x 0x38, its round's `+0x01`, and the event's `+0x01` set; the round, signed, other than 0 writes past the event's one round into the calendar, a stock problem), the movie stopped, the event's end (`0x004A6870`), CLICK, `0x004BAEE0`; money: the movie stopped, `CMSGridWalk` (mode 1). Step 1 |
-| 22 .. 25 | `0x004321B0`, `0x00432360`, `0x00432280`, `0x004323B0` | after the race (`characterPostRace`): `WINS_CASH1 / 2 / 3`, `WIN_PINKSLIP1`, `LOSES_CASH1 / 2 / 3`, `LOSES_PINKSLIP1 / 2` (`rand() & 1`) |
+| 22 .. 25 | `0x004321B0`, `0x00432360`, `0x00432280`, `0x004323B0` | nothing sets these steps (the talk starts at 3 or 13; `characterPostRace` plays its own clips): 22 `WINS_CASH1 / 2 / 3`, the count `0x00715AD8` (1 at start, + 1, past 5 → 1, read by nothing), step 23 for kind 1, else 21; 23 `WIN_PINKSLIP1`, step 21; 24 `LOSES_CASH1 / 2 / 3`, the count `0x00715AD4` alike, step 25 for kind 1, else 21; 25 `LOSES_PINKSLIP1` when `rand() & 1` is 1, else `LOSES_PINKSLIP2`, step 21 |
 | 26, 28 | `0x004309F0`, `0x00431190` | `THINKING1 / 2 / 3`, step 27 / 29 |
 | 27 | `0x00430AD0` | `rand() % 18` below crew x 2 + 4: `ACCEPT_BET1 / 2 / 3`, respect kind 5, `+0x24` = 1; else `DECLINE_BET_HIGH1 / 2 / 3`, kind 6, `+0x28` = 1 |
 | 29 | `0x00431270` | `rand() % 18` above crew x 2 + 4: `YES1 / 2 / 3`, `+0x20` = 1; else `DECLINE_BET_LOW1 / 2 / 3`, kind 7 |
@@ -259,11 +262,11 @@ the text's second the entry is shown (`comment`, `type` and `counter` shown, `0x
 the next entry, or after the last finishes the window (with the save system's autosave over it when it is on); and
 the entry is counted (`0x004D06D0`) until every entry has passed.
 
-An entry shown (`0x004D1050`): kinds 0 .. 9 "RESPECT INCREASE" (533) green, 10 .. 19 "RESPECT DECREASE" (534) red,
-with the crew's fade hidden and the others shown, `comment` the crew's name (108 + crew) and what it thinks (277 +
-kind, 287 + kind - 10), the crew's component highlighted (the second for kind 13); kinds 20 .. 23 "GAINED PRIVILEGE"
-(535) green and 24 .. 27 "LOST PRIVILEGE" (536) red by the crew of the entry's first number, with lines 269 + kind -
-20 and 273 + kind - 24. The crew leader speaks (the speech object's line 0x1E for a rise, 0x1F for a fall, 0x20 for
+An entry shown (`0x004D1050`): kinds 0 .. 9 "RESPECT INCREASE" (533) green, 10 .. 19 "RESPECT DECREASE" (534) red
+(`type` and `counter` take the colour, `comment` keeps its own), with the crew's fade hidden and the others shown,
+`comment` the crew's name (108 + crew) and what it thinks (277 + kind, 287 + kind - 10), the crew's component
+highlighted (the second for kind 13); kinds 20 .. 23 "GAINED PRIVILEGE" (535) green and 24 .. 27 "LOST PRIVILEGE"
+(536) red by the crew of the entry's first number, with lines 269 + kind - 20 and 273 + kind - 24. The crew leader speaks (the speech object's line 0x1E for a rise, 0x1F for a fall, 0x20 for
 kind 13, kind + 2 for a privilege; none for kinds 4 and 14 of a crew past 1).
 
 The next entry (`0x004D0D40`): `counter` and the highlighted component emptied; an entry of kinds 0 .. 19 leaves its
@@ -593,8 +596,8 @@ the round's type (140 + type), "   ", for a circuit "Laps" (174) and its laps an
 size) (`0x005B52C0` on it). `%dLogo` (1 .. 6) shown with the crew's logo of the flyers, past the racers every such
 element hidden. For each place: `ps2_car%d` hidden; `%dInfo` over several lines, the member's short name, " - " and
 the car's display name (emptied past the racers); `%dInfo2` as in the lines below; the racer's car in `Car3d%d` (a
-car view per racer, the crew's cars made ready `0x004A9080`, the car `0x00434D90`, the view `0x0045A080` with 2.355,
-0.5, 1, its place 110, -560); `Recovery%d`, `Ability%dt`, `Recover%d`, `Ability%d`, `BOX0%d`, `%d`: for the player
+car view per racer, the crew's cars made ready `0x004A9080`, the car `0x00434D90`, the view `0x0045A080` with 2.35575
+(`0x4016C49C`), 0.5, 1, its place 110, -560); `Recovery%d`, `Ability%dt`, `Recover%d`, `Ability%d`, `BOX0%d`, `%d`: for the player
 (crew id 0, member 0) the first four hidden; for a crewmate or another crew's member all six shown and the meters
 `Recover%d` (a crewmate's recover, else the member's concentration, x 0.01) and `Ability%d` (driving ability or
 ability x 0.01); past the racers all six hidden; `bph%d` the car's rating (cut, thousands marked) and "bhp" (484),
@@ -611,8 +614,8 @@ bets' `+0x80`), the leader of another crew not yet bet with (`+0x5C`) and no amo
 here) have their middle amount (`+0x38`) under the money; and betting on cars for a leader with no money on its odds.
 
 Update: with `+0x64` the race starts. The blinking: +the frame time, past 1 less 1; over 0.75 the blinking elements
-hidden, else shown. The views turned (`0x00459EE0`); until every view has loaded (their `+0x40` and `+0x3C` 0)
-nothing more; the first time the loader over the window goes (`0x00728C68` 1). Cash and Date. `+0x60` answered
+hidden, else shown. The views turned (`0x00459EE0`), each looked at before its frame; until every view has loaded
+(their `+0x40` and `+0x3C` 0, a load the frame ends counted the next frame) nothing more; the first time the loader over the window goes (`0x00728C68` 1). Cash and Date. `+0x60` answered
 "yes": in the first event (the profile's `+0x00`) `menu`; else the profile's `+0x630` 1, the racers again
 (`0x004B8570`), the session's end (`0x004BA8A0`, `0x004B9E20`), the round's and the event's `+0x01` set, the bets
 cleared, CLICK and `CMSCalendar`.
@@ -895,7 +898,7 @@ time since the crew was chosen, `+0x44` the narration's volume, `+0x48 ..` the m
 `+0x70` the DATA panel shown.
 
 Enter: `[game + 4]`'s method `+0x34` with 1 (the application's methods `+0x34` and `+0x38` are empty on PC: vtable
-`0x006F77A0`, `0x005A10E0`); MAP3D's camera from 4000 to 5 000 000 (`0x005B4660`); Menu emptied, then
+`0x006F77A0`, `0x005A10E0`); MAP3D's camera from 3999 to 5 000 000 (`0x005B4660`); Menu emptied, then
 "OVERVIEW" (532, value 0) and the crews 1 .. 8 (118 .., values 1 .. 8); `+0x0C`, `+0x10` -1, `+0x70` 0; the elements
 whose name holds DATA hidden; the territories (`0x004DBE60`: for crews 0 .. 8 the model of `0x00719110 + 0x14 x crew`
 (ui_westanderson, ui_sanricardo, ui_campbellhills, ui_downtown, ui_angelnorth, ui_westanderson again, ui_southside,
@@ -1061,8 +1064,20 @@ parameter 4 1, `0x0048BEB0`) else hidden. Painting the car again (`0x0045A6F0`) 
 (0, 20, 0) from the arm (0, 0, -725) turning by -0.25, the zoom from 0 to 0.7; else at its place looking at (0, 20, 0),
 the zoom and its target `+0x14`).
 
-The view is busy (`0x0045A880`) while either load is there; `0x0045AE90` drops the load and empties the view;
-`0x0045A340` frees it (waiting for its loads).
+The car's parts changed (`0x0045A8A0`, the view, the car, clear and prototype): with neither load there and a car
+shown, the parts cleared (`0x004600C0`) or the automatic modification (`0x0048F2C0`), the model's glass tinted
+(`0x0048C040`), and a group of jobs (`+0x40`) queued on the loading thread (`0x00463D60`): the cars' folders
+(`0x0045A750`), each body part (`0x0048BC30` -> `0x0048BB00`: its mesh read on the thread, `0x0048F620`, and put in
+the slots by its slot 2, `0x0048B9D0`) and each catalogue part (`0x0048BD70`) of the model and of its mirror image,
+`0x0048C210`'s, the folders back (`0x0045A770`, its slot 2 the decal's colour `0x0048BEF0`), the driver
+(`0x0048B860`) and the neon (slot 2 `0x0045A790`). Each frame (after the load's part above) with the group there:
+every job's slot 2 run (`0x00401130`, not waiting for the thread), the group let go and the chassis of the model
+and of its mirror image lowered (`0x0045A027`): the parts are in a frame later. A window showing MODDING while
+`+0x40` is there (instant_selcar `0x0045F508`, the split screen's `0x0046D4D4`) checks it after the view's frame,
+which has let it go. OpenJuice runs the parts' work on the main thread at that frame.
+
+The view is busy (`0x0045A880`) while either load is there; `0x0045AE90` drops the load (`+0x3C`, not `+0x40`) and
+empties the view; `0x0045A340` frees it (waiting for its loads).
 
 ## The garage's scenes
 
@@ -1253,7 +1268,8 @@ traction control (`+0x174` 0).
 
 The camera, by its stage: 1 looks at (0, 0, 0) and moves 450 cm a second along x; 2 looks at (0, 50, 100) and moves
 25 cm a second back along x; 3 looks at (0, 0, 0) and moves 150 cm a second along z; in each the black is 1 - the
-stage's time under 1 s; 4 the black 1. Its time falls by the window's step; past 0 the next stage: 1 at
+stage's time under 1 s (in 3 the scene's 3D sounds paused then too, `[G+0x50]`'s manager, so the engines go quiet
+with the black); 4 the black 1. Its time falls by the window's step; past 0 the next stage: 1 at
 (-3800, 150, 3000) for 5 s, 2 at (600, 70, 250) for 5 s, 3 at (250, 75, 700) for 8 s with the black 1, 4 the test
 track's race when `+0xA8` is set (else `CMSAtMeeting`, mode 3) and `+0xA8` 0.
 
@@ -1758,11 +1774,13 @@ The texts (`0x004CC820`): the reason 0. Race1Type, Race1Laps, Race1Route, Race1N
 for point to points and sprints, else the laps of `0x00719044`; the route "1" or "1 R" for a point to point (past
 route 0), else "<route - 3> R" past 3, else "<route + 1>"; the team; the prize's places in thousands "$<n>k" (marked).
 CostValue the setup's cost (`[0x00728C6C]`); CashValue the money, under the cost 0xFFBC381D with reason 2; Attendance
-the crews coming (`0x004CD580`), red under 2.
+the crews coming (`0x004CD580`), under 2 red with reason 4 ("Cannot Host Event - You need at least 2 crews in
+attendance", 480; the setup's and the race's windows only colour it).
 
 Update: the map's frame. A "yes" to cancel (`+0x0C` 1): `CMSMainMenu`. BACK (CLICK): "Cancel event setup?" and "ARE
 YOU SURE?" (type 3, on NO) into `+0x0C`. SELECT on `menu`'s item of value 1 while no round is kept (CLICK):
-`CMSHostMeetingSetupRace`. A "yes" to create (`+0x10` 1): the event made (`0x004CD6F0`). SELECT on the item of value 2
+`CMSHostMeetingSetupRace`. A "yes" to create (`+0x10` 1): the event made (`0x004CD6F0`), and the update goes on (no
+return; `+0x10` stays). SELECT on the item of value 2
 (CLICK): with a reason its note (type 1, 476 + it); with no round reason 3 and "Cannot Host Event - You need at least
 one race" (479); else the setup's `+0x38` set and "Create event. Cost: " (1826), the cost and "ARE YOU SURE?" (type 3,
 on NO) into `+0x10`.
@@ -1779,11 +1797,11 @@ crew's `+0x24C` and `+0x250` (+ 4 x the route), team 1, laps 1, `+0x0C` 3; `+0x5
 and `+0x18` 0, `+0x08` 1 for a team over one, the crews' flags (`+0x0D`) cleared; the crews 0 .. 8 shuffled by 50
 swaps of `rand() % 9` and `rand() % 9`; then in that order each crew's coming (the setup's `+0x3C + 4 x crew`) goes to
 the event's `+0x56`, and while the round has under 6 racers (`+0x18`) and fewer crews than `+0x0C`, a crew coming takes
-a place (`+0x18` by the team, `+0x16` one more, its `+0x0D` flag). Then the teams (`0x004A4410`), the profile's
-`+0x620` the type, the event into the calendar's first free slot (marked used), the event of that slot and day chosen
-(`[0x00728C50]`, the profile's `+0x610`; `[0x00728C5C]` and `[0x00728C58]` its slot and day), both note lists emptied
-(`0x004B5CC0`), the days passed (`0x004A6530`) until the calendar is at its slot and day, and the meeting
-(`0x004C27A0`).
+a place (`+0x18` by the team, `+0x16` one more, its `+0x0D` flag). Then the time of day and weather (`0x004A4410`),
+the profile's `+0x620` the type, the event into the calendar's first free slot (marked used), the event of that slot
+and day chosen (`[0x00728C50]`, the profile's `+0x610`; `[0x00728C5C]` and `[0x00728C58]` its slot and day), both note
+lists emptied (`0x004B5CC0`), the days passed (`0x004A6530`) until the calendar is at its slot and day, and the
+meeting (`0x004C27A0`).
 
 ## Car_Stats2 and Car_Stats2purple
 

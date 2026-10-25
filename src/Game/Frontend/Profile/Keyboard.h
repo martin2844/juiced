@@ -26,6 +26,9 @@ struct KeyboardSetup {
     std::string next;        // +0x564, the state after DONE
     bool checkName = true;   // +0x5BC, the text goes through the name filter
     bool small = false;      // +0x5B8, the smaller text box (more than 26 characters)
+    // The fixed build's lobby chat (Frontend/Network/LobbyChat): its lines above, DONE or ENTER says the text and
+    // stays, the session leaving the lobby goes back.
+    bool chat = false;
 };
 
 // The keys' letters (the keyboard's +0x5A4): lower case, upper case, the symbols page.

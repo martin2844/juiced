@@ -15,7 +15,10 @@ namespace oj::frontend {
 namespace {
 
 int32_t g_hosting = 0;            // [0x00728C54]
-std::string g_lastButton;         // [0x0079E850]: the highlighted button the calendar saw last
+// [0x0079E850]: the highlighted button the calendar saw last. Stock problem: a pointer to the window's element, which
+// the front end frees before a race and makes again after it, so the first frame after a race read the freed
+// button's name (a random crash); its name is kept here.
+std::string g_lastButton;
 float g_selectPulse = 1.0f;       // [0x00725600]
 float g_adviceBlink = 0.0f;       // [0x0079E84C]
 

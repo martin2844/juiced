@@ -31,17 +31,16 @@ OJ_UNIT_TEST(SoundSet, QuietestFewVoices) {
     check(quietest({0.3f}, voice) == 4, "one voice: none (its mean)");
 }
 
-// Four voices or more sum as the stock's unrolled loop does: the last 4 x (n / 4) into the 1 / n slot, the first
-// n % 4 into the sum, the quietest compared with their product (Stock problem: not the mean).
-OJ_UNIT_TEST(SoundSet, QuietestUnrolled) {
+// Four voices or more: the stock's unrolled loop compared the quietest with a product that was not the mean (0 for
+// a multiple of four); the fixed build compares it with the mean as below four.
+OJ_UNIT_TEST(SoundSet, QuietestManyVoices) {
     uint32_t voice = 0;
-    check(quietest({0.3f, 0.3f, 0.3f, 0.3f}, voice) == 1 && voice == 3,
-          "four as quiet as each other: the sum stays 0, so the last of them is taken");
-    check(quietest({0.0f, 0.0f, 0.0f, 0.0f}, voice) == 4, "four silent: none (0 against 0)");
-    check(quietest({0.0f, 1.0f, 1.0f, 1.0f, 1.0f}, voice) == 4,
-          "five, the first silent and the rest full: 0 against (1/5 + 4) x 0, none");
-    check(quietest({0.1f, 0.5f, 0.5f, 0.5f, 0.5f}, voice) == 1 && voice == 0,
-          "five, the first quiet: 0.1 against (1/5 + 2) x 0.1, the first taken");
+    check(quietest({0.3f, 0.3f, 0.3f, 0.3f}, voice) == 4, "four as quiet as each other: none (their mean)");
+    check(quietest({0.0f, 0.0f, 0.0f, 0.0f}, voice) == 4, "four silent: none");
+    check(quietest({0.0f, 1.0f, 1.0f, 1.0f, 1.0f}, voice) == 1 && voice == 0,
+          "five, the first silent and the rest full: the first taken");
+    check(quietest({0.5f, 0.5f, 0.1f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f}, voice) == 1 && voice == 2,
+          "eight, the third quiet: the third taken");
 }
 
 // The x86's shifts take their count modulo 32: a 33rd voice's bit is the first's.

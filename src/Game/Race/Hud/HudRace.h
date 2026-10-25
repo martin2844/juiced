@@ -36,8 +36,8 @@ class Engine;
 class View3d;
 }
 
-// "%02d:%02d:%02d" of a time (0x0044FBD0): minutes, seconds and the fraction of the second x 99, each cut toward
-// zero; below 0 the time is 0.
+// "%02d:%02d:%02d" of a time (0x0044FBD0): minutes, seconds and the fraction of the second x 99 (the fixed build:
+// x 100, the hundredths 00 .. 99), each cut toward zero; below 0 the time is 0.
 std::string hudTime(float seconds);
 
 // The messages of a player (0x1C bytes, 0x004560B0): at most 10, the first shown in MSG.

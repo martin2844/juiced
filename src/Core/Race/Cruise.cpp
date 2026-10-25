@@ -172,7 +172,7 @@ bool CruiseZone::contains(const Vec4& point) const {
 
 // 0x004B0F40: the helper's node, its properties: CRUISE_MOVE the crowd kind, CRUISE_NAME, CRUISE_DIFFICULTY (5 without
 // it, at least 5), CRUISE_CROWD; with CRUISE_MESSAGE and a CRUISE_NAME of text, the zone's name by the message (none
-// for another message). Stock problem: the message is taken only when CRUISE_NAME has a text.
+// for another message). Stock problem: the message is taken only when CRUISE_NAME has a text (not in the fixed build).
 void Cruise::addZone(const SceneMoveZone& helper, const TextTable& texts) {
     CruiseZone z;
     for (size_t i = 0; i < 12; ++i) z.matrix[i] = helper.matrix[i];
@@ -195,7 +195,8 @@ void Cruise::addZone(const SceneMoveZone& helper, const TextTable& texts) {
                            : 5;
         if (z.difficulty < 5) z.difficulty = 5;
         if (props.has(ObjectProperties::CruiseCrowd)) z.pleased = props.integer(ObjectProperties::CruiseCrowd);
-        if (props.has(ObjectProperties::CruiseMessage) && named) {
+        // The fixed build asks the message's own key (the game's helpers all have a CRUISE_NAME text too).
+        if (props.has(ObjectProperties::CruiseMessage)) {
             const std::string* message = props.text(ObjectProperties::CruiseMessage);
             for (size_t i = 0; message != nullptr && i < kZoneMessages.size(); ++i) {
                 if (sameText(*message, kZoneMessages[i])) {
@@ -302,8 +303,22 @@ void Cruise::excite(int32_t level, float seconds) {
 }
 
 // 0x004ABD10 / 0x004ABDC0: the lines move up one place (the first goes); the last a new line of the trick (or of the
-// special move), its value 0, going on, shown 2.5 s; the list changed.
+// special move), its value 0, going on, shown 2.5 s; the list changed. Stock problem: a trick going on keeps the list's
+// last place, not its line, so a newer line (another trick, a special move, a bonus) takes the points it goes on
+// adding (and its end's points, which decide the multiplier, are that line's). The fixed build's trick follows its
+// line up the list; a line going past the top keeps its points in the trick's own (offList).
 void Cruise::shift() {
+    for (CruiseTrick& t : tricks) {
+        if (t.message == nullptr || t.message == &t.offList) continue;
+        const std::ptrdiff_t at = t.message - messages.data();
+        if (at < 0 || at >= static_cast<std::ptrdiff_t>(messages.size())) continue;
+        if (at == 0) {
+            t.offList = messages[0];
+            t.message = &t.offList;
+        } else {
+            t.message = &messages[static_cast<size_t>(at - 1)];
+        }
+    }
     for (size_t i = 0; i + 1 < messages.size(); ++i) {
         CruiseMessage& to = messages[i];
         const CruiseMessage& from = messages[i + 1];

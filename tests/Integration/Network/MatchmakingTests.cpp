@@ -225,3 +225,32 @@ OJ_INTEGRATION_TEST(Matchmaking, HostListJoin) {
           "client after the host's NAT negotiation told to the first, the leave");
     hosts = oj::net::ServiceHosts{};
 }
+
+// The fixed build: a search without a server browser (the available check not "available") is over at once with
+// nothing found (the stock's went through a null browser; the port's waited for ever: the quick match's "JOINING
+// GAME..." never ended).
+OJ_INTEGRATION_TEST(Matchmaking, SearchWithoutBrowserEnds) {
+    oj::net::startWinsock();
+    oj::net::availableResult() = oj::net::AvailableCheck::Waiting;
+    oj::net::Transport link;
+    oj::net::Matchmaking mm(&link);
+    mm.startSearch(0, 0, 0);
+    check(mm.listIn == 1 && mm.detailsIn == 1 && mm.results.empty(),
+          "matchmaking (fixed): a search without a browser over at once, nothing found");
+}
+
+// The fixed build: a listed session of this machine (our public address, its private one ours with our game port) is
+// told apart; another machine behind the same address (a friend on the LAN) or another port is not.
+OJ_INTEGRATION_TEST(Matchmaking, OwnSessionPassedOver) {
+    oj::net::SbServer s;
+    s.publicIp = 0x3AF61F90u;
+    s.privateIp = 0x7B01A8C0u;  // 192.168.1.123
+    s.privatePort = static_cast<uint16_t>((8667 >> 8) | ((8667 & 0xFF) << 8));
+    const std::vector<uint32_t> own = {0x7B01A8C0u};
+    const bool ours = oj::net::ownSession(s, 0x3AF61F90u, 8667, own);
+    const bool friendOnLan = oj::net::ownSession(s, 0x3AF61F90u, 8667, {0x7C01A8C0u});
+    const bool otherPort = oj::net::ownSession(s, 0x3AF61F90u, 8668, own);
+    const bool otherNet = oj::net::ownSession(s, 0x01020304u, 8667, own);
+    check(ours && !friendOnLan && !otherPort && !otherNet,
+          "matchmaking (fixed): our own listed session told apart, a friend's behind our address not");
+}

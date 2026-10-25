@@ -26,6 +26,7 @@
 #include <oleauto.h>
 #include <shlobj.h>
 #include <commctrl.h>
+#include <dpapi.h>
 
 #include <algorithm>
 #include <cstddef>
@@ -283,6 +284,9 @@ const Windows7Function kWindows7[] = {
     OJ_WIN7_ORDINAL("OLEAUT32.dll", 9, VariantClear),
     // COMCTL32.dll
     OJ_WIN7("COMCTL32.dll", InitCommonControlsEx),
+    // CRYPT32.dll (the fixed build's protected account; both since Windows 2000)
+    OJ_WIN7("CRYPT32.dll", CryptProtectData),
+    OJ_WIN7("CRYPT32.dll", CryptUnprotectData),
     // WS2_32.dll
     OJ_WIN7_ORDINAL("WS2_32.dll", 1, accept),
     OJ_WIN7_ORDINAL("WS2_32.dll", 2, bind),
@@ -512,6 +516,21 @@ OJ_INTEGRATION_TEST(Windows7, Executable) { checkStartsOnWindows7(executable(L"O
 
 // The settings tool's executable starts on Windows 7.
 OJ_INTEGRATION_TEST(Windows7, ConfigTool) { checkStartsOnWindows7(executable(L"OpenJuiceConfig"), 50); }
+
+// The game's executable names neither file function of Windows 8 its C++ library calls: not imported, and not looked
+// up by name as it runs (its own slots hold Windows 7's ways on every Windows, Game/Platform/Win7Imports.cpp). The
+// clocks' GetSystemTimePreciseAsFileTime stays a name in the C runtime's own list of the functions it asks the system
+// for (beside GetLocaleInfoEx, GetTimeFormatEx, ..), as in every executable the toolset builds.
+OJ_INTEGRATION_TEST(Windows7, NothingLookedUp) {
+    const std::filesystem::path file = executable(L"OpenJuice");
+    std::ifstream in(file, std::ios::binary);
+    check(in.good(), "the executable beside the tests: " + file.filename().string());
+    if (!in) return;
+    const std::string bytes((std::istreambuf_iterator<char>(in)), {});
+    for (const char* name : {"CreateFile2", "CopyFile2"}) {
+        check(bytes.find(name) == std::string::npos, std::string("no ") + name + " in the executable");
+    }
+}
 
 // CreateFile2 without Windows 8: CreateFileW with its parameters' attributes and flags.
 OJ_INTEGRATION_TEST(Windows7, CreateFile2) {

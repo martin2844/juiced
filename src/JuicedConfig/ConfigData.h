@@ -42,10 +42,10 @@ uint32_t textId(uint32_t first, Language language);
 
 // A display mode as the mode list keeps it (an item's data, [0x00412044]): the width shifted 12 bits up, the height,
 // and bit 31 for 16 bits per pixel (else 32). Stock problem: widths from 4096 lose their high bits (5120 reads as
-// 1024).
+// 1024). The fixed build keeps the width in bits 16 .. 30 and the height in bits 0 .. 15.
 uint32_t modeKey(uint32_t width, uint32_t height, bool sixteenBits);
-inline uint32_t modeWidth(uint32_t key) { return (key >> 12) & 0xFFF; }
-inline uint32_t modeHeight(uint32_t key) { return key & 0xFFF; }
+inline uint32_t modeWidth(uint32_t key) { return (key >> 16) & 0x7FFF; }
+inline uint32_t modeHeight(uint32_t key) { return key & 0xFFFF; }
 inline uint32_t modeDepth(uint32_t key) { return (key & 0x80000000u) != 0 ? 16u : 32u; }
 // 0x00402030: the order of the full screen modes: by width, height, then depth.
 bool modeLess(uint32_t a, uint32_t b);
@@ -53,7 +53,7 @@ bool modeLess(uint32_t a, uint32_t b);
 // unsigned values: a wrapped sum is far); the first of equals, 0 for an empty list.
 size_t nearestMode(const std::vector<uint32_t>& keys, uint32_t kept);
 // 800 x 600 at 32 bits, the mode kept before the registry's is read ([0x00412044]).
-inline constexpr uint32_t kDefaultMode = (800u << 12) | 600u;
+inline constexpr uint32_t kDefaultMode = (800u << 16) | 600u;
 
 // The modes the windowed list offers ([0x004120D8]), those within the desktop's display mode.
 struct WindowedMode {

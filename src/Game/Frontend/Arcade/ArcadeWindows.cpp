@@ -25,11 +25,10 @@ bool same(const std::string& a, const char* b) {
     return _stricmp(a.c_str(), b) == 0;
 }
 
-// An 8-bit text widened character by character (0x0040ACE0).
+// An 8-bit text widened character by character, with its sign (0x0040ACE0); the fixed build reads it in the
+// names' code page.
 std::wstring latin(const std::string& text) {
-    std::wstring wide;
-    for (char c : text) wide += static_cast<wchar_t>(static_cast<unsigned char>(c));
-    return wide;
+    return oj::widenSigned(text);
 }
 
 // Lines of the game's text table.
@@ -51,7 +50,8 @@ bool g_arcadeVideo = false;
 // first race's +0x08) "DEVELOPMENT TEAM .." (1943 + the developers' items so far) with them open (+0x5138), an extreme
 // nitrous one (+0x04) "EXTREME NITROUS .." (1948 + ..) with them open (+0x5134), another its name (1888 + its number),
 // disabled while its first race is locked; the championship of [0x0075ECF4] highlighted (Stock problem: by its number
-// as the item's place, though items before it may be left out). +0x0C -1.
+// as the item's place, though items before it may be left out; the fixed build's by its item, none when it has none).
+// +0x0C -1.
 void ArcadeChampionship::enter(WindowHost& host, ui::Screen& s) {
     GameData* data = host.gameData();
     const TextTable& texts = host.gameTexts();
@@ -70,6 +70,7 @@ void ArcadeChampionship::enter(WindowHost& host, ui::Screen& s) {
     size_t extreme = 0;
     for (int32_t c = 0; c < a.count(); ++c) {
         const size_t first = Arcade::race(c, 0);
+        const size_t before = s.menuSize("CHAMPIONSHIP_MENU");
         if (a.i32(first + Arcade::kRaceDevelopers) == 0) {
             if (a.i32(first + Arcade::kRaceExtreme) == 0) {
                 s.addMenuItem("CHAMPIONSHIP_MENU", texts.at(kTextChampionships + static_cast<size_t>(c)),
@@ -83,9 +84,8 @@ void ArcadeChampionship::enter(WindowHost& host, ui::Screen& s) {
         } else if (a.i32(Arcade::kDevelopers) != 0) {
             s.addMenuItem("CHAMPIONSHIP_MENU", texts.at(kTextDevelopers + developers++), static_cast<float>(c));
         }
-        if (g_championship == c) {
-            const size_t items = s.menuSize("CHAMPIONSHIP_MENU");
-            s.selectMenuItem("CHAMPIONSHIP_MENU", items != 0 && static_cast<size_t>(c) > items - 1 ? 0 : c);
+        if (g_championship == c && s.menuSize("CHAMPIONSHIP_MENU") > before) {
+            s.selectMenuItem("CHAMPIONSHIP_MENU", before);
         }
     }
     m_shown = -1;
@@ -378,16 +378,16 @@ void ArcadeRace::details(WindowHost& host, ui::Screen& s) {
 // car shown turned 2.64, turning 0.4, fading (0x0045A080 on the arcade's cars, its place c x 5 + r); +0x1C 0.
 void ArcadeRace::show(WindowHost& host, ui::Screen& s) {
     GameData* data = host.gameData();
-    const TextTable& texts = host.gameTexts();
     if (!m_refresh || (m_view && m_view->busy())) return;
     Arcade& a = data->arcade;
     const size_t race = a.current();
     const auto route = static_cast<size_t>(a.i32(race + Arcade::kRaceRoute));
     const std::vector<ExeTables::Route>& routes = data->tables.routes;
     if (route < routes.size()) {
-        // Stock problem: the location's text of the language against nine English names, exactly; Super Speedway is
-        // past the eight city places.
-        m_map.lookAt(host, s, texts.at(kTextLocations + static_cast<size_t>(routes[route].location)));
+        // Stock problem: the location's text of the language against nine English names, exactly (another language
+        // looks at the first place); Super Speedway is past the eight city places. The fixed build gives it the
+        // location's English name ([0x00711A10], as the hosted events' map does): the same place in every language.
+        m_map.lookAt(host, s, englishLocation(host, routes[route].location));
         m_map.route(host, s, routes[route].name, false);
     }
     const size_t place = static_cast<size_t>(a.i32(Arcade::kChampionshipIndex) * 5 + a.i32(Arcade::kRaceIndex));

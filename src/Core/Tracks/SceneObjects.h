@@ -173,7 +173,7 @@ struct CarPartObject {
     // "bonnet" and "spoiler" about x (1), a name starting "sskirt" about x and z (5), one starting "exhaust" about x
     // and y (3) and named "exhaust" for its files; any other name not at all, and has no files and no body.
     // Stock problem: the skirts are told apart by _strnicmp with "sskirt_l" and "sskirt_r" over 6 characters, so the
-    // right skirt takes the left's bit (0x10, never 0x20).
+    // right skirt takes the left's bit (0x10, never 0x20); the fixed build's 0x20.
     static CarPartObject make(const std::string& nodeName);
 
     uint32_t axes = 0;              // +0x5C: 1 about x, 2 about y, 4 about z
@@ -305,6 +305,12 @@ struct SceneSpline {
     // space.
     Vec4 pointAt(float place) const;
 };
+
+// 0x0041B720: the spline's path (its segments made), the points at the knots moved by the node's place (x, y, z):
+// each one's direction from the point before (the first from the last) and that point's length to it, the length of
+// the path up to it; the spline's length the points' lengths summed (the fixed build's open spline without the last
+// one's way back to the first).
+void makeSplinePath(SceneSpline& s, float x, float y, float z);
 
 // The scene objects' manager of a race.
 class SceneObjects {

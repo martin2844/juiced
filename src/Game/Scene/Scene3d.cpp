@@ -13,12 +13,14 @@
 
 #include <algorithm>
 #include <bit>
+#include <chrono>
 #include <cmath>
 #include <cstdarg>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <fstream>
+#include <thread>
 
 namespace oj::scene {
 
@@ -109,19 +111,19 @@ void shadeTexel(const fx::Program& shader, const std::vector<float>& constants, 
 
 // D3DXFillTextureTX / FillVolumeTextureTX / FillCubeTextureTX (0x005DB944 / 0x005DB970 / 0x005DB95A → 0x005DB7C6,
 // D3DXFillTexture 0x005DAB3E, D3DXFillVolumeTexture 0x005DB47D, D3DXFillCubeTexture 0x005DAD54) on the texture
-// 0x0051B400 makes: a flat one width x height with the height as its levels (Stock problem: the miplevels annotation
-// is not used for it), a volume width x height x depth with miplevels, a cube of the width with miplevels; a size 0
-// is 1. Each level's texel at ((x + 0.5) / w, (y + 0.5) / h[, (z + 0.5) / d]), its size (1 / w, 1 / h[, 1 / d]); a
-// cube's texel the direction through its centre on its face, (2i + 1) / size - 1 across, its size 2 / size on the
-// face's two axes.
+// 0x0051B400 makes: a flat one width x height with the height as its levels (Stock problem: the miplevels annotation is
+// not used for it; the fixed build uses it), a volume width x height x depth with miplevels, a cube of the width with
+// miplevels; a size 0 is 1. Each level's texel at ((x + 0.5) / w, (y + 0.5) / h[, (z + 0.5) / d]), its size (1 / w, 1 /
+// h[, 1 / d]); a cube's texel the direction through its centre on its face, (2i + 1) / size - 1 across, its size 2 /
+// size on the face's two axes.
 ProceduralTexture fillProcedural(const fx::Program& shader, const std::vector<float>& constants,
                                  const render::Program::TextureRequest& request) {
     ProceduralTexture t;
     t.width = std::max(request.width, 1u);
     t.height = request.type == 9 ? t.width : std::max(request.height, 1u);
     t.depth = request.type == 8 ? std::max(request.depth, 1u) : 1;
-    t.levels = request.type == 7 ? levelsOf(request.height, t.width, t.height, 1)
-                                 : levelsOf(request.mipLevels, t.width, t.height, t.depth);
+    // The fixed build: a flat one takes miplevels too (the stock took its height).
+    t.levels = levelsOf(request.mipLevels, t.width, t.height, t.depth);
     uint8_t texel[4];
     auto put = [&t, &texel] { t.pixels.insert(t.pixels.end(), texel, texel + 4); };
     if (request.type == 9) {
@@ -550,6 +552,7 @@ std::string Engine::cacheKey(const std::filesystem::path& folder, const char* ow
 }
 
 void Engine::useCarFolders() {
+    const LoadLock lock(*this);
     m_keptFolders = m_folders;
     m_folders.models = "carmodels";
     m_folders.mesh = "carmesh";
@@ -557,9 +560,22 @@ void Engine::useCarFolders() {
     m_folders.textures = "cartextures";
 }
 
-void Engine::restoreFolders() { m_folders = m_keptFolders; }
+void Engine::restoreFolders() {
+    const LoadLock lock(*this);
+    m_folders = m_keptFolders;
+}
+
+Engine::LoadLock::LoadLock(Engine& engine) : m_engine(engine) {
+    while (!engine.m_loadLock.try_lock()) {
+        engine.m_device.letLoadingRun();
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    }
+}
+
+Engine::LoadLock::~LoadLock() { m_engine.m_loadLock.unlock(); }
 
 const render::GameTexture* Engine::texture(const std::string& name) {
+    const LoadLock lock(*this);
     const std::string key = cacheKey(m_folders.textures, "textures", name);
     const auto it = m_textures.find(key);
     if (it != m_textures.end()) return it->second.get();
@@ -580,6 +596,7 @@ const render::GameTexture* Engine::texture(const std::string& name) {
 }
 
 const render::GameTexture* Engine::cubeTexture(const std::string& name) {
+    const LoadLock lock(*this);
     const auto it = m_cubeTextures.find(name);
     if (it != m_cubeTextures.end()) return it->second.get();
     const GameFiles files(std::filesystem::current_path());
@@ -620,6 +637,7 @@ render::Material* Engine::material(const std::string& part) {
 
 const render::GameTexture* Engine::texture(const std::string& name, const std::filesystem::path& folder,
                                            const std::filesystem::path& shared) {
+    const LoadLock lock(*this);
     if (folder.empty()) return shared.empty() ? texture(name) : texture(name, shared);
     const std::string key = folder.string() + "|" + name;
     const auto it = m_textures.find(key);
@@ -635,6 +653,7 @@ const render::GameTexture* Engine::texture(const std::string& name, const std::f
 std::unique_ptr<render::Material> Engine::loadMaterial(const std::filesystem::path& mats, const std::string& part,
                                                        const std::filesystem::path& textures,
                                                        const std::filesystem::path& shared) {
+    const LoadLock lock(*this);
     const GameFiles files(std::filesystem::current_path());
     const auto bytes = files.read(mats / (part + ".pmd"));
     if (!bytes) {
@@ -655,6 +674,7 @@ std::unique_ptr<render::Material> Engine::loadMaterial(const std::filesystem::pa
     }
     // The description keeps every parameter (zeros for a key the file leaves out); the object takes them in the
     // class's order.
+    std::vector<std::vector<uint8_t>> description;
     for (const ExeTables::MaterialParam& p : info->params) {
         std::vector<uint8_t> value(valueSize(p.type), 0);
         for (const auto& [key, text] : pmd.values) {
@@ -664,7 +684,9 @@ std::unique_ptr<render::Material> Engine::loadMaterial(const std::filesystem::pa
             }
         }
         if (!value.empty()) material->setParam(p.index, value.data());
+        description.push_back(std::move(value));
     }
+    material->setDescription(std::move(description));
     for (const auto& [slot, slotName] : info->textures) {
         for (const auto& [key, text] : pmd.values) {
             if (_stricmp(key.c_str(), slotName.c_str()) != 0) continue;
@@ -677,6 +699,7 @@ std::unique_ptr<render::Material> Engine::loadMaterial(const std::filesystem::pa
 }
 
 render::Mesh* Engine::mesh(const std::string& name) {
+    const LoadLock lock(*this);
     const std::string key = cacheKey(m_folders.mesh, "mesh", name);
     const auto it = m_meshes.find(key);
     if (it != m_meshes.end()) return it->second.get();
@@ -700,6 +723,7 @@ std::unique_ptr<render::Mesh> Engine::readMesh(const std::string& name) {
 }
 
 bool Engine::reloadMesh(render::Mesh& mesh, const std::string& name) {
+    const LoadLock lock(*this);
     const GameFiles files(std::filesystem::current_path());
     const auto bytes = files.read(m_folders.mesh / (name + ".d8m"));
     const auto parsed = bytes ? parseMesh(bytesOf(*bytes)) : std::nullopt;
@@ -736,7 +760,8 @@ void Model::mirror() {
     root->invalidate();
 }
 
-std::unique_ptr<Model> Engine::loadModel(const std::string& name, CrtRandom& random) {
+std::unique_ptr<Model> Engine::loadModel(const std::string& name, CrtRandom& random, bool ownMeshes) {
+    const LoadLock lock(*this);
     const GameFiles files(std::filesystem::current_path());
     const auto bytes = files.read(m_folders.models / (name + ".boh"));
     const auto tree = bytes ? parseBoh(bytesOf(*bytes)) : std::nullopt;
@@ -752,7 +777,7 @@ std::unique_ptr<Model> Engine::loadModel(const std::string& name, CrtRandom& ran
         if (b.attach == 0) {
             render::Mesh* m = nullptr;
             if (_stricmp(b.mesh.c_str(), "NONE") != 0) {
-                if (m_meshCaching) {
+                if (m_meshCaching && !ownMeshes) {
                     m = mesh(b.mesh);
                 } else if (std::unique_ptr<render::Mesh> own = readMesh(b.mesh)) {
                     m = own.get();
@@ -788,6 +813,7 @@ std::unique_ptr<Model> Engine::loadModel(const std::string& name, CrtRandom& ran
 }
 
 std::unique_ptr<render::Material> Engine::newMaterial(uint32_t classId, const ExeTables::MaterialClass** info) {
+    const LoadLock lock(*this);
     const ExeTables::MaterialClass* c = m_tables.materialClass(classId);
     if (info != nullptr) *info = c;
     if (c == nullptr) return nullptr;
@@ -795,6 +821,7 @@ std::unique_ptr<render::Material> Engine::newMaterial(uint32_t classId, const Ex
 }
 
 std::unique_ptr<render::GameTexture> Engine::makeTexture(const std::vector<std::byte>& bytes) {
+    const LoadLock lock(*this);
     Ddt ddt;
     if (!ddt.parse(bytes)) return nullptr;
     auto texture = std::make_unique<render::GameTexture>();
@@ -805,6 +832,7 @@ std::unique_ptr<render::GameTexture> Engine::makeTexture(const std::vector<std::
 }
 
 std::unique_ptr<render::Material> Engine::newMaterial(const std::string& className) {
+    const LoadLock lock(*this);
     const ExeTables::MaterialClass* info = m_tables.materialClass(className);
     if (info == nullptr) return nullptr;
     return render::createMaterial(*info, m_renderer, [this](const std::string& n) { return program(n); }, m_tables);
@@ -1040,7 +1068,7 @@ void View3d::buildSky() {
         sun->roadHeight = 200.0f;
         sun->roadAlphaTop = 128.0f;
         sun->roadAlphaBottom = 64.0f;
-        sun->reflection = a.sunReflection.empty() ? std::string() : a.sunFlare;
+        sun->reflection = a.sunReflection;
         sun->reflectionSize = a.sunReflection.empty() ? 300.0f : 200000.0f * a.sunReflectionSize * 0.01f;
         LensFlares::Flare f;
         f.def = sun.get();
@@ -1259,13 +1287,20 @@ void View3d::drawView(float x0, float y0, float x1, float y1) {
     r.dynamicEnvironment = m_world.environment;
     r.environment = m_world.environment;
     if (m_world.sky) m_world.sky->draw(m_camera);
-    if (m_model) {
-        for (auto& node : m_model->meshNodes) node->draw(r, m_camera, 0);
+    // The world's roots (0x00550500, as the race's): each tree with the parts of opaque classes (mode 1), then again
+    // with the others (mode 2), so a car's glass goes over what is behind it (a spoiler). Stock problem: the sponsors'
+    // decals (Coloured Spec ABlend) are of the late classes too and drawn in the parts' order with the glass, so the
+    // far side's decals show through the rear window.
+    // The fixed build: every tree's opaque parts, then every tree's late ones (a car's glass writes its depth,
+    // Model.cpp: a car behind another's window is drawn before that window).
+    const auto drawTree = [&](Model& model, uint32_t mode) {
+        for (auto& node : model.meshNodes) node->draw(r, m_camera, mode);
+    };
+    for (uint32_t mode = 1; mode <= 2; ++mode) {
+        if (m_model) drawTree(*m_model, mode);
+        for (const std::unique_ptr<Model>& model : m_models) drawTree(*model, mode);
+        for (const auto& draw : worldDraws) draw(r, m_camera, mode);
     }
-    for (const std::unique_ptr<Model>& model : m_models) {
-        for (auto& node : model->meshNodes) node->draw(r, m_camera, 0);
-    }
-    for (const auto& draw : worldDraws) draw(r, m_camera);
     r.endMaterial();
     // The object constants of no object (0x0054D8D0), the world's lens flares (0x0054FC60).
     identityObject(r, m_camera);

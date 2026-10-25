@@ -193,6 +193,9 @@ private:
 };
 
 // [0x0075EF84]: the game's matchmaking, none outside the online windows.
+// The fixed build: a listed session of this machine (our public address, its private one among ours with our game
+// port), passed over by the searches (OpenSpy keeps a dead session's listing for minutes).
+bool ownSession(const SbServer& server, uint32_t myPublicIp, uint16_t gamePort, const std::vector<uint32_t>& own);
 Matchmaking* matchmaking();
 // 0x004E1A00: the matchmaking made anew (0x00560D50; the one before released) on the network game's transport.
 void makeMatchmaking();

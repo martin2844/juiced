@@ -3,8 +3,10 @@
 How the LAN and online games are put together: the transport, the session, the cars' states, GameSpy's parts and the
 windows that use them. What the stock game does is `docs/spec/28-network.md`.
 
-GameSpy's servers are closed, so the online modes find no one; the LAN (link-up) game works. OpenJuice keeps the
-stock game's GameSpy host names and protocols as they are (`gamespy.com`, the game's keys): no replacement service.
+GameSpy's servers are closed; the LAN (link-up) game works. The retail build keeps the stock game's GameSpy host
+names and protocols as they are (`gamespy.com`, the game's keys), so its online modes find no one. The fixed build
+(`docs/fixes.md`) is on OpenSpy: the same names on `openspy.net` (`kServiceDomain` in `GameSpy/GameSpy.h`), which
+serves the same protocols with the game's name and keys.
 
 ## The layers
 

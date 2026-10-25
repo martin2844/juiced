@@ -102,9 +102,9 @@ window (`+0x44`) it runs first (`0x005AA010`: the events, the elements' updates,
 that waits for an answer (`+0x4C`, types 1 and 3) or mode 2 stops the rest. Of the stacked windows the top one runs
 fully, the others only their 3d elements (`0x005AA060`); then the window over the windows (`+0x30`) fully. Drawing:
 the windows from the bottom, the window over them, the message window, then the front end's black (`+0x10C`, alpha x
-255, falling by the frame time; careerload's exit sets 1.0). The window over the windows is `CMSLoader` (whose enter
-`0x004CA910` keeps the music's volume and silences it, its leave `0x004CA950` giving it back) or
-`car_StatsLogos`.
+255, falling by the frame time; careerload's and garageload's exit sets 1.0). The window over the windows is
+`CMSLoader` (whose enter `0x004CA910` keeps the music's volume and silences it, its leave `0x004CA950` giving it back)
+or `car_StatsLogos`.
 
 ## The windows a manager keeps
 
@@ -301,8 +301,8 @@ they make the window event (`0x00408260`):
 
 1. Directions: while none of LEFT, RIGHT, UP, DOWN is on, the repeat timer and the last direction are cleared. A
    running timer counts down by the frame time (kept within 0 .. 1) and no direction is given. Else the first of LEFT
-   (3), RIGHT (4), UP (1), DOWN (2) that is on is the event, and the timer is set to 0.1 s when it is the last
-   direction again, 0.25 s when it is new.
+   (3), RIGHT (4), UP (1), DOWN (2) that is on is the event, and the timer is set to 0.075 s (`0x3D99999A`) when it is
+   the last direction again, 0.25 s when it is new.
 2. START on: event 13 and the start flag.
 3. Then, the first that is on: SELECT or START → 5; BACK or BACK2 → 12; SELECT2 → 6; SELECT3 → 7; SELECT4 → 8; SELECT5
    → 9; SELECT6 → 10; SELECT7 → 11.
@@ -554,9 +554,14 @@ no window events, `0x005B11A0`). backmenu follows Menu. SELECT on an item (CLICK
 
 `instant_selcar` (enter `0x0045EC40`, update `0x0045F340`, exit `0x0045F100`): enter hides the PROT_ elements and
 shows them (`+0x4C`) when every arcade race is completed (`0x0042B9F0`: each race's `+0xD0`, `+0x08` and `+0x04`)
-off line; repairs every arcade car (`0x0048EB20`); takes paint 0. An empty place of the group goes to 0, a locked car to
-the last place of the group whose car is not locked. The car shown (`+0x20`) is the first arcade car of that model (0
-when none). CARORIGIN is hidden, the parts' buttons are on (`+0x48`). The car view (`0x0045A2C0` on FRAME_CAR3D,
+off line (without the matchmaking, `[0x0075EF84]`); repairs every arcade car (`0x0048EB20`); takes paint 0. An empty
+place of the group goes to 0, a locked car to the last place of the group whose car is not locked. The car shown
+(`+0x20`) is the first arcade car of that model (0 when none). CARORIGIN is hidden, the parts' buttons are on
+(`+0x48`). Online outside an online career (`0x0045EE8A`, `[0x0075EF88]` 0) the session's mods (`[0x00728D38]`, the
+hosted or joined arcade session's `+0x30`) decide: none (0) turns the parts' buttons off and clears the car shown's
+parts (`0x004600C0`), prototypes (2) shows the PROT_ elements and allows them (`+0x4C`), standard (1) neither, so
+the automatic modification stays below prototype. `link_selcar`'s enter (`0x0046FF10`, `0x0047052B`) clears each
+local player's car before it is sent in a session of no mods. The car view (`0x0045A2C0` on FRAME_CAR3D,
 CARNAME, CARLOGO and CARORIGIN, zoom 0.7, the mirror image, the folder kept and the shadow) shows the car rated (`0x0048E8A0`),
 turned pi/4, not turning, fading; CARFADE (`+0x18`); TARROW shown; MODDING hidden; the options (`0x0045F150`:
 OptionsBox, CarSel_Colour_Text and CarSel_ColourArrows shown, Locked and Locked_Text shown for a locked car and hidden
@@ -590,7 +595,7 @@ player; then `instant_setup`. BACK (CLICK) `instant_selcar` (mode 3).
 `instant_setup` (enter `0x0045BFE0`, update `0x0045DC60`, exit `0x0045C420`) sets the race on the city map in pages
 (`+0x28`): 0 the location, 1 the route, 2 the laps, 3 the opponents, 4 the difficulty, 5 the time of day, 6 the
 weather. Enter: a cruise off line whose tutorial was not asked (the profile's `+0x634`) asks "VIEW SHOWOFF
-TUTORIAL?" (1911) and marks it; the menu shown; the map (`0x0045B6B0`: MAP3D's camera from 4000 to 5 000 000, the
+TUTORIAL?" (1911) and marks it; the menu shown; the map (`0x0045B6B0`: MAP3D's camera from 3999 to 5 000 000, the
 sky, the rig's pitch within -1.5 .. -0.15, the atmosphere `map`); page 0; laps 3 for a race of another type than 0 ..
 4 and 6; opponents 0 for the types 0 .. 4, 3 for a sprint, else 5; the difficulty 3.0; the time of day 1 for a cruise,
 else rand() % 3 (1 afternoon, 2 evening, else morning); weather 1; LOCKED hidden. Each of these goes into the race and

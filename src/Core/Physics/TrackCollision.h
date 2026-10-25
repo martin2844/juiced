@@ -31,14 +31,16 @@ struct SphereHit {
 bool sphereOnPlane(const Vec4& point, const Vec4& normal, const Vec4& centre, float radius, SphereHit& hit);
 
 // 0x00538310: a polygon cut by a clipping plane (Sutherland-Hodgman): the corners that lie behind the plane (their
-// dot with its normal below the plane's) kept, a corner where an edge crosses it (0x005394E0) added; the corners
-// written to `out` (room for twice the count), their count returned (none for fewer than 3).
+// dot with its normal below the plane's) kept, a corner where an edge crosses it (0x005394E0; the fixed build's held
+// to the edge) added; the corners written to `out` (room for twice the count), their count returned (none for fewer
+// than 3).
 uint32_t clipPolygon(const Vec4* in, uint32_t count, Vec4* out, const ClippingPlane& plane);
 
 // 0x005388C0: a sphere against a polygon of `count` corners with its unit normal: the centre within its radius of the
 // polygon's plane (either side); the depth is the radius less the centre's distance in front, also when it does not
-// touch. When the centre's foot lies inside every edge the foot is the point, else the first edge whose line meets
-// the sphere within the edge (0x00538760) gives the middle of the two meetings held to the edge.
+// touch. When the centre's foot lies inside every edge the foot is the point, else of the edges whose lines meet the
+// sphere within the edge (0x00538760) the nearest (the stock's the first) gives the middle of the two meetings held
+// to the edge.
 bool sphereOnFace(const Vec4* polygon, uint32_t count, const Vec4& normal, const Vec4& centre, float radius,
                   SphereHit& hit);
 
@@ -96,7 +98,8 @@ private:
     void planePass(RigidBody& body, const Mat34& m, const WorldPlane& plane);
 
     // The face cut by the definition's clipping planes in turn (0x00538310), the first buffer into the second and
-    // back; the corners of the first buffer and their count are what the sphere colliders take.
+    // back; the corners of the first buffer and their count are what the sphere colliders take (the fixed build's
+    // first buffer holds the last cut).
     uint32_t clipFace(const Vec4& a, const Vec4& b, const Vec4& c, const std::vector<ClippingPlane>& cuts);
 
     // 0x0053A890: the body's mesh collider against a sphere (in the model's frame): its nodes whose spheres reach

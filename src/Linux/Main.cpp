@@ -1,4 +1,5 @@
 #include "Linux/Paths.h"
+#include "Game/App/Version.h"
 #include "Mac/Controls.h"
 #include "Core/Base/Config.h"
 #include "Core/Base/GameFiles.h"
@@ -22,7 +23,7 @@ int main(int argc, char** argv) {
             } else if (arg == "--controls") {
                 oj::mac::requestControlsEditor();
             } else if (arg == "--help") {
-                std::cout << "OpenJuice for Linux\nUsage: juiced --game DATA [-i] [--autopilot] "
+                std::cout << "OpenJuice " OJ_VERSION_TEXT " for Linux\nUsage: juiced --game DATA [-i] [--autopilot] "
                              "[--frames N] [--capture /absolute/file.bmp] [--controls]\n";
                 return 0;
             } else { command += '"' + arg + "\" "; }
@@ -44,7 +45,7 @@ int main(int argc, char** argv) {
         game = std::filesystem::absolute(game);
         std::ofstream(configDir / "game-path.txt") << game.string() << '\n';
         oj::log::open(stateDir / "Juiced.log");
-        oj::log::info("OpenJuice native Linux; game data {}", game.string());
+        oj::log::info("OpenJuice " OJ_VERSION_TEXT " native Linux x86_64; game data {}", game.string());
         auto config = oj::Config::load(configDir / "OpenJuice.ini");
         config.skipIntroMovies = true;
         config.saveFolder = dataDir / "saves";

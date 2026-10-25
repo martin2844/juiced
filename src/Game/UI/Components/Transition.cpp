@@ -113,6 +113,13 @@ void Screen::restartTransition(const std::string& element) {
     s.hidden = false;
 }
 
+const Transition* Screen::transitionOf(const std::string& element) const {
+    const int i = indexOf(element);
+    if (i < 0) return nullptr;
+    const State& s = m_states[static_cast<size_t>(i)];
+    return s.hasTransition ? &s.transition : nullptr;
+}
+
 void Screen::restartTransitions() {
     for (size_t i : m_order) {
         State& s = m_states[i];
@@ -154,6 +161,14 @@ bool Screen::transitionsDone() const {
         }
     }
     return true;
+}
+
+void endTransitions(Screen& window, const std::vector<Screen*>& open) {
+    if (window.transitionsDone()) return;
+    for (Screen* s : open) {
+        if (s != nullptr) s->finishTransitions();
+    }
+    window.finishTransitions();
 }
 
 void Screen::transitionsOut() {

@@ -42,7 +42,7 @@ Language chooseLanguage(int32_t settingsLanguage, uint32_t userLangId, std::stri
 }
 
 uint32_t modeKey(uint32_t width, uint32_t height, bool sixteenBits) {
-    return (sixteenBits ? 0x80000000u : 0u) | (width << 12) | height;
+    return (sixteenBits ? 0x80000000u : 0u) | ((width & 0x7FFF) << 16) | (height & 0xFFFF);
 }
 
 bool modeLess(uint32_t a, uint32_t b) {

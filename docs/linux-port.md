@@ -1,10 +1,52 @@
-# Native Linux / NixOS port — 2026-10-25
+# Native Linux / NixOS port — updated to 1.02.5 on 2026-10-25
 
 This port builds the engine source into a native Linux executable. It does not run
 Juiced.exe or OpenJuice.exe. Original game assets are required and are kept outside
 the source repository and Nix store.
 
-## Source baseline
+## Current release
+
+The base is upstream [v1.02.5](https://gitlab.com/sidecr3w/openjuice/-/releases/v1.02.5),
+commit `4e5ab27` (October 24). The changes from upstream v1.01.2 to v1.02.5 were
+merged onto the existing platform port; conflicts in engine logic were resolved
+using v1.02.5. The previous Linux port is preserved in commit `bde984b`.
+
+Linux-specific additions for this release:
+
+- Marshal background-loader graphics resource operations to the OpenGL context
+  owner, including servicing pending work while the game waits for a load.
+- Specialize Shader Model 1 pixel samplers for the actual bound cube textures,
+  with cached variants and the matching uniform layout. This fixes the white
+  glass/reflection corruption without inventing materials or changing assets.
+- Use POSIX local time for replay dates and iconv for Windows-1250/1251/1252 names.
+- New `juiced_gl_check` regression: six independently coloured cube faces,
+  repeated cube/2D switching on one shader, and texture creation from another
+  thread. Run it manually in `nix-shell` on a real OpenGL driver. It is intentionally
+  not part of sandboxed CTest, which has no GPU/display.
+
+The menu's blue footer is present in the original `ui.dat` → `windows/driver.ui`:
+BOTTOMPANEL and BLUEBOX1 explicitly specify `Colour 255 0 0 255`. It is not a colour
+conversion defect and has not been recoloured. The original data files are intact.
+
+Windows DPAPI credential encryption is unavailable on Linux. Like upstream on
+DPAPI failure, the Linux port does not persist online credentials and never falls
+back to plaintext. Guest/network behavior has not been validated against a live
+service. Original Windows encrypted credentials cannot be read here.
+
+Validation for 1.02.5: **178 unit checks passed, 0 failed**; the manual GL regression
+passed; a 1,700-frame autopilot race and 1,500-frame title/profile-navigation run
+completed. White glass patches and black road artifacts from the previous captures
+are absent in the new race capture. No full-career or all-cars parity claim is made.
+The async car-selection preview also completed (700 frames), and the fly-by was
+captured separately at 900 frames. The installed Nix package passed CTest.
+
+Installed package: `/nix/store/f5hmisn2xwfihcjqy9j3wlvm4dfdgbaw-openjuice-1.02.5-linux`.
+The launcher resolves it through `out/linux-result`; `out/linux-previous-result`
+retains the previous package as a rollback root. Source and runtime logs, screenshots
+and the asset audit are in `out/validation/update-1.02.5/`. See the separate
+[installed-mod audit](mod-audit-2026-10-25.md).
+
+## Initial port provenance
 
 - Engine and portable SDL platform/input/audio: main `622c6071e441e3b2b8f53ee6352279cb4a61982b`.
 - OpenGL renderer and case-insensitive asset lookup adapted from `origin/android`
@@ -69,7 +111,7 @@ Menus use arrows, Enter and Escape. Driving defaults: WASD, Space handbrake,
 Left Shift nitrous, C camera. Use `--controls` to edit bindings, `-i` for instant race.
 The inherited behavior pauses a race when its window loses keyboard focus.
 
-## Validation and limitations
+## Initial port validation and limitations (historical)
 
 The development build passed CTest and its unit runner reported **122 checks
 passed, 0 failed**. Linux excludes CPU-instruction, voice-chat and Windows system

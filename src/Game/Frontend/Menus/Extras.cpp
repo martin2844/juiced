@@ -8,12 +8,11 @@
 namespace oj::frontend {
 
 // 0x0046A920: menu and backmenu back to their items (0x005AECF0), replay taken out of menu and backmenu's first item
-// with it (its pointer only), every ONLINEICON hidden; +0x0C 4, +0x10 -1.
+// with it (its pointer only), every ONLINEICON hidden; +0x0C 4, +0x10 -1. The fixed build keeps both: the replays are
+// saved on the PC (<My Documents>\THQ\Juiced\Replays), so loadreplay has them to show.
 void Extras::enter(WindowHost&, ui::Screen& s) {
     s.restoreMenu("menu");
     s.restoreMenu("backmenu");
-    if (s.find("menu") >= 0) s.removeMenuItem("menu", "replay");
-    if (s.find("backmenu") >= 0) s.removeMenuItem("backmenu", "none");
     hideNamed(s, "ONLINEICON", true);
     m_refresh = 4;
     m_answer = -1;
@@ -86,7 +85,9 @@ void Credits::enter() {
 // 0x00469D90: the page's text not written (+0x10): CREDITS multiline (+0x128), inside its box (+0x13C), scrolling
 // (+0x140) from 0 (+0x144), +0x150 0xFF9CC4CE, and its text the page's lines each followed by a line feed: page 1
 // lines 874 .. 1099, page 2 lines 1100 .. 1310, page 3 for each of 174 lines 1311 + n when line 1100 + n is not empty
-// (stock problem: the third page reads the second page's line for its test), else lines 780 .. 873; +0x10 set.
+// (stock problem: the third page reads the second page's line for its test; the fixed build tests its own line: the
+// game's languages have no empty second-page line beside a third-page one, so the pages read the same), else lines
+// 780 .. 873; +0x10 set.
 // Stock problem: +0x150 is the Font line's colour kept for the transitions (0x005AC4EC writes it with +0x11C), of
 // which the drawing takes only the alpha (0x005B2048); the text is drawn in +0x11C, the Font line's white, so the
 // blue never shows.
@@ -106,7 +107,7 @@ void Credits::update(WindowHost& host, ui::Screen& s, uint32_t event) {
             case CreditsPage::Licensing: lines(1100, 1310); break;
             case CreditsPage::Music:
                 for (size_t n = 0; n < 174; ++n) {
-                    if (!texts.at(1100 + n).empty()) text += texts.at(1311 + n);
+                    if (!texts.at(1311 + n).empty()) text += texts.at(1311 + n);
                     text += L"\n";
                 }
                 break;

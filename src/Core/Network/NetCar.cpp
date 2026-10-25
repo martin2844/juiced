@@ -158,19 +158,29 @@ void applyState(RaceCar& car, const uint8_t* s, PhysicsWorld* world, void (*horn
     applyRest(car, s, world, horn);
 }
 
-void smoothState(RaceCar& car, const uint8_t* s, PhysicsWorld* world, void (*horn)(RaceCar&, bool)) {
+float smoothStep(float step, float dt) {
+    if (!(dt > 0.0f)) return 0.0f;
+    return 1.0f - std::pow(1.0f - step, dt * 60.0f);
+}
+
+void smoothState(RaceCar& car, const uint8_t* s, PhysicsWorld* world, void (*horn)(RaceCar&, bool), float dt) {
+    // The stock's steps (0.07, 0.21; the spins' 0.07 of their scale) as a 1/60 s frame's, made the frame's own.
+    const float step = smoothStep(kStep, dt);
+    const float keep = 1.0f - step;
+    const float stepY = smoothStep(kStepY, dt);
+    const float keepY = 1.0f - stepY;
+    const float spinStep = kSpinBack * step;
     CarBody& body = *car.body;
     const Vec4 at = body.position;
     const float sx = f32(s), sy = f32(s + 4), sz = f32(s + 8);
-    Vec4 p{sx * kStep + at[0] * kKeep, sy * kStepY + at[1] * kKeepY, sz * kStep + at[2] * kKeep, at[3]};
+    Vec4 p{sx * step + at[0] * keep, sy * stepY + at[1] * keepY, sz * step + at[2] * keep, at[3]};
     if (std::fabs(sx - at[0]) > 30.0f) p[0] = sx;
     if (std::fabs(sy - at[1]) > 3.0f) p[1] = sy;
     if (std::fabs(sz - at[2]) > 30.0f) p[2] = sz;
     body.setPosition(p);
-    body.setOrientation(slerp(body.orientation, quat(s + 0x14), kStep), true);
-    auto towards = [](const Vec4& now, const Vec4& to) {
-        return Vec4{now[0] * kKeep + to[0] * kStep, now[1] * kKeep + to[1] * kStep, now[2] * kKeep + to[2] * kStep,
-                    now[3]};
+    body.setOrientation(slerp(body.orientation, quat(s + 0x14), step), true);
+    auto towards = [step, keep](const Vec4& now, const Vec4& to) {
+        return Vec4{now[0] * keep + to[0] * step, now[1] * keep + to[1] * step, now[2] * keep + to[2] * step, now[3]};
     };
     body.setLocalVelocity(towards(body.localVelocity, vec(s + 0x0C, kVelocityBack, 0.0f)));
     body.setLocalAngularVelocity(towards(body.localAngularVelocity, vec(s + 0x24, kAngularBack, 0.0f)));
@@ -179,7 +189,7 @@ void smoothState(RaceCar& car, const uint8_t* s, PhysicsWorld* world, void (*hor
         const float now = had != nullptr ? had->spin : 0.0f;
         CarWheel* w = body.wheelOf(i);
         if (w == nullptr) continue;
-        w->spin = static_cast<float>(i16(s + 0x2A + i * 2)) * kSpinSmooth + now * kKeep;
+        w->spin = static_cast<float>(i16(s + 0x2A + i * 2)) * spinStep + now * keep;
         body.state[w->index] = w->spin;
     }
     applyRest(car, s, world, horn);

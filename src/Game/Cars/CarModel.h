@@ -46,6 +46,8 @@ public:
         kExhaustOpposite, // EXHAUST_O
         kDecal,           // DECAL
         kDriver,          // DRIVER
+        kMirrorLeft,      // WMIR_L: the fixed build's (the stock has no slot for the wing mirrors)
+        kMirrorRight,     // WMIR_R
         kSlotCount
     };
     // The folders a mesh is read from. Car: the car's own (the stock pushes them, 0x0040D5C0, for the model's nodes,
@@ -62,15 +64,25 @@ public:
     ~CarModel();
 
     render::Node* root() { return m_model ? m_model->root : nullptr; }
+    // The CarDef's name the model was loaded for.
+    const std::string& name() const { return m_name; }
     // Every mesh node, in the tree's order.
     void draw(render::Renderer3d& r, render::Camera& camera, uint32_t mode);
 
     // 0x0048BF90: the body material's paint from the car: Car Colour the base colour, Metallic Colour, Metallic
     // Shininess 30 - the metallic amount x 25, Pearlescent Colour, Pearlescent Shininess the pearl amount x 6 + 0.01.
     void paint(const Car& car);
-    // 0x0048C440: with the car's wheel colour set (+0x40) the wheel's materials (the wheel mesh's own, _BS, _B and
-    // _LOD; the model object's +0x11C ..) take its colour (+0x3C) as their colour (parameter 0).
+    // 0x0048C440: with the car's wheel colour set (+0x40) the wheel's materials (+0x11C .., none for the standard
+    // wheels) take its colour (+0x3C) as their colour (parameter 0).
     void colourWheels(const Car& car);
+    // 0x0048C530: the wheel's materials' colours back to those kept (+0x134 ..).
+    void restoreWheelColours();
+    // 0x0048C5D0: the car's wheel colour (+0x3C) kept for each of the wheel's materials (+0x134 ..).
+    void keepWheelColours(const Car& car);
+    // The wheel's materials (+0x11C ..: the wheel's, _BS, _B, _LOD, _BL; none for a name not found) and their
+    // colours kept (+0x134 ..).
+    const render::Material* wheelMaterial(size_t i) const { return i < 5 ? m_wheelMaterials[i] : nullptr; }
+    uint32_t keptWheelColour(size_t i) const { return i < 5 ? m_wheelColours[i] : 0xFFFFFFFF; }
     // 0x0048C040: the glass material (<car>_GLASS, the model object's +0xF4) black (Colour, parameter 5) with the
     // car's tint (+0x44) as its parameter 2.
     void tint(const Car& car);
@@ -78,6 +90,11 @@ public:
     // "DECAL" on in the part's mesh name (the model object's +0x130) takes the car's decal colour (+0x38) as its
     // colour (parameter 0) when it is of Coloured Spec ABlend (28).
     void colourDecal(const Car& car);
+    // 0x0048C210 (0x0048C090): the parts of the primer material (the CarDef's +0x19C, <car>_PRIMER, found by its
+    // name) in the meshes of the model's slots (+0x30 .. +0x58) take the body material (+0xEC). Stock problem: a
+    // mesh not in a slot keeps the primer (the S2000's chassis, the Golf's farthest logo: the primer's grey). The fixed
+    // build turns the primer's parts of every mesh of the model.
+    void primerToBody();
     // 0x0048B440 and 0x0048B690 (the model's parts and lights again): with a SPONS node the materials decal_spons_1
     // .. 9 (the model object's +0xF8 ..) take alpha2 of cartextures; with the car's sponsor decals shown (+0x48) each
     // one whose kind of catalogue part the car has (+0x0E ..) takes decal_<the part's supplier> of cartextures and, of
@@ -93,7 +110,12 @@ public:
 
     // The wheels' mesh in the four wheel slots (0x0048ABC0, 0x0048B3C0); its blurred mesh <mesh>_BLUR, else
     // RX7_WHEEL_BLUR, kept for the race's fast wheels (the model object's +0x28, +0x2C). The CarDef's standard wheels
-    // are read from the car's folders, a catalogue wheel from the shared ones.
+    // are read from the car's folders, a catalogue wheel from the shared ones. The wheel's materials let go
+    // (0x0048AE42); a catalogue wheel's found by name (+0x11C ..: the mesh's name, with _BS, _B and _LOD, and its
+    // "_BL" one: the name up to its first '_', "_BL", the rest from that '_', cut at the last '_'; WHEEL_BBS_VS1_17
+    // gives WHEEL_BL_BBS_VS1), each with its file's colour (its description's first value, 0x0048AED8) kept
+    // (+0x134 ..; -1 for a name not found) and put back on it. The standard wheels have none: the wheel colour does
+    // not reach them.
     void fillWheels(const std::string& meshName, Folders folders);
     // The wheel slot of a race wheel (0 WHEEL_FL, 1 WHEEL_FR, 2 WHEEL_RL, 3 WHEEL_RR).
     render::ModelNode* wheelNode(size_t i);
@@ -102,7 +124,8 @@ public:
     // 0x00555290 on a wheel slot: the wheel's mesh, or its blurred one.
     void blurWheel(size_t i, bool blurred);
     // A body part's mesh in its category's slots (0x0048BC30): the first four categories theirs, the skirt SSKIRT_L and
-    // SSKIRT_R as <mesh>_L and <mesh>_R, the decal DECAL; the others none.
+    // SSKIRT_R as <mesh>_L and <mesh>_R, the decal DECAL; the others none (the fixed build's wing mirrors, 7, WMIR_L
+    // and WMIR_R as the skirt).
     void fillBody(int category, const std::string& meshName);
     // The wheels and the exhaust of fitParts and refitParts.
     void fitWheelsAndExhaust(const Car& car, const PartCatalogue& catalogue);
@@ -147,8 +170,8 @@ public:
 
 private:
     CarModel(Engine& engine) : m_engine(engine) {}
-    // A mesh of the folders with its materials; the parts of the body's or the primer's material take the car's body
-    // material.
+    // A mesh of the folders with its materials; the parts of the body's material take the car's body material (the
+    // material manager's one of that name, 0x0048A404).
     render::Mesh* mesh(const std::string& name, Folders folders, bool quiet = false);
     // The slot found by a name as the stock finds one (0x00534EC0 through meshNode, a mesh node alone).
     render::ModelNode* slotNode(const char* name);
@@ -170,10 +193,11 @@ private:
     std::vector<std::unique_ptr<render::Material>> m_materials;
     std::vector<std::unique_ptr<CarFlare>> m_flares;
     render::Material* m_body = nullptr;  // +0xEC of the car's model object
-    std::string m_wheel;                 // the wheels' mesh
     render::Mesh* m_wheelMesh = nullptr;      // +0x20, +0x24: front and rear (the same here)
     render::Mesh* m_wheelBlurMesh = nullptr;  // +0x28, +0x2C
     std::map<std::string, render::Material*> m_partMaterials;  // the materials by their parts' names (lower case)
+    std::array<render::Material*, 5> m_wheelMaterials{};  // +0x11C .. +0x12C: the wheel's, _BS, _B, _LOD and _BL
+    std::array<uint32_t, 5> m_wheelColours{};             // +0x134 .. +0x144: their colours kept
 };
 
 }  // namespace oj::scene

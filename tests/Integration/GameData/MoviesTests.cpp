@@ -6,8 +6,12 @@
 #include "Core/Base/GameFiles.h"
 #include "Core/Network/GameSpy/GameSpyHttp.h"
 #include "Game/Media/BinkLibrary.h"
+#include "Game/Media/BinkNative.h"
 
+#include <chrono>
 #include <cstdio>
+#include <string>
+#include <thread>
 #include <vector>
 
 namespace {
@@ -50,4 +54,51 @@ OJ_INTEGRATION_TEST(Movies, Bink) {
         }
     }
     check(hub && leader, "movies: the game's binkw32.dll opens hub_01 and a leader's clip, decodes frame 30");
+}
+// OpenJuice's own BinkWait (the 64-bit build's) after a stall, as binkw32 measured: a 25 fps movie stalled 1 s (a
+// window loading under a menu's movie) goes on at its pace, about 10 frames in the next 0.4 s, not the 25 missed ones
+// at once; stalled 60 ms its frame or two are caught up.
+OJ_INTEGRATION_TEST(Movies, NativeWaitAfterStall) {
+    using namespace std::chrono_literals;
+    const oj::GameFiles& game = oj::test::gameFiles();
+    if (!game.valid()) return;
+    oj::bink::Native native;
+    std::string why;
+    uint32_t m = 0;
+    if (native.start(game.root(), &why)) {
+        native.setSoundTrack(0, nullptr);
+        m = native.open(game.root() / "movies" / "career_01.bik", 0);
+    }
+    int stalled = -1, short_ = -1;
+    if (m != 0) {
+        auto now = [] { return std::chrono::steady_clock::now(); };
+        auto play = [&](std::chrono::milliseconds span) {
+            const auto t0 = now();
+            int frames = 0;
+            while (now() - t0 < span) {
+                if (native.wait(m) == 0) {
+                    native.doFrame(m);
+                    native.nextFrame(m);
+                    ++frames;
+                }
+                std::this_thread::yield();
+            }
+            return frames;
+        };
+        auto stall = [&](std::chrono::milliseconds span) {
+            const auto t0 = now();
+            while (now() - t0 < span) std::this_thread::yield();
+        };
+        play(500ms);
+        stall(1000ms);
+        stalled = play(400ms);
+        play(500ms);
+        stall(60ms);
+        short_ = play(200ms);
+        native.close(m);
+    }
+    std::printf("     career_01 (25 fps): 0.4 s after a 1 s stall %d frames, 0.2 s after a 60 ms stall %d\n", stalled,
+                short_);
+    check(stalled >= 9 && stalled <= 12 && short_ >= 6 && short_ <= 8,
+          "movies: OpenJuice's BinkWait goes on at the movie's pace after a long stall, catches up a short one");
 }

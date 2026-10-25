@@ -661,6 +661,12 @@ void RaceCamera::chase(const CameraTarget& target, const CameraRace& race, rende
     m_reset = false;
 }
 
+std::vector<Vec4> gridPlaces(const Spl& lines) {
+    std::vector<Vec4> places;
+    for (const Spl::GridPoint& p : lines.grid) places.push_back({p.x, p.y, p.z, p.heading});
+    return places;
+}
+
 void RaceCamera::beforeStart(const CameraTarget& target, const CameraRace& race, render::Camera& camera) {
     if (m_reset) {
         // 0x0040533C: the stock's camera without a car (+0x08) only clears its fly-by here, asking no window and
@@ -1178,8 +1184,8 @@ void RaceCamera::nextCarView(const CameraTarget& target, const CameraRace& race,
 }
 
 // 0x00403B00: the view turns toward the point above the car with turn rates that grow by |sin| of the error (0.36
-// a second, held within ±0.008; a pitch error below 0 takes it off all three rates) and by the error itself (6.67,
-// 10 and 20 a second for pitch, yaw and roll).
+// a second, held within ±0.008; a pitch error below 0 takes it off all three rates: the fixed build's off the pitch's
+// alone) and by the error itself (6.67, 10 and 20 a second for pitch, yaw and roll).
 void RaceCamera::follow(render::Camera& camera) {
     const float dx = m_look[0] - m_position[0];
     const float dy = m_look[1] - m_position[1];
@@ -1196,10 +1202,7 @@ void RaceCamera::follow(render::Camera& camera) {
     float a = std::fabs(sinOf(pitchError));
     if (pitchError < 0.0f) {
         if (m_spin[0] > -0.008f) {
-            const float change = a * m_dt * rate;
-            m_spin[0] = m_spin[0] - change;
-            m_spin[1] = m_spin[1] - change;
-            m_spin[2] = m_spin[2] - change;
+            m_spin[0] = m_spin[0] - a * m_dt * rate;
         }
     } else if (m_spin[0] < 0.008f) {
         m_spin[0] = a * m_dt * rate + m_spin[0];
@@ -1237,8 +1240,8 @@ void RaceCamera::follow(render::Camera& camera) {
 // the car's velocity x 20 near the car (fully within 10 m, none beyond 30 m), raised by 200 x the sine's top and
 // 200 / (distance + 1) (at most 200) + 85, kept 85 cm over the ground, and swung 200 cm to the side of the end's sign
 // by the same top. The camera eases there keeping 0.85 a frame (all of it while paused, none with the reset), rises
-// as cars come near (on all three axes), looks at the point above the car with the reset and follows it after, with
-// a fixed zoom of 0.7.
+// as cars come near (on all three axes; the fixed build's in height alone), looks at the point above the car with the
+// reset and follows it after, with a fixed zoom of 0.7.
 void RaceCamera::passing(const CameraTarget& target, const CameraRace& race, render::Camera& camera) {
     // 0x004047F9: +0x230 2, the motion blur 0.5 and 0.5.
     camera.depthOfFieldMode = 2;
@@ -1302,10 +1305,7 @@ void RaceCamera::passing(const CameraTarget& target, const CameraRace& race, ren
     const float move = 1.0f - keep;
     m_position = {m_position[0] * keep + p[0] * move, m_position[1] * keep + move * p[1],
                   m_position[2] * keep + p[2] * move, m_position[3]};
-    const float up = rise(race);
-    m_position[0] = up + m_position[0];
-    m_position[1] = up + m_position[1];
-    m_position[2] = up + m_position[2];
+    m_position[1] = rise(race) + m_position[1];
     if (placed) {
         lookAt(m_look, camera);
     } else {

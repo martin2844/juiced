@@ -407,9 +407,12 @@ bool TrackScene::load(const TrackSetup& setup, CrtRandom& random, std::string* w
         for (Instance& in : m->instances) numbered.push_back({m.get(), &in});
     }
     // The regions of the nodes (0x00544B90): a leaf's with those of its records' instances, an inner node's with its
-    // children's (Stock problem: added to the bytes the file holds there, left over from the tool that wrote it).
+    // children's (Stock problem: added to the bytes the file holds there, left over from the tool that wrote it, so
+    // most nodes have regions they hold nothing of and the walks go into them for nothing). The fixed build starts
+    // each node's regions empty: the walks test each instance's own regions, so nothing drawn changes.
     for (size_t n = m_tree.size(); n-- > 0;) {
         RenderTreeNode& node = m_tree[n];
+        node.regions.fill(0);
         if (node.leaf) {
             for (uint32_t i : node.instances) {
                 if (i >= numbered.size()) continue;
@@ -767,9 +770,13 @@ void TrackScene::draw(render::Camera& camera, float clock) {
     device.setRenderState(RenderState::FogEnable, 1);
     device.setRenderState(RenderState::ZEnable, 1);
 
-    // 0x00547690. The world's cube when it is due (Stock problem: its faces' constants stay for the pass).
+    // 0x00547690. The world's cube when it is due (Stock problem: its faces' constants stay for the pass: the view is
+    // drawn with the last face's c7, c10, c14, c33, c41, c42). The fixed build sets the view's constants again.
     Engine::ReflectionTargets& targets = m_engine.reflectionTargets();
-    if (targets.worldCubeDue) drawWorldCube(clock);
+    if (targets.worldCubeDue) {
+        drawWorldCube(clock);
+        setViewConstants(r, camera);
+    }
     if (m_atmosphere) render::applyAtmosphere(r, *m_atmosphere, camera);
     const oj::Mat34& c = camera.world();
     const Region region = regionAt(c[3], c[7], c[11]);
@@ -841,10 +848,13 @@ void TrackScene::draw(render::Camera& camera, float clock) {
     identityObject(camera);
     for (const auto& p : m_projectors) p->draw(camera);
     drawSceneObjects(camera);
+    // The fixed build: every car's opaque parts, then every car's late ones (its glass writes its depth, Model.cpp:
+    // a car behind another's window is drawn before that window).
     for (const auto& car : m_cars) {
-        if (car->hidden) continue;
-        car->draw(r, camera, 1);
-        car->draw(r, camera, 2);
+        if (!car->hidden) car->draw(r, camera, 1);
+    }
+    for (const auto& car : m_cars) {
+        if (!car->hidden) car->draw(r, camera, 2);
     }
     r.endMaterial();
     identityObject(camera);

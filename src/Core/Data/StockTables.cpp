@@ -164,7 +164,7 @@ const ExeTables& ExeTables::stock() {
         t.logos = {"ui_chooselogo_01", "ui_chooselogo_02", "ui_chooselogo_03", "ui_chooselogo_04", "ui_chooselogo_05",
                    "ui_chooselogo_06", "ui_chooselogo_07", "ui_chooselogo_08", "ui_chooselogo_09", "ui_chooselogo_10",
                    "ui_chooselogo_11", "ui_chooselogo_12", "ui_chooselogo_13", "ui_chooselogo_14", "ui_chooselogo_15",
-                   "ui_chooselogo_16", "ui_chooselogo_17", "ui_chooselogo_18", "ui_chooselogo_20"};
+                   "ui_chooselogo_16", "ui_chooselogo_17", "ui_chooselogo_18", "ui_chooselogo_19", "ui_chooselogo_20"};
         t.respectSteps = {100, 300, 600, 1000};
         t.prizeFactors = {
             std::bit_cast<float>(0x40400000u), std::bit_cast<float>(0x40200000u), std::bit_cast<float>(0x40000000u),

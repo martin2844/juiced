@@ -32,7 +32,7 @@ OJ_UNIT_TEST(GameSpy, SharedParts) {
     for (int i = 0; i < 16; ++i) coded[i] = a.encrypt(plain[i]);
     b.decrypt(coded, 16);
     check(oj::net::masterHash("juicedpc") == 575721383u &&
-              oj::net::masterListHost("juicedpc") == "juicedpc.ms3.gamespy.com" &&
+              oj::net::masterListHost("juicedpc") == "juicedpc.ms3.openspy.net" &&
               std::memcmp(coded, plain, 16) == 0 && oj::net::challengeAnswer("abc").size() == 4 &&
               oj::net::gsEncode(reinterpret_cast<const uint8_t*>("Man"), 3) == "TWFu",
           "GameSpy: the master list's name, the answer's base64, the list's cipher both ways");

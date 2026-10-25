@@ -1,5 +1,5 @@
 // Integration tests: what OpenJuiceConfig asks the system before its window opens (JuicedConfig/DirectXVersion.h):
-// DxDiag's DirectX version.
+// DxDiag's DirectX version and the 9.0c check made of it.
 
 #include "Framework/Test.h"
 
@@ -21,4 +21,6 @@ OJ_INTEGRATION_TEST(JuicedConfigSystem, DirectXVersion) {
     check(result == S_OK, "DxDiag's major, minor and letter read");
     check(major >= 9, "DirectX " + std::to_string(major) + "." + std::to_string(minor) + ", letter " +
                           std::to_string(static_cast<int>(static_cast<unsigned char>(letter))) + ": 9 or later");
+    // OpenJuiceConfig's check passes on this system (the stock's fails from DirectX 10 on: a blank letter).
+    check(oj::config::directX9cOrLater(result, major, letter), "this system's DirectX taken for 9.0c or later");
 }

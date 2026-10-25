@@ -1,10 +1,14 @@
-// loadreplay: the replays listed, one read or deleted (no way leads to it on the PC).
+#include <ctime>
+// loadreplay: the replays listed, one read or deleted (no way leads to it on the stock PC; the fixed build's extras
+// keeps its replay item).
 
 #include "Game/Frontend/Saves/LoadReplay.h"
 
 #include "Core/Data/GameTexts.h"
 #include "Core/Data/JetTexts.h"
 #include "Game/Frontend/WindowTools.h"
+
+#include <windows.h>
 
 namespace oj::frontend {
 
@@ -14,6 +18,35 @@ using save::SaveFlag;
 namespace {
 
 // The PC block of jettext: the line of flag 0.
+
+// The fixed build's date of a replay: the time its USERDATA was written, in the system's short date and time (their
+// order, separators and 12 or 24 hours as the user's settings have them); empty when it does not convert.
+std::wstring systemDate(uint64_t written) {
+#ifndef _WIN32
+    if (written < 116444736000000000ULL) return {};
+    const time_t seconds = (written - 116444736000000000ULL) / 10000000ULL;
+    std::tm local{};
+    if (!localtime_r(&seconds, &local)) return {};
+    wchar_t date[100]{};
+    if (!std::wcsftime(date, 100, L"%x %H:%M", &local)) return {};
+    return date;
+#else
+    const FILETIME utc{static_cast<DWORD>(written), static_cast<DWORD>(written >> 32)};
+    SYSTEMTIME universal{};
+    SYSTEMTIME local{};
+    if (written == 0 || !FileTimeToSystemTime(&utc, &universal) ||
+        !SystemTimeToTzSpecificLocalTime(nullptr, &universal, &local)) {
+        return std::wstring();
+    }
+    wchar_t date[80] = {};
+    wchar_t time[80] = {};
+    if (GetDateFormatW(LOCALE_USER_DEFAULT, DATE_SHORTDATE, &local, nullptr, date, 80) == 0 ||
+        GetTimeFormatW(LOCALE_USER_DEFAULT, TIME_NOSECONDS, &local, nullptr, time, 80) == 0) {
+        return std::wstring();
+    }
+    return std::wstring(date) + L" " + time;
+#endif
+}
 
 }  // namespace
 
@@ -55,7 +88,8 @@ void LoadReplay::clear(SaveHost& host, ui::Screen& s) {
     data->saveDevice.reset();
 }
 
-// 0x00468FC0: MENU emptied, then each replay listed: one with cars its date's text (its place the value), else "DAMAGED
+// 0x00468FC0: MENU emptied, then each replay listed: one with cars its date's text (its place the value; the fixed
+// build's the system's date and time of its writing, the stock's text "month/day/year h:mm" without it), else "DAMAGED
 // REPLAY" (1665, the command "corrupt"); the DEL_ elements shown with any; the first item highlighted; +0x0C 0.
 void LoadReplay::fill(SaveHost& host, ui::Screen& s) {
     GameData* data = host.gameData();
@@ -65,7 +99,8 @@ void LoadReplay::fill(SaveHost& host, ui::Screen& s) {
     const std::vector<save::ReplaySlot>& replays = data->saveDevice.replays();
     for (const save::ReplaySlot& r : replays) {
         if (r.cars > 0) {
-            s.addMenuItem("menu", widenSigned(r.date), static_cast<float>(r.index));
+            const std::wstring when = systemDate(r.written);
+            s.addMenuItem("menu", when.empty() ? widenSigned(r.date) : when, static_cast<float>(r.index));
         } else {
             s.addMenuItem("menu", texts.at(kTextDamagedReplay), static_cast<float>(r.index), "corrupt");
         }
@@ -297,8 +332,10 @@ void LoadReplay::update(SaveHost& host, ui::Screen& s, uint32_t event) {
             host.setSaveBusy(0);
             if (hasMenu && s.menuSize("menu") > 0) {
                 const size_t item = s.selectedMenuItem("menu");
+                // The stock's question is the PC block's "Are you sure you want to delete driver "; the fixed build's
+                // the replay's line of the file (8), as the replays are saved on the PC.
                 host.message(MessageType::YesNoModeless,
-                             host.jetText(save::flagText(flag)) + s.menuItemText("menu", item) + L"?", false, &r.answer,
+                             host.jetText(kJetDeleteReplay) + s.menuItemText("menu", item) + L"?", false, &r.answer,
                              true);
                 m_deleteAsked = host.lastMessageNumber();
             }

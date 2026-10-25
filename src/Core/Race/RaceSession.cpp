@@ -53,13 +53,14 @@ int classBottom(int cls) {
 void applyCrewScheme(Career& career, const Crew& crew, const CarDefs& defs, const PartCatalogue& catalogue) {
     std::vector<Car>& cars = crew.id == 0 ? career.garage : career.opponentCars;
     for (Car& car : cars) {
+        // Stock problem: the amounts 0.5 and 0.1 are written over by the crew's, which nothing ever sets: the metallic
+        // amount the bits of the new career's fourth white (0x80FFFFFF, about -0), the pearl's 0. The fixed build
+        // keeps 0.5 and 0.1 (the Xbox builds of 2004 do the same as the PC).
         car.metallicAmount = Car::bitsOf(0.5f);
         car.pearlAmount = Car::bitsOf(0.1f);
         car.base = crew.baseColour;
         car.metallic = crew.metallicColour;
         car.pearl = crew.pearlColour;
-        car.metallicAmount = Car::bitsOf(crew.metallicAmount);
-        car.pearlAmount = Car::bitsOf(crew.pearlAmount);
         car.mods[kWheel] = static_cast<uint8_t>(crew.wheels);
         car.body[9] = 1;
         if (!defs.neons.empty()) {
@@ -939,19 +940,12 @@ void sessionResults(Career& career, CareerContext& context, const RaceSetup& rac
     if (first >= 0 && first < 9) {
         CrewOdds& o = s.odds[static_cast<size_t>(first)];
         if (o.staked != 0) o.winnings = static_cast<float>(o.staked) * (o.against / o.stake + 1.0f) + o.winnings;
-    } else if (first == -1) {
-        // Stock problem: with no first (-1: none placed, as after a cruise, whose racers 0x004BA8A0 leaves
-        // unfinished) the odds before the table are read and written (0x004BA195 .. 0x004BA1CA): the last racer's
-        // level timer (+0x260) is the stake, its order (+0x258, a whole number read as a float) and order time
-        // (+0x25C) against and for, and the session's +0x264 (the set-up flag) the winnings, which takes the float.
-        const Racer& last = s.racers[5];
-        const auto staked = std::bit_cast<int32_t>(last.levelTimer);
-        if (staked != 0) {
-            const float against = std::bit_cast<float>(last.order);
-            s.needsSetup = std::bit_cast<int32_t>(static_cast<float>(staked) * (against / last.orderTime + 1.0f) +
-                                                  std::bit_cast<float>(s.needsSetup));
-        }
     }
+    // Stock problem: with no first (-1: none placed, as after a cruise, whose racers 0x004BA8A0 leaves unfinished)
+    // the odds before the table are read and written (0x004BA195 .. 0x004BA1CA): the last racer's level timer (+0x260)
+    // is the stake, its order (+0x258, a whole number read as a float) and order time (+0x25C) against and for, and
+    // the session's +0x264 (the set-up flag) the winnings, which takes the float (any stake sets it: the next
+    // 0x004B8570 sets the session up again). The fixed build reads and writes nothing then.
     if (first == 0) {
         ++career.stats.wins;
         if (host != nullptr) ++host->racesWonHosted;
@@ -1248,6 +1242,11 @@ int32_t referencedUser(const net::NetPlayer& p) {
     return p.profile;
 }
 
+// The fixed build lets the user go after its report (the stock kept the reference).
+void releaseUser(int32_t user) {
+    if (net::OnlineUser* users = net::onlineUser()) users->userRelease(user);
+}
+
 std::vector<net::NetPlayer>& netPlayers() {
     static std::vector<net::NetPlayer> none;
     net::NetGame* game = net::netGame();
@@ -1262,7 +1261,11 @@ void onlineStakes(Career& career, const Car& own, const Car& rival) {
     if (net::stats::gameStatistics() != nullptr) {
         bool ok = false;
         for (const net::NetPlayer& p : netPlayers()) {
-            if (p.peer == -1 && p.localIndex == 0) ok = net::stats::reportCareerRaceBegun(referencedUser(p));
+            if (p.peer == -1 && p.localIndex == 0) {
+                const int32_t user = referencedUser(p);
+                ok = net::stats::reportCareerRaceBegun(user);
+                releaseUser(user);
+            }
         }
         if (ok) net::stats::reporter()->send();
     }
@@ -1300,7 +1303,9 @@ void onlineSettle(Career& career, bool won, bool tie, const PartCatalogue& catal
             for (const net::NetPlayer& p : netPlayers()) {
                 if (reported) break;
                 if (p.peer == -1 && p.localIndex == 0) {
-                    net::stats::reportPinkSlip(referencedUser(p), won, static_cast<uint32_t>(value));
+                    const int32_t user = referencedUser(p);
+                    net::stats::reportPinkSlip(user, won, static_cast<uint32_t>(value));
+                    releaseUser(user);
                     reported = true;
                 }
             }

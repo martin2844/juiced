@@ -141,7 +141,7 @@ int Qr2::initSocket(const GameSocket& socket, int port, std::string_view gameNam
     if (isPublic) {
         const ServiceHosts& hosts = serviceHosts();
         const std::string host =
-            hosts.master.empty() ? std::format("{}.master.gamespy.com", gameName) : hosts.master;
+            hosts.master.empty() ? std::format("{}.master.{}", gameName, kServiceDomain) : hosts.master;
         m_master.port = htons(hosts.masterPort);
         m_master.ip = inet_addr(host.c_str());
         if (m_master.ip == INADDR_NONE && host != "255.255.255.255") {

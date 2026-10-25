@@ -64,6 +64,10 @@ public:
 
 private:
     int32_t m_own = 2;  // +0x10: the place of the car's wheel colour
+    // The fixed build's: the car's wheel colour (+0x3C, +0x40) as it entered, put back by BACK when it is none of
+    // the list (m_own -1).
+    uint32_t m_ownColour = 0;
+    uint32_t m_ownColoured = 0;
 };
 
 }  // namespace oj::frontend

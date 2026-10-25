@@ -106,35 +106,24 @@ int SoundSet::findFree(uint32_t& voice) {
 }
 
 int SoundSet::stealQuietest(uint32_t& voice) const {
-    // Scanned from the last voice down; the first of the lowest (below 1) kept. The volumes summed as the stock's
-    // unrolled loop sums them (single precision): four at a time while four are left, into the slot that holds 1 / n,
-    // the rest (n % 4, the first voices) into the sum; the lowest then compared with the two multiplied. Stock
-    // problem: only below four voices is that the mean; with a multiple of four the sum stays 0, so the quietest is
-    // taken unless it is silent.
+    // Scanned from the last voice down; the first of the lowest (below 1) kept, then taken unless it is as quiet as
+    // the voices' mean (all as quiet). Stock problem: the unrolled loop sums four at a time into the slot that holds
+    // 1 / n and only the rest (n % 4, the first voices) into the sum, so the lowest is compared with the mean only
+    // below four voices; with a multiple of four the product is 0 and the quietest is taken unless it is silent.
+    // The fixed build compares it with the mean, (1 / n) x the sum, as the player's quietest slot (0x005BF490).
     const uint32_t n = instances();
     if (n == 0) return 4;
     float lowest = 1.0f;
     int found = -1;
-    float slot = 1.0f / static_cast<float>(n);
     float sum = 0.0f;
-    int i = static_cast<int>(n) - 1;
-    for (; i >= 3; i -= 4) {
-        for (int k = i; k > i - 4; --k) {
-            if (m_volume[k] < lowest) {
-                lowest = m_volume[k];
-                found = k;
-            }
-            slot += m_volume[k];
-        }
-    }
-    for (; i >= 0; --i) {
+    for (int i = static_cast<int>(n) - 1; i >= 0; --i) {
         if (m_volume[i] < lowest) {
             lowest = m_volume[i];
             found = i;
         }
         sum += m_volume[i];
     }
-    if (lowest != slot * sum && found != -1) {
+    if (lowest != (1.0f / static_cast<float>(n)) * sum && found != -1) {
         voice = static_cast<uint32_t>(found);
         return 1;
     }
@@ -456,19 +445,22 @@ int VoiceSet::setOcclusion(uint32_t i, float v) {
     // The 2D set's slot (0x005285D0) does nothing. Stock problem: a stream set has no slot +0x88 (its table ends at
     // +0x84; the next table's first entry, a destructor, would be called), never reached: streams are not 3D voices.
     if (m_type != 3) return 0;
-    // [0x00725858]: 0.5 while the device gives each voice its own EAX, else [0x0072585C] 0.1 from the first call on.
-    static float scale = 0.5f;
+    // [0x00725858]: 0.5 while the device gives each voice its own EAX, else [0x0072585C] 0.1 (Stock problem: written
+    // over the 0.5 from the first call on; the fixed build takes it by the call's device).
     const System& sys = system();
-    if ((sys.eaxFlags() & 0x10) == 0) scale = 0.1f;
+    const float scale = (sys.eaxFlags() & 0x10) == 0 ? 0.1f : 0.5f;
     // x87: the product of two floats is exact in double as in the extended register.
     const double value = static_cast<double>(scale) * static_cast<double>(v);
     HardwareVoice& h = m_voices[i];
     if (h.properties == nullptr) return 0;
-    // Steps of 0.25 toward the value, not held at it; equal (or not a number) unchanged.
+    // Steps of 0.25 toward the value (Stock problem: not held at it, so a value between two steps goes back and forth
+    // by 0.25 each call; the fixed build holds it there); equal (or not a number) unchanged.
     if (value < static_cast<double>(h.occlusion)) {
         h.occlusion = h.occlusion - 0.25f;  // [0x006FFBEC]
+        if (static_cast<double>(h.occlusion) < value) h.occlusion = static_cast<float>(value);
     } else if (value > static_cast<double>(h.occlusion)) {
         h.occlusion = h.occlusion + 0.25f;
+        if (static_cast<double>(h.occlusion) > value) h.occlusion = static_cast<float>(value);
     }
     int32_t mb = volumeMb(h.occlusion);
     if ((sys.eaxFlags() & 0x10) != 0) {

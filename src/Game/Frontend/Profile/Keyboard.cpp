@@ -3,6 +3,7 @@
 #include "Game/Frontend/Profile/Keyboard.h"
 
 #include "Core/Data/GameTexts.h"
+#include "Game/Frontend/Network/LobbyChat.h"
 #include "Game/Frontend/WindowTools.h"
 
 namespace oj::frontend {
@@ -89,11 +90,29 @@ void Keyboard::enter(ProfileHost&, ui::Screen& s) {
     setCase(s, false);
     m_fresh = true;
     m_hovered.clear();
+    lobbyChatLayout(s, m_setup.chat);
 }
 
 // The keyboard window (0x00460B40): the keys on screen, the characters typed, DONE and BACK.
 void Keyboard::update(ProfileHost& host, ui::Screen& s, uint32_t event, char typed, bool shiftHeld) {
     std::wstring& text = m_setup.text;
+    if (m_setup.chat) {
+        // The fixed build's lobby chat: gone with the session's lobby; ENTER typed says the text (the frame's SELECT
+        // with it left alone).
+        if (!lobbyChatFrame(s)) {
+            host.request(m_setup.back, SwitchMode::Replace);
+            return;
+        }
+        if (typed == '\r') {
+            if (lobbyChatSay(text)) {
+                text.clear();
+                m_fresh = false;
+                host.sound("CLICK");
+            }
+            typed = 0;
+            event = input::kNone;
+        }
+    }
     auto append = [&](const std::wstring& added) {
         if (m_fresh) {
             text.clear();
@@ -108,7 +127,16 @@ void Keyboard::update(ProfileHost& host, ui::Screen& s, uint32_t event, char typ
         const bool wasShift = m_shiftOnce;
         m_shiftOnce = false;
         const std::string button = s.currentButton();
-        if (_stricmp(button.c_str(), "DONE") == 0) {
+        if (_stricmp(button.c_str(), "DONE") == 0 && m_setup.chat) {
+            // The fixed build's lobby chat: the text said, the keyboard kept.
+            if (lobbyChatSay(text)) {
+                text.clear();
+                m_fresh = false;
+                host.sound("CLICK");
+            } else {
+                host.sound("NO");
+            }
+        } else if (_stricmp(button.c_str(), "DONE") == 0) {
             if (text.size() < m_setup.minLength) {
                 host.sound("NO");
             } else if (m_setup.checkName && host.nameRefused(text)) {

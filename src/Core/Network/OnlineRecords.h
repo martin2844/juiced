@@ -110,7 +110,10 @@ public:
     int32_t done = 0;                           // +0x4C
 
 private:
-    bool rowThere(uint32_t row) const;
+    // The fixed build: a row is there when the rank, the name and each of the first `read` columns have it (the
+    // stock's, its first column alone: a table whose fields run out early, as OpenSpy's answer of the leaderboards,
+    // read the other columns past their ends, at address 0).
+    bool rowThere(uint32_t row, size_t read) const;
 };
 
 // The routes' table (0x00711A3C) the records read a route's type and location in; the game's.

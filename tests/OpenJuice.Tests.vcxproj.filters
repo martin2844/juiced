@@ -114,7 +114,25 @@
     <ClCompile Include="Integration\Frontend\AudioOptionsTests.cpp">
       <Filter>Integration\Frontend</Filter>
     </ClCompile>
+    <ClCompile Include="Integration\Frontend\CarStatsTests.cpp">
+      <Filter>Integration\Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Frontend\CharacterTests.cpp">
+      <Filter>Integration\Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Frontend\CutSceneTests.cpp">
+      <Filter>Integration\Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Frontend\GraphicsOptionsTests.cpp">
+      <Filter>Integration\Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Frontend\HostMeetingTests.cpp">
+      <Filter>Integration\Frontend</Filter>
+    </ClCompile>
     <ClCompile Include="Integration\Frontend\InstantSelTypeTests.cpp">
+      <Filter>Integration\Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Frontend\InstantSetupTests.cpp">
       <Filter>Integration\Frontend</Filter>
     </ClCompile>
     <ClCompile Include="Integration\Frontend\MainMenuTests.cpp">
@@ -126,7 +144,28 @@
     <ClCompile Include="Integration\Frontend\MessageWindowTests.cpp">
       <Filter>Integration\Frontend</Filter>
     </ClCompile>
+    <ClCompile Include="Integration\Frontend\OnlineCrewRaceSetupTests.cpp">
+      <Filter>Integration\Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Frontend\RespectChangesTests.cpp">
+      <Filter>Integration\Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Frontend\ScreenShowTests.cpp">
+      <Filter>Integration\Frontend</Filter>
+    </ClCompile>
     <ClCompile Include="Integration\Frontend\StartupTests.cpp">
+      <Filter>Integration\Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Frontend\WindowStackTests.cpp">
+      <Filter>Integration\Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Frontend\GarageFixesTests.cpp">
+      <Filter>Integration\Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Frontend\CareerRaceResultsTests.cpp">
+      <Filter>Integration\Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Frontend\OnlineLoginTests.cpp">
       <Filter>Integration\Frontend</Filter>
     </ClCompile>
     <ClCompile Include="Integration\GameData\CarDefsTests.cpp">
@@ -195,13 +234,37 @@
     <ClCompile Include="Integration\Network\TransportTests.cpp">
       <Filter>Integration\Network</Filter>
     </ClCompile>
+    <ClCompile Include="Integration\Network\PeerchatTests.cpp">
+      <Filter>Integration\Network</Filter>
+    </ClCompile>
     <ClCompile Include="Integration\Platform\DirectInputKeyboardTests.cpp">
       <Filter>Integration\Platform</Filter>
     </ClCompile>
     <ClCompile Include="Integration\Platform\Windows7Tests.cpp">
       <Filter>Integration\Platform</Filter>
     </ClCompile>
+    <ClCompile Include="Integration\Race\RaceCameraTests.cpp">
+      <Filter>Integration\Race</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Race\RaceIntroTests.cpp">
+      <Filter>Integration\Race</Filter>
+    </ClCompile>
     <ClCompile Include="Integration\Race\RaceFrontEndTests.cpp">
+      <Filter>Integration\Race</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Race\RaceHudTargetTests.cpp">
+      <Filter>Integration\Race</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Race\RaceCarRecordTests.cpp">
+      <Filter>Integration\Race</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Race\PostEffectsSplitTests.cpp">
+      <Filter>Integration\Race</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Race\HudReplayTests.cpp">
+      <Filter>Integration\Race</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Race\CruiseTricksTests.cpp">
       <Filter>Integration\Race</Filter>
     </ClCompile>
     <ClCompile Include="Integration\Saves\ReplaysDeviceTests.cpp">
@@ -219,8 +282,17 @@
     <ClCompile Include="Unit\Base\CpuInfoTests.cpp">
       <Filter>Unit\Base</Filter>
     </ClCompile>
+    <ClCompile Include="Unit\Base\LoadingThreadTests.cpp">
+      <Filter>Unit\Base</Filter>
+    </ClCompile>
     <ClCompile Include="Unit\Base\ScriptTests.cpp">
       <Filter>Unit\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Base\NamesCodePageTests.cpp">
+      <Filter>Unit\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Career\CareerLoadTests.cpp">
+      <Filter>Unit\Career</Filter>
     </ClCompile>
     <ClCompile Include="Unit\Career\DealerTests.cpp">
       <Filter>Unit\Career</Filter>
@@ -228,10 +300,16 @@
     <ClCompile Include="Unit\Career\MoneyTests.cpp">
       <Filter>Unit\Career</Filter>
     </ClCompile>
+    <ClCompile Include="Unit\Career\CrewFileBoundsTests.cpp">
+      <Filter>Unit\Career</Filter>
+    </ClCompile>
     <ClCompile Include="Unit\Cars\CarPartsTests.cpp">
       <Filter>Unit\Cars</Filter>
     </ClCompile>
     <ClCompile Include="Unit\Cars\DamageTests.cpp">
+      <Filter>Unit\Cars</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Cars\AutoModQuestionTests.cpp">
       <Filter>Unit\Cars</Filter>
     </ClCompile>
     <ClCompile Include="Unit\Data\LanguageTests.cpp">
@@ -258,6 +336,9 @@
     <ClCompile Include="Unit\Input\UiInputTests.cpp">
       <Filter>Unit\Input</Filter>
     </ClCompile>
+    <ClCompile Include="Unit\JuicedConfig\DirectXCheckTests.cpp">
+      <Filter>Unit\JuicedConfig</Filter>
+    </ClCompile>
     <ClCompile Include="Unit\JuicedConfig\ConfigDataTests.cpp">
       <Filter>Unit\JuicedConfig</Filter>
     </ClCompile>
@@ -273,10 +354,19 @@
     <ClCompile Include="Unit\Network\VoiceTests.cpp">
       <Filter>Unit\Network</Filter>
     </ClCompile>
+    <ClCompile Include="Unit\Network\NetCarTests.cpp">
+      <Filter>Unit\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Network\PeerchatTests.cpp">
+      <Filter>Unit\Network</Filter>
+    </ClCompile>
     <ClCompile Include="Unit\Physics\DynamicsTests.cpp">
       <Filter>Unit\Physics</Filter>
     </ClCompile>
     <ClCompile Include="Unit\Physics\RigidBodyTests.cpp">
+      <Filter>Unit\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Physics\TrackCollisionTests.cpp">
       <Filter>Unit\Physics</Filter>
     </ClCompile>
     <ClCompile Include="Unit\Platform\LanguageChoiceTests.cpp">
@@ -286,9 +376,6 @@
       <Filter>Unit\Platform</Filter>
     </ClCompile>
     <ClCompile Include="Unit\Race\DriverControlTests.cpp">
-      <Filter>Unit\Race</Filter>
-    </ClCompile>
-    <ClCompile Include="Unit\Race\RaceStartTests.cpp">
       <Filter>Unit\Race</Filter>
     </ClCompile>
     <ClCompile Include="Unit\Race\RaceStateTests.cpp">
@@ -306,6 +393,21 @@
     <ClCompile Include="Unit\Race\TrackViewEndTests.cpp">
       <Filter>Unit\Race</Filter>
     </ClCompile>
+    <ClCompile Include="Unit\Race\ArcadeRacesBoundsTests.cpp">
+      <Filter>Unit\Race</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Race\HudTimeTests.cpp">
+      <Filter>Unit\Race</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Race\ReplayFrameTests.cpp">
+      <Filter>Unit\Race</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Race\CrewSchemeTests.cpp">
+      <Filter>Unit\Race</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Race\RacePauseTests.cpp">
+      <Filter>Unit\Race</Filter>
+    </ClCompile>
     <ClCompile Include="Unit\Render\MeshTests.cpp">
       <Filter>Unit\Render</Filter>
     </ClCompile>
@@ -318,6 +420,9 @@
     <ClCompile Include="Unit\Saves\SettingsTests.cpp">
       <Filter>Unit\Saves</Filter>
     </ClCompile>
+    <ClCompile Include="Unit\Saves\OnlineAccountTests.cpp">
+      <Filter>Unit\Saves</Filter>
+    </ClCompile>
     <ClCompile Include="Unit\Scene\WorldClockTests.cpp">
       <Filter>Unit\Scene</Filter>
     </ClCompile>
@@ -327,8 +432,20 @@
     <ClCompile Include="Unit\Tracks\RouteTests.cpp">
       <Filter>Unit\Tracks</Filter>
     </ClCompile>
+    <ClCompile Include="Unit\Tracks\SplinePathTests.cpp">
+      <Filter>Unit\Tracks</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Framework\Fakes\FakeCareerHost.h">
+      <Filter>Framework\Fakes</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Fakes\FakeCustomRaceHost.h">
+      <Filter>Framework\Fakes</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Fakes\FakeGarageHost.h">
+      <Filter>Framework\Fakes</Filter>
+    </ClInclude>
     <ClInclude Include="Framework\Fakes\FakeGpcm.h">
       <Filter>Framework\Fakes</Filter>
     </ClInclude>

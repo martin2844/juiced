@@ -1930,7 +1930,11 @@ void Native::nextFrame(uint32_t movie) {
     if (m->timing) ++m->advanced;
 }
 
-// BinkWait: 1 while the frame's time has not come (and while paused), else 0. The clock starts at the first call.
+// BinkWait: 1 while the frame's time has not come (and while paused), else 0. The clock starts at the first call. A
+// movie more than three frames behind is not caught up: its clock goes on from now, the frame at once and the next at
+// the movie's pace. binkw32 measured so (a 25 fps movie stalled 100 ms or more goes on at 25 fps; stalled less, its
+// one to three frames are caught up); every late frame let through at once played a menu's movie fast for seconds
+// after a window's load.
 int32_t Native::wait(uint32_t movie) {
     Movie* m = find(movie);
     if (m == nullptr) return 0;
@@ -1941,7 +1945,12 @@ int32_t Native::wait(uint32_t movie) {
         m->base = t;
         m->advanced = 0;
     }
-    return t < m->due() ? 1 : 0;
+    const int64_t due = m->due();
+    if (t < due) return 1;
+    const double frame = static_cast<double>(m->header.rateDiv) / m->header.rate;
+    const auto late = static_cast<int64_t>(3.0 * frame * static_cast<double>(ticksPerSecond()));
+    if (t - due > late) m->base += t - due;
+    return 0;
 }
 
 int32_t Native::pause(uint32_t movie, int32_t on) {

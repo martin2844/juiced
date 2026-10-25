@@ -26,7 +26,9 @@ functions throughout.
    MB_OK)` ("You need to install DirectX9.0c runtime or better ...").
 
 Windows 11 (checked on the stock under a debugger): DxDiag reports 12.0 and the letter a space (32), so the tool shows
-the message and never its window (a stock problem).
+the message and never its window (a stock problem). OpenJuiceConfig departs from it: a major past 9 is enough, the
+letter counts only for 9 ('c' or later, either case), and without DxDiag's answer the Direct3D 9 interface made with
+`D3D_SDK_VERSION` 32 (refused by the runtimes before 9.0c) answers it.
 
 ## The texts
 

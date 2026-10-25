@@ -20,6 +20,19 @@ namespace {
 
 }  // namespace
 
+void restartSprint(const HudRace& race) {
+    if (race.type != RaceType::Sprint || race.race == nullptr) return;
+    const uint32_t racers = race.career != nullptr ? race.career->session.count : 0;
+    for (const RaceCar* car : race.cars) {
+        if (car != nullptr && car->competitor != nullptr && car->record >= 0 &&
+            static_cast<uint32_t>(car->record) < racers) {
+            car->competitor->points = 0.0f;
+            car->competitor->totalTime = 0.0f;  // the fixed build's
+        }
+    }
+    race.race->rules().heat = -1;
+}
+
 RacePause::RacePause(ui::WindowManager& windows, const TextTable& texts)
     : m_windows(windows), m_texts(texts) {}
 
@@ -49,13 +62,16 @@ bool RacePause::enter(const HudRace& race) {
             s.removeMenuItem(m, command);
             if (s.find("BackMenu") >= 0 && s.menuSize("BackMenu") != 0) s.removeMenuItemAt("BackMenu", 0);
         };
-        if (net::onlineFriends() == nullptr) {
+        // The fixed build's guest has no friends' windows: FRIENDS and PLAYERS out.
+        const net::OnlineUser* user = net::onlineUser();
+        const bool guest = user != nullptr && user->guest();
+        if (net::onlineFriends() == nullptr || guest) {
             remove("friends");
             m_friends = 0;
         } else {
             m_friends = 1;
         }
-        if (net::matchmaking() == nullptr) remove("players");
+        if (net::matchmaking() == nullptr || guest) remove("players");
         if (race.networked) remove("restart");
         if (race.mode == RaceMode::Career) {
             const RaceType type = race.type;
@@ -81,8 +97,8 @@ bool RacePause::enter(const HudRace& race) {
         }
     }
     // 0x0044EBDB: with more than one player and a player who paused, PLAYER "Player" (167), " " and " <its number>"
-    // (Stock problem: two spaces); the second player's pause takes FRIENDS and RESTART out of Menu and BackMenu's first
-    // item twice. Else PLAYER hidden.
+    // (Stock problem: two spaces; the fixed build's one); the second player's pause takes FRIENDS and RESTART out of
+    // Menu and BackMenu's first item twice. Else PLAYER hidden.
     if (const int player = s.find("player"); player >= 0) {
         if (race.players.size() > 1 && race.pausing >= 0) {
             s.setHidden(player, false);
@@ -98,7 +114,7 @@ bool RacePause::enter(const HudRace& race) {
                     }
                 }
             }
-            s.setText(player, m_texts.at(kTextPlayer) + L" " + std::format(L" {}", race.pausing == 1 ? 2 : 1));
+            s.setText(player, m_texts.at(kTextPlayer) + std::format(L" {}", race.pausing == 1 ? 2 : 1));
         } else {
             s.setHidden(player, true);
         }
@@ -145,18 +161,7 @@ RaceWindowFrame RacePause::frame(const HudRace& race, uint32_t uiEvent, uint32_t
         return out;
     }
     if (m_restart != 0 && m_settled != 0) {
-        // A sprint starts again from its first heat: the points (+0x138) of the session's racers' cars cleared and the
-        // heat -1 (restart_race counts it). Stock problem: the heats' time (+0x134) is kept.
-        if (race.type == RaceType::Sprint && race.race != nullptr) {
-            const uint32_t racers = race.career != nullptr ? race.career->session.count : 0;
-            for (const RaceCar* car : race.cars) {
-                if (car != nullptr && car->competitor != nullptr && car->record >= 0 &&
-                    static_cast<uint32_t>(car->record) < racers) {
-                    car->competitor->points = 0.0f;
-                }
-            }
-            race.race->rules().heat = -1;
-        }
+        restartSprint(race);
         out.window = "restart_race";
         m_settled = 1;
         return out;

@@ -30,11 +30,14 @@ State& st() {
     return s;
 }
 
-// 0x0055BA50's part of the user object (its base): the local player whose user has the same profile, referenced
-// (each local player's user looked at referenced and kept: Stock problem); -1.
+// 0x0055BA50's part of the user object (its base): the local player whose user has the same profile, referenced;
+// -1. Each local player's user looked at let go again in the fixed build (the stock's 0x0055BA81 kept it referenced).
 int32_t localPlayerOf(OnlineUser& users, int32_t user) {
     for (int32_t player : users.localPlayers) {
-        if (users.sameUser(user, users.playerUser(player))) {
+        const int32_t its = users.playerUser(player);
+        const bool same = users.sameUser(user, its);
+        users.userRelease(its);
+        if (same) {
             users.playerAddRef(player);
             return player;
         }
@@ -166,6 +169,9 @@ int32_t ratingsAgainst(const PlayerRace& ours, int32_t own, int32_t step, bool p
             sign = step;
         }
         if (placeTwoWins && sign == 0) sign = 1;
+        // The fixed build: a racer in our own place changes neither rating (0x004EC980 with 0 added its step to both:
+        // a gain for each).
+        if (sign == 0) continue;
         const int32_t theirsBefore = theirs->rating;
         rating = ratingAfter(sign, static_cast<uint32_t>(rating), theirsBefore);
         if (static_cast<uint32_t>(rating) > static_cast<uint32_t>(limit)) rating = over;
@@ -228,8 +234,12 @@ void TableReader::reset() {
     problem() = 0;
 }
 
-bool TableReader::rowThere(uint32_t row) const {
-    return done != 0 && !columns.empty() && row < columns[0].size();
+bool TableReader::rowThere(uint32_t row, size_t read) const {
+    if (done == 0 || columns.size() < read || row >= ranks.size() || row >= names.size()) return false;
+    for (size_t c = 0; c < read; ++c) {
+        if (row >= columns[c].size()) return false;
+    }
+    return read != 0;
 }
 
 bool TableReader::bestTime(int32_t routeIndex, Leaderboards::Callback success, void* successArg,
@@ -289,7 +299,7 @@ bool TableReader::lapTimes(int32_t rows, int32_t routeIndex, int32_t user) {
 bool TableReader::lapTimeRow(uint32_t row, const char16_t*& name, int32_t& rank, float& time, int32_t& car,
                              int32_t& carRating, float& topSpeed, int32_t& totalRows) const {
     if (done == 0) return false;
-    if (!rowThere(row)) return false;
+    if (!rowThere(row, 4)) return false;
     name = names[row];
     rank = ranks[row];
     time = static_cast<float>(static_cast<uint32_t>(columns[0][row])) * 0.001f;
@@ -317,7 +327,7 @@ bool TableReader::showoff(int32_t rows, int32_t location, int32_t user) {
 bool TableReader::showoffRow(uint32_t row, int32_t& rank, const char16_t*& name, int32_t& points, int32_t& car,
                              int32_t& totalRows) const {
     if (done == 0) return false;
-    if (!rowThere(row)) return false;
+    if (!rowThere(row, 2)) return false;
     rank = ranks[row];
     name = names[row];
     points = columns[0][row];
@@ -344,7 +354,7 @@ bool TableReader::pinkSlips(int32_t rows, int32_t user) {
 bool TableReader::pinkSlipsRow(uint32_t row, int32_t& rank, const char16_t*& name, int32_t& won, int32_t& lost,
                                int32_t& money, int32_t& totalRows) const {
     if (done == 0) return false;
-    if (!rowThere(row)) return false;
+    if (!rowThere(row, 3)) return false;
     rank = ranks[row];
     name = names[row];
     won = columns[0][row];
@@ -373,7 +383,7 @@ bool TableReader::worldRanking(int32_t rows, int32_t user) {
 bool TableReader::worldRankingRow(uint32_t row, const char16_t*& name, int32_t& rank, int32_t& rating, int32_t& won,
                                   int32_t& lost, int32_t& disconnects, int32_t& totalRows) const {
     if (done == 0) return false;
-    if (!rowThere(row)) return false;
+    if (!rowThere(row, 3) || row >= wide.size()) return false;
     name = names[row];
     rank = ranks[row];
     rating = static_cast<int32_t>(wide[row]);  // the 64-bit value's low half
@@ -557,13 +567,12 @@ bool reportCareerRaceBegun(int32_t user) {
 
 bool finishedRace(int32_t user, int32_t place) {
     log::debugPrint("\n*** Called FinishedRace with paramaters %d and %d\n\n", user, place);
-    OnlineUser* users = onlineUser();
     const char16_t* nick = nickOf(user);
-    // Our race: the first player of the user (each player looked at its user referenced, kept: Stock problem).
+    // Our race: the first player of the user (the stock's 0x004ECA82 referenced each player's user looked at and kept
+    // it; not the fixed build).
     std::vector<NetPlayer>& players = sessionPlayers();
     const PlayerRace* ours = nullptr;
     for (size_t i = 0; i < players.size() && ours == nullptr; ++i) {
-        if (users != nullptr) users->userAddRef(players[i].profile);
         if (players[i].profile == user) ours = &players[i].race;
     }
     Reporter& reporter = *stats::reporter();
@@ -706,7 +715,8 @@ void frame(float dt, bool frontEnd) {
     if (statistics() == nullptr) {
         s.refreshTimer = 5.0f;
         OnlineUser* users = onlineUser();
-        if (users == nullptr || users->loggedOn == 0) return;
+        // The fixed build's guest has no statistics (no GameSpy profile to report for).
+        if (users == nullptr || users->loggedOn == 0 || users->guest()) return;
         if (!startStatistics()) return;
     }
     if (!s.localRecords) {

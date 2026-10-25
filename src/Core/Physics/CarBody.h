@@ -41,8 +41,9 @@ public:
 
     // 0x00488B50: the turbo lost to the damage, its boost back to 1.
     void loseTurbo() { carDef.turbo = 1.0f; }
-    // 0x004896A0: the turbo back at 1.3.
-    void restoreTurbo() { carDef.turbo = 1.3f; }
+    // 0x004896A0: the turbo back. Stock problem: at 1.3, whatever the car's own (its turbo part's 1.25 .. 1.4, a
+    // stock turbo's 1.01); the fixed build's the Turbo the car was made with.
+    void restoreTurbo() { carDef.turbo = m_fittedTurbo; }
     // The definition's traction control (+0xC8 +0x174; CMSCutScene clears it each frame, 0x004C72D0, car_rolling
     // sets it, 0x004DE350).
     void setAsr(bool on) { carDef.asr = on; }
@@ -164,6 +165,7 @@ public:
     CarWheel* wheelOf(int32_t id);  // 0x004F7500: the wheel of a definition ID, none without one
 
 private:
+    float m_fittedTurbo = 1.0f;     // the fixed build's: the definition's Turbo when the body was made
     void engineDrive();             // 0x004F5C60
     float boost() const;            // 0x004F7550
     void updatePeakTorque();        // 0x004F5B60

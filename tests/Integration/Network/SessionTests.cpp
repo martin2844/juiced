@@ -9,6 +9,7 @@
 #include <windows.h>
 
 #include <cstring>
+#include <array>
 #include <functional>
 #include <string>
 #include <vector>
@@ -118,4 +119,125 @@ OJ_INTEGRATION_TEST(Session, HostAndGuest) {
     }
     check(opened && known && setup && started && raced && states && finished && lobby,
           "network session: names, setup, stages, start, count, car states, finishes, the lobby again");
+}
+
+// The fixed build's cars' states: every player's period 0.05 s (the stock's 0.1 s up to three players, 0.2 s with
+// six), the peers pinged each second and their one way time from the pings (the stock's pings were never on: the
+// states were never carried on by the way here).
+OJ_INTEGRATION_TEST(Session, StatesSyncFixed) {
+    const uint32_t loop = 0x0100007Fu;
+    auto options = [&](uint16_t lan, uint16_t game, uint16_t to) {
+        oj::net::Transport::Options o;
+        o.lanPort = lan;
+        o.gamePort = game;
+        o.ownIp = loop;
+        o.broadcastIp = loop;
+        o.broadcastPort = to;
+        return o;
+    };
+    oj::CrtRandom netRandom;
+    oj::net::Transport hostLink, guestLink;
+    std::string why;
+    const bool opened = hostLink.open(options(29676, 29677, 29678), netRandom, &why) &&
+                        guestLink.open(options(29678, 29679, 29676), netRandom, &why);
+    oj::net::NetSession hostSession(hostLink), guestSession(guestLink);
+    auto pump = [&](float dt, int frames, const std::function<bool()>& done) {
+        for (int i = 0; i < frames && !done(); ++i) {
+            hostSession.frame(dt);
+            guestSession.frame(dt);
+            Sleep(0);
+        }
+        return done();
+    };
+    bool known = false, periods = false, pinged = false;
+    if (opened) {
+        hostSession.start();
+        guestSession.start();
+        hostSession.addOwnPlayer(u"Host", 0);
+        guestSession.addOwnPlayer(u"Guest", 0);
+        hostSession.host(u"OJ session", 6);
+        oj::net::Address at{loop, static_cast<uint16_t>((29677 >> 8) | ((29677 & 0xFF) << 8))};
+        guestSession.join(at);
+        known = pump(0.05f, 2000, [&] {
+            return guestSession.player(0, 0) != nullptr && !hostLink.peers().empty() &&
+                   hostSession.player(hostLink.peers()[0].id, 0) != nullptr;
+        });
+        periods = known && hostSession.players().size() == 2 && guestSession.players().size() == 2;
+        for (const oj::net::NetPlayer& p : hostSession.players()) periods = periods && p.period == 0.05f;
+        for (const oj::net::NetPlayer& p : guestSession.players()) periods = periods && p.period == 0.05f;
+        // Three seconds of frames: three pings each way, their answers a frame or two later.
+        pump(0.01f, 300, [] { return false; });
+        const float hostToGuest = known ? hostSession.oneWay(hostLink.peers()[0].id) : 1.0f;
+        const float guestToHost = guestSession.oneWay(0);
+        pinged = hostToGuest < 0.025f && guestToHost < 0.025f && hostToGuest >= 0.0f && guestToHost >= 0.0f;
+    }
+    check(opened && known && periods && pinged,
+          "network session (fixed): the states each 0.05 s, the peers' one way time from their pings");
+}
+
+// The fixed build's contacts: two sessions of the fixed build know each other by their hello (0x30) and a contact
+// (0x31) comes to the other's hook; a machine that passes over 0x30 (as the stock's session, 0x004E96A0) is never
+// marked and is never sent a contact.
+OJ_INTEGRATION_TEST(Session, ContactsToFixedPeersOnly) {
+    const uint32_t loop = 0x0100007Fu;
+    auto options = [&](uint16_t lan, uint16_t game, uint16_t to) {
+        oj::net::Transport::Options o;
+        o.lanPort = lan;
+        o.gamePort = game;
+        o.ownIp = loop;
+        o.broadcastIp = loop;
+        o.broadcastPort = to;
+        return o;
+    };
+    oj::CrtRandom netRandom;
+    oj::net::Transport hostLink, guestLink, stockLink;
+    std::string why;
+    const bool opened = hostLink.open(options(29686, 29687, 29688), netRandom, &why) &&
+                        guestLink.open(options(29688, 29689, 29686), netRandom, &why) &&
+                        stockLink.open(options(29690, 29691, 29686), netRandom, &why);
+    oj::net::NetSession hostSession(hostLink), guestSession(guestLink);
+    stockLink.setHandler([](const uint8_t*, size_t, int32_t) {});  // a machine that passes over every message
+    int32_t contactIndex = -1;
+    std::array<float, 3> contactLinear{};
+    guestSession.hooks.contact = [&](int32_t, int32_t localIndex, const std::array<float, 3>& linear,
+                                     const std::array<float, 3>&) {
+        contactIndex = localIndex;
+        contactLinear = linear;
+    };
+    auto pump = [&](const std::function<bool()>& done) {
+        for (int i = 0; i < 3000 && !done(); ++i) {
+            hostSession.frame(0.01f);
+            guestSession.frame(0.01f);
+            stockLink.update(0.01f);
+            Sleep(0);
+        }
+        return done();
+    };
+    bool known = false, sent = false, stockLeft = false;
+    if (opened) {
+        hostSession.start();
+        guestSession.start();
+        hostSession.addOwnPlayer(u"Host", 0);
+        guestSession.addOwnPlayer(u"Guest", 0);
+        hostSession.host(u"OJ session", 6);
+        const oj::net::Address at{loop, static_cast<uint16_t>((29687 >> 8) | ((29687 & 0xFF) << 8))};
+        guestSession.join(at);
+        stockLink.join(at, 1);
+        known = pump([&] {
+            return hostLink.peers().size() == 2 && guestSession.fixedPeer(0) && !hostLink.peers().empty() &&
+                   hostSession.fixedPeer(hostLink.peers()[0].id);
+        });
+        int32_t guestId = -1, stockId = -1;
+        for (const oj::net::Peer& p : hostLink.peers()) {
+            (hostSession.fixedPeer(p.id) ? guestId : stockId) = p.id;
+        }
+        pump([] { return false; });
+        stockLeft = stockId != -1 && !hostSession.fixedPeer(stockId) &&
+                    !hostSession.sendContact(stockId, 0, {1.0f, 2.0f, 3.0f}, {0.0f, 0.0f, 0.0f});
+        sent = guestId != -1 && hostSession.sendContact(guestId, 0, {1500.0f, 0.0f, -250.0f}, {0.0f, 10.0f, 0.0f}) &&
+               pump([&] { return contactIndex != -1; }) && contactIndex == 0 && contactLinear[0] == 1500.0f &&
+               contactLinear[2] == -250.0f;
+    }
+    check(opened && known && stockLeft && sent,
+          "network session (fixed): fixed peers know each other, a contact to one; none to a machine that passes over");
 }

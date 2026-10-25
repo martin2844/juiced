@@ -5,6 +5,7 @@
 #include "Core/Data/GameTexts.h"
 #include "Core/Input/Input.h"
 #include "Core/Saves/GraphicsConfig.h"
+#include "Game/UI/WindowFixes.h"
 
 #include <cstring>
 #include <utility>
@@ -24,6 +25,11 @@ void GraphicsOptions::enter(OptionsHost& host, ui::Screen& s) {
         s.setMeter(meter, value, true);
     }
     const bool effects = c.noShaders == 0 && c.shaders != 0;
+    // The fixed build's glow meter (Game/UI/WindowFixes.h): the glow's strength, 0 without the effects.
+    if (s.find(ui::kGlowMeter) >= 0) {
+        s.setMeterSlider(ui::kGlowMeter, true);
+        s.setMeter(ui::kGlowMeter, effects ? glowStrength(c.glow) : 0.0f, true);
+    }
     m_brightness = c.brightness;
     m_detail = c.detail;
     m_reflections = c.reflections;
@@ -55,12 +61,16 @@ void GraphicsOptions::leave(OptionsHost& host, float detail) {
 // at the detail and the brightness, +0x0C 0. LEFT or RIGHT: SHADOWS_BUT turns the shadows over (1 or 2), MOBLUR_BUT,
 // GLOW_BUT, DOF_BUT their effect (stays off without shaders), REFLECTION_BUT the reflections one down (LEFT) or up
 // (RIGHT) round 0 .. 3 (0 without shaders); each CLICK and +0x0C 0.
+// The fixed build's glow meter in place of GLOW's YES and NO (Game/UI/WindowFixes.h): GLOW empty, the meter and its
+// boxes shown with the effects (else hidden and GLOW "-"), taking the held direction while GLOW_BUT is highlighted,
+// the glow following its shown value (glowSetting); RESET puts it at the defaults' glow.
 void GraphicsOptions::update(OptionsHost& host, ui::Screen& s, uint32_t event) {
     GraphicsConfig& c = graphicsConfig();
     const std::string current = s.currentButton();
     const auto is1 = [&](const char* name) { return _stricmp(current.c_str(), name) == 0; };
     const bool shaderless = c.noShaders != 0;
     const bool effects = c.noShaders == 0 && c.shaders != 0;
+    const bool glowMeter = s.find(ui::kGlowMeter) >= 0;
     if (m_shownButton != current) {
         m_shownButton = current;
         const auto yesNo = [&](bool on) { return host.gameTexts().at(on ? kTextYes : kTextNo); };
@@ -74,15 +84,18 @@ void GraphicsOptions::update(OptionsHost& host, ui::Screen& s, uint32_t event) {
         }
         if (effects) {
             s.setText("MOBLUR", yesNo(c.motionBlur != 0));
-            s.setText("GLOW", yesNo(c.glow != 0));
+            s.setText("GLOW", glowMeter ? std::wstring() : yesNo(c.glow != 0));
             s.setText("DOF", yesNo(c.depthOfField != 0));
         } else {
             for (const char* name : {"MOBLUR", "GLOW", "DOF"}) s.setText(name, L"-");
         }
         s.setMeterActive("DETAIL", is1("DETAIL_BUT"));
         s.setMeterActive("BRIGHT", is1("BRIGHT_BUT"));
+        for (const char* name : {ui::kGlowMeter, ui::kGlowMinus, ui::kGlowPlus}) s.setHidden(name, !effects);
+        s.setMeterActive(ui::kGlowMeter, effects && is1("GLOW_BUT"));
     }
     if (s.find("BRIGHT") >= 0 && is1("BRIGHT_BUT")) c.brightness = s.meterShown("BRIGHT");
+    if (glowMeter && effects && is1("GLOW_BUT")) c.glow = glowSetting(s.meterShown(ui::kGlowMeter));
     if (event == input::kBack) {
         c.brightness = m_brightness;
         c.reflections = shaderless ? 0 : m_reflections;
@@ -103,6 +116,7 @@ void GraphicsOptions::update(OptionsHost& host, ui::Screen& s, uint32_t event) {
             graphicsDefaults(c);
             if (s.find("DETAIL") >= 0) s.setMeter("DETAIL", c.detail, true);
             if (s.find("BRIGHT") >= 0) s.setMeter("BRIGHT", c.brightness, true);
+            if (glowMeter) s.setMeter(ui::kGlowMeter, effects ? glowStrength(c.glow) : 0.0f, true);
             m_shownButton.clear();
         }
         return;
@@ -116,7 +130,7 @@ void GraphicsOptions::update(OptionsHost& host, ui::Screen& s, uint32_t event) {
         const bool on = !shaderless && c.shadows == 2;
         c.shadows = !on && !shaderless ? 2 : 1;
         changed();
-    } else if (is1("MOBLUR_BUT") || is1("GLOW_BUT") || is1("DOF_BUT")) {
+    } else if (is1("MOBLUR_BUT") || (is1("GLOW_BUT") && !glowMeter) || is1("DOF_BUT")) {
         int32_t& value = is1("MOBLUR_BUT") ? c.motionBlur : is1("GLOW_BUT") ? c.glow : c.depthOfField;
         const bool on = effects && value != 0;
         value = !on && effects ? 1 : 0;

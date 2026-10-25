@@ -26,8 +26,11 @@ void applyState(RaceCar& car, const uint8_t* state, PhysicsWorld* world, void (*
 
 // 0x004E6E30: towards the state: the position by 0.07 (y by 0.21), at once past 30 m (y 3 m), the orientation by
 // 0.07 of the way, the velocities and the wheels' spins by 0.07; the rest as 0x004E73E0 (the position whatever
-// the parking).
-void smoothState(RaceCar& car, const uint8_t* state, PhysicsWorld* world, void (*horn)(RaceCar&, bool));
+// the parking). The fixed build takes those steps for a frame of 1/60 s and the frame's own time `dt` by them
+// (smoothStep: the stock's are a frame's whatever its time, so a higher frame rate pulled the cars harder).
+void smoothState(RaceCar& car, const uint8_t* state, PhysicsWorld* world, void (*horn)(RaceCar&, bool), float dt);
+// The fixed build: a step of a 1/60 s frame made a step of `dt`: 1 - (1 - step)^(60 dt).
+float smoothStep(float step, float dt);
 
 // 0x004E6B60: the state carried on for dt seconds: the position by its velocity (turned to the world), the
 // orientation by its angular velocity.

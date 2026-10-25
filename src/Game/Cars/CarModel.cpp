@@ -18,7 +18,8 @@ const float kRandomScale = std::bit_cast<float>(0x38000100u);  // 1 / 32767 (0x0
 // The slots' names (0x00717538, in CarModel::Slot's order) and the wheels' (0x0048A0A0).
 constexpr const char* kSlotNames[CarModel::kSlotCount] = {"FBUMP",     "RBUMP",     "BONNET",    "SPOILER",
                                                           "SSKIRT_L",  "SSKIRT_R",  "EXHAUST_C", "EXHAUST_S",
-                                                          "EXHAUST_O", "DECAL",     "DRIVER"};
+                                                          "EXHAUST_O", "DECAL",     "DRIVER",    "WMIR_L",
+                                                          "WMIR_R"};
 constexpr const char* kWheelNames[] = {"WHEEL_FL", "WHEEL_FR", "WHEEL_RL", "WHEEL_RR"};
 
 std::optional<std::vector<uint8_t>> readBytes(const std::filesystem::path& path) {
@@ -100,6 +101,8 @@ std::unique_ptr<CarModel> CarModel::load(Engine& engine, const Car& car, const P
     // The stock's model points at the record ([model+0x8C]) and its fitting (0x0048BC30) writes the index it fits
     // back into it: the record is the caller's own (no caller passes a const object).
     m->fitParts(const_cast<Car&>(car), catalogue);
+    // 0x0048C2E0 after the body parts (0x0048C3B5).
+    m->primerToBody();
     // The right wheels face the other way: the race turns them each frame (0x00487670), the interface's car view
     // itself (0x004590E0).
     // 0x0048B860: the driver.
@@ -144,6 +147,20 @@ void CarModel::fitParts(Car& car, const PartCatalogue& catalogue) {
         fillBody(static_cast<int>(category), part);
     }
     fitWheelsAndExhaust(car, catalogue);
+}
+
+void CarModel::primerToBody() {
+    std::string key = m_name + "_primer";
+    for (char& ch : key) ch = static_cast<char>(std::tolower(static_cast<unsigned char>(ch)));
+    const auto found = m_partMaterials.find(key);
+    if (found == m_partMaterials.end() || !m_model) return;
+    // The fixed build: every mesh of the model (the slots' are among them; a car's meshes are its own).
+    for (const auto& node : m_model->meshNodes) {
+        if (node->mesh == nullptr) continue;
+        for (size_t i = 0; i < node->mesh->parts().size(); ++i) {
+            if (node->mesh->parts()[i].material == found->second) node->mesh->setMaterial(i, m_body);
+        }
+    }
 }
 
 void CarModel::refitParts(Car& car, const PartCatalogue& catalogue) {
@@ -210,8 +227,7 @@ render::Mesh* CarModel::mesh(const std::string& name, Folders folders, bool quie
     }
     std::vector<render::Material*> materials;
     for (const MeshPart& p : parsed->parts) {
-        if (m_body != nullptr && (_stricmp(p.name.c_str(), (m_name + "_body").c_str()) == 0 ||
-                                  _stricmp(p.name.c_str(), (m_name + "_primer").c_str()) == 0)) {
+        if (m_body != nullptr && _stricmp(p.name.c_str(), (m_name + "_body").c_str()) == 0) {
             materials.push_back(m_body);
             continue;
         }
@@ -338,9 +354,29 @@ void CarModel::fillWheels(const std::string& meshName, Folders folders) {
     for (render::ModelNode* node : m_wheels) {
         if (node != nullptr) node->mesh = m_wheelMesh;
     }
-    m_wheel = meshName;
     m_wheelBlurMesh = meshName.empty() ? nullptr : mesh(meshName + "_BLUR", folders, true);
     if (m_wheelBlurMesh == nullptr) m_wheelBlurMesh = mesh("RX7_WHEEL_BLUR", folders, true);
+    m_wheelMaterials = {};
+    if (folders != Folders::Shared) return;
+    std::array<std::string, 5> names{meshName, meshName + "_BS", meshName + "_B", meshName + "_LOD", ""};
+    if (const size_t first = meshName.find('_'); first != std::string::npos) {
+        names[4] = meshName.substr(0, first) + "_BL" + meshName.substr(first);
+        names[4].erase(names[4].rfind('_'));
+    }
+    for (size_t i = 0; i < names.size(); ++i) {
+        std::string key = names[i];
+        for (char& ch : key) ch = static_cast<char>(std::tolower(static_cast<unsigned char>(ch)));
+        const auto it = m_partMaterials.find(key);
+        if (it == m_partMaterials.end() || it->second == nullptr) {
+            m_wheelColours[i] = 0xFFFFFFFF;
+            continue;
+        }
+        m_wheelMaterials[i] = it->second;
+        const std::vector<std::vector<uint8_t>>& description = it->second->description();
+        if (description.empty() || description[0].size() < sizeof(uint32_t)) continue;
+        std::memcpy(&m_wheelColours[i], description[0].data(), sizeof(uint32_t));
+        it->second->setParam(0, &m_wheelColours[i]);
+    }
 }
 
 render::ModelNode* CarModel::wheelNode(size_t i) {
@@ -357,6 +393,11 @@ void CarModel::fillBody(int category, const std::string& meshName) {
     } else if (category == 4) {
         fill(kSkirtLeft, meshName.empty() ? meshName : meshName + "_L", Folders::Car);
         fill(kSkirtRight, meshName.empty() ? meshName : meshName + "_R", Folders::Car);
+    } else if (category == 7) {
+        // The fixed build's wing mirrors (cardefs.txt's WMIRROR parts; the stock fits nothing for 5, 6 and 7): as the
+        // skirts, <part>_L and <part>_R in WMIR_L and WMIR_R (as J1CustomCars fits them).
+        fill(kMirrorLeft, meshName.empty() ? meshName : meshName + "_L", Folders::Car);
+        fill(kMirrorRight, meshName.empty() ? meshName : meshName + "_R", Folders::Car);
     } else if (category == 8) {
         fill(kDecal, meshName, Folders::Car);
     }
@@ -374,22 +415,21 @@ void CarModel::paint(const Car& car) {
 }
 
 void CarModel::colourWheels(const Car& car) {
-    if (car.wheelsColoured == 0 || m_wheel.empty()) return;
-    // The wheel's materials (0x0048ABC0, the model object's +0x11C .. +0x12C): the mesh's name, with _BS, _B and _LOD,
-    // and its "_BL" one: the name up to its first '_', "_BL", the rest from that '_', cut at the last '_'
-    // (WHEEL_BBS_VS1_17: WHEEL_BL_BBS_VS1).
-    std::vector<std::string> names{m_wheel, m_wheel + "_BS", m_wheel + "_B", m_wheel + "_LOD"};
-    if (const size_t first = m_wheel.find('_'); first != std::string::npos) {
-        std::string bl = m_wheel.substr(0, first) + "_BL" + m_wheel.substr(first);
-        bl.erase(bl.rfind('_'));
-        names.push_back(bl);
+    if (car.wheelsColoured == 0) return;
+    for (render::Material* material : m_wheelMaterials) {
+        if (material != nullptr) material->setParam(0, &car.wheelColour);
     }
-    for (std::string& key : names) {
-        for (char& ch : key) ch = static_cast<char>(std::tolower(static_cast<unsigned char>(ch)));
-        const auto it = m_partMaterials.find(key);
-        if (it == m_partMaterials.end()) continue;
-        const uint32_t argb = car.wheelColour;
-        it->second->setParam(0, &argb);
+}
+
+void CarModel::restoreWheelColours() {
+    for (size_t i = 0; i < m_wheelMaterials.size(); ++i) {
+        if (m_wheelMaterials[i] != nullptr) m_wheelMaterials[i]->setParam(0, &m_wheelColours[i]);
+    }
+}
+
+void CarModel::keepWheelColours(const Car& car) {
+    for (size_t i = 0; i < m_wheelMaterials.size(); ++i) {
+        if (m_wheelMaterials[i] != nullptr) m_wheelColours[i] = car.wheelColour;
     }
 }
 

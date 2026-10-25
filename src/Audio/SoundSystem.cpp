@@ -186,9 +186,8 @@ void System::probeEax() {
             log::debugPrint("No eax property set\n");
         } else {
             m_eaxOn = true;
-            // Stock problem: the device and the primary buffer are AddRef'd here and never released for it.
-            m_device->AddRef();
-            if (m_primary != nullptr) m_primary->AddRef();
+            // Stock problem: the device and the primary buffer are AddRef'd here and never released for it. The
+            // fixed build takes no such reference: stop() lets the device go before eax.dll is freed.
             m_eaxOn = supportsEax(m_eaxProperties, eax::kContext, eax::kContextAllParameters) && m_eaxOn;
             m_eaxOn = supportsEax(m_eaxProperties, eax::kFxSlot0, eax::kFxSlotAllParameters) && m_eaxOn;
             m_eaxOn = supportsEax(m_eaxProperties, eax::kFxSlot1, eax::kFxSlotAllParameters) && m_eaxOn;

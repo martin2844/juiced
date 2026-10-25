@@ -1,5 +1,10 @@
 #pragma once
 #include "Render/RenderDevice.h"
+#include <thread>
+#include <mutex>
+#include <future>
+#include <deque>
+#include <functional>
 namespace oj::render {
 class GlesDevice final : public IRenderDevice {
   public:
@@ -10,6 +15,8 @@ class GlesDevice final : public IRenderDevice {
     std::string description() const override;
     bool beginFrame() override;
     void endFrame() override;
+    void letLoadingRun() override;
+    void waitForService() override;
     void resize(uint32_t width, uint32_t height) override;
     void drawDebugTriangles(const DebugVertex *vertices, uint32_t count) override;
     uint32_t width() const override;
@@ -79,6 +86,16 @@ class GlesDevice final : public IRenderDevice {
     void clear(uint32_t flags, uint32_t argb, float z, uint32_t stencil) override;
 
   private:
+    // All OpenGL work stays on the context owner; callers wait with their input data alive.
+    const std::thread::id owner = std::this_thread::get_id();
+    mutable std::mutex workMutex;
+    mutable std::deque<std::function<void()>> work;
+    template<class F> auto onOwner(F&& fn) const -> decltype(fn()) {
+        auto task = std::make_shared<std::packaged_task<decltype(fn())()>>(std::forward<F>(fn));
+        auto result = task->get_future();
+        { std::lock_guard lock(workMutex); work.emplace_back([task] { (*task)(); }); }
+        return result.get();
+    }
     struct Impl;
     std::unique_ptr<Impl> p;
 };

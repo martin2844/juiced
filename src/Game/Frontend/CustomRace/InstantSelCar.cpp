@@ -4,16 +4,20 @@
 
 #include "Game/Frontend/CustomRace/CustomRaceInternal.h"
 
+#include "Core/Network/OnlineSessions.h"
+
 namespace oj::frontend {
 
 using namespace customrace;
 
 // instant_selcar's enter (0x0045EC40): the PROT_ elements hidden, shown (+0x4C) once every arcade race is completed
-// (0x0042B9F0) off line; every arcade car repaired (0x0048EB20); paint 0. The group's place: an empty place goes to 0;
-// a locked car (off line) to the last place of the group with a car not locked (0 when none). The car shown (+0x20) the
-// first arcade car of that model (0 when none); the start kept (+0x2C .. +0x38) and on the network a copy of the car
-// (+0x3C, 0x00434D90) for BACK. CARORIGIN hidden; the
-// parts' buttons on (+0x48; on the network as its state says). The car view (+0x10, 0x0045A2C0 on FRAME_CAR3D, CARNAME,
+// (0x0042B9F0) off line (without the matchmaking, [0x0075EF84]); every arcade car repaired (0x0048EB20); paint 0. The
+// group's place: an empty place goes to 0; a locked car (off line) to the last place of the group with a car not
+// locked (0 when none). The car shown (+0x20) the first arcade car of that model (0 when none); the start kept (+0x2C
+// .. +0x38) and on the network a copy of the car (+0x3C, 0x00434D90) for BACK. CARORIGIN hidden; the parts' buttons on
+// (+0x48). Online outside an online career (0x0045EE8A) by the session's mods ([0x00728D38]): none (0) the parts'
+// buttons off and the car shown's parts cleared (0x004600C0), prototypes (2) the PROT_ elements shown and prototypes
+// on (+0x4C), standard (1) neither. The car view (+0x10, 0x0045A2C0 on FRAME_CAR3D, CARNAME,
 // CARLOGO, CARORIGIN: the zoom 0.7, the mirror image, the car's folder kept and the shadow) shows the car rated
 // (0x0048E8A0) turned pi/4, not turning, fading (0x0045A080); CARFADE (+0x18), +0x40 1; TARROW shown; MODDING hidden
 // (+0x44 0); the options (0x0045F150); COUNTDOWNBOX hidden; FRAME_CAR3D's view in the map mode (0x005B4490, mode 4).
@@ -23,7 +27,7 @@ void InstantSelCar::enter(CustomRaceHost& host, ui::Screen& s) {
     s.hideContaining("PROT_");
     if (data == nullptr) return;
     GameData& d = *data;
-    if (d.arcade.finished()) {  // and not online ([0x0075EF84] 0)
+    if (d.arcade.finished() && net::matchmaking() == nullptr) {
         s.showContaining("PROT_", false);
         m_prototypes = true;
     }
@@ -58,6 +62,15 @@ void InstantSelCar::enter(CustomRaceHost& host, ui::Screen& s) {
     m_backAnswer = -1;
     s.setHidden("CARORIGIN", true);
     m_options = true;
+    if (net::matchmaking() != nullptr && !host.onlineCareer()) {
+        const int32_t mods = net::onlineHosted().arcade.mods;
+        if (mods == 0) m_options = false;
+        if (mods == 2) {
+            s.showContaining("PROT_", false);
+            m_prototypes = true;
+        }
+    }
+    if (!m_options && m_car < d.arcadeCars.size()) clearParts(d.arcadeCars[m_car]);
     m_view.reset();
     if (host.engine() != nullptr && s.find("FRAME_CAR3D") >= 0) {
         scene::CarView::Setup setup;
@@ -132,22 +145,22 @@ void InstantSelCar::setParts(CustomRaceHost& host, int clear, int prototype) {
         CarMaking making{d.defs, d.catalogue, gameRandom(), d.autoModifyCounter};
         autoModify(car, prototype != 0, prototype != 0 ? -1 : 2, making);
     }
-    m_view->refit(car, d.defs, gameRandom());
+    m_view->refit(car, d.defs);
 }
 
 // 0x0045F340. The question's answer (+0x54): yes, the automatic modification (0x0045A8A0, level 2); no, a car not
 // locked goes on (as SELECT's end); a locked one makes NO (the answer kept). The network's BACK answered yes (+0x50):
-// the car, the group, its place and the car's record (0x0045FFA0) as they were at the enter, link_selcar.
-// FRAME_CAR3D's +0x1A0 0 (OpenJuice's view keeps it 0). The view's frame and CARFADE's alpha 1 - its +0x4C. While the
-// view loads the car again (+0x40) MODDING shows and the events wait. COUNTDOWN emptied (0x00471740).
-// Events: UP / DOWN the next / the previous paint of the CarDefs' list, the car painted (0x0045A640: the dial
-// colours of a random [DialColour], rand()), CLICK; LEFT / RIGHT the group's place before / after (0x0042A830,
-// 0x0042A800), the arcade car of its model shown (its parts cleared without the buttons), SELECT, the options again;
-// SELECT: a car not modified (its first four body parts 0) with the buttons and not locked asks "AUTO-MOD CAR?"
-// (2014; CLICK); a locked car NO; else CLICK, the race's +0x54 the automatic box (0 for a sprint) and instant_seltype;
-// event 6 (CLICK) the automatic modification, 7 (CLICK) the parts cleared, 8 with the prototypes (CLICK) a prototype
-// modification; BACK (CLICK) instant_manu. Then the arcade car's place to the save system's +0x50; with the view not
-// loading the car rated: BHP "<rating> bhp" (cut toward zero), DRIVE its drive (1830 ..), else both hidden.
+// the car, the group, its place and the car's record (0x0045FFA0) as they were at the enter, link_selcar. FRAME_CAR3D's
+// +0x1A0 0 (OpenJuice's view keeps it 0). The view's frame and CARFADE's alpha 1 - its +0x4C. While the view loads the
+// car again (+0x40) MODDING shows and the events wait. COUNTDOWN emptied (0x00471740). Events: UP / DOWN the next / the
+// previous paint of the CarDefs' list, the car painted (0x0045A640: the dial colours of a random [DialColour], rand()),
+// CLICK; LEFT / RIGHT the group's place before / after (0x0042A830, 0x0042A800), the arcade car of its model shown (its
+// parts cleared without the buttons), SELECT, the options again; SELECT: a car not modified (its first four body parts
+// 0; the fixed build's: and no neon) with the buttons and not locked asks "AUTO-MOD CAR?" (2014; CLICK); a locked car
+// NO; else CLICK, the race's +0x54 the automatic box (0 for a sprint) and instant_seltype; event 6 (CLICK) the
+// automatic modification, 7 (CLICK) the parts cleared, 8 with the prototypes (CLICK) a prototype modification; BACK
+// (CLICK) instant_manu. Then the arcade car's place to the save system's +0x50; with the view not loading the car
+// rated: BHP "<rating> bhp" (cut toward zero), DRIVE its drive (1830 ..), else both hidden.
 void InstantSelCar::update(CustomRaceHost& host, ui::Screen& s, uint32_t event) {
     GameData* data = host.gameData();
     const TextTable& texts = host.gameTexts();
@@ -185,6 +198,19 @@ void InstantSelCar::update(CustomRaceHost& host, ui::Screen& s, uint32_t event) 
         if (m_fade) {
             if (const int e = s.find("CARFADE"); e >= 0) s.setAlpha(e, 1.0f - m_view->shown());
         }
+    }
+    // 0x0045F508: while the view's parts are changed and not put in (+0x40) MODDING comes in (once) and nothing more
+    // is done this frame; after, it goes out (once).
+    if (m_view && m_view->refitting()) {
+        if (!m_modding) {
+            s.showContaining("MODDING", true);
+            m_modding = true;
+        }
+        return;
+    }
+    if (m_modding) {
+        s.hideContaining("MODDING", true);
+        m_modding = false;
     }
     host.netCountdown();
     if (host.netWait(net::SessionStage::Cars, true)) return;
@@ -243,8 +269,7 @@ void InstantSelCar::update(CustomRaceHost& host, ui::Screen& s, uint32_t event) 
             host.request("link_selcar", SwitchMode::Replace);
             break;
         }
-        const bool plain = car != nullptr && car->body[0] == 0 && car->body[1] == 0 && car->body[2] == 0 &&
-                           car->body[3] == 0;
+        const bool plain = car != nullptr && unmodified(*car);
         if (m_view && m_view->hasModel() && plain && m_options && !locked()) {
             host.sound("CLICK");
             m_answer = -1;

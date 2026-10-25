@@ -406,33 +406,7 @@ void SceneObjects::handleNode(const DlhObject& object, const DlhNode& node, Scen
             Vec4 centre{};
             float radius = 0.0f;
             buildSpline(object, s.segments, centre, radius);
-            // 0x0041B720: the path's points at the knots, moved by the node's place; each one's direction from the
-            // point before (the first from the last) and that point's length to it.
-            const size_t count = s.closed ? s.segments.size() : s.segments.size() + 1;
-            if (!s.segments.empty()) {
-                for (size_t i = 0; i < count; ++i) {
-                    SplinePathPoint p;
-                    p.position = s.pointAt(static_cast<float>(i));
-                    p.position[0] = node.matrix[3] + p.position[0];
-                    p.position[1] = node.matrix[7] + p.position[1];
-                    p.position[2] = node.matrix[11] + p.position[2];
-                    s.path.push_back(p);
-                }
-                for (size_t i = 0; i < count; ++i) {
-                    SplinePathPoint& here = s.path[i];
-                    SplinePathPoint& before = s.path[i == 0 ? count - 1 : i - 1];
-                    const float dx = here.position[0] - before.position[0];
-                    const float dy = here.position[1] - before.position[1];
-                    const float dz = here.position[2] - before.position[2];
-                    here.direction = {dx, dy, dz, here.position[3]};
-                    const float length = std::sqrt((dz * dz + dy * dy) + dx * dx);
-                    before.length = length;
-                    const float unit = 1.0f / (length + 1.1920929e-7f);
-                    here.direction = {unit * dx, unit * dy, unit * dz, here.position[3]};
-                    here.distance = i == 0 ? 0.0f : before.distance + before.length;
-                }
-                for (const SplinePathPoint& p : s.path) s.length = p.length + s.length;
-            }
+            makeSplinePath(s, node.matrix[3], node.matrix[7], node.matrix[11]);
             if (centreLine) {
                 if (!m_centreLine) m_centrePath = std::move(s.path);
                 m_centreLine = true;
@@ -640,12 +614,10 @@ CarPartObject CarPartObject::make(const std::string& nodeName) {
         o.softness = 0.5f;
         o.bit = 8;
     } else if (_strnicmp(n, "sskirt_l", 6) == 0) {
+        // Stock problem: "sskirt_l" over 6 characters takes the right skirt too ("sskirt_r", 0x20, never reached).
+        // The fixed build gives a name of "sskirt_r" the right's bit.
         o.axes |= 5;
-        o.bit = 0x10;
-    } else if (_strnicmp(n, "sskirt_r", 6) == 0) {
-        // Stock problem: never reached; "sskirt_l" over 6 characters takes the right skirt too.
-        o.axes |= 5;
-        o.bit = 0x20;
+        o.bit = _strnicmp(n, "sskirt_r", 8) == 0 ? 0x20 : 0x10;
     } else if (_strnicmp(n, "exhaust", 7) == 0) {
         o.axes |= 3;
         o.softness = 0.5f;
@@ -920,6 +892,37 @@ const double kSixteenths = std::bit_cast<float>(0x4022F983u);
 
 }  // namespace
 
+void makeSplinePath(SceneSpline& s, float x, float y, float z) {
+    const size_t count = s.closed ? s.segments.size() : s.segments.size() + 1;
+    if (s.segments.empty()) return;
+    for (size_t i = 0; i < count; ++i) {
+        SplinePathPoint p;
+        p.position = s.pointAt(static_cast<float>(i));
+        p.position[0] = x + p.position[0];
+        p.position[1] = y + p.position[1];
+        p.position[2] = z + p.position[2];
+        s.path.push_back(p);
+    }
+    for (size_t i = 0; i < count; ++i) {
+        SplinePathPoint& here = s.path[i];
+        SplinePathPoint& before = s.path[i == 0 ? count - 1 : i - 1];
+        const float dx = here.position[0] - before.position[0];
+        const float dy = here.position[1] - before.position[1];
+        const float dz = here.position[2] - before.position[2];
+        here.direction = {dx, dy, dz, here.position[3]};
+        const float length = std::sqrt((dz * dz + dy * dy) + dx * dx);
+        before.length = length;
+        const float unit = 1.0f / (length + 1.1920929e-7f);
+        here.direction = {unit * dx, unit * dy, unit * dz, here.position[3]};
+        here.distance = i == 0 ? 0.0f : before.distance + before.length;
+    }
+    // Stock problem: the length summed every point's, on an open spline the last one's way back to the first too
+    // (EVEN_SPACING spread the riders over it). The fixed build's open spline ends at its last point; the last
+    // point keeps its length (a rider's look-ahead past the end divides by it).
+    const size_t summed = s.closed ? count : count - 1;
+    for (size_t i = 0; i < summed; ++i) s.length = s.path[i].length + s.length;
+}
+
 size_t nearestPathPoint(const std::vector<SplinePathPoint>& path, float x, float y, float z) {
     size_t best = 0;
     float least = FLT_MAX;
@@ -1115,7 +1118,8 @@ bool SceneObjects::filterRoot(const Dlh& dlh, const DlhNode& root, size_t record
     }
     // 0x00423B80: a rider at a place of the curve: the point it heads for next, its yaw and pitch towards the
     // curve's point 0.1 further, its node turned by them (about y by pi - yaw, then about x by the pitch) at the
-    // place's point.
+    // place's point. Stock problem: each frame's turn (0x00423D00) is about x by -pitch, and only when it banks; the
+    // fixed build starts it so.
     const size_t count = spline->path.size();  // +0x20
     auto place = [&](SceneRider& r, float at) {
         r.place = at;
@@ -1128,7 +1132,7 @@ bool SceneObjects::filterRoot(const Dlh& dlh, const DlhNode& root, size_t record
         const double dz = static_cast<double>(q[2]) - p[2];
         r.yaw = static_cast<float>(std::atan2(dx, dz));
         r.pitch = static_cast<float>(std::atan2(dy, std::sqrt(dx * dx + dz * dz)));
-        Mat34 m = turned(wrapAngle(3.14159274f - r.yaw), true, r.pitch);
+        Mat34 m = turned(wrapAngle(3.14159274f - r.yaw), r.banks, wrapAngle(-r.pitch));
         m[3] = p[0];
         m[7] = p[1];
         m[11] = p[2];

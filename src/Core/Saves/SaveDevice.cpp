@@ -98,15 +98,18 @@ bool readReplayData(const std::wstring& folder, ReplaySlot& slot) {
     return true;
 }
 
-// 0x00502B30 and 0x00502C50: SAVE made when it is not there, then the folder in it.
-bool makeFolder(const std::filesystem::path& save, const std::wstring& folder, std::wstring& made) {
+// 0x00502B30 and 0x00502C50: SAVE made when it is not there, then the folder in it (`parents`: the fixed build's
+// replays' folder, made with the folders above it).
+bool makeFolder(const std::filesystem::path& save, const std::wstring& folder, std::wstring& made, bool parents) {
     std::wstring root = save.wstring();
     while (!root.empty() && root.back() == L'\\') root.pop_back();
     WIN32_FIND_DATAW find{};
     HANDLE f = FindFirstFileW(root.c_str(), &find);
+    std::error_code ignored;
     if (f != INVALID_HANDLE_VALUE) {
         FindClose(f);
-    } else if (!CreateDirectoryW(root.c_str(), nullptr)) {
+    } else if (!CreateDirectoryW(root.c_str(), nullptr) &&
+               !(parents && std::filesystem::create_directories(std::filesystem::path(root), ignored))) {
         return false;
     }
     const std::wstring path = withSlash(save) + folder;
@@ -153,6 +156,10 @@ DeviceState SaveDevice::stepReplay(SaveRequest& request, SaveGameSide& game) {
     return step(request, Kind::Replay, game);
 }
 
+const std::filesystem::path& SaveDevice::root() const {
+    return m_side.kind == Kind::Replay && !m_replayFolder.empty() ? m_replayFolder : m_save;
+}
+
 bool SaveDevice::setReplayObject(SaveReplays* replays) {
     if (replays == nullptr) return false;
     m_replayObject = replays;
@@ -170,8 +177,19 @@ DeviceState SaveDevice::step(SaveRequest& request, Kind kind, SaveGameSide& game
         } else if (kind == Kind::Replay) {
             SYSTEMTIME t{};
             GetLocalTime(&t);
-            m_source->folder = std::format(L"R{:04}{:02}{:02}{:02}{:02}{:02}", t.wYear, t.wMonth, t.wDay, t.wHour,
-                                           t.wMinute, t.wSecond);
+            if (m_replayFolder.empty()) {
+                m_source->folder = std::format(L"R{:04}{:02}{:02}{:02}{:02}{:02}", t.wYear, t.wMonth, t.wDay, t.wHour,
+                                               t.wMinute, t.wSecond);
+            } else {
+                // The fixed build's name: Replay_ and the time, a second replay of the second _2, then _3 ..
+                const std::wstring name = std::format(L"Replay_{:02}-{:02}-{:04}_{:02}-{:02}-{:02}", t.wDay, t.wMonth,
+                                                      t.wYear, t.wHour, t.wMinute, t.wSecond);
+                m_source->folder = name;
+                std::error_code ignored;
+                for (int n = 2; std::filesystem::exists(m_replayFolder / m_source->folder, ignored); ++n) {
+                    m_source->folder = std::format(L"{}_{}", name, n);
+                }
+            }
             const int hour = t.wHour > 12 ? t.wHour - 12 : t.wHour;
             const std::string date = std::format("{}/{}/{:02} {:2}:{:02}", t.wMonth, t.wDay, t.wYear, hour, t.wMinute);
             if (m_replayObject != nullptr) m_replayObject->save(*m_source, date);
@@ -259,7 +277,7 @@ DeviceState SaveDevice::list(SaveRequest& request) {
         s.names.clear();
         s.at = 0;
         WIN32_FIND_DATAW find{};
-        const HANDLE f = FindFirstFileW((withSlash(m_save) + L"*").c_str(), &find);
+        const HANDLE f = FindFirstFileW((withSlash(root()) + L"*").c_str(), &find);
         DWORD error = GetLastError();
         if (f != INVALID_HANDLE_VALUE) {
             do {
@@ -283,7 +301,7 @@ DeviceState SaveDevice::list(SaveRequest& request) {
             if (m_side.kind == Kind::Profile && startsWith(s.current, L"P")) {
                 s.none = 0;
                 SaveSlot slot;
-                if (readUserData(withSlash(m_save) + s.current, slot)) {
+                if (readUserData(withSlash(root()) + s.current, slot)) {
                     slot.folder = s.current;
                     slot.index = s.count;
                     s.slots.push_back(slot);
@@ -292,7 +310,7 @@ DeviceState SaveDevice::list(SaveRequest& request) {
             } else if (m_side.kind == Kind::Replay && startsWith(s.current, L"R")) {
                 s.none = 0;
                 ReplaySlot slot;
-                if (readReplayData(withSlash(m_save) + s.current, slot)) {
+                if (readReplayData(withSlash(root()) + s.current, slot)) {
                     slot.folder = s.current;
                     slot.index = s.count;
                     s.replays.push_back(slot);
@@ -323,7 +341,7 @@ DeviceState SaveDevice::list(SaveRequest& request) {
             s.step = ListStep::End;
             return DeviceState::List;
         }
-        if (deleteFolder(withSlash(m_save) + slotFolder(request))) {
+        if (deleteFolder(withSlash(root()) + slotFolder(request))) {
             request.flag(SaveFlag::Deleted) = 1;
         } else {
             request.flag(SaveFlag::DeleteError) = 1;
@@ -387,7 +405,7 @@ DeviceState SaveDevice::read(SaveRequest& request, SaveGameSide& game) {
         s.files.clear();
         s.at = 0;
         WIN32_FIND_DATAW find{};
-        const HANDLE f = FindFirstFileW((withSlash(m_save) + s.folder + L"\\*").c_str(), &find);
+        const HANDLE f = FindFirstFileW((withSlash(root()) + s.folder + L"\\*").c_str(), &find);
         if (f == INVALID_HANDLE_VALUE) {
             s.failed = m_side.kind == Kind::HighScores ? 0 : 1;
             s.step = ReadStep::End;
@@ -408,7 +426,7 @@ DeviceState SaveDevice::read(SaveRequest& request, SaveGameSide& game) {
     case ReadStep::File: {
         const std::wstring name = s.files[s.at];
         if (m_side.kind == Kind::Profile) game.readRegCf1();
-        const std::wstring path = withSlash(m_save) + s.folder + L"\\" + name;
+        const std::wstring path = withSlash(root()) + s.folder + L"\\" + name;
         const HANDLE h = CreateFileW(path.c_str(), GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL,
                                      nullptr);
         bool read = false;
@@ -471,7 +489,7 @@ DeviceState SaveDevice::write(SaveRequest& request, SaveGameSide& game) {
         s.folder =
             m_side.kind == Kind::HighScores ? std::wstring(L"HS") : (m_source ? m_source->folder : std::wstring());
         WIN32_FIND_DATAW find{};
-        const HANDLE f = FindFirstFileW((withSlash(m_save) + s.folder).c_str(), &find);
+        const HANDLE f = FindFirstFileW((withSlash(root()) + s.folder).c_str(), &find);
         if (f != INVALID_HANDLE_VALUE) {
             FindClose(f);
             s.step = m_side.kind == Kind::HighScores ? WriteStep::Begin : WriteStep::Overwrite;
@@ -497,7 +515,7 @@ DeviceState SaveDevice::write(SaveRequest& request, SaveGameSide& game) {
     case WriteStep::MakeFolder: {
         request.flag(SaveFlag::Saving) = 1;
         std::wstring made;
-        if (!makeFolder(m_save, s.folder, made)) {
+        if (!makeFolder(root(), s.folder, made, m_side.kind == Kind::Replay && !m_replayFolder.empty())) {
             s.step = WriteStep::End;
             return DeviceState::Write;
         }

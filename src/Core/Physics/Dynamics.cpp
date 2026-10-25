@@ -94,6 +94,7 @@ std::optional<CarDynamics> parseFile(std::string_view text, std::optional<Object
     std::array<float, 4> normal{};            // +0x30 Normal
     std::array<float, 4> centre{};            // +0x40 Centre (0x005369E0): no block reads it
     float radius = 0.0f;                      // +0x60 Radius
+    bool meshCollideeOpen = false;            // the fixed build's: the last collider block opened [BeginMeshCollidee]
     bool contactOpen = false, rigidOpen = false, springOpen = false, tyreOpen = false;  // +0x74, +0x78, +0x7C, +0x114
     ContactDef contact;                       // +0x84 .. +0xA8 (the clipping plane, MaxCompression) and the tyre's
     float stiffness = 0.0f, dampingRatio = 0.0f, weightDistribution = 0.0f;  // +0xAC, +0xB0, +0xB4
@@ -261,6 +262,18 @@ std::optional<CarDynamics> parseFile(std::string_view text, std::optional<Object
         } else if (same(k, "[BeginMeshCollider]") || same(k, "[BeginMeshCollidee]") ||
                    same(k, "[BeginLineCollider]") || same(k, "[BeginClippingPlane]") ||
                    same(k, "[BeginSphereCollider]") || same(k, "[BeginSphereCollidee]")) {
+            meshCollideeOpen = same(k, "[BeginMeshCollidee]");
+        } else if (same(k, "[EndMeshCollidee]") || (meshCollideeOpen && same(k, "[EndSphereCollidee]"))) {
+            // Stock problem: [EndSphereCollidee] closing a [BeginMeshCollidee] (dynamic_box, dynamic_bin01,
+            // dynamic_bin02, dynamic_rbump) made a sphere collidee of radius 0 and left the mesh collidee's Mu and
+            // Restitution 0. The fixed build closes the mesh collidee with it.
+            meshCollideeOpen = false;
+            if (body != nullptr) {
+                body->collision.meshCollideeSurface = surface;
+                body->collision.meshCollideeMu = mu;
+                body->collision.meshCollideeRestitution = restitution;
+                if (!file.empty()) body->collision.meshCollidee = file;
+            }
         } else if (same(k, "[EndClippingPlane]") || same(k, "[EndSphereCollider]") ||
                    same(k, "[EndSphereCollidee]")) {
             // 0x00536CA0 / 0x00536D00 / 0x00536DE0: the block's records added to the definition, open or not.
@@ -298,13 +311,6 @@ std::optional<CarDynamics> parseFile(std::string_view text, std::optional<Object
             if (body != nullptr) {
                 body->collision.meshColliderId = id;
                 if (!file.empty()) body->collision.meshCollider = file;
-            }
-        } else if (same(k, "[EndMeshCollidee]")) {
-            if (body != nullptr) {
-                body->collision.meshCollideeSurface = surface;
-                body->collision.meshCollideeMu = mu;
-                body->collision.meshCollideeRestitution = restitution;
-                if (!file.empty()) body->collision.meshCollidee = file;
             }
         } else if (same(k, "[BeginRigidContact]") || same(k, "[BeginSpringContact]") ||
                    same(k, "[BeginTyreContact]")) {
@@ -410,9 +416,10 @@ std::optional<CarDynamics> parseFile(std::string_view text, std::optional<Object
                 wheel.brakeMu = line.real(0);
             } else if (same(k, "HandbrakeMu")) {
                 // A value between 100 and 10000 becomes 10000 (0x004F5700); a missing one is 0. The bounds are
-                // compared with atof's double, rounded to a float only as it is stored.
+                // compared with atof's double, rounded to a float only as it is stored. The fixed build keeps the
+                // file's value (27 of the game's cars give 3000, 4000 or 8000).
                 const double v = line.words.empty() ? 0.0 : std::atof(line.words[0].c_str());
-                wheel.handbrakeMu = 100.0 < v && v < 10000.0 ? 10000.0f : static_cast<float>(v);
+                wheel.handbrakeMu = static_cast<float>(v);
             } else if (same(k, "AxleMu")) {
                 wheel.axleMu = line.real(0);
             } else if (same(k, "Drive")) {

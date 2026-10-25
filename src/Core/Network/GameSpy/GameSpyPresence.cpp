@@ -570,8 +570,8 @@ bool readKeyValue(FILE* f, std::string& key, std::string& value) {
 }  // namespace
 
 // 0x00576640: "2" on the first line, then each profile (0x00575F30): "[<id>]" and its keys up to a line that is not
-// one; the profile kept with its user id and, "valid" not 0, its info. Stock problem: "sex=Female" is read as Pat
-// (the second letter compared with 'F').
+// one; the profile kept with its user id and, "valid" not 0, its info. "sex=Female" is Female in the fixed build (the
+// stock compared the second letter with 'F': Pat).
 void Connection::readInfoFile() {
     FILE* f = nullptr;
     if (fopen_s(&f, m_server.infoFile.c_str(), "rt") != 0 || f == nullptr) return;
@@ -621,7 +621,9 @@ void Connection::readInfoFile() {
                     if (std::toupper(static_cast<unsigned char>(value.empty() ? '\0' : value[0])) == 'M') {
                         info.sex = 0x500;
                     } else {
-                        info.sex = std::toupper(value.size() > 1 && value[1] == 'F' ? 1 : 0) != 0 ? 0x501 : 0x502;
+                        info.sex = std::toupper(static_cast<unsigned char>(value.empty() ? '\0' : value[0])) == 'F'
+                                       ? 0x501
+                                       : 0x502;
                     }
                 } else if (key == "publicmask") {
                     info.publicmask = atolOf(value);
@@ -732,11 +734,10 @@ Result Connection::connectNewUser(std::u16string_view nick, std::u16string_view 
                                   std::u16string_view password, std::u16string_view cdkey, bool firewall,
                                   bool blocking, ConnectCallback callback) {
     const std::string n = narrow(nick);
-    std::string e = narrow(email);
+    const std::string e = narrow(email);
     const std::string p = narrow(password);
-    // The email's 32 bytes are followed by the password's (0x00569160's stack): from 32 characters on it runs into
-    // them and the password written after it takes their place.
-    if (e.size() >= 32) e = e.substr(0, 32) + p;
+    // The fixed build: the email whole (the stock narrowed it into 32 bytes followed by the password's on 0x00569160's
+    // stack: from 32 characters on it ran into them and the password written after it took their place).
     // gpConnectNewUserA (0x00569030): the nick, the email and the password not empty, a callback; the simulation as
     // gpConnect's.
     if (n.empty() || e.empty() || p.empty()) return Result::ParameterError;
@@ -1465,7 +1466,10 @@ Result Connection::setStatus(int32_t status, std::u16string_view statusString, s
     const std::string ls = slashes(cut(toUtf8(locationString), 0x100));
     if (status == m_lastStatus && ss == m_lastStatusString && ls == m_lastLocationString) return Result::NoError;
     m_lastStatus = status;
-    // Stock problem: the strings sent are not kept (+0x234 and +0x334 stay as gpiReset left them, empty).
+    // The fixed build keeps the strings sent (the stock's +0x234 and +0x334 stayed as gpiReset left them, empty: the
+    // same status with its strings went again at each call, every 60 s).
+    m_lastStatusString = ss;
+    m_lastLocationString = ls;
     m_output += std::format("\\status\\{}\\sesskey\\{}\\statstring\\{}\\locstring\\{}\\final\\", status, m_sessKey, ss,
                             ls);
     return Result::NoError;

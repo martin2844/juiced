@@ -15,7 +15,8 @@ namespace app {
 void TrackView::makeLightSteps(RaceSlot& s) {
     using oj::scene::LightStep;
     s.lights.clear();
-    s.lights.reserve(16);
+    // Room for every step (the parts keep the chassis's place: no reallocation), the fixed build's four more.
+    s.lights.reserve(20);
     if (s.chassis == nullptr) return;
     const oj::render::AtmosphereSet* set = scene->atmosphere();
     const bool night = set != nullptr && set->current != nullptr && set->current->night != 0;
@@ -33,7 +34,7 @@ void TrackView::makeLightSteps(RaceSlot& s) {
             }
         }
         if (kind == LightStep::Kind::Part) {
-            l.zone = s.car.zones[table];
+            l.zone = table < s.car.zones.size() ? s.car.zones[table] : nullptr;
             l.chassis = &s.lights.front();
             l.modelParts = &s.car.modelParts;
         }
@@ -48,6 +49,13 @@ void TrackView::makeLightSteps(RaceSlot& s) {
     for (size_t i = 0; i < std::size(kTable); ++i) {
         oj::render::ModelNode* node = s.model->meshNode(kTable[i]);
         if (node != nullptr) add(LightStep::Kind::Part, node, i);
+    }
+    // Stock problem: the wing mirrors and the lamps (WMIR_L, WMIR_R, HEADLIGHTS, REARLIGHTS; car parts by the scene
+    // objects' names too) get no step, so their nodes keep the full light in the shade while the body darkens. The
+    // fixed build gives them the chassis's light as the table's parts (no zone, no wobble).
+    for (const char* name : {"WMIR_L", "WMIR_R", "HEADLIGHTS", "REARLIGHTS"}) {
+        oj::render::ModelNode* node = s.model->meshNode(name);
+        if (node != nullptr) add(LightStep::Kind::Part, node, SIZE_MAX);
     }
 }
 
@@ -176,7 +184,11 @@ void TrackView::atmosZonesFrame(RacePlayer& player) {
     }
     if (nearest == nullptr) return;
     const float d = oj::zoneDistance(*nearest, at);
-    if (!(d < nearest->radius)) return;
+    if (!(d < nearest->radius)) {
+        // The fixed build: out of every zone no blend (the atmosphere in use alone).
+        set->blend = 0.0f;
+        return;
+    }
     const float inner = nearest->radius * 0.75f;
     float blend = 1.0f;
     if (!(d <= inner)) {

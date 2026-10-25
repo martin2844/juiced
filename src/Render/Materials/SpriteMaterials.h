@@ -256,10 +256,11 @@ public:
         if (m_program != nullptr) m_program->beginPass(pass);
         m_r.bindTexture(m_texture, 0);
         // The sixteens are cut toward zero and made a float as an unsigned number.
-        // Stock problem: a negative offset (a negative speed) takes away 2^32 more than its sixteens.
+        // Stock problem: a negative offset (a negative speed) takes away 2^32 more than its sixteens. The fixed build
+        // takes them as a signed number (the same for the game's materials, whose speeds are not negative).
         auto wrap = [](float v) {
-            const auto sixteens = static_cast<int32_t>(0.0625f * v) << 4;
-            return v - static_cast<float>(static_cast<uint32_t>(sixteens));
+            const auto sixteens = static_cast<int32_t>(0.0625f * v) * 16;
+            return v - static_cast<float>(sixteens);
         };
         const float c35[4] = {wrap(m_r.time * m_speed[0]), wrap(m_r.time * m_speed[1]), 0.0f, 0.0f};
         m_r.programs().managerVertexConstants(35, c35, 1);

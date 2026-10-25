@@ -3,6 +3,7 @@
 
 #include "Game/UI/UiScreen.h"
 #include "Game/UI/UiInternal.h"
+#include "Game/UI/WindowFixes.h"
 
 #include "Core/Base/Log.h"
 
@@ -79,6 +80,7 @@ bool Screen::load(const std::string& name, bool fromDisk) {
         m_states.clear();
         return false;
     }
+    fixWindow(name, m_window);
     // The window's texts in the game's language, else the English ones (0x005AA660).
     const auto texts =
         windows / m_language.name / (name + "." + (fromDisk ? m_language.looseExtension : m_language.extension));
@@ -393,10 +395,15 @@ void Screen::showState(State& s, bool animate) {
     t.out = false;
 }
 
+// 0x005A9BB0: unlike 0x005A9C20 (showContaining) an element shown without its transition started again keeps the
+// transition as it is: one still coming in with the window goes on fading in.
 void Screen::show(const std::string& element, bool animate) {
     for (size_t i = 0; i < m_window.elements.size(); ++i) {
-        if (_stricmp(m_window.elements[i].name.c_str(), element.c_str()) == 0) {
-            showState(m_states[i], animate);
+        if (_stricmp(m_window.elements[i].name.c_str(), element.c_str()) != 0) continue;
+        if (animate) {
+            showState(m_states[i], true);
+        } else {
+            m_states[i].hidden = false;
         }
     }
 }

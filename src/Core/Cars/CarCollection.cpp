@@ -73,8 +73,9 @@ void autoModify(Car& car, bool prototype, int level, CarMaking& making) {
         if (c == kDecal) {
             // Stock problem: (choices - 8) is not checked (0x0048F392, unsigned): a list of 9 decals divides by zero
             // and the game stops (0 here); a list of 1 .. 8 gives an unsigned wrap, so the decal is rand() + 1 cut
-            // to a byte. The game's cars have 31 decals each.
-            const uint32_t span = choices - 8;
+            // to a byte, past the list. The game's cars have 31 decals each. The fixed build gives a list of 9 or
+            // fewer the decal 0, as the 9 (no rand() drawn).
+            const uint32_t span = choices > 8 ? choices - 8 : 0;
             car.body[c] = prototype || span == 0 ? 0 : static_cast<uint8_t>(next(making.random) % span + 1);
         } else if (count > 1) {
             car.body[c] = static_cast<uint8_t>(next(making.random) % choices + 1);

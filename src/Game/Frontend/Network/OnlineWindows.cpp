@@ -17,6 +17,7 @@
 #include "Game/Frontend/WindowTools.h"
 
 #include <algorithm>
+#include <array>
 #include <cstring>
 #include <format>
 #include <windows.h>
@@ -52,38 +53,38 @@ std::u16string narrowWide(const std::wstring& text) {
     return std::u16string(text.begin(), text.end());
 }
 
-// The user's state as the login's loop of online_create_gs tells it (0x0047273C): 9 .. 15; 0 none.
-size_t createText(net::UserState state) {
+// The note of a failed login, both windows: the states 9 .. 13 and 15 their own, any other but none "Failed to
+// connect". The stock's create window (0x0047273C) had none for 1 .. 8, its connect window (0x00473160 by 0x00473180)
+// none for MemoryError, ServerError, Unavailable, ForcedDisconnect and ConnectionClosed: the login waited for ever.
+size_t loginText(net::UserState state) {
     switch (state) {
+    case net::UserState::None: return 0;
     case net::UserState::BadNick: return kTextBadNick;
     case net::UserState::BadEmail: return kTextBadEmail;
     case net::UserState::BadPassword: return kTextBadPassword;
     case net::UserState::BadProfile: return kTextUnknownProfile;
     case net::UserState::ProfileDeleted: return kTextProfileDeleted;
-    case net::UserState::ConnectionFailed: return kTextFailedToConnect;
     case net::UserState::AuthFailed: return kTextNotAuthenticated;
-    default: return 0;
+    default: return kTextFailedToConnect;
     }
 }
 
-// online_connect_gs's (0x00473160 by 0x00473180): ParameterError, NetworkError, LoginTimeout and ConnectionFailed
-// "Failed to connect", the others as the create's but MemoryError, ServerError, Unavailable, ForcedDisconnect and
-// ConnectionClosed (none).
-size_t connectText(net::UserState state) {
-    switch (state) {
-    case net::UserState::ParameterError:
-    case net::UserState::NetworkError:
-    case net::UserState::LoginTimeout:
-    case net::UserState::ConnectionFailed: return kTextFailedToConnect;
-    case net::UserState::BadNick: return kTextBadNick;
-    case net::UserState::BadEmail: return kTextBadEmail;
-    case net::UserState::BadPassword: return kTextBadPassword;
-    case net::UserState::BadProfile: return kTextUnknownProfile;
-    case net::UserState::ProfileDeleted: return kTextProfileDeleted;
-    case net::UserState::AuthFailed: return kTextNotAuthenticated;
-    default: return 0;
+// The fixed build's guest's item of online_logon_gs (its own text, in every language) and the online_main items a
+// guest goes without (the friends' windows and the scoreboards need a GameSpy profile).
+constexpr char kGuest[] = "guest";
+constexpr wchar_t kGuestText[] = L"PLAY AS GUEST";
+constexpr std::array<const char*, 2> kAccountOnly = {"friends", "rankings"};
+
+bool hasItem(ui::Screen& s, const char* menu, const char* command) {
+    for (size_t i = 0; i < s.menuSize(menu); ++i) {
+        if (same(s.menuItemCommand(menu, i), command)) return true;
     }
+    return false;
 }
+
+// The fixed build's time for a login: then "Failed to connect" (the stock waited for ever on a server that did not
+// answer; the available check gives up after 18 s, a connect that is not answered fails after about 21).
+constexpr float kLoginTime = 60.0f;
 
 // 0x004EE990, the user object's logged-on hook: each local player online as the settings' +0x44 says (its presence
 // within a second); the settings' +0x48 0 when the first player's device has a headset (the input manager's methods
@@ -101,15 +102,18 @@ void onlineLoggedOn(GameData* data) {
 }
 
 // online_main's enter: the nick of the online setups' settings (+0x21C, +0x268, at their +4): 16 characters at most
-// and the 0 after them, then the 0 at +0x22 (Stock problem: a nick of 16 characters or more puts its 0 at +0x24).
+// and the 0 after them, then the 0 at +0x22 (Stock problem: a nick of 16 characters or more puts its 0 at +0x24, the
+// playing flag's low half; the fixed build leaves it: the 0 at +0x22 ends the nick).
 void setupNick(save::Settings& set, uint32_t offset, const std::u16string& nick) {
     size_t i = 0;
     for (; i < nick.size() && i < 16; ++i) {
         set.object[offset + 4 + i * 2] = static_cast<uint8_t>(nick[i] & 0xFF);
         set.object[offset + 4 + i * 2 + 1] = static_cast<uint8_t>(nick[i] >> 8);
     }
-    set.object[offset + 4 + i * 2] = 0;
-    set.object[offset + 4 + i * 2 + 1] = 0;
+    if (i < 16) {
+        set.object[offset + 4 + i * 2] = 0;
+        set.object[offset + 4 + i * 2 + 1] = 0;
+    }
     set.object[offset + 0x22] = 0;
     set.object[offset + 0x23] = 0;
 }
@@ -175,16 +179,46 @@ void onlineKeyboard(OnlineHost& host, size_t title, std::wstring& buffer, size_t
     host.request("keyboard", SwitchMode::Replace);
 }
 
-// The edit buffers kept as the driver's account (0x00409FC0, 0x0040A020, 0x0040A080: the settings' +0xE4, +0x122,
-// +0x188) and "Logging into account..." (type 0).
+// "Logging into account..." (type 0). The stock kept the edit buffers as the driver's account here, before the login
+// was known to be good (a failed one replaced the account kept, saved with the driver later); the fixed build keeps
+// them once logged on (onlineKeepAccount).
 void onlineStore(WindowHost& host) {
     const TextTable& texts = host.gameTexts();
+    host.message(MessageType::Note, texts.at(kTextLoggingIn), false, nullptr);
+}
+
+// The edit buffers kept as the driver's account (0x00409FC0, 0x0040A020, 0x0040A080: the settings' +0xE4, +0x122,
+// +0x188; the fixed build's driver save keeps them protected, Core/Saves/OnlineAccount).
+void onlineKeepAccount(WindowHost& host) {
     save::Settings& set = host.optionSettings();
     const OnlineForms& f = host.shared().onlineForms;
     set.setWideText(save::Settings::kOnlineNick, f.nick, 31);
     set.setWideText(save::Settings::kOnlineEmail, f.email, 51);
     set.setWideText(save::Settings::kOnlinePassword, f.password, 31);
-    host.message(MessageType::Note, texts.at(kTextLoggingIn), false, nullptr);
+}
+
+// The login's frame, the fixed build's in place of the stock's loop inside the frame (the screen held, Sleep(50) and
+// the user object's frame of 50 s each time): the game's loop runs the user object's frame; a failed state its note
+// (0x00472940: signed out), no login within its time "Failed to connect"; logged on, the message closed and the
+// account kept.
+LoginStep onlineLoginFrame(WindowHost& host, int32_t& connecting, float& time, bool keepAccount) {
+    net::OnlineUser* u = net::onlineUser();
+    if (u == nullptr) {
+        connecting = 0;
+        return LoginStep::NoUser;
+    }
+    time += host.frameTime();
+    size_t text = loginText(u->state);
+    if (text == 0 && u->loggedOn == 0 && time > kLoginTime) text = kTextFailedToConnect;
+    if (text != 0) {
+        onlineFailed(host, text, connecting);
+        return LoginStep::Failed;
+    }
+    if (u->loggedOn == 0) return LoginStep::Waiting;
+    connecting = 0;
+    host.closeMessage();
+    if (keepAccount) onlineKeepAccount(host);
+    return LoginStep::LoggedOn;
 }
 
 // 0x004719F0: the services brought up (0x00471920); every element whose name holds "EULA_" hidden (its agreement:
@@ -193,6 +227,17 @@ void OnlineLogon::enter(WindowHost& host, ui::Screen& s) {
     onlineBringUp(host);
     s.hideContaining("EULA_");
     *this = OnlineLogon{};
+    // The fixed build: a third item, the guest's, with BACKMENU's bar under it (the .ui's two items alternate
+    // ui_pan5_yel and ui_pan5_ora, drawn adding: the third yellow).
+    if (s.find("MENU") >= 0 && !hasItem(s, "MENU", kGuest)) {
+        s.addCommandItem("MENU", kGuestText, 0.0f, kGuest);
+        if (s.find("BACKMENU") >= 0) {
+            s.addMenuItem("BACKMENU", L"", 0.0f, "ui_pan5_yel");
+            const size_t bar = s.menuSize("BACKMENU") - 1;
+            s.setMenuItemCommand("BACKMENU", bar, "none");
+            s.setMenuItemAdditive("BACKMENU", bar, true);
+        }
+    }
 }
 
 // 0x00471A60. Leaving: nothing. BACKMENU follows MENU. (A message numbered 9999, never given, would close after the
@@ -203,6 +248,15 @@ void OnlineLogon::update(OnlineHost& host, ui::Screen& s, uint32_t event) {
     OnlineForms& f = host.shared().onlineForms;
     if (m_leaving != 0) return;
     if (s.find("MENU") >= 0 && s.find("BACKMENU") >= 0) s.selectMenuItem("BACKMENU", s.selectedMenuItem("MENU"));
+    // The fixed build's guest: its logon (the available check) a frame at a time as a login, then online_main.
+    if (m_guest != 0) {
+        const LoginStep step = onlineLoginFrame(host, m_guest, m_guestTime, false);
+        if (step == LoginStep::LoggedOn) {
+            host.request("online_main", SwitchMode::Replace);
+            m_leaving = 1;
+        }
+        if (step != LoginStep::NoUser) return;
+    }
     if (host.messageNumber() == m_box) {
         if (host.onlineTopMoving()) return;
         if (m_wait > 0.0f) {
@@ -242,6 +296,18 @@ void OnlineLogon::update(OnlineHost& host, ui::Screen& s, uint32_t event) {
             f.verify.clear();
             host.sound("CLICK");
             host.request("online_create_gs", SwitchMode::Replace);
+        } else if (same(item, kGuest)) {
+            // The fixed build's guest under the driver's name ("Guest" without one): "Logging into account..." while
+            // the available check answers, then online_main.
+            GameData* data = host.gameData();
+            const std::wstring name = data != nullptr && !data->profileName.empty() ? data->profileName : L"Guest";
+            if (net::OnlineUser* u = net::onlineUser()) {
+                host.sound("CLICK");
+                host.message(MessageType::Note, host.gameTexts().at(kTextLoggingIn), false, nullptr);
+                u->setGuest(narrowWide(name.substr(0, 30)));
+                m_guest = 1;
+                m_guestTime = 0.0f;
+            }
         }
     } else if (event == input::kBack) {
         m_back = 1;
@@ -260,16 +326,15 @@ void OnlineCreate::enter(WindowHost& host, ui::Screen& s) {
     if (!f.createFocus.empty() && s.find(f.createFocus) >= 0) s.setCurrentButton(s.nameOf(s.find(f.createFocus)));
 }
 
-// 0x00472070. "Logging into account..." up and the login not begun: once it has moved in, the account given to the
-// user object as a new profile (0x0055F090) and the login's loop. The loop (Stock problem: inside this one frame,
-// the screen held, Sleep(50) and the user object's frame of 50 s each time; the main thread's jobs (0x0051D1A0 /
-// 0x0051D200): none here): a state of 9 .. 15 its note, signed out (0x00472940); logged on, the message closed, the
-// account to be saved and online_main; else again (Stock problem: the states 1 .. 8 go on for ever, a server not
-// answering too). SUBMIT accepted: with an account kept, "If you continue, existing Gamespy account information will
-// be lost! .." (starting on no), else stored at once; stored: the account kept and "Logging into account...". SELECT
-// with no message up on the highlighted button: B_SUBMIT (CLICK) checks the nick, the email (an '@' neither first nor
-// last), the password and the verification; B_NICK, B_EMAIL, B_PASSWORD, B_VERIFY the keyboard, the next button
-// kept for the way back. BACK with no message up: CLICK, online_logon_gs.
+// 0x00472070. "Logging into account..." up and the login not begun: once it has moved in, the account given to the user
+// object as a new profile (0x0055F090) and the login, a frame at a time in the fixed build (onlineLoginFrame; the
+// stock's loop inside this one frame held the screen, its states 1 .. 8 and a server not answering for ever): a failed
+// state its note, signed out (0x00472940); logged on, the message closed, the account kept and to be saved,
+// online_main. SUBMIT accepted: with an account kept, "If you continue, existing Gamespy account information will be
+// lost! .." (starting on no), else stored at once; stored: "Logging into account...". SELECT with no message up on the
+// highlighted button: B_SUBMIT (CLICK) checks the nick, the email (an '@' neither first nor last), the password and the
+// verification; B_NICK, B_EMAIL, B_PASSWORD, B_VERIFY the keyboard, the next button kept for the way back. BACK with no
+// message up: CLICK, online_logon_gs.
 void OnlineCreate::update(OnlineHost& host, ui::Screen& s, uint32_t event) {
     const TextTable& texts = host.gameTexts();
     OnlineForms& f = host.shared().onlineForms;
@@ -280,26 +345,16 @@ void OnlineCreate::update(OnlineHost& host, ui::Screen& s, uint32_t event) {
             u->setCredentials(narrowWide(f.nick), narrowWide(f.email), narrowWide(f.password), true);
         }
         m_connecting = 1;
+        m_loginTime = 0.0f;
     }
-    while (m_connecting != 0) {
-        Sleep(50);
-        net::OnlineUser* u = net::onlineUser();
-        if (u == nullptr) {
-            m_connecting = 0;
-            break;
-        }
-        u->update(50.0f);
-        if (const size_t text = createText(u->state); text != 0) {
-            onlineFailed(host, text, m_connecting);
-            return;
-        }
-        if (u->loggedOn != 0) {
-            m_connecting = 0;
-            host.closeMessage();
+    if (m_connecting != 0) {
+        const LoginStep step = onlineLoginFrame(host, m_connecting, m_loginTime);
+        if (step == LoginStep::LoggedOn) {
             f.accountChanged = 1;
             host.request("online_main", SwitchMode::Replace);
             return;
         }
+        if (step != LoginStep::NoUser) return;
     }
     if (m_submit == 1) {
         m_submit = -1;
@@ -380,9 +435,9 @@ void OnlineConnect::enter(WindowHost& host, ui::Screen& s) {
 
 // 0x00472A90. The command line's account ([0x0075EE84]): stored at once (no check, no question). "Logging into
 // account..." up and the login not begun: once it has moved in, the account given to the user object (0x0055F090)
-// and the login's loop (as online_create_gs's, the states 1, 3, 8, 14 "Failed to connect", 9 .. 13 and 15 their
-// notes; Stock problem: 2, 4, 5, 6 and 7 for ever); logged on: the account to be saved when it changed, the message
-// closed, CLICK, online_main. SUBMIT accepted: the account against the driver's (no user object: nothing more); a
+// and the login as online_create_gs's (the stock's loop: the states 1, 3, 8, 14 "Failed to connect", 9 .. 13 and 15
+// their notes, 2, 4, 5, 6 and 7 for ever); logged on: the message closed, the account kept and to be saved when it
+// changed, CLICK, online_main. SUBMIT accepted: the account against the driver's (no user object: nothing more); a
 // changed one asks "If you continue, existing Gamespy account information will be lost! .." (starting on no), else
 // stored at once. SELECT with no message up: B_SUBMIT (no CLICK) checks the nick, the email and the password;
 // NICKTITLE, EMAILTITLE, PASSTITLE the keyboard. BACK with no message up: CLICK, online_logon_gs.
@@ -400,27 +455,17 @@ void OnlineConnect::update(OnlineHost& host, ui::Screen& s, uint32_t event) {
             u->setCredentials(narrowWide(f.nick), narrowWide(f.email), narrowWide(f.password), false);
         }
         m_connecting = 1;
+        m_loginTime = 0.0f;
     }
-    while (m_connecting != 0) {
-        Sleep(50);
-        net::OnlineUser* u = net::onlineUser();
-        if (u == nullptr) {
-            m_connecting = 0;
-            break;
-        }
-        u->update(50.0f);
-        if (const size_t text = connectText(u->state); text != 0) {
-            onlineFailed(host, text, m_connecting);
-            return;
-        }
-        if (u->loggedOn != 0) {
+    if (m_connecting != 0) {
+        const LoginStep step = onlineLoginFrame(host, m_connecting, m_loginTime);
+        if (step == LoginStep::LoggedOn) {
             if (m_changed != 0) f.accountChanged = 1;
-            m_connecting = 0;
-            host.closeMessage();
             host.sound("CLICK");
             host.request("online_main", SwitchMode::Replace);
             return;
         }
+        if (step != LoginStep::NoUser) return;
     }
     if (m_submit == 1) {
         m_submit = -1;
@@ -484,13 +529,26 @@ void OnlineConnect::update(OnlineHost& host, ui::Screen& s, uint32_t event) {
 // 0x00473EA0: every GAMESPY hidden, the online status (0x00473CD0); the network game made when there is none
 // (0x004E9C40), the matchmaking made when there is none (its hook); 5 s; with a user object the online setups'
 // settings (+0x21C, +0x268) take our first player's nick at their +4; the account changed and the saving on: the
-// autosave over this window (mode 5; Stock problem: the account is kept, password and all, before the login is known
-// to be good, in plain text) and the flag cleared; not joining, the sign-out not asked.
+// autosave over this window (mode 5: the account kept once the login is good, protected in the fixed build's driver
+// save; the stock's was kept before, in plain text) and the flag cleared; not joining, the sign-out not asked.
 void OnlineMain::enter(OnlineHost& host, ui::Screen& s) {
     GameData* data = host.gameData();
     const TextTable& texts = host.gameTexts();
     hideAll(s, "GAMESPY");
     frontend::showOnlineStatus(s, texts);
+    // The fixed build: a guest's menu without the friends and the scoreboards (BACKMENU's highlights with it); an
+    // account's whole again.
+    const net::OnlineUser* signedIn = net::onlineUser();
+    if (signedIn != nullptr && signedIn->guest()) {
+        for (const char* item : kAccountOnly) {
+            if (s.removeMenuItem("MENU", item) && s.find("BACKMENU") >= 0 && s.menuSize("BACKMENU") != 0) {
+                s.removeMenuItemAt("BACKMENU", s.menuSize("BACKMENU") - 1);
+            }
+        }
+    } else if (s.find("MENU") >= 0 && !hasItem(s, "MENU", kAccountOnly[0])) {
+        s.restoreMenu("MENU");
+        if (s.find("BACKMENU") >= 0) s.restoreMenu("BACKMENU");
+    }
     if (net::netGame() == nullptr) {
         net::startNetGame(gameRandom());
         host.netHook();

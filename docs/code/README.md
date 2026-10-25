@@ -40,8 +40,9 @@ JuicedConfig  the settings tool's parts apart from      oj::config            ->
 - `OpenJuiceConfig.exe` (`src/JuicedConfig/OpenJuiceConfig.vcxproj`) is the port of the game's `JuicedConfig.exe`
   (`docs/spec/30-juiced-config.md`): its window (`ConfigDialog.cpp`) and `WinMain` over the JuicedConfig library,
   with the stock's resources (`OpenJuiceConfig.rc`, `res\`). It shares no code with the game but the EAX
-  property sets' ids. Its debug builds take `--skip-directx-check` (the window without the stock's DirectX 9.0c
-  check, which Windows 11's DxDiag never passes).
+  property sets' ids. Its DirectX 9.0c check takes any DirectX past 9 (the stock's, by DxDiag's letter alone,
+  never passes on Windows Vista and later); its debug builds take `--skip-directx-check` (the window whatever the
+  check finds).
 
 ## From the start to a frame
 
@@ -66,7 +67,8 @@ JuicedConfig  the settings tool's parts apart from      oj::config            ->
   comment names the stock object it is (its address, size, vtable) and the `docs/spec` page. The addresses are the
   retail build's (`Version.h` names it).
 - **Stock problems.** What the stock code gets wrong and OpenJuice keeps is marked `Stock problem:` where it happens;
-  `docs/spec/stock-problems.md` lists the ones a player can see.
+  `docs/spec/stock-problems.md` lists the ones a player can see. The unofficial patch's branch (the fixed build) marks a
+  fix with "The fixed build" beside it (`docs/fixes.md`).
 - **Layouts.** Objects the saves copy byte for byte, or that the stock code reads past their ends, keep the stock
   layout, each field's offset in its comment (`int32_t m_answer = -1;  // +0x10`). `Core/Base/RawFields.h` reads and
   writes a field by its offset where the stock code indexes past an object.

@@ -90,7 +90,7 @@ private:
     LeaderMovie m_movie;  // +0x58: the MOVIE element
 
     // The state record 0x0071FA78 (offsets of its fields).
-    int32_t m_debugClip = 0;      // +0x0C: the test mode's count (career +0x64 set; read by nothing)
+    int32_t m_debugClip = 0;      // +0x0C: the test mode's clip (career +0x64 set; 0x0042F140)
     int32_t m_inputOn = 0;        // +0x1C
     int32_t m_lowered = 0;        // +0x20: the leader took a lower bet
     int32_t m_raised = 0;         // +0x24: the leader took a higher bet
@@ -117,6 +117,8 @@ private:
     int32_t m_answer = -1;        // +0xF4
     BetCarViews m_views;
     static inline int32_t m_impatience = 1;  // 0x00715AB4: which impatient clip comes next (kept while the game runs)
+    static inline int32_t m_winsCount = 1;   // 0x00715AD8: the step 22's count (read by nothing)
+    static inline int32_t m_losesCount = 1;  // 0x00715AD4: the step 24's count (read by nothing)
 };
 
 // The window after a race with a bet, "characterPostRace" (the record 0x0071FB70, vtable 0x006EFAC8): the crew's

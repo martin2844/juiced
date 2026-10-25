@@ -65,7 +65,8 @@ void HudReplay::showControls(const HudRace&, const Replay& replay) {
 }
 
 // 0x0044DD00: play on (0x00426B80), CLICK, the race paused; a replay saved already (or read from its file, its
-// +0x30 0x00426650) quits at once, else "Quit Replay?" (433) asked on NO with the answer at +0x20, +0x28 set.
+// +0x30 0x00426650) quits at once, else "Quit Replay?" (433) asked on NO with the answer at +0x20, +0x28 set (the
+// fixed build's frame asks "Save replay?" after its yes).
 void HudReplay::eject(Replay& replay, ReplayWindowFrame& out) {
     replay.resume();
     if (m_screen != nullptr && m_screen->sound) m_screen->sound("CLICK");
@@ -85,7 +86,9 @@ void HudReplay::eject(Replay& replay, ReplayWindowFrame& out) {
 // the whole played, it plays on and asks for restart_replay. In the attract (mode 4) any input, or the play past 0.8
 // of its length, ends it: the race paused and the quit set. RP_TOOLTIP names the selected item; the controls hidden
 // or shown (+0x30). The save asked (+0x24) asks for savereplay (mode 5) and quits; the eject answered quits (1) or
-// goes on (0, the race on). The meter shows the part played; with a message box over the window (+0x34 of the
+// goes on (0, the race on). The fixed build's eject answered yes asks "Save replay?" (435, on NO) as the save (+0x24):
+// yes savereplay, then the quit; no the quit (the replays are saved on the PC, <My Documents>\THQ\Juiced\Replays).
+// The meter shows the part played; with a message box over the window (+0x34 of the
 // manager) the play stops: no fast forward, the normal speed, paused (0x0044E1A4; here as the note opens, Main's
 // controllerWatch, the window having no frames under a message). RP_INFO by the play: PAUSED
 // once it ended, SLOW-MOTION under the normal speed, FAST FORWARD, else PLAYING. A showoff's marks of the frame queue
@@ -161,7 +164,13 @@ ReplayWindowFrame HudReplay::frame(const HudRace& race, Replay& replay, float dt
     }
     if (m_ejectAsked != 0) {
         if (m_answer == 1) {
-            m_quit = 1;
+            // The fixed build: the replay not saved (eject quits a saved one at once), its save asked before the quit.
+            m_ejectAsked = 0;
+            m_answer = -1;
+            m_saveAsked = 1;
+            out.question = m_texts.at(kTextSaveReplay);
+            out.answer = &m_answer;
+            out.startNo = true;
             return out;
         }
         if (m_answer == 0) out.unpause = true;

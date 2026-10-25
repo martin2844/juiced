@@ -331,24 +331,12 @@ Spl parseSpl(const std::string& text) {
         const std::string& k = l.keyword;
         if (_stricmp(k.c_str(), "GRIDPOINT") == 0) {
             const Spl::GridPoint p{l.real(0), l.real(1), l.real(2), l.real(3)};
-            if (spl.grid.size() < 6) {
-                spl.grid.push_back(p);
-            } else {
-                // Stock problem: a seventh point's x is written over the count that follows the six slots (+0xAC);
-                // its y, z and heading go to the slot of that new count, x's bits x 16 bytes on, and the count
-                // becomes x's bits + 1 (0x004A1447 .. 0x004A14D7). An x of bits 0 .. 5 (0 and the smallest
-                // denormals) lands in a slot of the six, which keeps its x; any other writes far past them (the
-                // game stops) or leaves a count past the slots: dropped here.
-                uint32_t bits;
-                std::memcpy(&bits, &p.x, 4);
-                if (bits < 6) {
-                    spl.grid.resize(bits + 1);
-                    Spl::GridPoint& slot = spl.grid[bits];
-                    slot.y = p.y;
-                    slot.z = p.z;
-                    slot.heading = p.heading;
-                }
-            }
+            // Stock problem: a seventh point's x is written over the count that follows the six slots (+0xAC); its
+            // y, z and heading go to the slot of that new count, x's bits x 16 bytes on, and the count becomes x's
+            // bits + 1 (0x004A1447 .. 0x004A14D7): an x of bits 0 .. 5 (0 and the smallest denormals) lands in a
+            // slot of the six and cuts the grid to it, any other writes far past them (the game stops). The fixed
+            // build keeps the six and passes a further point over (the game's files have six at most).
+            if (spl.grid.size() < 6) spl.grid.push_back(p);
         } else if (_stricmp(k.c_str(), "ROUTETYPE") == 0) {
             if (_stricmp(l.word(0).c_str(), "POINT2POINT") == 0) {
                 spl.pointToPoint = true;

@@ -488,9 +488,6 @@ struct RaceDrivers {
     // +0x64: the racers' names' time: 2 s after a tactics key (0x004BDF00), down by the frame time (0x004BDF5A); read by
     // the network's overlay (0x00456BA0) and the labels over the racers (0x004BF320) (Game/Race/TrackView).
     float namesTime = 0.0f;
-    // 0x004BEA60 asked by the race's chatter: the orders opened (as a tactics key opens them) and the racers' lines
-    // flashed; the race HUD takes them.
-    std::vector<int32_t> chatterFlash;
 };
 
 // A bet amount of the betting screen and its weight.

@@ -293,8 +293,9 @@ frame are cleared (`+0x4F4`, `+0x4FC`, `+0x500`, `+0x504`) and its wheels shown 
    part the car keeps the nitro left (`0x0048F210`, its `+0x84` within 0 .. 15); while the brake is applied (the
    body's `+0x34C`) the brakes wear (`0x0048F080`, not on the stand nor in a race of type 9): the car's `+0x7C` grows
    by 0.01 x the frame's time within 0 .. 1 (`0x0048F1C0`) and every wheel's BrakeMu becomes the car's `+0x80` /
-   (the wear + 1); the time through other cars after a respawn; touching the route above 20 m/s the car slows by
-   30 m/s each second;
+   (the wear + 1), the BrakeMu its brakes' part gave when the race made the car (`0x00485E98`: the parts fitted
+   with the record itself; a network game's car is a new record, never rated, which has no other); the time
+   through other cars after a respawn; touching the route above 20 m/s the car slows by 30 m/s each second;
 3. its slipstream (`0x00487D50`): the body's drag factor (`+0x2F0`) back to 1; over the manager's cars from the first
    (the car itself left out), the first whose point 600 cm behind it along its velocity is within 447 cm of the car's
    origin (the squared distance below 199809) gives the drag factor 1 − its speed² × 7e-5 (the cut held within

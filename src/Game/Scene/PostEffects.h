@@ -10,7 +10,9 @@
 #include <array>
 #include <functional>
 #include <cstdint>
+#include <map>
 #include <memory>
+#include <utility>
 #include <vector>
 
 namespace oj::render {
@@ -37,6 +39,8 @@ public:
         bool glow = true;
         bool glowFirst = true;
         uint32_t clear = 0xFF000000u;
+        // The fixed build's: the cars' headlights on (night or wet; TrackView), the glow at 0.7 of its strength.
+        bool headlights = false;
     };
 
     // The renderer's start (0x005146D6, 0x00514745, 0x005142B3, 0x005142D8): with a size for them (the settings'
@@ -96,12 +100,27 @@ private:
     void measureExposure(float width, float height);  // 0x00520900, 0x00512290
     void cutBlend(float amount, float x0, float y0, float x1, float y1);  // 0x00520410
     void depthOfField(const render::Camera& camera, float x0, float y0);  // 0x005214C0
-    void glow(float x0, float y0, float x1, float y1, bool first);      // 0x00521C80
+    void glow(float x0, float y0, float x1, float y1, bool first, float strength);  // 0x00521C80
     // 0x00520EF0: 2DBlur (0x10005) with -2 and the texture, its pass, the engine's c52 .. c55 0.
     void blurPass(const render::GameTexture& texture);
     // 0x00520FC0: a quad of transformed vertices (XYZRHW, a colour, four u v with their offsets of 1 / 256) from the
     // second buffer (+0x04) at the depth z.
     void blurQuad(uint32_t colour, float x0, float y0, float x1, float y1, float z);
+
+    // The fixed build's split screen (Game/Scene/PostEffectsSplit.cpp): a view that is not the whole screen takes its
+    // own pair of the scene's targets, of its size, and its passes go at its own places from (0, 0), the back buffer
+    // taking the view's place as its viewport; the whole screen's view the stock's pair and places. A view's pair
+    // is kept by its place on the screen: the next race's views (new players) take the same pairs.
+    struct ViewTargets {
+        Target targets[2];
+        int frame = 0;
+    };
+    void splitBegin(const View& view, uint32_t x, uint32_t y, uint32_t width, uint32_t height);
+    Target& frameTarget();     // m_targets[m_frame], or the split view's
+    Target& previousTarget();  // m_targets[1 - m_frame], or the split view's
+    void flipFrame();
+    void backViewport();       // the split view's place on the back buffer
+    void destroySplit();
 
     Engine& m_engine;
     render::IRenderDevice& m_device;
@@ -136,6 +155,9 @@ private:
     float m_x0 = 0.0f, m_y0 = 0.0f, m_x1 = 0.0f, m_y1 = 0.0f;
     float m_c22[4] = {};  // [0x0079BCF0]
     float m_c23[4] = {};  // [0x0079BCE0]
+    std::map<std::pair<uint32_t, uint32_t>, ViewTargets> m_splitTargets;  // by the view's place (x, y)
+    ViewTargets* m_split = nullptr;  // the split view drawn (none for the whole screen's)
+    uint32_t m_viewX = 0, m_viewY = 0;  // the view's place on the screen
 };
 
 }  // namespace oj::scene

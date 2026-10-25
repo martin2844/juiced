@@ -175,7 +175,8 @@ void AtMeeting::enter(CareerHost& host, ui::Screen& s) {
     if (e.type == EventKind::Showoff && e.location >= 0 && e.location < 9) {
         const auto route = static_cast<size_t>(career.crews[static_cast<size_t>(e.location)].circuitRoute[0]);
         const int location = route < routes.size() ? routes[route].location : 0;
-        m_map.lookAt(host, s, texts.at(kTextLocations + static_cast<size_t>(std::max(location, 0))));
+        // The fixed build: the location's English name (as the arcade's map), the same place in every language.
+        m_map.lookAt(host, s, englishLocation(host, std::max(location, 0)));
     }
     s.setHidden("RaceMenu", false);
     p.outOfRace = 0;

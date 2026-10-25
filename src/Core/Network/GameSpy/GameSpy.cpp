@@ -109,7 +109,7 @@ uint32_t masterHash(std::string_view gameName) {
 }
 
 std::string masterListHost(std::string_view gameName) {
-    return std::format("{}.ms{}.gamespy.com", gameName, masterHash(gameName) % 20);
+    return std::format("{}.ms{}.{}", gameName, masterHash(gameName) % 20, kServiceDomain);
 }
 
 // ---- GOA.
@@ -219,7 +219,8 @@ bool AvailableCheck::start(std::string_view gameName) {
     m_socket.close();
     m_result = Waiting;
     const ServiceHosts& hosts = serviceHosts();
-    m_ip = resolveHost(hosts.available.empty() ? std::format("{}.available.gamespy.com", gameName) : hosts.available);
+    m_ip = resolveHost(hosts.available.empty() ? std::format("{}.available.{}", gameName, kServiceDomain)
+                                               : hosts.available);
     if (m_ip == 0) return false;
     m_port = htons(hosts.availablePort);
     if (!m_socket.open()) return false;

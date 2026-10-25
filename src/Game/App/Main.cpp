@@ -77,8 +77,8 @@ int runMain(const oj::LaunchOptions& options, const oj::Config& config) {
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR commandLine, int) {
     const std::filesystem::path folder = executableFolder();
     oj::log::open(folder / L"OpenJuice.log");
-    oj::log::info("OpenJuice " OJ_VERSION_TEXT " for Juiced " OJ_GAME_VERSION_TEXT " (" OJ_BUILD_TEXT
-                  ", " OJ_RELEASE_NAME ")");
+    oj::log::info(OJ_PRODUCT_TEXT "." OJ_RELEASE_TEXT ", " OJ_BASED_ON_TEXT " (" OJ_BUILD_TEXT ", " OJ_RELEASE_NAME
+                  ")");
     SetUnhandledExceptionFilter(logCrash);
 
     const oj::Config config = oj::Config::load(folder / L"OpenJuice.ini");

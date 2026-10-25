@@ -54,6 +54,10 @@ void Screen::setAlpha(int element, float alpha) {
     for (uint32_t& c : m_states[static_cast<size_t>(element)].corners) c = withAlpha(c, a);
 }
 
+uint32_t Screen::colourOf(int element) const {
+    return m_states[static_cast<size_t>(element)].corners[0];
+}
+
 void Screen::setTexture(int element, const std::string& texture) {
     State& s = m_states[static_cast<size_t>(element)];
     s.hasTexture = true;
@@ -188,10 +192,11 @@ void Screen::drawBox(const Element& e, const State& s, float seconds) {
             flashOver = false;
         } else if (const Property* scroll = e.find("UVScroll")) {
             // 0x005185D0: the whole picture once, moved by the game's clock: v less (v x 1/16 cut toward zero) x 16,
-            // loaded back as unsigned (Stock problem: a negative multiple gains 2^32).
+            // loaded back as unsigned (Stock problem: a negative multiple gains 2^32; the fixed build loads it signed,
+            // the same for the game's windows, whose scrolls are not negative).
             auto wrap = [](float v) {
-                const auto whole = static_cast<uint32_t>(x87::chop(v * 0.0625f)) << 4;
-                return v - x87::asUnsigned(whole);
+                const int32_t whole = x87::chop(v * 0.0625f) * 16;
+                return v - static_cast<float>(whole);
             };
             u0 = wrap(number(scroll, 0, 0.0f) * seconds);
             v0 = wrap(number(scroll, 1, 0.0f) * seconds);

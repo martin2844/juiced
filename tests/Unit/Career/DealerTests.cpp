@@ -90,3 +90,17 @@ OJ_UNIT_TEST(Dealer, OtherOffers) {
     const bool sold = career->garage.size() == 1 && career->garage[0].def == &b;
     check(others && bought && sold, "dealer: other offers, a car bought and a car sold");
 }
+
+// The fixed build's wing mirrors open by their own steps of the model's unlocks (none of which raises them): the
+// standard part alone before step 14, the first from it, the second from 26, every part from the last, 37.
+OJ_UNIT_TEST(Unlocks, MirrorLevels) {
+    auto career = std::make_unique<oj::Career>();
+    oj::CareerProfile& p = career->profile;
+    const auto at = [&](uint8_t step) {
+        p.unlockStep[5] = step;
+        return oj::mirrorLevel(p, 5);
+    };
+    check(at(0) == -1 && at(13) == -1 && at(14) == 0 && at(25) == 0 && at(26) == 1 && at(36) == 1 && at(37) == 100 &&
+              at(38) == 100 && oj::mirrorLevel(p, 60) == -1,
+          "mirror levels (fixed) by the model's unlock step");
+}

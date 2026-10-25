@@ -140,7 +140,8 @@ ReplayFrame unpackFrame(const uint8_t* p) {
     }
     f.rpm = static_cast<float>(static_cast<double>(p[0x1C]) * 10000.0 * 0.003921569);
     // Stock problem: the throttle is read from the whole byte, the parts' bits with it: with any part off it is 1.
-    float throttle = static_cast<float>(static_cast<double>(p[0x1D]) * 0.33333334);
+    // The fixed build reads its two bits.
+    float throttle = static_cast<float>(static_cast<double>(p[0x1D] & 3) * 0.33333334);
     if (!(0.0f <= throttle)) {
         throttle = 0.0f;
     } else if (1.0f < throttle) {

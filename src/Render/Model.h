@@ -34,6 +34,10 @@ public:
     Mesh(IRenderDevice& device, const oj::Mesh& data, const std::vector<Material*>& materials);
 
     const std::vector<Part>& parts() const { return m_parts; }
+    // A part's material (the mesh's interface +0x18; +0x14 reads it).
+    void setMaterial(size_t part, Material* material) {
+        if (part < m_parts.size()) m_parts[part].material = material;
+    }
     // The bounding sphere's radius of the whole mesh (a mesh node's sphere, its +0x74).
     float radius() const { return m_radius; }
     // The mesh's box (its bounds' least and greatest corner), as a mesh node gives it (its +4 method).

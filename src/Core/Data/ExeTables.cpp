@@ -227,6 +227,12 @@ bool ExeTables::load(const std::filesystem::path& exe, std::string* error) {
     challengeTypes = strings(image, image.operand({0x8B, 0x04, 0x9D}, {0x50, 0x55, 0xE8}), 4);
     crewNames = strings(image, image.operand({0x8B, 0x14, 0x8D}, {0x52, 0x8D, 0x87, 0xDE, 0x00, 0x00, 0x00}), 9);
     logos = strings(image, image.operand({0x8B, 0x0C, 0x85}, {0x5E, 0x8D, 0x53, 0x58}), 64);
+    // Stock problem: the table goes from ui_chooselogo_18 to _20, so logo 19 (in the game's files and in
+    // cmschooselogo.ui) is never offered. The fixed build puts it in its place.
+    if (const auto at = std::find(logos.begin(), logos.end(), std::string("ui_chooselogo_20"));
+        at != logos.end() && std::find(logos.begin(), logos.end(), std::string("ui_chooselogo_19")) == logos.end()) {
+        logos.insert(at, "ui_chooselogo_19");
+    }
     respectSteps = numbers<int>(image, image.operand({0x3B, 0x0C, 0xBD}, {0x7C, 0x09}), 4);
     prizeFactors = numbers<float>(image, image.operand({0xD8, 0x0C, 0x95}, {0x80, 0xCC, 0x0C}), 9);
     crewClassLimits = numbers<int>(image, image.operand({0x3B, 0x34, 0x85}, {0x7E, 0x0B}), 9);

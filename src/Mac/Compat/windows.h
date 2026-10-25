@@ -11,6 +11,7 @@
 #include <mutex>
 #include <string>
 #include <thread>
+#include <unistd.h>
 using DWORD = uint32_t;
 using WORD = uint16_t;
 using BYTE = uint8_t;
@@ -177,3 +178,5 @@ void PostQuitMessage(int);
 BOOL SetFilePointerEx(HANDLE, LARGE_INTEGER, LARGE_INTEGER *, DWORD);
 BOOL GetFileSizeEx(HANDLE, LARGE_INTEGER *);
 #define FILE_FLAG_SEQUENTIAL_SCAN 0x08000000
+
+inline DWORD GetCurrentProcessId() { return static_cast<DWORD>(getpid()); }

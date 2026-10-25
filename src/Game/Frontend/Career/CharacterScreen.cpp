@@ -42,6 +42,13 @@ enum Stage {
     kStartRace = 19,
     kAutosave = 20,
     kLeave = 21,
+    // The leader on the race bet with, after it (0x004321B0, 0x00432360, 0x00432280, 0x004323B0): nothing sets
+    // these steps (the talk starts at 3 or 13, the bets' +0x14), the window after the race (characterPostRace) plays
+    // those clips; kept as the stock code has them.
+    kWinsCash = 22,
+    kWinsPinkSlip = 23,
+    kLosesCash = 24,
+    kLosesPinkSlip = 25,
     kThinkRaise = 26,
     kRaise = 27,
     kThinkLower = 28,
@@ -54,6 +61,23 @@ std::string leaderFolder(int crew) {
     // Another crew number leaves the folder as it was; empty here.
     return crew >= 1 && crew <= 8 ? kFolders[crew] : "";
 }
+
+// 0x00715AE0: the character test mode's clips (cheat 5) by its +0x0C, 0x0042F140; the six words after them are 0.
+constexpr const char* kTestClips[] = {
+    "_GREETING1", "_GREETING_WON_LAST1", "_GREETING_WON_LAST2", "_GREETING_WON_LAST3", "_GREETING_LOST_LAST1",
+    "_GREETING_LOST_LAST2", "_GREETING_LOST_LAST3", "_DECLINE_CHALLENGE1", "_DECLINE_CHALLENGE2", "_DECLINE_CHALLENGE3",
+    "_COMMENT_CAR_NEG1", "_COMMENT_CAR_NEG2", "_COMMENT_CAR_NEG3", "_COMMENT_CAR_POS1", "_COMMENT_CAR_POS2",
+    "_COMMENT_CAR_POS3", "_COMMENT_CAR_NEUTRAL1", "_COMMENT_CAR_NEUTRAL2", "_COMMENT_CAR_NEUTRAL3", "_SUGGEST_BET1",
+    "_SUGGEST_BET2", "_SUGGEST_BET3", "_HOW_MUCH1", "_HOW_MUCH2", "_HOW_MUCH3", "_ACCEPT_BET1", "_ACCEPT_BET2",
+    "_ACCEPT_BET3", "_DECLINE_BET_LOW1", "_DECLINE_BET_LOW2", "_DECLINE_BET_LOW3", "_DECLINE_BET1", "_DECLINE_BET2",
+    "_DECLINE_BET3", "_DECLINE_BET_HIGH1", "_DECLINE_BET_HIGH2", "_DECLINE_BET_HIGH3", "_RESPONCE_SEE_BONNET1",
+    "_RESPONCE_SEE_BONNET2", "_RESPONCE_SEE_BONNET3", "_OKAY1", "_OKAY2", "_OKAY3", "_THINKING1", "_THINKING2",
+    "_THINKING3", "_YES1", "_YES2", "_YES3", "_WAITCYCLE1", "_WAITCYCLE2", "_WAITCYCLE3", "_PLAYER_ACCEPT_CHALLENGE1",
+    "_PLAYER_ACCEPT_CHALLENGE2", "_PLAYER_ACCEPT_CHALLENGE3", "_PLAYER_DECLINE_BET1", "_PLAYER_DECLINE_BET2",
+    "_PLAYER_DECLINE_BET3", "_IMPATIENT1", "_IMPATIENT2", "_IMPATIENT3", "_YAWN1", "_COUGH1", "_SIGH1", "_WINS_CASH1",
+    "_WINS_CASH2", "_WINS_CASH3", "_LOSES_CASH1", "_LOSES_CASH2", "_LOSES_CASH3", "_WIN_PINKSLIP1", "_LOSES_PINKSLIP1",
+    "_SUGGEST_PINKSLIP1", "_SUGGEST_PINKSLIP2", "_SUGGEST_PINKSLIP3",
+};
 
 // One of three clips by rand() % 3: 1 the second, 2 the third, else the first.
 const char* ofThree(uint32_t r, const char* first, const char* second, const char* third) {
@@ -75,8 +99,9 @@ void LeaderMovie::bind(ui::Screen& s) {
     element = s.find("MOVIE");
 }
 
-// The clip plays from the element's next draw (0x005AA3A0); its player exists also for a file that is not there and
-// then counts as finished, so such a clip ends at once.
+// The clip plays from the element's next draw (0x005AA3A0); a missing take is played as take 1 or 2 of the same clip
+// (0x00559B10), and a player of no file at all (CHALLENGE_INTRO1 and _OUTRO1 of every leader but TK) counts as
+// finished, so that clip ends at once.
 void LeaderMovie::play(CareerHost& host, const std::string& name) {
     if (screen == nullptr || element < 0) return;
     screen->playMovie(element, name, false);
@@ -381,8 +406,9 @@ void CharacterScreen::pickClip(ui::Screen& screen, GameData& data, CrtRandom& ra
             clip += ofThree(draw(), "_HOW_MUCH1", "_HOW_MUCH2", "_HOW_MUCH3");
         } else {
             m_stage = kBetMenu;
-            // Stock problem: the pick is rand() & 1, so _SUGGEST_BET3 (for 2) never plays.
-            clip += (draw() & 1) == 1 ? "_SUGGEST_BET2" : "_SUGGEST_BET1";
+            // Stock problem: the pick is rand() & 1, so _SUGGEST_BET3 (for 2) never plays. The fixed build picks one of
+            // three as the other lines (only TK has a third take: the others' movie open takes 1 or 2, 0x00559B10).
+            clip += ofThree(draw(), "_SUGGEST_BET1", "_SUGGEST_BET2", "_SUGGEST_BET3");
         }
         break;
     case kBetMenu: {
@@ -540,10 +566,12 @@ void CharacterScreen::pickClip(ui::Screen& screen, GameData& data, CrtRandom& ra
             // The pink slip: the car views freed; a copy of the player's car (the profile's +0x600 of the garage,
             // 0x00434D90) kept as the stake and the car taken out of the garage (0x00489CD0); the event marked done
             // (+0x01) and the race set up again (0x004B8570). The autosave that follows keeps the garage without it.
+            // Stock problem: the copy has a new grid, so the car's kept dents are gone (a repair for nothing); the
+            // fixed build's stake keeps them.
             m_views.free();
             const auto index = static_cast<size_t>(career.profile.raceCars[0]);
             if (index < career.garage.size()) {
-                m_stake = copyCar(career.garage[index]);
+                m_stake = career.garage[index];
                 career.garage.erase(career.garage.begin() + static_cast<std::ptrdiff_t>(index));
             }
             if (CalendarEvent* e = currentEvent(career.calendar)) e->done = 1;
@@ -561,10 +589,12 @@ void CharacterScreen::pickClip(ui::Screen& screen, GameData& data, CrtRandom& ra
         m_stage = kLeave;
         break;
     case kThinkRaise:
+        // 0x004309F0
         clip += ofThree(draw(), "_THINKING1", "_THINKING2", "_THINKING3");
         m_stage = kRaise;
         break;
     case kThinkLower:
+        // 0x00431190
         clip += ofThree(draw(), "_THINKING1", "_THINKING2", "_THINKING3");
         m_stage = kLower;
         break;
@@ -601,15 +631,14 @@ void CharacterScreen::pickClip(ui::Screen& screen, GameData& data, CrtRandom& ra
         showMenuAgain(screen);
         screen.showContaining("ARROW", true);
         // The amount: twice (raise taken) or half (lower taken) the money cut to a whole number. Stock problem: else
-        // the text shows the money cut, the amount keeps it rounded.
+        // the text shows the money cut, the amount keeps it rounded. The fixed build shows what is kept.
         const auto cut = static_cast<int32_t>(bets.rivalMoney);
         const bool taken = raising ? m_raised != 0 : m_lowered != 0;
         const int32_t changed = raising ? cut * 2 : cut / 2;
-        const int32_t shown = taken ? changed : cut;
         const int32_t kept = taken ? changed : static_cast<int32_t>(std::nearbyint(bets.rivalMoney));
         m_cash = kept;
         m_shownCash = kept;
-        setCash(screen, shown);
+        setCash(screen, kept);
         break;
     }
     case kAutosave: {
@@ -624,8 +653,38 @@ void CharacterScreen::pickClip(ui::Screen& screen, GameData& data, CrtRandom& ra
         setCash(screen, m_shownCash);
         break;
     }
+    case kWinsCash:
+        // 0x004321B0: the count at 0x00715AD8 (1 .. 5, read by nothing) on.
+        clip += ofThree(draw(), "_WINS_CASH1", "_WINS_CASH2", "_WINS_CASH3");
+        if (++m_winsCount > 5) m_winsCount = 1;
+        m_stage = m_kind == BetKind::PinkSlip ? kWinsPinkSlip : kLeave;
+        break;
+    case kWinsPinkSlip:
+        // 0x00432360
+        clip += "_WIN_PINKSLIP1";
+        m_stage = kLeave;
+        break;
+    case kLosesCash:
+        // 0x00432280: the count at 0x00715AD4 (1 .. 5, read by nothing) on.
+        clip += ofThree(draw(), "_LOSES_CASH1", "_LOSES_CASH2", "_LOSES_CASH3");
+        if (++m_losesCount > 5) m_losesCount = 1;
+        m_stage = m_kind == BetKind::PinkSlip ? kLosesPinkSlip : kLeave;
+        break;
+    case kLosesPinkSlip:
+        // 0x004323B0: rand() & 1.
+        clip += (draw() & 1) != 0 ? "_LOSES_PINKSLIP1" : "_LOSES_PINKSLIP2";
+        m_stage = kLeave;
+        break;
     default:
-        log::warning("character: step {} has no clip", m_stage);
+        // 0x0042F140 (the step 0 of the character test mode, and 2, 5, 6 and past 29, which nothing sets): the test
+        // mode's clip of +0x0C, BOSSCAR shown (+0x58 0) with the clip's name for its text (0x0049A850, its text
+        // modifier started again as 0x005B19C0 does). Stock problem: +0x0C of 75 .. 80 names no clip (a null
+        // pointer's length, the game stops); here the leader's folder alone.
+        if (m_debugClip >= 0 && m_debugClip < static_cast<int32_t>(std::size(kTestClips))) {
+            clip += kTestClips[static_cast<size_t>(m_debugClip)];
+        }
+        screen.setHidden("BOSSCAR", false);
+        screen.setText("BOSSCAR", widenSigned(clip));
         break;
     }
 }
@@ -640,11 +699,12 @@ void CharacterScreen::update(CareerHost& host, ui::Screen& screen, uint32_t even
         m_shownCash = m_cash;
         setCash(screen, m_shownCash);
     }
-    // 0x00432696: a pink slip's stake back at the garage's end after the autosave: a copy of it (0x00434D90), the
-    // event's +0x01 cleared, rated (0x0048E8A0), the profile's +0x600 the new car, each racer of crew 0 racing it.
+    // 0x00432696: a pink slip's stake back at the garage's end after the autosave: a copy of it (0x00434D90; the fixed
+    // build's with its grid, as above), the event's +0x01 cleared, rated (0x0048E8A0), the profile's +0x600 the new
+    // car, each racer of crew 0 racing it.
     if (m_stakeBack != 0) {
         if (m_stake) {
-            Car car = copyCar(*m_stake);
+            Car car = *m_stake;
             if (CalendarEvent* e = currentEvent(career.calendar)) e->done = 0;
             if (car.def != nullptr) {
                 rateCar(car, data.dynamics ? data.dynamics->of(*car.def) : nullptr, data.catalogue);
@@ -761,10 +821,11 @@ void CharacterScreen::update(CareerHost& host, ui::Screen& screen, uint32_t even
         m_playing = 1;
     }
 
-    // 0x004330E7: the character test mode takes the events in place of the window: SELECT counts +0x0C up through
-    // 81 and BACK down (read by nothing); event 6 bets on the next crew (1 .. 8 round): a pink slip kind 1 at step 13,
-    // else kind 0 at step 3 with +0x80 set, the bets on the crew (0x004B1870), its +0x5C set, no amount, the leader's
-    // movie folder (0x004B1650). After them a clip playing gives CLICK, +0xD4 0 and SKIPFADE 1. Other events: nothing.
+    // 0x004330E7: the character test mode takes the events in place of the window: SELECT counts +0x0C up through 81
+    // and BACK down (the clip of the step 0, 0x0042F140); event 6 bets on the next crew (1 .. 8 round): a pink slip
+    // kind 1 at step 13, else kind 0 at step 3 with +0x80 set, the bets on the crew (0x004B1870), its +0x5C set, no
+    // amount, the leader's movie folder (0x004B1650). After them a clip playing gives CLICK, +0xD4 0 and SKIPFADE 1.
+    // Other events: nothing.
     if (career.cheatFlags[kCheatCharacterTest] != 0) {
         if (event == input::kSelect) {
             if (++m_debugClip == 81) m_debugClip = 0;

@@ -5,6 +5,7 @@
 #include "Core/Base/Text.h"
 #include <SDL3/SDL.h>
 #include <chrono>
+#include <iconv.h>
 #include <codecvt>
 #include <cstdarg>
 #include <fstream>
@@ -17,15 +18,31 @@ std::string toUtf8(std::wstring_view s) {
 std::wstring toWide(std::string_view s) {
     return std::wstring_convert<std::codecvt_utf8<wchar_t>>{}.from_bytes(s.data(), s.data() + s.size());
 }
-std::wstring widenSigned(std::string_view s) {
-    std::wstring o;
-    for (char c : s) {
-        if (!c)
-            break;
-        o.push_back((uint16_t)(int16_t)(int8_t)c);
+namespace { uint32_t namesPage = 1252; }
+void setNamesCodePage(uint32_t page) { namesPage = page; }
+uint32_t namesCodePage(int language) { return language == 7 ? 1251 : (language == 5 || language == 6) ? 1250 : 1252; }
+static std::wstring widenPage(std::string_view text, uint32_t page) {
+    text = text.substr(0, text.find('\0'));
+    const auto from = "CP" + std::to_string(page);
+    iconv_t converter = iconv_open("WCHAR_T", from.c_str());
+    if (converter == (iconv_t)-1) return {};
+    std::wstring result(text.size(), L'\0');
+    char* input = const_cast<char*>(text.data());
+    char* output = reinterpret_cast<char*>(result.data());
+    size_t left = text.size(), available = result.size() * sizeof(wchar_t);
+    while (left) {
+        if (iconv(converter, &input, &left, &output, &available) != size_t(-1)) break;
+        // Undefined code-page bytes become the replacement character, never a hang.
+        if (available < sizeof(wchar_t)) break;
+        *reinterpret_cast<wchar_t*>(output) = L'\uFFFD';
+        output += sizeof(wchar_t); available -= sizeof(wchar_t); ++input; --left;
     }
-    return o;
+    iconv_close(converter);
+    result.resize((output - reinterpret_cast<char*>(result.data())) / sizeof(wchar_t));
+    return result;
 }
+std::wstring widenSigned(std::string_view text) { return widenPage(text, namesPage); }
+std::wstring widenAnsi(std::string_view text) { return widenPage(text, 1252); }
 Config Config::load(const std::filesystem::path &path) {
     Config c;
     std::ifstream in(path);

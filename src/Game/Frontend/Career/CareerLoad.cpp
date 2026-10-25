@@ -9,10 +9,12 @@ namespace oj::frontend {
 // careerload (0x004358A0 / 0x00435960): three frames, then the window the career manager's +0xA4 names (mode 3):
 // 0 carsel (carbuy while the dealer's +0 is set), 1 CMSGridWalk, 2 character, 3 characterPostRace, 4 cmsCutScene,
 // 5 car_rolling, 6 and 7 carsel, 8 CMSOnlineGridWalk. With +0xA4 0 and the dealer's +0 1 the GR_ elements are
-// hidden, else shown.
+// hidden, else shown. The enter clears the front end's +0x38 (its controllers not watched; the leave, 0x00435930,
+// sets it again).
 void CareerLoad::enter(CareerHost& host, ui::Screen& s) {
     GameData* data = host.gameData();
     m_frames = 3;
+    host.watchControllers(false);
     const DealerMode dealer0 = data != nullptr ? data->career->dealer.mode : DealerMode::Garage;
     if (data != nullptr && data->careerScreen == CareerScreen::CarSel && dealer0 == DealerMode::Offers) {
         s.hideContaining("GR_");

@@ -93,7 +93,8 @@ bool RaceResults::enter(const HudRace& race, RaceHud* hud) {
 // round whose +0x17 is over 1 has its own table, 0x004529E0: fillCrews): for
 // each of the six rows, a finisher in the race's order gives its driver's name, its crew (line 108 + the crew; empty
 // in a split race), its race time (0x0044FBD0) and its car (line 211 + the model's id), the player's row highlighted;
-// past the finishers Name and Car "----------", Team and Time "--:--:--"; rows past the race's vehicles are hidden.
+// past the finishers Name and Car "----------", Team and Time "--:--:--" (the fixed build's Team "----------", as Name
+// and Car); rows past the race's vehicles are hidden.
 void RaceResults::fill(const HudRace& race) {
     ui::Screen& s = *m_screen;
     m_filled = 0;
@@ -149,8 +150,8 @@ void RaceResults::fill(const HudRace& race) {
             }
         } else {
             set(m_name[i], L"----------");
-            // Stock problem: Team takes the time's dashes.
-            set(m_team[i], L"--:--:--");
+            // Stock problem: Team takes the time's dashes. The fixed build gives it the name's.
+            set(m_team[i], L"----------");
             set(m_raceTime[i], L"--:--:--");
             set(m_car[i], L"----------");
         }
@@ -321,9 +322,10 @@ void RaceResults::fillOnlineTeams(const HudRace& race) {
 // 0x004529E0, a career round of crews with more than one driver: a row for each crew of the session's round, in the
 // order the crews finished (the session's +0x340, -1 for none yet): Team the crew's name (line 108 + the crew),
 // Time the latest race time of its drivers (Stock problem: kept from row to row, 0 only before the first: a row shows
-// the latest of its crew and of the crews above it), Name and Car emptied and Car hidden; the player's crew's row (by its
-// leader's car, else its first driver's) has Team and Time highlighted; a crew not finished shows "----------",
-// "--:--:--" and "----------" in Team, Time and Car; rows from the round's crews on are hidden.
+// the latest of its crew and of the crews above it; the fixed build's its crew's alone), Name and Car emptied and Car
+// hidden; the player's crew's row (by its leader's car, else its first driver's) has Team and Time highlighted; a crew
+// not finished shows "----------", "--:--:--" and "----------" in Team, Time and Car; rows from the round's crews on
+// are hidden.
 void RaceResults::fillCrews(const HudRace& race) {
     ui::Screen& s = *m_screen;
     const Career& career = *race.career;
@@ -341,9 +343,10 @@ void RaceResults::fillCrews(const HudRace& race) {
     const auto set = [&](int e, const std::wstring& text) {
         if (e >= 0) s.setText(e, text);
     };
-    // 0x00452A2C: the latest (a stack slot) 0 once; each row only raises it (0x00452A9A ..).
-    float latest = 0.0f;
+    // 0x00452A2C: the latest (a stack slot) 0 once; each row only raises it (0x00452A9A ..). The fixed build starts
+    // it at 0 for each row.
     for (int32_t i = 0; i < crews && i < 6; ++i) {
+        float latest = 0.0f;
         const auto k = static_cast<size_t>(i);
         const int32_t crew = static_cast<size_t>(i) < session.order.size() ? session.order[k] : -1;
         if (crew == -1) {

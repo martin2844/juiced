@@ -46,6 +46,7 @@
     <ClInclude Include="Base\GameFiles.h" />
     <ClInclude Include="Base\Log.h" />
     <ClInclude Include="Base\Matrix.h" />
+    <ClInclude Include="Base\LoadingThread.h" />
     <ClInclude Include="Base\Random.h" />
     <ClInclude Include="Base\RawFields.h" />
     <ClInclude Include="Base\Script.h" />
@@ -88,6 +89,7 @@
     <ClInclude Include="Network\GameSpy\GameSpy.h" />
     <ClInclude Include="Network\GameSpy\GameSpyBrowser.h" />
     <ClInclude Include="Network\GameSpy\GameSpyHttp.h" />
+    <ClInclude Include="Network\GameSpy\Peerchat.h" />
     <ClInclude Include="Network\GameSpy\GameSpyNatNeg.h" />
     <ClInclude Include="Network\GameSpy\GameSpyPresence.h" />
     <ClInclude Include="Network\GameSpy\GameSpyPresenceDetail.h" />
@@ -123,6 +125,7 @@
     <ClInclude Include="Race\Replay.h" />
     <ClInclude Include="Saves\GraphicsConfig.h" />
     <ClInclude Include="Saves\HighScores.h" />
+    <ClInclude Include="Saves\OnlineAccount.h" />
     <ClInclude Include="Saves\Profile.h" />
     <ClInclude Include="Saves\Save.h" />
     <ClInclude Include="Saves\SaveDevice.h" />
@@ -138,6 +141,7 @@
     <ClCompile Include="Base\GameFiles.cpp" />
     <ClCompile Include="Base\Log.cpp" />
     <ClCompile Include="Base\Matrix.cpp" />
+    <ClCompile Include="Base\LoadingThread.cpp" />
     <ClCompile Include="Base\Random.cpp" />
     <ClCompile Include="Base\Script.cpp" />
     <ClCompile Include="Base\Text.cpp" />
@@ -175,6 +179,7 @@
     <ClCompile Include="Network\GameSpy\GameSpy.cpp" />
     <ClCompile Include="Network\GameSpy\GameSpyBrowser.cpp" />
     <ClCompile Include="Network\GameSpy\GameSpyHttp.cpp" />
+    <ClCompile Include="Network\GameSpy\Peerchat.cpp" />
     <ClCompile Include="Network\GameSpy\GameSpyNatNeg.cpp" />
     <ClCompile Include="Network\GameSpy\GameSpyPresence.cpp" />
     <ClCompile Include="Network\GameSpy\GameSpyPresencePeers.cpp" />
@@ -210,6 +215,7 @@
     <ClCompile Include="Race\Replay.cpp" />
     <ClCompile Include="Saves\GraphicsConfig.cpp" />
     <ClCompile Include="Saves\HighScores.cpp" />
+    <ClCompile Include="Saves\OnlineAccount.cpp" />
     <ClCompile Include="Saves\Profile.cpp" />
     <ClCompile Include="Saves\Save.cpp" />
     <ClCompile Include="Saves\SaveDevice.cpp" />

@@ -40,6 +40,11 @@ public:
     // vtable + 0x1C
     virtual uint32_t passes() { return 1; }
 
+    // The material manager's description of the material (the manager's +0x14, 0x0048AED8): the parameters' values
+    // in the class's order as its file gives them.
+    const std::vector<std::vector<uint8_t>>& description() const { return m_description; }
+    void setDescription(std::vector<std::vector<uint8_t>> values) { m_description = std::move(values); }
+
 protected:
     // The current material is forgotten when its parameters change.
     void touched();
@@ -48,6 +53,7 @@ protected:
     uint32_t m_class;
     uint32_t m_flags;
     Renderer3d& m_r;
+    std::vector<std::vector<uint8_t>> m_description;
 };
 
 // A material of a class (the executable's class record), or nullptr for a class past the table's 53: the

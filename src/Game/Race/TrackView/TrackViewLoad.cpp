@@ -141,6 +141,7 @@ bool TrackView::start(oj::scene::Engine& engine, const oj::scene::TrackSetup& se
     }
     scene->startObjectLights();
     route = std::make_unique<oj::Route>(scene->lines());
+    places = oj::scene::gridPlaces(scene->lines());
     const oj::SceneObjects& objects = scene->sceneObjects();
     oj::log::info("track: scene objects: {} mesh nodes, {} emitters, {} objects, {} physics objects, {} cameras, "
                   "{} riding splines, {} cruise zones, {} rand() values drawn by the load", objects.meshNodes(),
@@ -179,6 +180,10 @@ void TrackView::makePlayers() {
 void TrackView::prepareRace(int32_t raceLaps, const oj::RaceRules& raceRules) {
     laps = raceLaps;
     rules = raceRules;
+    // 0x004BEA60 on the race's HUD as the drivers' levels and the chatter ask.
+    rules.ordersFlash = [this](int32_t racer, float frameTime) {
+        if (frontEnd.hud != nullptr) frontEnd.hud->ordersFlash(hudRace(), racer, frameTime);
+    };
     // The race's load (0x00425501): a replay not playing is made ready (0x00426B00) and left stopped, the race
     // not a replay's.
     if (replay.playing == 0) {
@@ -205,10 +210,9 @@ void TrackView::prepareRace(int32_t raceLaps, const oj::RaceRules& raceRules) {
     }
 }
 
-void TrackView::addCar(const oj::CarDynamics& dynamics, const oj::Car& source, oj::Car* kept, const oj::GameData& data,
-                       oj::scene::CarModel* model, const oj::Spl::GridPoint& place, oj::CarKind kind, int32_t crew,
-                       int32_t record, bool refresh) {
-    if (scene == nullptr || scene->collision() == nullptr || model == nullptr || source.def == nullptr) return;
+TrackView::RaceRecord TrackView::raceRecord(const oj::CarDynamics& dynamics, const oj::Car& source, oj::Car* kept,
+                                            const oj::CarDefs& defs, const oj::PartCatalogue& catalogue,
+                                            int& modifications, bool refresh) {
     const auto renew = [refresh](oj::Car& c) {
         c.neonFlickers = 0;
         if (!refresh) return;
@@ -217,23 +221,35 @@ void TrackView::addCar(const oj::CarDynamics& dynamics, const oj::Car& source, o
         c.nitro = oj::Car::bitsOf(15.0f);
     };
     if (kept != nullptr) renew(*kept);
-    oj::Car car = source;
+    RaceRecord r{source, dynamics};
+    oj::Car& car = r.car;
     renew(car);
     // 0x00485E5B, with -automod: N not 0 modifies the car automatically (0x0048F2C0 with the loading thread's
     // rand(); N 4 as a prototype of parts of any level, else of level N), then its +0x0F 1; both after the
     // model was made from the car as it was. The game's counter of modifications ([0x00717868]) moves on.
     if (automod) {
         if (automodValue != 0) {
-            oj::CarMaking making{data.defs, data.catalogue, loading, const_cast<int&>(data.autoModifyCounter)};
+            oj::CarMaking making{defs, catalogue, loading, modifications};
             const int level = automodValue == 4 ? -1 : static_cast<int>(automodValue);
             oj::autoModify(car, automodValue == 4, level, making);
         }
         car.mods[oj::kExhaust] = 1;
         if (kept != nullptr) *kept = car;
     }
-    oj::CarDynamics fitted = dynamics;
-    oj::Car fittedCar = car;
-    oj::fitParts(fitted, fittedCar, data.catalogue);
+    // 0x00485E98: the parts fitted with the record itself (0x0048E380), which keeps its brake value (+0x80).
+    oj::fitParts(r.dynamics, car, catalogue);
+    if (kept != nullptr) kept->brake = car.brake;
+    return r;
+}
+
+void TrackView::addCar(const oj::CarDynamics& dynamics, const oj::Car& source, oj::Car* kept, const oj::GameData& data,
+                       oj::scene::CarModel* model, const oj::Spl::GridPoint& place, oj::CarKind kind, int32_t crew,
+                       int32_t record, bool refresh) {
+    if (scene == nullptr || scene->collision() == nullptr || model == nullptr || source.def == nullptr) return;
+    RaceRecord made = raceRecord(dynamics, source, kept, data.defs, data.catalogue,
+                                 const_cast<int&>(data.autoModifyCounter), refresh);
+    const oj::Car& car = made.car;
+    oj::CarDynamics& fitted = made.dynamics;
     oj::loadShapes(fitted.body, data.files(), std::filesystem::path("cars") / car.def->name);
     if (!world) makeWorld();
     auto slot = std::make_unique<RaceSlot>();
@@ -408,10 +424,28 @@ void TrackView::beginRace() {
                       first().slot->body->position[0], first().slot->body->position[1],
                       first().slot->body->position[2], first().slot->body->tyreCount);
     }
-    // Each player's camera out of the fly-by (0x00401E80: on the network, or without a fly-by) at the sweep.
+    // Each player's camera without a fly-by (0x00401E80, oj::startView): the kept view of a solo race or a cruise
+    // (the first player's, whichever the player; the fixed build's: the player's own) with the race's count, a
+    // sprint's later heat's sweep with the count 8, the network's sweep, or (a route without a fly-by, 0x00405BE0)
+    // the count 6 and the sweep.
     for (std::unique_ptr<RacePlayer>& p : players) {
-        if (p->introPlaying || netSweep(*p)) continue;
-        countAndSweep(*p);
+        if (p->introPlaying) continue;
+        switch (oj::startView(rules.type, rules.heat, net != nullptr)) {
+        case oj::StartView::Kept:
+            p->raceCamera.take(viewKept(*p), true, cameraTarget(*p), cameraRace(*p), p->camera);
+            for (const int asked : p->raceCamera.takeWindowAsks()) chooseWindow(asked != 0);
+            break;
+        case oj::StartView::LaterHeat:
+            race->count = 8.0f;
+            if (hasCamera()) {
+                p->raceCamera.take(oj::scene::RaceCamera::kBeforeStart, true, cameraTarget(*p), cameraRace(*p),
+                                   p->camera);
+            }
+            for (const int asked : p->raceCamera.takeWindowAsks()) chooseWindow(asked != 0);
+            break;
+        case oj::StartView::Sweep: netSweep(*p); break;
+        case oj::StartView::FlyBy: countAndSweep(*p); break;
+        }
     }
 }
 

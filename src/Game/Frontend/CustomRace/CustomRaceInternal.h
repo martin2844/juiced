@@ -30,11 +30,10 @@ inline bool same(const std::string& a, const char* b) {
     return _stricmp(a.c_str(), b) == 0;
 }
 
-// An 8-bit text widened character by character (0x00409370).
+// An 8-bit text widened character by character, with its sign (0x00409370); the fixed build reads it in the
+// names' code page.
 inline std::wstring latin(const std::string& text) {
-    std::wstring wide;
-    for (char c : text) wide += static_cast<wchar_t>(static_cast<unsigned char>(c));
-    return wide;
+    return oj::widenSigned(text);
 }
 
 // The network game ([0x0075EF8C]), this machine hosting it (its +0x0C) or only joined.
@@ -68,6 +67,14 @@ inline uint32_t arcadeCarOf(const std::vector<Car>& cars, int32_t id) {
         if (cars[i].def != nullptr && cars[i].def->id == id) return static_cast<uint32_t>(i);
     }
     return 0;
+}
+
+// SELECT's question "AUTO-MOD CAR?" (0x0045F340): a car not modified, its first four body parts 0. Stock problem: a
+// car whose model has none of them (a mod's car) stays so after the automatic modification, so the question comes
+// again at each SELECT until NO. The fixed build also asks for no neon: the automatic modification always fits it
+// (autoModify), the arcade collection's cars and cleared parts have none.
+inline bool unmodified(const Car& car) {
+    return car.body[0] == 0 && car.body[1] == 0 && car.body[2] == 0 && car.body[3] == 0 && car.body[kNeon] == kNoMod;
 }
 
 // 0x004600C0: the car's parts cleared: +0x58 and +0x44 0, the body parts 0 but the decal and the neon (-1), every

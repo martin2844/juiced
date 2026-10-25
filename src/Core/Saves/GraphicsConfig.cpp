@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <bit>
+#include <cmath>
 #include <initializer_list>
 
 namespace oj {
@@ -61,11 +62,13 @@ GraphicsConfig& graphicsConfig() {
     return config;
 }
 
-// Stock problem: the ATI cards' device ids are looked for in the vendor id, so those lines never match and every ATI
-// card (vendor 0x1002) is of class 4.
-int graphicsClass(uint32_t v, uint32_t device) {
-    if (v == 0x10DE) return nvidiaClass(device);
-    if (v == 0x1002) return 4;
+// Stock problem: the ATI cards' device ids are cases of the vendor's switch, so an ATI card (vendor 0x1002) never
+// matches them and is of class 4 (ATI's own case), while another vendor of one of those numbers would. The fixed
+// build compares the ATI card's device id; an ATI card not listed stays of class 4, any other vendor's of class 3.
+int graphicsClass(uint32_t vendor, uint32_t device) {
+    if (vendor == 0x10DE) return nvidiaClass(device);
+    if (vendor != 0x1002) return 3;
+    const uint32_t v = device;
     if (among(v, {0x4A70, 0x5548, 0x554A, 0x5568, 0x556A, 0x5D4D, 0x5D4F, 0x5D52, 0x5D57, 0x5D6D, 0x5D6F, 0x5D72,
                   0x5D77}) ||
         within(v, 0x4A48, 0x4A4E) || within(v, 0x4A68, 0x4A6E)) {
@@ -87,7 +90,7 @@ int graphicsClass(uint32_t v, uint32_t device) {
         within(v, 0x5345, 0x5348) || within(v, 0x534B, 0x534E) || within(v, 0x5452, 0x5455)) {
         return 0;
     }
-    return 3;
+    return 4;
 }
 
 void graphicsDefaults(GraphicsConfig& c) {
@@ -212,6 +215,17 @@ save::RegCf1 graphicsRegCf1(const GraphicsConfig& c) {
 
 float detailFactor(float detail) {
     return static_cast<float>(static_cast<double>(detail) * static_cast<double>(1.5f) + static_cast<double>(0.66f));
+}
+
+float glowStrength(int32_t glow) {
+    if (glow == 0) return 0.0f;
+    if (glow >= 2 && glow <= 100) return static_cast<float>(glow) / 100.0f;
+    return 0.5f;
+}
+
+int32_t glowSetting(float strength) {
+    const auto percent = static_cast<int32_t>(std::lround(std::clamp(strength, 0.0f, 1.0f) * 100.0f));
+    return percent == 1 ? 2 : percent;
 }
 
 }  // namespace oj

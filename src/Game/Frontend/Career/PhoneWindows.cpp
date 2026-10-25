@@ -228,7 +228,8 @@ void MobilePhone::ringing(CareerHost& host, ui::Screen& s, uint32_t event) {
 
 // 0x004D2140: caller "RINGING" (1638) over 0.2 of each second, else empty; RingOut each 2 s. The ringing (+0xF94) gone
 // below 0: caller emptied, talking (4), message the call's text, BACK_ hidden, CMSMobilePhoneMenu over it, the ring
-// stopped. Else, unless the call answers at once (+0xF98), the ringing runs down, and SELECT ends it (-1).
+// stopped. Else, unless the call answers at once (+0xF98), the ringing runs down, and SELECT ends it (-1). The fixed
+// build runs it down and ends it with SELECT for every call.
 void MobilePhone::calling(CareerHost& host, ui::Screen& s, uint32_t event) {
     GameData* data = host.gameData();
     const TextTable& texts = host.gameTexts();
@@ -250,9 +251,10 @@ void MobilePhone::calling(CareerHost& host, ui::Screen& s, uint32_t event) {
         stopRing(host);
         return;
     }
-    // Stock problem: a crewmate who joined answers at once (+0xF98), so the ringing never runs down nor ends.
-    if (p.answersAtOnce == 0) p.dialTimer = p.dialTimer - host.frameTime();
-    if (event == input::kSelect && p.answersAtOnce == 0) p.dialTimer = -1.0f;
+    // Stock problem: a crewmate who joined answers at once (+0xF98), so the ringing never runs down nor ends: only
+    // BACK left. The fixed build lets it run down to the call's END CALL as any other.
+    p.dialTimer = p.dialTimer - host.frameTime();
+    if (event == input::kSelect) p.dialTimer = -1.0f;
 }
 
 // 0x004D1AD0 / 0x004B75D0: the speech's line stopped (0x0040B600), the front end's music back, the ring's or dial's

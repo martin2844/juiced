@@ -18,7 +18,8 @@ std::string hudTime(float seconds) {
     const auto secs = static_cast<int32_t>(rest);
     double integral = 0.0;
     const double fraction = std::modf(static_cast<double>(rest), &integral);
-    const auto hundredths = static_cast<int32_t>(static_cast<float>(fraction) * 99.0f);
+    // Stock problem: the fraction x 99 (00 .. 98); the fixed build x 100 (00 .. 99).
+    const auto hundredths = static_cast<int32_t>(static_cast<float>(fraction) * 100.0f);
     char buffer[48];
     std::snprintf(buffer, sizeof(buffer), "%02d:%02d:%02d", static_cast<int>(minutes), secs, hundredths);
     return buffer;

@@ -33,7 +33,7 @@ struct GraphicsConfig {
     int32_t reflections = 0;                 // +0x4C: 0 .. 3
     float detail = 0.0f;                     // +0x50: 0 .. 1
     int32_t motionBlur = 0;                  // +0x54
-    int32_t glow = 0;                        // +0x58
+    int32_t glow = 0;                        // +0x58: the fixed build's percent (glowStrength)
     int32_t depthOfField = 0;                // +0x5C
     float brightness = 0.0f;                 // +0x60: 0 .. 1
     int32_t noShaders = 0;                   // +0x64: the adapter has no shaders
@@ -87,5 +87,12 @@ save::RegCf1 graphicsRegCf1(const GraphicsConfig& config);
 
 // The detail factor of a detail (the graphics options window: x87 at 53 bits).
 float detailFactor(float detail);
+
+// The fixed build's glow strength (its own: the stock glow is on or off): the glow kept as a percent, 0 off, 2 .. 100
+// the percent; 1 (the stock's on, the defaults and a stock reg.cf1) and any other value 50 %. The stock reads any
+// value but 0 as on, so a stock game takes the file as before.
+float glowStrength(int32_t glow);
+// The kept glow of a strength (0 .. 1): the percent, 2 for 1 % (1 is 50 %).
+int32_t glowSetting(float strength);
 
 }  // namespace oj

@@ -32,6 +32,11 @@ void recordHistory(Career& career);
 // the steps ran out before that many were raised.
 bool unlockSteps(CareerProfile& profile, size_t car, int changes, const ExeTables& tables);
 
+// The fixed build's level of a car model's wing mirrors (the styling category 7, which no unlock step raises): by the
+// model's place in its steps, as the other parts open along them: -1 (the standard part alone) before step 14, 0 from
+// it, 1 from step 26, every part from step 37 (the last). Derived, so a career saved before has it at once.
+int mirrorLevel(const CareerProfile& profile, size_t car);
+
 // 0x004B4BE0: the dealer's offers made again: two or three of each car model the profile's respect level reaches
 // (three times its dealer threshold), sorted; a level raised calls the player (a phone message, rand() & 3).
 void stockDealer(Career& career, CareerContext& context);

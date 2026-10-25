@@ -153,10 +153,10 @@ void Renderer3d::fixedFunctionLights() {
     for (uint32_t i = 0; i < 3; ++i) {
         FixedLight l;
         l.type = 3;  // D3DLIGHT_DIRECTIONAL
-        // Stock problem: the green of the diffuse colour is the light's red again (0x00546419).
-        const float red = (*colours[i])[0] * 0.00390625f;
-        l.diffuse[0] = red;
-        l.diffuse[1] = red;
+        // Stock problem: the green of the diffuse colour is the light's red again (0x00546419); the fixed build takes
+        // the light's green.
+        l.diffuse[0] = (*colours[i])[0] * 0.00390625f;
+        l.diffuse[1] = (*colours[i])[1] * 0.00390625f;
         l.diffuse[2] = (*colours[i])[2] * 0.00390625f;
         l.specular[0] = l.specular[1] = l.specular[2] = 0.6f;
         l.ambient[0] = ambient[0] * 0.01f;
@@ -195,31 +195,18 @@ void Renderer3d::setLight2Colour(const Vec4& colour) {
 
 void Renderer3d::writeLightColours() {
     const float f = night ? 1.0f : lightScale;
-    std::array<Vec4, 3> light = {
+    const std::array<Vec4, 3> light = {
         Vec4{light1Colour[0] * lightScale * kOver511, light1Colour[1] * lightScale * kOver511,
              light1Colour[2] * lightScale * kOver511, lightScale},
         Vec4{f * light2Colour[0] * kOver511, f * light2Colour[1] * kOver511, f * light2Colour[2] * kOver511, 1.0f},
         Vec4{light3Colour[0] * kOver511, light3Colour[1] * kOver511, light3Colour[2] * kOver511, 1.0f},
     };
-    // Brightest first ([0x00725780] is set): a light moves up while its (z + y) + x is above the one before.
-    auto sum = [](const Vec4& v) { return (v[2] + v[1]) + v[0]; };
-    bool swapped = true;
-    while (swapped) {
-        swapped = false;
-        if (sum(light[0]) < sum(light[1])) {
-            std::swap(light[0], light[1]);
-            swapped = true;
-        }
-        if (sum(light[1]) < sum(light[2])) {
-            std::swap(light[1], light[2]);
-            swapped = true;
-        }
-    }
-    // Stock problem: the three colours go to c26, c27, c28 although the shaders read them from c26, c28, c30
-    // (c27 is the first light's direction): c28 gets the third colour, c30 none.
-    float block[12];
-    for (size_t i = 0; i < 3; ++i) std::memcpy(block + i * 4, light[i].data(), 16);
-    setVertexConstants(26, block, 3);
+    // Stock problem: the colours are sorted brightest first ([0x00725780] is set: a light moves up while its
+    // (z + y) + x is above the one before) while their directions (c27, c29, c31) are not, and the three go to c26,
+    // c27, c28 although the shaders read them from c26, c28, c30: the track's light 2 took the darkest colour (light
+    // 3's, below 0 in the game's atmospheres), light 3 none; the models' c26 and c28 are light 1's and 2's (their
+    // setLightScale). The fixed build puts each light's colour beside its direction, unsorted, in c26, c28, c30.
+    for (size_t i = 0; i < 3; ++i) setVertexConstants(26 + static_cast<uint32_t>(i) * 2, light[i].data(), 1);
 }
 
 void Renderer3d::setLightDirection(const Vec4& d) {
@@ -249,7 +236,7 @@ void Renderer3d::setLightDirection(const Vec4& d) {
     setVertexConstants(43, axes, 2);
     if (classes() < 0x70000) return;
 
-    // The clouds: c45 the time, c46 .. c48 the axes and the direction scaled, c49 the static after them.
+    // The clouds: c45 the time, c46 .. c48 the axes and the direction scaled (the stock's c49 the static after them).
     float t = time;
     float s = 0.0f;
     m_cloud[0] = m_cloud[1] = m_cloud[2] = 0.0f;
@@ -270,15 +257,13 @@ void Renderer3d::setLightDirection(const Vec4& d) {
         default:
             break;
     }
-    m_cloudGuard = true;
     const float scroll = t * 0.015f;
     const float rows[12] = {vx * s, vy * s, vz * s, scroll, wx * s, wy * s, wz * s, 0.0f,
                             d[0] * s, d[1] * s, d[2] * s, scroll};
     std::memcpy(m_cloud.data() + 4, rows, sizeof(rows));
-    // The static that follows the array is the guard of its initialisation: c49.x is 1 as an integer.
-    const uint32_t guard = m_cloudGuard ? 1u : 0u;
-    std::memcpy(&m_cloud[16], &guard, 4);
-    setVertexConstants(45, m_cloud.data(), 5);
+    // The static that follows the array is the guard of its initialisation: c49.x is 1 as an integer. The fixed build
+    // sets c45 .. c48 alone: no shader of the game reads c49 (the clouds read c46, c47, the sea's shadow c45).
+    setVertexConstants(45, m_cloud.data(), 4);
 }
 
 void Renderer3d::setLight2Direction(const Vec4& direction) {

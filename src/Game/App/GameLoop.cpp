@@ -11,6 +11,7 @@
 #include "Audio/SoundSystem.h"
 #include "Audio/Voices.h"
 #include "Core/Base/GameFiles.h"
+#include "Core/Base/LoadingThread.h"
 #include "Core/Base/Random.h"
 #include "Core/Base/Text.h"
 #include "Core/Base/X87.h"
@@ -20,6 +21,7 @@
 #include "Core/Data/Language.h"
 #include "Core/Input/Input.h"
 #include "Core/Network/GameSpy/GameSpyUser.h"
+#include "Core/Network/GameSpy/Peerchat.h"
 #include "Core/Network/Matchmaking.h"
 #include "Core/Network/OnlineRecords.h"
 #include "Core/Network/OnlineSessions.h"
@@ -48,6 +50,7 @@
 #include <cstdlib>
 #include <format>
 #include <memory>
+#include <optional>
 #include <string_view>
 #include <utility>
 #include <vector>
@@ -60,8 +63,8 @@ constexpr char kTitle[] = "Juiced";
 
 // The application's +0x30 (0x00513C60): the back buffer after the present as <My Documents>\THQ\Juiced\Screenshots
 // \PCScreenshot<n>.jpg (the folders made, 0x005A12E0). n ([0x0079E870], from 0 as the game starts) passes every file
-// of which 4 bytes can be read (Stock problem: an empty file of the name is written over); it counts one more after
-// the shot.
+// of which 4 bytes can be read (Stock problem: an empty file of the name is written over; the fixed build passes every
+// file there is); it counts one more after the shot.
 void screenshot(oj::render::IRenderDevice& device) {
     static int number = 0;
     wchar_t documents[MAX_PATH] = {};
@@ -70,16 +73,7 @@ void screenshot(oj::render::IRenderDevice& device) {
     std::error_code ignored;
     std::filesystem::create_directories(folder, ignored);
     auto name = [&] { return folder / std::format(L"PCScreenshot{}.jpg", number); };
-    for (;;) {
-        HANDLE f = CreateFileW(name().c_str(), GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
-        if (f == INVALID_HANDLE_VALUE) break;
-        uint32_t word = 0;
-        DWORD read = 0;
-        ReadFile(f, &word, 4, &read, nullptr);
-        CloseHandle(f);
-        if (read == 0) break;
-        ++number;
-    }
+    while (std::filesystem::exists(name(), ignored)) ++number;
     const std::filesystem::path file = name();
     if (device.capture(file.wstring())) oj::log::info("screenshot {}", oj::toUtf8(file.wstring()));
     ++number;
@@ -160,6 +154,14 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
     }
     oj::log::info("renderer {} on {}: {}", oj::render::backendName(device->backend()), device->adapterName(),
                   device->description());
+    // The loading thread's jobs end once the main thread has run the renderer's queue again (0x0051D270), while
+    // the device lives (the windows and their loads go before it).
+    struct JobEnd {
+        explicit JobEnd(oj::render::IRenderDevice& d) {
+            oj::loadingThread().setJobEnd([&d] { d.waitForService(); });
+        }
+        ~JobEnd() { oj::loadingThread().setJobEnd(nullptr); }
+    } jobEnd(*device);
     // 0x005132AC, the renderer's start: the processors for the game ([0x0079E5C0]) to the debugger's output.
     oj::log::debugPrint("numCores %d\n", g_gameProcessors);
 
@@ -182,6 +184,7 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
     // As the English build 1.0.1: the settings' language id, else the user's (0x0059E300); [Game] Language names one.
     const oj::Language language = oj::chooseLanguage(settings.language, config.language);
     oj::log::info("language {}", language.name);
+    oj::setNamesCodePage(oj::namesCodePage(language.index));  // the fixed build: the files' 8-bit names
     // The file system's localized names (0x004F9DB3) by the language object's letter.
     oj::GameFiles::setLanguageLetter(language.controlsLetter);
     oj::TextTable gameTexts;
@@ -319,6 +322,17 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
     // replays' object on the PC (0x004FA8B0 is called by nothing), so savereplay and loadreplay, if reached, would
     // call through address 0; here they find none (no files written, a read counts as corrupt). The replay's slots
     // 13 and 14 (ReplaySaves) are kept for it as the stock has them.
+    // The fixed build gives the device the race's replay as its replays' object and the replays their folder,
+    // <My Documents>\THQ\Juiced\Replays (beside the screenshots), a folder of the game's files each.
+    app::ReplaySaves replaySaves;
+    replaySaves.replay = &trackView.replay;
+    replaySaves.data = &data;
+    data.saveDevice.setReplayObject(&replaySaves);
+    {
+        wchar_t documents[MAX_PATH] = {};
+        SHGetSpecialFolderPathW(nullptr, documents, CSIDL_PERSONAL, FALSE);
+        data.saveDevice.setReplayFolder(std::filesystem::path(documents) / L"THQ" / L"Juiced" / L"Replays");
+    }
     trackView.multiTurn = settings.multiTurn != 0;
     if (scene) {
         trackView.particleDensity =
@@ -387,7 +401,6 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
             for (const oj::Spl::GridPoint& place : trackView.scene->lines().grid) {
                 oj::scene::CarModel* model = trackView.scene->addCar(
                     oj::scene::CarModel::load(*scene, car, data.catalogue, trackView.loading, false), place);
-                trackView.places.push_back({place.x, place.y, place.z, place.heading});
                 // The car of the first place is the player's, the others the AI's.
                 if (dynamics != nullptr) {
                     trackView.addCar(*dynamics, car, nullptr, data, model, place,
@@ -648,7 +661,10 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
                         uint32_t begun = 0;
                         for (size_t i = 0; i < users->localPlayers.size(); ++i) {
                             ++begun;
-                            oj::net::stats::reportRaceBegun(users->playerUser(users->localPlayers[i]));
+                            // The user let go after its report in the fixed build (the stock kept the reference).
+                            const int32_t user = users->playerUser(users->localPlayers[i]);
+                            oj::net::stats::reportRaceBegun(user);
+                            users->userRelease(user);
                         }
                         if (begun != 0) oj::net::stats::reporter()->send();
                     }
@@ -713,6 +729,8 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
         if (oj::net::OnlineUser* user = oj::net::onlineUser()) user->update(dt);
         // 0x0040CF84: the matchmaking's frame (+0x30) after the network game's and GP's.
         if (oj::net::Matchmaking* mm = oj::net::matchmaking()) mm->update(dt);
+        // The fixed build's chat of an online session's lobby (Peerchat), after the matchmaking's frame.
+        oj::net::peerchat::frame(dt);
         // 0x0040CF87: the statistics' frame (0x004EC5B0: made at the login, the records asked again every 5 s with a
         // front end, [G+0x38] or [G+0x3C]).
         oj::net::stats::frame(dt, phase == Phase::Frontend || phase == Phase::Race);
@@ -741,6 +759,10 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
             loadFailed = true;
         }
         if (phase == Phase::Load && loaderFrames >= 3 && !loadFailed) {
+            // The load holds this frame (the stock's ran on its loading thread, the frames going on): the peers told
+            // we are here meanwhile (else after 25 s of silence they drop this machine).
+            std::optional<oj::net::LoadKeepAlive> keepAlive;
+            if (oj::net::NetGame* netGame = oj::net::netGame()) keepAlive.emplace(&netGame->transport);
             const oj::RaceSetup& race = data.race;
             oj::scene::TrackSetup setup;
             setup.track = race.track;
@@ -802,8 +824,6 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
                         auto car =
                             oj::scene::CarModel::load(*scene, racerCar, data.catalogue, trackView.loading, false);
                         oj::scene::CarModel* model = trackView.scene->addCar(std::move(car), lines.grid[place]);
-                        const oj::Spl::GridPoint& at = lines.grid[place];
-                        trackView.places.push_back({at.x, at.y, at.z, at.heading});
                         const oj::CarDynamics* dynamics =
                             data.dynamics && racerCar.def != nullptr ? data.dynamics->of(*racerCar.def) : nullptr;
                         if (dynamics != nullptr) {

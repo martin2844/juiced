@@ -211,7 +211,8 @@ void SaveReplayWindow::update(RaceSaveHost& host) {
     if (m_failed != 0) {
         if (m_answer == -1) {
             if (host.gameTexts() != nullptr)
-                host.raceMessage(ui::MessageType::YesNo, host.gameTexts()->at(kTextSaveReplayPs2), &m_answer, false);
+                // The stock's question names the PS2's memory card; the fixed build's "Save replay?" (435).
+                host.raceMessage(ui::MessageType::YesNo, host.gameTexts()->at(kTextSaveReplay), &m_answer, false);
             m_answer = -1;
             return;
         }

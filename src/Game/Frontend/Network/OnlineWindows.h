@@ -23,6 +23,8 @@ private:
     int32_t m_box = 9999;    // +0x10: a message's number never given
     float m_wait = 1.0f;     // +0x14
     int32_t m_leaving = 0;   // +0x18
+    int32_t m_guest = 0;     // the fixed build's: the guest's logon waited for
+    float m_guestTime = 0.0f;
 };
 
 // The window of the record of online_create_gs (0x007217E4, vtable 0x006F2E3C).
@@ -38,6 +40,7 @@ private:
     int32_t m_box = 999999;    // +0x10: "Logging into account..."'s number
     int32_t m_store = -1;      // +0x14: the account to be stored (the question's answer)
     int32_t m_submit = -1;     // +0x18: SUBMIT accepted
+    float m_loginTime = 0.0f;  // the fixed build's: the login's time so far
 };
 
 // The window of the record of online_connect_gs (0x00721800, vtable 0x006F2E0C).
@@ -54,6 +57,7 @@ private:
     int32_t m_box = 999999;    // +0x14
     int32_t m_store = -1;      // +0x18
     int32_t m_submit = -1;     // +0x1C
+    float m_loginTime = 0.0f;  // the fixed build's: the login's time so far
 };
 
 // The window of the record of online_main (0x0072185C, vtable 0x006F2EBC).
@@ -90,8 +94,16 @@ void onlineFailed(WindowHost& host, size_t text, int32_t& connecting);
 // The keyboard set up for an account's field (the buffer written back on DONE); keyboard.
 void onlineKeyboard(OnlineHost& host, size_t title, std::wstring& buffer, size_t most, bool checkName,
                     const char* allowed, bool password, const char* window);
-// The edit buffers kept as the driver's account and "Logging into account..." (type 0).
+// "Logging into account..." (type 0); the stock kept the edit buffers as the driver's account here, before the login.
 void onlineStore(WindowHost& host);
+// The fixed build: the edit buffers kept as the driver's account once the login is good.
+void onlineKeepAccount(WindowHost& host);
+// The fixed build's login frame (in place of the stock's loop inside the frame): waiting; logged on (the message
+// closed, the account kept); failed (a failed state, or no login in its time: its note, signed out); no user object.
+// `connecting` 0 when it ends.
+enum class LoginStep { Waiting, LoggedOn, Failed, NoUser };
+// keepAccount: the edit buffers kept as the driver's account when logged on (not a guest's).
+LoginStep onlineLoginFrame(WindowHost& host, int32_t& connecting, float& time, bool keepAccount = true);
 // 0x00472030, the leave of online_create_gs, online_connect_gs and online_main: a message up closed.
 void leaveOnlineForm(WindowHost& host);
 

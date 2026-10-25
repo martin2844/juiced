@@ -179,7 +179,7 @@ bool Frontend::netWait(net::SessionStage stage, bool loading) {
     }
     if (!netDropped()) return false;
     net->session.reset(false);
-    request("link_search", SwitchMode::Replace);
+    request(net::matchmaking() != nullptr ? "online_main" : "link_search", SwitchMode::Replace);
     return true;
 }
 

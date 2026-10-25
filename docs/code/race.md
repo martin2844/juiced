@@ -30,10 +30,10 @@ it (the HUD, the pause, the results) are `race-frontend.md`. What the stock race
 - **`RacePlayer`**: a player of the race (one, or two in a split screen race; one without a car when watching): its
   car, controller, camera and its director, view, fly-by, the driver's control.
 - **`Core/Race`**: the race's rules without a screen. `RaceState` and the competitors (`Racer.h`: the lines followed,
-  the laps, sectors and places, the AI's steering and driving), the start's count (`RaceStart.h`), the replay's record
-  (`Replay.h`), the showoff's tricks and score (`Cruise.h`), the driver's control (`DriverControl.h`: the DRIVER1
-  actions into throttle, brake, steering, gears), the race of a career event and its bets (`RaceSession.h`), what a
-  race is (`RaceKinds.h`: `RaceMode`, `RaceType`).
+  the laps, sectors and places, the AI's steering and driving, the start's count; `RaceStart.h` an early port of
+  the count alone, unused), the replay's record (`Replay.h`), the showoff's tricks and score (`Cruise.h`), the
+  driver's control (`DriverControl.h`: the DRIVER1 actions into throttle, brake, steering, gears), the race of a
+  career event and its bets (`RaceSession.h`), what a race is (`RaceKinds.h`: `RaceMode`, `RaceType`).
 - **`Core/Physics`**: the physics world (`PhysicsWorld.h`), its rigid bodies (`RigidBody.h`), the car's body with its
   engine, drive and wheels (`CarBody.h`), the contacts (`Contact.h`), the touches with the route's collision
   (`TrackCollision.h`), the cars' physics files (`Dynamics.h`).

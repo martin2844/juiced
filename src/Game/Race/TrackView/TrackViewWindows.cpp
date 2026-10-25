@@ -101,6 +101,10 @@ void TrackView::chooseWindow(bool asked) {
         frontEnd.askWindow(RaceWindowId::Replay);
         return;
     }
+    // 0x004584FC: nothing while the race is paused (the race state's +0x20) but in the free view (14): the pause's
+    // window stays (a view taken under it, as the sweep's at the count's 4 s in a network game, whose count goes on
+    // paused, asks for the HUD in vain).
+    if (paused && first().raceCamera.mode() != oj::scene::RaceCamera::kFree) return;
     // In a split screen race (mode 3), whatever was asked: with every player finished hud_race_results; else while
     // the first player's camera plays the fly-by or the sweep before the start (modes 9, 10) blank_split, else
     // hud_split.

@@ -308,8 +308,9 @@ void setChecks(HWND window) {
     send(window, IDC_MUSIC, BM_SETCHECK, t.audio.music ? 1 : 0);
     send(window, IDC_HARDWARE_MIXING, BM_SETCHECK, t.audio.hardwareMixing ? 1 : 0);
     send(window, IDC_EAX, BM_SETCHECK, t.audio.eax ? 1 : 0);
-    // The processors' flag and the value ANDed: a registry's threading of 2 leaves the box clear.
-    send(window, IDC_THREADING, BM_SETCHECK, ((t.multipleProcessors ? 1u : 0u) & t.threading) != 0 ? 1 : 0);
+    // Stock problem: the processors' flag and the value ANDed, so a registry's threading of 2 leaves the box clear; the
+    // fixed build checks it for any value but 0 with several processors.
+    send(window, IDC_THREADING, BM_SETCHECK, t.multipleProcessors && t.threading != 0 ? 1 : 0);
     send(window, IDC_ALL_AUDIO, BM_SETCHECK, t.audio.allAudio ? 1 : 0);
     send(window, IDC_WIDESCREEN, BM_SETCHECK, t.widescreen != 0 ? 1 : 0);
     send(window, IDC_MULTI_TURN, BM_SETCHECK, t.multiTurn != 0 ? 1 : 0);
@@ -373,7 +374,8 @@ void initDialog(HWND window, bool defaults) {
             if (readDword(key, "Shaders", saved)) shaders = saved;
             const uint32_t items = static_cast<uint32_t>(send(window, IDC_SHADERS, CB_GETCOUNT));
             // Stock problem: the count itself is past the last item: no selection, OK refused until one is picked.
-            if (items < shaders) shaders = items;
+            // The fixed build takes the last item.
+            if (items != 0 && shaders >= items) shaders = items - 1;
             send(window, IDC_SHADERS, CB_SETCURSEL, shaders);
             readDword(key, "Windowed", windowed);
             GUID adapter{};
@@ -400,8 +402,8 @@ void initDialog(HWND window, bool defaults) {
                 t.threading = t.multipleProcessors ? threading : 0;
             } else {
                 // Stock problem: no "threading" takes the defaults over what was read, the antialiasing's list made
-                // as by the reset too.
-                defaults = true;
+                // as by the reset too. The fixed build gives the threading alone its default.
+                t.threading = t.multipleProcessors ? 1u : 0u;
             }
         }
         if (defaults) {

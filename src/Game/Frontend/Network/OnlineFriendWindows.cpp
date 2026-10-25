@@ -56,6 +56,8 @@ void drawPresenceIcon(render::IRenderDevice& device, ui::Screen& loader, const s
 bool netOnlineKeys(WindowHost& host, uint32_t event) {
     net::NetGame* net = net::netGame();
     if (net == nullptr || net::matchmaking() == nullptr) return false;
+    // The fixed build's guest has no friends' windows.
+    if (const net::OnlineUser* u = net::onlineUser(); u != nullptr && u->guest()) return false;
     const char* window = event == input::kSelect4   ? "online_players"
                          : event == input::kSelect5 ? "online_friends"
                                                     : nullptr;

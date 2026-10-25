@@ -38,7 +38,7 @@ private:
     size_t m_selected = 0;     // +0x18: RP_MENU's item last frame
     int32_t m_info = 3;        // +0x1C: RP_INFO's text (504 + it: PLAYING, FAST FORWARD, SLOW-MOTION, PAUSED)
     int32_t m_answer = -1;     // +0x20
-    int32_t m_saveAsked = 0;   // +0x24 (set nowhere: the save is not reached)
+    int32_t m_saveAsked = 0;   // +0x24 (set nowhere: the save is not reached; the fixed build's after the eject's yes)
     int32_t m_ejectAsked = 0;  // +0x28
     int32_t m_quit = 0;        // +0x2C
     int32_t m_hideAsked = 0;   // +0x30

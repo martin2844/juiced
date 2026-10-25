@@ -760,10 +760,8 @@ void ProgramManager::frame(uint32_t classes, float detail) {
     }
     if (m_request == 0x1000) return;
     if (m_request == 0x1001) {
-        for (Program* p : m_programs) {
-            while (!p->recreate()) {
-            }
-        }
+        // The fixed build: each made once, as in restore (the stock's loop never ends for one with no technique).
+        for (Program* p : m_programs) p->recreate();
     } else {
         chooseLevel(m_request);
     }
@@ -772,14 +770,13 @@ void ProgramManager::frame(uint32_t classes, float detail) {
 
 // Every program made again from its effect (0x0051B620), each until it has a usable technique: Stock problem: a
 // program with none (its file not read, or no technique for the device's classes) is made again for ever and the
-// game hangs at the reset. Then the shared parameters' handles (vOne, vAmbUnit, 0x00719478) are taken again from the
+// game hangs at the reset. The fixed build makes each once: the making is the same every time (the effect, its
+// textures, the device's classes), so a program without a technique stays without one, as a program loaded at the
+// start without one does. Then the shared parameters' handles (vOne, vAmbUnit, 0x00719478) are taken again from the
 // first program (OpenJuice finds them by name). With the shader classes 0x70000 and up the technique of the level:
 // 1 with the detail 0.1 or under, else 3 on a 3.0 device (0xF0000), else 2; [0x00725784] is left as it is.
 void ProgramManager::restore(uint32_t classes, float detail) {
-    for (Program* p : m_programs) {
-        while (!p->recreate()) {
-        }
-    }
+    for (Program* p : m_programs) p->recreate();
     if (classes < 0x70000) return;
     if (!(detail > 0.1f)) {
         chooseLevel(1);

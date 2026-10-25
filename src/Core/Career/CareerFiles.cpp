@@ -21,7 +21,8 @@ double number(const ScriptLine& line, size_t i) {
 }
 
 // The handlers write at offsets of the object as the stock game does, also past a table's end when a file has more
-// lines than slots (stock problem: the next fields take the values; see RawFields.h).
+// lines than slots (stock problem: the next fields take the values; see RawFields.h). The fixed build keeps each
+// table's lines to its slots (the game's files never pass them).
 using raw::put;
 using raw::putText;
 
@@ -42,6 +43,11 @@ int attendIndex(const std::string& word) {
 
 uint8_t byteOf(const ScriptLine& line, size_t i) {
     return static_cast<uint8_t>(line.integer(i));
+}
+
+// The fixed build: a member's name cut to its 25-byte field (24 characters and the 0); the stock copies it whole.
+std::string fixedName(const std::string& name) {
+    return name.substr(0, 24);
 }
 
 }  // namespace
@@ -91,21 +97,28 @@ void readCrewFile(std::string_view text, Crew& crew, const ExeTables& tables) {
         } else if (same(k, "PrizeMoney")) {
             for (size_t i = 0; i < 3; ++i) crew.prizeMoney[i] = line.integer(i);
         } else if (same(k, "DriverName")) {
-            putText(crew, 0x7A + names * 25, line.word(0));
+            // The fixed build: the members' slots only, the name cut to its field (fixedName).
+            if (names >= crew.memberNames.size()) continue;
+            putText(crew, 0x7A + names * 25, fixedName(line.word(0)));
             put(crew, 0x144 + names * 0x18, line.real(1));
             put(crew, 0x14C + names * 0x18, line.real(2));
             ++names;
         } else if (same(k, "ShortDriverName")) {
-            putText(crew, 0xDE + shortNames * 25, line.word(0));
+            if (shortNames >= crew.memberShortNames.size()) continue;  // the fixed build: as DriverName
+            putText(crew, 0xDE + shortNames * 25, fixedName(line.word(0)));
             ++shortNames;
         } else if (same(k, "WillAttendAt")) {
-            // Stock problem: a word that names no crew gives -1 and sets the field before the table (+0x260).
+            // Stock problem: a word that names no crew gives -1 and sets the field before the table (+0x260). The
+            // fixed build passes such a word over.
             const int index = attendIndex(line.word(0));
+            if (index < 0) continue;
             put(crew, static_cast<size_t>(0x264 + index * 4), int32_t{1});
         } else if (same(k, "RespectFactor")) {
+            if (respect >= crew.respectFactor.size()) continue;  // the fixed build: the table's slots only
             put(crew, 0x04 + respect * 4, productToFloat(number(line, 0), 0.01f));
             ++respect;
         } else if (same(k, "Circuit")) {
+            if (circuit >= crew.circuitRoute.size()) continue;  // the fixed build: the table's slots only
             put(crew, 0x1C4 + circuit * 4, int32_t{tables.routeIndex(line.word(0), line.word(1))});
             put(crew, 0x1E4 + circuit * 4, line.real(2));
             put(crew, 0x204 + circuit * 4, int32_t{line.integer(3)});
@@ -113,16 +126,17 @@ void readCrewFile(std::string_view text, Crew& crew, const ExeTables& tables) {
             increment(crew, 0x228);
         } else if (same(k, "P2P") || same(k, "Cruise") || same(k, "Sprint") || same(k, "Illegal")) {
             // Each has a slot of route and km (P2P two); stock problem: a further line writes over the fields after
-            // the slot (the km and the count of the slot before).
-            size_t base = 0x22C, kmBase = 0x234, count = 0x23C;
+            // the slot (the km and the count of the slot before). The fixed build passes a further line over.
+            size_t base = 0x22C, kmBase = 0x234, count = 0x23C, slots = crew.p2pRoute.size();
             size_t* n = &p2p;
             if (same(k, "Cruise")) {
-                base = 0x240, kmBase = 0x244, count = 0x248, n = &cruise;
+                base = 0x240, kmBase = 0x244, count = 0x248, n = &cruise, slots = 1;
             } else if (same(k, "Sprint")) {
-                base = 0x24C, kmBase = 0x250, count = 0x254, n = &sprint;
+                base = 0x24C, kmBase = 0x250, count = 0x254, n = &sprint, slots = 1;
             } else if (same(k, "Illegal")) {
-                base = 0x258, kmBase = 0x25C, count = 0x260, n = &illegal;
+                base = 0x258, kmBase = 0x25C, count = 0x260, n = &illegal, slots = 1;
             }
+            if (*n >= slots) continue;
             put(crew, base + *n * 4, int32_t{tables.routeIndex(line.word(0), line.word(1))});
             put(crew, kmBase + *n * 4, line.real(2));
             ++*n;
@@ -172,11 +186,12 @@ void readCrewmateFile(std::string_view text, Crewmate& mate, int& currentMate) {
             currentMate = line.integer(0);
         } else if (same(k, "[EndCrewmate]")) {
             currentMate = -1;
-        } else if (same(k, "PhoneNumber")) {
-            // Stock problem: no check of the crewmate, so every crewmate takes the file's last number.
-            mate.phoneNumber = line.integer(0);
         } else if (mate.number != currentMate) {
+            // Stock problem: PhoneNumber was read before this check, so every crewmate took the file's last number
+            // (the game's four have the same one, and nothing reads it). The fixed build reads each its own.
             continue;
+        } else if (same(k, "PhoneNumber")) {
+            mate.phoneNumber = line.integer(0);
         } else if (same(k, "Name")) {
             putText(mate, 0x08, line.word(0));
         } else if (same(k, "ShortName")) {
@@ -239,6 +254,9 @@ void readChallengeFile(std::string_view text, std::array<Crew, 9>& crews, const 
         } else if (same(k, "[EndCrew]")) {
             crew = nullptr;
         } else if (same(k, "Challenge") && crew != nullptr) {
+            // Stock problem: a fourth and further challenge are written past the table (CMSCrewChallenges.txt has
+            // three at most). The fixed build passes them over.
+            if (count >= crew->challenges.size()) continue;
             const size_t at = 0x2DC + count * 0x1C;
             put(*crew, at + 0x14, int32_t{0});
             int32_t type = 4;

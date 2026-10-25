@@ -131,13 +131,18 @@ public:
         // The cruise's score (0x19) and trick (0x1A) of a player on the HUD.
         std::function<void(const NetPlayer&)> cruiseScore;
         std::function<void(const NetPlayer&, int32_t trick)> cruiseTrick;
+        // The fixed build: a hit a fixed peer's machine saw on our player of the index (its momentum and angular
+        // momentum, the world's frame).
+        std::function<void(int32_t peer, int32_t localIndex, const std::array<float, 3>& linear,
+                           const std::array<float, 3>& angular)>
+            contact;
         // A car of the race: its state as 0x40 bytes (0x004E7740), the state applied (0x004E73E0), smoothed towards
         // (0x004E6E30), carried on by its velocities for a time (0x004E6B60), put back on its line (0x00487080), the
         // race's distance (+0x494 +0x98), the model's byte sent each 5 s (+0x430 +0x170) and its setter, gone (the
         // car's +0x4E8 1, its +0x4EC 0).
         std::function<void(void* car, uint8_t* state)> carState;
         std::function<void(void* car, const uint8_t* state)> applyState;
-        std::function<void(void* car, const uint8_t* state)> smoothState;
+        std::function<void(void* car, const uint8_t* state, float dt)> smoothState;  // the frame's time (fixed)
         std::function<void(uint8_t* state, float dt)> extrapolate;
         std::function<void(void* car)> putBack;
         std::function<float(void* car)> carDistance;
@@ -244,6 +249,16 @@ public:
     bool waiting() const { return m_waiting != 0; }
 
     std::vector<NetPlayer>& players() { return m_players; }
+    // The fixed build: the peers known to be of the fixed build (their hello, 0x30 with "OJFX" and the protocol's
+    // version, came; the stock's session passes over the ids 0x1C .. 0xDD, 0x004E96A0). Only they are told the cars'
+    // contacts.
+    bool fixedPeer(int32_t peer) const;
+    // A hit our machine saw on the peer's player of the index: sent (0x31, plain) when the peer is of the fixed build;
+    // false otherwise.
+    bool sendContact(int32_t peer, int32_t localIndex, const std::array<float, 3>& linear,
+                     const std::array<float, 3>& angular);
+    // The fixed build: a peer's one way time, half its pings' mean (at most 0.25 s; the stock's states never had it).
+    float oneWay(int32_t peer) const;
     const std::vector<NetPlayer>& players() const { return m_players; }
     const std::vector<NetNode>& nodes() const { return m_nodes; }
     NetPlayer* player(int32_t peer, int32_t localIndex);  // 0x004E7C30
@@ -299,6 +314,7 @@ private:
     Transport& m_transport;
     std::vector<NetNode> m_nodes;
     std::vector<NetPlayer> m_players;
+    std::vector<int32_t> m_fixedPeers;  // the fixed build's: the peers whose hello came
     std::vector<uint32_t> m_order;      // [0x00728D40], [0x0075F02C] its count
     SessionStage m_stage = SessionStage::Lobby;  // [0x0075EF90]
     uint32_t m_stageNumber = 0;         // [0x0075EF94]

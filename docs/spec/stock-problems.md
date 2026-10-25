@@ -2,7 +2,8 @@
 
 Mistakes and oddities of Juiced 1.0 (PC) that OpenJuice repeats on purpose: the engine behaves as the stock game,
 fixes are left to mods. Where the stock game only crashes or reads memory it does not own, OpenJuice cannot repeat it
-exactly; the entry says what OpenJuice does instead. The code marks each place with "Stock problem".
+exactly; the entry says what OpenJuice does instead. The code marks each place with "Stock problem". The fixed
+build's branches fix some of them: `docs/fixes.md`.
 
 ## The post effects (`12-rendering.md`)
 
@@ -23,6 +24,7 @@ exactly; the entry says what OpenJuice does instead. The code marks each place w
 | the programs made again after a reset of the device (`0x0051B620`) | each is made again until it has a usable technique: one with none (its file not read, or no technique for the device's classes) is made again for ever and the game hangs (every program of the game's files has a usable technique for any classes) | the same |
 | the fixed-function lights (`0x00546419`) | each light's diffuse green is its colour's red | the same |
 | the world's clock started again (`0x004263E0`, `12-rendering.md`) | the lead is the last pause's length, not the sum of the pauses: after a second pause the world's time (the shaders', the cubes', the particles') jumps on by the pauses before it | the same |
+| a car's tree drawn in two modes (`0x00550500`) | the sponsors' decals (Coloured Spec ABlend, flags `0x2004`) are of the late classes as the glass (Car Glass, `0x145`) and go with it in the parts' order: the far side's decals show through the rear window | the same |
 
 ## The effects' textures and sources (`11-effects.md`)
 
@@ -88,9 +90,10 @@ exactly; the entry says what OpenJuice does instead. The code marks each place w
 | `dynamic_<car>.txt` `MaxCollidees`, `Primary`, the collider ends before any object | written through a null definition (the game stops) | left out |
 | `dynamic_*.txt` `[EndTyreContact]` in a plain dynamic object | the object makes a rigid contact (0x3C bytes) and the tyre's values are written past it | the rigid contact |
 | `dynamic_<car>.txt` `ClutchSpeed`, `SteeringSpeed` | read, never used | the same |
-| the betting window's clips (`14-career-windows.md`) | movies the talk asks for that are not there: `COMMENT_CAR_NEG3`, `_NEUTRAL3`, `_POS3`, `YES3` of every leader, `CHALLENGE_INTRO1` but TK's, and others (`HOW_MUCH3`, `OKAY3`, `DECLINE_BET3`, ... of most leaders); such a clip ends at once and the talk goes on | the same |
+| the betting window's clips (`14-career-windows.md`) | `CHALLENGE_INTRO1` and `CHALLENGE_OUTRO1` are there only for TK: for the seven other leaders the challenge's intro and outro have no movie and end at once. The other takes the talk asks for that are not there (`COMMENT_CAR_NEG3`, `_NEUTRAL3`, `_POS3`, `YES3` of every leader, `HOW_MUCH3`, `OKAY3`, `DECLINE_BET3`, ... of most) are played as take 1 or 2 of the same clip (the movie's open, `0x00559B10`), so the third take repeats one of the others | the same |
 | a route's `.spl` with more than six `GRIDPOINT` lines (`0x004A1410`) | the seventh point's x is written over the count that follows the six slots, its y, z and heading into the slot of that new count (x's bits x 16 bytes on) and the count becomes x's bits + 1: an x of 0 (bits 0 .. 5) gives the slot of the six its y, z, heading and the count bits + 1, any other x writes far past the slots (the game stops) | the same for bits 0 .. 5; else dropped |
 | `cardefs.txt` without a `[NeonColour]` (`0x004590E0`) | the neon colour is `rand() %` 0, a division by zero (the game stops) | the colour stays |
+| a car's `<car>_PRIMER` material (`0x0048C210`, `06-cars.md`) | only the meshes in the model's slots take the body material for it: a part of the S2000's chassis and the Golf's farthest logo keep the primer's grey (128 128 128) | the same |
 
 ## Game logic
 
@@ -105,7 +108,7 @@ exactly; the entry says what OpenJuice does instead. The code marks each place w
 | `0x004A2C70` | a draw is compared with -1 (`rand() % n == -1`), which never happens | the same |
 | performance ratings (`07-dynamics.md`) | the x87 precision of the computing thread decides the last bit: the main thread rounds to floats, other threads to doubles; the saves hold both | both, chosen by the caller |
 | lights (`0x00514E80`) | the three light colours are written to c26, c27, c28 at once, but the shaders read them from c26, c28, c30: c27 is then overwritten by light 1's direction, c28 holds the third colour (sorted, the darkest), c30 none | the same |
-| clouds (`0x005151D0`) | c49 is the static after the cloud constants: its first value is the block's initialisation flag (1 as an integer) | the same |
+| clouds (`0x005151D0`) | c49 is the static after the cloud constants: its first value is the block's initialisation flag (1 as an integer); harmless, no shader of the game reads c49 | the same |
 | material classes with a Z-Bias | the value is kept and never used when drawing | the same |
 | atmospheres (`13-atmosphere.md`): ambient, light colours, directions, fog colours, FogMin, FogMax, SunFlareSize, `+0x1C0` | no default: the memory the object was made in when the file leaves them out; `+0x1C0` has no key: the set's loading makes it 1 for the atmosphere it puts in use (`0x00533950`), the others keep the memory, and it goes to the renderer's `+0x188` every frame | 0 (1 for the one in use) |
 | atmospheres: w of the ambient, light colours and directions | a value of the handler's stack (c27, c29, c31 take it) | 0 |
@@ -122,6 +125,7 @@ exactly; the entry says what OpenJuice does instead. The code marks each place w
 | DemoFlyby without the speech object | the counter `+0x20` (10, less the frame time, rounded each frame) never changes at frame times under 0.5 s, and its end is tested as an unsigned number below 0: it leads nowhere | the same |
 | the betting window, step 7 (`0x0042F910`) | the clip is picked with `rand() & 1` but compared with 1 and 2: `SUGGEST_BET3` never plays | the same |
 | the betting window, steps 27 and 29 | without a raise / lower taken BET_CASH shows the money cut, the amount keeps it rounded | the same |
+| the betting window's character test mode (cheat 5, `0x0042F140`) | the count goes through 81 clips, the list (`0x00715AE0`) has 75 names and six zeros: on those the name's length is read at address 0 (the game stops) | the leader's folder alone is played |
 | the phone's contacts (`0x004B6640`) | past 26 contacts the next one is written after the list | not added |
 | track instances (`0x005450C0`) | the fourth values of the column lengths and of the normalised rows (c3.w .. c6.w) are never written: the memory the instances were made in | 0 |
 | Unlit Sign Scroll (`0x0052B0D0`) | the whole sixteens taken off the scroll are made a float as an unsigned number: a negative scroll loses 2^32 more | the same |
@@ -169,12 +173,12 @@ exactly; the entry says what OpenJuice does instead. The code marks each place w
 | the HUD's times (`0x0044FBD0`) | the hundredths are the fraction of the second x 99: they run 00 .. 98 | the same |
 | the HUD's new lap (`0x0044B1C0`) | each player's new lap empties the first player's messages, not the player's own | the same |
 | the HUD's ABS light (`0x0044B1C0`) | without a `SPEED%d` element the light compares the car's signed speed in m/s with 5, not the shown units | the same |
-| the race map's markers (`0x0044A100`) | each vehicle's paint is put into the material named `ui_map_car`, which every marker shares: all markers take the first vehicle's paint | the same |
 | a session's end (`0x004BA8A0`) | the racers not finished are shuffled by `rand() % ` the round's laps: a round of no laps divides by 0 | no swaps from it |
 | a session's results (`0x004B9E20`) | a round past the first (the event's `+0x55` over 0) would write the crews' order past the stats' 0x90 bytes, but `+0x55` is always 0 | not kept |
 | a session's results (`0x004B9E20`) | a place no crew took (-1) after the player's crew counts in the profile's word before the crews' words (`+0x36`) | the same |
 | a session's results (`0x004B9E20`) | with no crew first (-1: none placed, as after a cruise, whose racers `0x004BA8A0` leaves unfinished) the odds before their table are read and their winnings written (`0x004BA195`): the last racer's level timer (`+0x260`, as a whole number) is the stake, its order (`+0x258`, a whole number as a float) and order time (`+0x25C`) against and for, and the session's set-up flag `+0x264` the winnings, which takes the float (any stake makes it set: the next `0x004B8570` sets the session up again) | the same |
-| leaving `CMSRespectChanges` (`0x004D0000`) | the history takes a step on leaving, after `0x004BAEE0` has taken one: two steps for one event | the same |
+| leaving `CMSMeetingSummary` (`0x004CEC30`) and `CMSRespectChanges` (`0x004D0000`) | each takes a history step on leaving, besides the event's own at `0x004BAEE0` (which opens them, and takes its step once their lists are empty): two or three steps for one event | the same |
+| `CMSCalendar`'s highlighted button (`0x004C157D` .. `0x004C15C9`, `[0x0079E850]`) | the button the calendar saw last is kept as a pointer to the window's element; the front end's windows are freed before a race loads and made again after it, so the first calendar frame after a race reads the freed button's name (its second character, `+0x39`, for the wrap across the row's ends): a random crash (J1Tools' calendar crash fix puts 0 in place of the read) | the name kept as a copy: nothing freed is read |
 | `CMSRespectChanges`' enter (`0x004CF5A0`) | an entry of a crew outside 1 .. 8 writes its change into the record's fields before or after the components | not kept |
 | an event search (`0x004A6A70`) | an event of more than one round has its later rounds' types read at the places after its round: the event's later fields and the next events | the same (0 past the calendar) |
 | the career's race results (`0x004DA310`) | a place of the crews' order no crew took (-1) reads the odds before their table (the last racer's `+0x54` .. `+0x60` and the session's `+0x264`) and the logo before the crews' (the flyers' `+0x34`: the player's colours 13 .. 20 as a name), and shows its row with them; a stake there (the last racer's level timer not 0) adds the prize to the profile's `+0x10` | the same |
@@ -378,7 +382,7 @@ exactly; the entry says what OpenJuice does instead. The code marks each place w
 
 | where | what | OpenJuiceConfig |
 |---|---|---|
-| the DirectX check (`0x0040543B`) | DirectX 9.0c or later by DxDiag's letter (`'c'` or later): DirectX 12 on Windows 11 reports a space, so the tool shows "DirectX 9.0c needed" and never its window | the same; the debug builds' `--skip-directx-check` opens the window anyway |
+| the DirectX check (`0x0040543B`) | DirectX 9.0c or later by DxDiag's letter (`'c'` or later) whatever the major: DirectX 10 .. 12 report a blank letter (Windows 11: 12.0 and a space), so the tool shows "DirectX 9.0c needed" and never its window | fixed (a departure): a major past 9 is enough, the letter counts only for 9; without DxDiag's answer the Direct3D 9 interface made with SDK version 32 answers it |
 | the start without DirectX 9.0c (`0x004054A2`) | Direct3D's interface is not released, nor the class unregistered | the same |
 | the window class's count (`0x004020B0`) | raised also when the registration fails or the game's window is found | the same |
 | eax.dll's EAX (`0x004058D0`) | each question loads the library again and makes a device never released; the window asks as it is filled and on each turning of the controls with All Audio | the same |

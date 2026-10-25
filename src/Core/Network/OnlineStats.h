@@ -5,6 +5,8 @@
 // gamestats.gamespy.com, 0x0055C9F0 .. 0x0055D730) and the reporter ([0x0075F28C], vtable 0x006FA97C: each player's
 // keys of a game sent to gstats, 0x00564B20 .. 0x00565070).
 
+#include "Core/Network/GameSpy/GameSpy.h"
+
 #include <array>
 #include <cstdint>
 #include <memory>
@@ -72,7 +74,7 @@ public:
     void parse(char* buffer, uint32_t length);
 
     const std::string& url() const { return m_url; }
-    std::string& host() { return m_host; }  // +0x26C: "gamestats.gamespy.com"
+    std::string& host() { return m_host; }  // +0x26C: "gamestats.<domain>"
 
 private:
     // 0x0055D730: ghttp's completion: success parsed and the success callback; else not pending, read, `done` 1,
@@ -94,7 +96,7 @@ private:
     int32_t m_leaderboard = 0;                      // +0x64
     int32_t* m_total = nullptr;                     // +0x68
     std::string m_url;                              // +0x6C
-    std::string m_host = "gamestats.gamespy.com";  // +0x26C
+    std::string m_host = std::string("gamestats.") + kServiceDomain;  // +0x26C (the fixed build's on kServiceDomain)
     std::u16string m_nick;                          // +0x2AC: the query's player's
     Callback m_success = nullptr;                   // +0x2EC
     void* m_successArg = nullptr;                   // +0x2F0

@@ -18,22 +18,25 @@ namespace oj::net {
 
 // 0x00471920: the game's name and secret key ([0x0075F1F0], [0x0075F230]) and its presence product ([0x0075F270]).
 inline constexpr const char* kGameName = "juicedpc";
+// The services' domain: the stock's gamespy.com, shut down in 2014. The fixed build's is OpenSpy's, openspy.net (the
+// same protocols, the game's name and key; JuicedEditor's "patch servers" writes it over the exe's nine names).
+inline constexpr const char* kServiceDomain = "openspy.net";
 inline constexpr const char* kSecretKey = "g3J8df2";  // 7 characters, as the stock game builds it
 inline constexpr int32_t kProductId = 10362;
 
-// The services' names and ports as the stock game has them. The SDK keeps overrides of the names that nothing writes
+// The services' names (the fixed build's on kServiceDomain) and ports as the stock game has them. The SDK keeps overrides of the names that nothing writes
 // (the master's [0x007A4340], the list server's [0x0075F5E4], the available check's [0x007A43E0]) and the NAT
 // negotiation servers' names behind pointers (0x0071B1C0, 0x0071B1C4). Only the tests point them (and the ports) at
 // their stand-ins on the loopback; nothing in the game changes them.
 struct ServiceHosts {
-    std::string master;           // "" → "<game>.master.gamespy.com"
+    std::string master;           // "" → "<game>.master.<domain>"
     uint16_t masterPort = 27900;  // 0x6CFC
     std::string list;             // "" → masterListHost(<game>)
     uint16_t listPort = 28910;    // 0x70EE
-    std::string natneg1 = "natneg1.gamespy.com";
-    std::string natneg2 = "natneg2.gamespy.com";
+    std::string natneg1 = std::string("natneg1.") + kServiceDomain;
+    std::string natneg2 = std::string("natneg2.") + kServiceDomain;
     uint16_t natnegPort = 27901;  // 0x6CFD
-    std::string available;        // "" → "<game>.available.gamespy.com"
+    std::string available;        // "" → "<game>.available.<domain>"
     uint16_t availablePort = 27900;
 };
 ServiceHosts& serviceHosts();
@@ -63,7 +66,8 @@ std::string challengeAnswer(std::string_view challenge, std::string_view secret 
 
 // 0x0056A670: h = tolower(c) + h x 0x9CCF9319 over the name.
 uint32_t masterHash(std::string_view gameName);
-// The master list server of a game: "<game>.ms<hash % 20>.gamespy.com" (juicedpc.ms3.gamespy.com).
+// The master list server of a game: "<game>.ms<hash % 20>.<domain>" (juicedpc.ms3.gamespy.com; the fixed build's
+// juicedpc.ms3.openspy.net).
 std::string masterListHost(std::string_view gameName);
 
 // The server list's cipher (0x0057FFA0 .. 0x00580200: GOACryptInit, GOACrypt). Both ways for the tests' stand-ins.

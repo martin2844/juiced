@@ -93,6 +93,8 @@ struct CruiseTrick {
     float hold = 0.0f;                 // +0x0C: how long its condition holds (a turn's own time)
     TurnState state = TurnState::Idle;  // +0x10: a turn's state
     CruiseMessage* message = nullptr;  // +0x14: the line it writes (the list's last place)
+    // The fixed build's: the trick's line once it went past the top of the list (Cruise::shift), its points kept.
+    CruiseMessage offList;
 };
 
 // What the cruise's frame reads of the race (0x004AAAB0 from the player's frame 0x0041E200).

@@ -6,6 +6,7 @@
 #include "Game/Cars/CarSound.h"
 #include "Game/Cars/CarView.h"
 #include "Game/Frontend/CustomRace/CustomRaceHost.h"
+#include "Game/Frontend/Network/OnlineHost.h"
 #include "Game/UI/UiScreen.h"
 
 #include <array>
@@ -42,7 +43,8 @@ public:
     // 0x0046EBB0
     void enter(WindowHost& host, ui::Screen& s);
     // 0x0046FB20
-    void update(NetworkHost& host, ui::Screen& s, uint32_t event);
+    // The fixed build's host is the online windows' (the lobby chat opens the keyboard).
+    void update(OnlineHost& host, ui::Screen& s, uint32_t event);
 
 private:
     // 0x0046EED0: each slot's name multiline and "-", its icons (playericon, CPU, voice) hidden, its points, races and

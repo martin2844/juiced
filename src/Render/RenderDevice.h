@@ -167,6 +167,16 @@ public:
     // SetGammaRamp on the swap chain 0: the flags and the red, green and blue ramps of 256 values each.
     virtual void setGammaRamp(uint32_t flags, const uint16_t* red, const uint16_t* green, const uint16_t* blue) = 0;
 
+    // The loading thread's work on the device (the stock renderer's queue [renderer+0x204], run by the main thread at
+    // its frame, 0x00514C96, and while it waits for a job, 0x0045A35B): a frame holds the device from beginFrame to
+    // endFrame, and the loading thread's calls making, freeing, locking or writing resources wait for the device
+    // between frames. The device's thread waiting for that work (a job, the loads' lock) lets the device go for a
+    // moment here; elsewhere it does nothing.
+    virtual void letLoadingRun() {}
+    // 0x0051D270 at a job's end on the loading thread: until the device's thread has run the renderer's queue once
+    // more (a frame begun, or letLoadingRun while it waits), 10 ms sleeps; on the device's thread nothing.
+    virtual void waitForService() {}
+
     // 0 when the data is not usable (the levels that fit are taken).
     virtual TextureId createTexture(const TextureData& data) = 0;
     // A cube: width x width faces +X, -X, +Y, -Y, +Z, -Z one after another, each with all its levels; 0 when the data

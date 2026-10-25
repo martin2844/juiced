@@ -162,11 +162,22 @@ box's edges, a wide cone of a beam, a fuller shadow).
   `_BL`, the rest from that `_`, cut at the last `_`: `WHEEL_BBS_VS1_17` gives `WHEEL_BL_BBS_VS1`) (the model object's
   `+0x11C .. +0x12C`, found by name in the material manager `[G+0x10]`, `0x0048ABC0`) take the car's colour `+0x3C` as
   their colour (parameter 0). The manager keeps one material of a name: the catalogue's wheels' blur meshes
-  (`AddWH_..._blur`) use the parts' names of their meshes, so the colour is on both.
+  (`AddWH_..._blur`) use the parts' names of their meshes, so the colour is on both. The wheels' fit (`0x0048ABC0`)
+  lets the five go and finds them for a catalogue wheel alone: the CarDef's standard wheels (the wheel -1) have none,
+  and the wheel colour does not reach them. Each found keeps its file's colour (the manager's description, its first
+  value, `0x0048AED8`; `+0x134 .. +0x144`, -1 for a name not found), which is put back on it. `0x0048C5D0` keeps the
+  car's colour as theirs (wheelcolourmenu entered with the car's own colour, a colour bought), `0x0048C530` puts the
+  kept ones back (schememenu putting on a look without a wheel colour, wheelcolourmenu's BACK before the car's own
+  colour, `0x0048C4F0`).
 - The body material (`+0xEC`) is the mesh material `<car>_BODY` (the CarDef's `+0x15C`); a slot's mesh takes it for
-  its parts of that material and of `<car>_PRIMER` (`0x0048B9D0`, `0x0048C090`). The paint (`0x0048BF90`): Car Colour
-  = the base colour, Metallic Colour, Metallic Shininess = 30 − the metallic amount × 25, Pearlescent Colour,
-  Pearlescent Shininess = the pearl amount × 6 + 0.01.
+  its parts of that material and of `<car>_PRIMER` (`0x0048B9D0`, `0x0048C090`). The primer's (`0x0048C210`: the
+  material found by the CarDef's `+0x19C`, then each of the slots `+0x30 .. +0x58`) runs after the body parts as the
+  model is made (`0x0048C2E0`), as a job after the parts changed (`0x0045A8A0`, for the model and its mirror image)
+  and as colourchoose and colourfocus are entered (the garage's car). A mesh in no slot keeps the primer's own
+  material (`<car>_primer.pmd`, Car Colour 128 128 128): a part of the S2000's chassis (S2000_PRIMER) and the Golf's
+  farthest logo stay grey, a stock problem. The paint (`0x0048BF90`): Car Colour = the base colour, Metallic Colour,
+  Metallic Shininess = 30 − the metallic amount × 25, Pearlescent Colour, Pearlescent Shininess = the pearl amount ×
+  6 + 0.01.
 - The race's wheel records (`0x00485270`, 0x9C bytes from the car's `+0x1A0`: WHEEL_FL, WHEEL_FR, WHEEL_RL,
   WHEEL_RR, the right ones flagged `+0x48`) keep the slot's place and diagonal. Each frame (`0x00487670`): the node's
   place against the last frame's; the turn less dt x the wheel's spin (0.05 of it for the front wheel whose steering

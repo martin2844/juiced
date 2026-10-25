@@ -46,7 +46,8 @@ Frontend --race asked--> Load --track and cars made--> Race --race left--> Unloa
 - **Load**: the loading front end's frames; after three, the load on the main thread: `TrackView::start` (the track),
   the grid by the race's mode (`Race/RaceGrids.h`: the career's racers, a custom or arcade race, a replay's, the
   network's), the intro, `beginRace`. The stock game loads on a thread with the loading window moving; here the window
-  stands while the track loads.
+  stands while the track loads; in a network game a thread of the transport (`LoadKeepAlive`) says the keep-alive
+  to the peers meanwhile, as the stock's frames did (else the peers drop a machine whose load passes 25 s).
 - **Race**: `TrackView::drive` and `draw` (`race.md`), the 3D sounds' world. When the race front end asks to leave
   (`unloadAsked`), the race ends (`endRace`) and a loading front end shows.
 - **Unload**: three frames of it, then a new `Frontend` on the window that follows the race (`windowAfterRace`).
@@ -74,9 +75,10 @@ Each frame, in the stock order:
 - Windows 7: the build targets it (`_WIN32_WINNT` 0x0601), but the toolset's C++ library calls three functions of
   Windows 8 directly (`CreateFile2`, `CopyFile2`, `GetSystemTimePreciseAsFileTime`), and an executable importing
   them does not start on Windows 7. `Platform/Win7Imports.cpp` (with `Win7Imports32.asm` for the 32-bit names),
-  built in the executable's own project, defines their import slots: each calls the system's function where there is
-  one, else its Windows 7 way (`Platform/Windows7.h`). The test `Windows7.Executable` (`tests.md`) checks every
-  import of the executable against Windows 7's functions.
+  built in the executable's own project, defines their import slots, read-only as the system's: each holds the
+  function that does the same with Windows 7's (`Platform/Windows7.h`: `CreateFileW`, `CopyFileExW`,
+  `GetSystemTimeAsFileTime`), on every Windows alike, nothing looked up as the game runs. The test
+  `Windows7.Executable` (`tests.md`) checks every import of the executable against Windows 7's functions.
 
 ## The command line and `OpenJuice.ini`
 

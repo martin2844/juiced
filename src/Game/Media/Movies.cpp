@@ -7,6 +7,7 @@
 #include "Game/Media/BinkLibrary.h"
 #include "Render/Renderer3d.h"
 
+#include <algorithm>
 #include <cmath>
 #include <cstring>
 #include <limits>
@@ -73,16 +74,6 @@ uint32_t powerOfTwo(uint32_t v) {
 int32_t chop(float v) {
     if (!(v > -2147483648.0f && v < 2147483648.0f)) return std::numeric_limits<int32_t>::min();
     return static_cast<int32_t>(v);
-}
-
-// 0x005B8B50: a volume 0 .. 1 in hundredths of decibels, -10000 .. 0 (2000 log10, cut toward zero).
-int32_t hundredthsOfDecibels(float volume) {
-    if (!(volume > 0.0f)) return -10000;
-    const float v = volume > 1.0f ? 1.0f : volume;
-    const auto decibels = static_cast<float>(std::log10(static_cast<double>(v)) * 2000.0);
-    const int32_t r = chop(decibels);
-    if (r < -10000) return -10000;
-    return r > 0 ? 0 : r;
 }
 
 // An unsigned whole number as the x87 loads it (fild, plus 2^32 when its top bit is set).
@@ -503,13 +494,13 @@ void Player::binkVolume(int32_t volume) const {
 }
 
 // 0x00559B10. The rad3d made at the first open (0x0055B7C0, then the surface table 0x00559AA0). movies\<name>.bik;
-// without it a name ending in a digit tries that digit as 1 and 2 in the order of rand() & 1 (1 + it first); with
-// none the player has no movie (0x40000000 of its refcount word). The sound: unless [0x0071E718] & 1 the language's
-// track (+0x68) is asked for (BinkSetSoundTrack(1, track)); a movie of one track is opened again with track 0 (+0x68
-// stays the language's; Stock problem: BinkSetVolume then names a track the movie does not play, so the volume and
-// the muting never reach its sound). With [0x0071E718] & 1 no track. The rectangle gives +0x40, +0x44 (its size over
-// the movie's) and +0x50, +0x54 (its corner cut to whole pixels). The shared image is made again when the movie is
-// larger than it (0x0055B740; tiles of 0x100), else kept; the movie's size is the one drawn.
+// without it a name ending in a digit tries that digit as 1 and 2 in the order of rand() & 1 (1 + it first); with none
+// the player has no movie (0x40000000 of its refcount word). The sound: unless [0x0071E718] & 1 the language's track
+// (+0x68) is asked for (BinkSetSoundTrack(1, track)); a movie of one track is opened again with track 0 (+0x68 stays
+// the language's; Stock problem: BinkSetVolume then names a track the movie does not play, so the volume and the muting
+// never reach its sound; the fixed build's +0x68 0 then). With [0x0071E718] & 1 no track. The rectangle gives +0x40,
+// +0x44 (its size over the movie's) and +0x50, +0x54 (its corner cut to whole pixels). The shared image is made again
+// when the movie is larger than it (0x0055B740; tiles of 0x100), else kept; the movie's size is the one drawn.
 bool Player::open() {
     System& s = m_system;
     if (!s.m_rad3d) {
@@ -554,6 +545,7 @@ bool Player::open() {
             const uint32_t zero = 0;
             lib.setSoundTrack(1, &zero);
             m_bink = lib.open(folder / file, kOpenFlags);
+            m_track = 0;
         }
     } else {
         lib.setSoundTrack(0, nullptr);
@@ -606,7 +598,9 @@ bool Player::finished() const {
 
 void Player::setVolume(float volume) {
     m_volume = volume;
-    if (m_bink != 0) binkVolume(hundredthsOfDecibels(volume));
+    // Stock problem: the volume in hundredths of decibels (0 for full), which Bink takes as silence until the step
+    // sets it again. The fixed build gives Bink the step's volume (x 32768, cut).
+    if (m_bink != 0) binkVolume(chop(volume * 32768.0f));
 }
 
 void Player::restart() {
@@ -625,7 +619,13 @@ void Player::copy(bool all) {
         uint32_t surface = 0, x = 0, y = 0, w = 0, h = 0;
         if (!s.lock(&bits, &pitch, &surface, &x, &y, &w, &h)) return;
         const uint32_t flags = s.m_surfaces[surface] | (all ? kCopyAll : 0u);
-        s.m_library->copyToBufferRect(m_bink, bits, pitch, h, 0, 0, x, y, w, h, flags);
+        // Stock problem: the right column's and the bottom row's tiles copy their power-of-two sides, past the frame's
+        // edge. The fixed build cuts them to the frame (a tile wholly past it copies nothing).
+        if (x < s.m_frameWidth && y < s.m_frameHeight) {
+            w = std::min(w, s.m_frameWidth - x);
+            h = std::min(h, s.m_frameHeight - y);
+            s.m_library->copyToBufferRect(m_bink, bits, pitch, h, 0, 0, x, y, w, h, flags);
+        }
         if (!s.m_image) return;
         s.unlock();
     }

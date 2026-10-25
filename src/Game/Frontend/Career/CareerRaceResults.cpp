@@ -8,29 +8,6 @@
 
 namespace oj::frontend {
 
-namespace {
-
-// The logo name of crew -1 (the flyers' +0x58 - 0x24, their +0x34): the bytes of the player's colours 13 .. 20, then
-// crew 0's colour and logo, up to the first 0 (colour 20 holds the chosen logo, 0 .. 18, so it ends there).
-std::string logoBeforeCrews(const Flyers& flyers) {
-    std::string name;
-    const auto bytes = [&](uint32_t v) {
-        for (int b = 0; b < 4; ++b) {
-            const auto c = static_cast<char>((v >> (8 * b)) & 0xFF);
-            if (c == '\0') return false;
-            name.push_back(c);
-        }
-        return true;
-    };
-    for (size_t k = 13; k < flyers.playerColours.size(); ++k) {
-        if (!bytes(flyers.playerColours[k])) return name;
-    }
-    if (!bytes(flyers.crews[0].colour)) return name;
-    return name + flyers.crews[0].logo;
-}
-
-}  // namespace
-
 // 0x004DA310: for the rows 1 .. 3 pos, time, driver 1 .. 3 and bet emptied, crew, timetitle, drivers, winnings and box0
 // hidden; then for each of the round's crews up to three, in the crews' order (the session's +0x340): the row shown;
 // pos "<n><st / nd / rd>" (lines 37 ..); crew shown (its texture the crew's logo of the flyers, the career's +0x00
@@ -75,25 +52,21 @@ void CareerRaceResults::enter(CareerHost& host, ui::Screen& s) {
     const int language = host.language().index;
     // A crew's odds (the session's +0x268 + 0x14 x crew). Stock problem: a place no crew took (-1) reads the 0x14 bytes
     // before the table: the last racer's +0x54 .. +0x60 (its nerves, order, order's time and level's timer) and the
-    // session's +0x264, and its row is shown with them (0x004DA783, 0x004DAA9C, 0x004DAD43).
+    // session's +0x264, and its row is shown with them (0x004DA783, 0x004DAA9C, 0x004DAD43), its logo the bytes before
+    // the crews' (the player's colours 13 .. 20 as a name), and a stake there (the last racer's level timer not 0) adds
+    // winnings made of those bytes to the money. The fixed build leaves such a row hidden and counts nothing of it.
     const auto oddsOf = [&](int32_t crew) {
         if (crew >= 0 && static_cast<size_t>(crew) < session.odds.size()) {
             return session.odds[static_cast<size_t>(crew)];
         }
-        const Racer& last = session.racers[5];
-        CrewOdds before;
-        before.raceTime = last.nerves;
-        before.against = std::bit_cast<float>(last.order);
-        before.stake = last.orderTime;
-        before.staked = std::bit_cast<int32_t>(last.levelTimer);
-        before.winnings = std::bit_cast<float>(session.needsSetup);
-        return before;
+        return CrewOdds{};
     };
     for (int i = 0; i < round.opponents && i < 3; ++i) {
         const int row = i + 1;
         const int32_t crew = session.order[static_cast<size_t>(i)];
-        // The order holds crews 0 .. 8 or -1; nothing of the row for another value (none).
-        if (crew < -1 || static_cast<size_t>(crew + 1) > session.odds.size()) continue;
+        // The order holds crews 0 .. 8 or -1; nothing of the row for another value (none), nor for -1 in the fixed
+        // build.
+        if (crew < 0 || static_cast<size_t>(crew) >= session.odds.size()) continue;
         const CrewOdds odds = oddsOf(crew);
         for (const char* name : {"timetitle", "drivers", "winnings", "box0"}) {
             hidden(std::format("{}{}", name, row), false);
@@ -101,8 +74,7 @@ void CareerRaceResults::enter(CareerHost& host, ui::Screen& s) {
         hidden(std::format("pos{}", row), false);
         text(std::format("pos{}", row), toWide(std::format("{}", row)) + texts.at(37 + static_cast<size_t>(i)));
         hidden(std::format("crew{}", row), false);
-        s.setTexture(std::format("crew{}", row), crew >= 0 ? career.flyers.crews[static_cast<size_t>(crew)].logo
-                                                           : logoBeforeCrews(career.flyers));
+        s.setTexture(std::format("crew{}", row), career.flyers.crews[static_cast<size_t>(crew)].logo);
         if (i == 0) {
             text(std::format("time{}", row), toWide(hudTime(odds.raceTime)));
         } else {

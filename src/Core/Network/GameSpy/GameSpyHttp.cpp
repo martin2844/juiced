@@ -159,11 +159,11 @@ Request* newRequest() {
     r.uniqueId = s.uniqueId++;
     r.inUse = true;
     r.request = slot;
-    if (r.sendBuffer.init(&r, 0x1000) && r.recvBuffer.init(&r, 0x800)) {
-        ++s.active;
-        return &r;
-    }
-    freeRequest(r);  // the count goes down though it never went up
+    // Counted before the buffers (the stock's after them, so a request whose buffers cannot be had was counted down
+    // by its freeing though never counted up).
+    ++s.active;
+    if (r.sendBuffer.init(&r, 0x1000) && r.recvBuffer.init(&r, 0x800)) return &r;
+    freeRequest(r);
     return nullptr;
 }
 
@@ -324,18 +324,17 @@ void connecting(Request& r) {
     }
     bool writable = false;
     bool failed = false;
-    // The select's value kept as its low byte and compared with -1 (Stock problem: never equal, a failed select
-    // reads as one with nothing set).
-    const int32_t selected = selectSocket(socketOf(r), nullptr, &writable, &failed) & 0xFF;
-    if (!failed) {
+    // The select's whole value (the stock kept its low byte and compared it with -1, never equal: a failed select read
+    // as one with nothing set, the request waiting for ever).
+    const int32_t selected = selectSocket(socketOf(r), nullptr, &writable, &failed);
+    if (selected != -1 && !failed) {
         if (!writable) return;
         r.state = kSendingRequest;
         progress(r);
         return;
     }
     fail(r, kConnectFailed);
-    if (selected != 0) return;
-    r.socketError = WSAGetLastError();
+    if (selected == -1) r.socketError = WSAGetLastError();
 }
 
 // 0x005701C0: the send buffer's rest sent while the socket takes it; false on a failure.
@@ -681,19 +680,24 @@ void receivingStatus(Request& r) {
 
 bool processFile(Request& r, char* data, int32_t length);
 
-// 0x00570F60: the headers up to "\r\n\r\n" (else "\n\n"; Stock problem: then the body's first byte made a 0 and its
-// first two skipped): a 1xx's again from the status; a 3xx's Location (more than 10 redirects kFileNotFound; a path
-// made "http://<server>:<port><path>"); Content-Length (from 16 characters on: Stock problem: the one after the
-// colon skipped; 19 digits from INT64_MAX on kFileTooBig); chunked; a HEAD or a post only done; else the body, the
-// bytes come with the headers first.
+// 0x00570F60: the headers up to "\r\n\r\n" (else "\n\n": the 0 after its first '\n', the body after the second; the
+// stock took "\r\n\r\n"'s places, making the body's first byte a 0 and skipping two): a 1xx's again from the status;
+// a 3xx's Location (more than 10 redirects kFileNotFound; a path made "http://<server>:<port><path>"); Content-Length
+// (after the colon and its spaces: the stock read from 16 characters on, skipping the character after the colon, the
+// first digit without a space; 19 digits from INT64_MAX on kFileTooBig); chunked; a HEAD or a post only done; else
+// the body, the bytes come with the headers first.
 void receivingHeaders(Request& r) {
     char data[0x1000];
     int32_t size = sizeof data;
     const int got = receiveData(r, data, size);
     if (!receiveInto(r, got, data, size)) return;
     char* headers = r.recvBuffer.data + r.recvBuffer.pos;
+    int32_t lineEnd = 2;
     char* end = std::strstr(headers, "\r\n\r\n");
-    if (end == nullptr) end = std::strstr(headers, "\n\n");
+    if (end == nullptr) {
+        end = std::strstr(headers, "\n\n");
+        lineEnd = 1;
+    }
     if (end == nullptr) {
         if (got == 2) {
             fail(r, kBadResponse);
@@ -701,11 +705,11 @@ void receivingHeaders(Request& r) {
         }
         return;
     }
-    end[2] = '\0';
+    end[lineEnd] = '\0';
     char* const buffer = r.recvBuffer.data;
-    char* body = end + 4;
+    char* body = end + 2 * lineEnd;
     const int32_t before = r.recvBuffer.len;
-    r.recvBuffer.len = static_cast<int32_t>(end + 2 - buffer);
+    r.recvBuffer.len = static_cast<int32_t>(end + lineEnd - buffer);
     const int32_t remaining = before - static_cast<int32_t>(body - buffer);
     const int32_t kind = r.statusCode / 100;
     if (kind == 1) {
@@ -742,7 +746,8 @@ void receivingHeaders(Request& r) {
     const char* length = std::strstr(headers, "Content-Length:");
     if (length != nullptr) {
         constexpr std::string_view kMax = "9223372036854775807";
-        const char* value = length + 16;
+        const char* value = length + 15;
+        while (*value == ' ' || *value == '\t') ++value;
         const char* p = value;
         while (*p != '\0' && *p != '\n' && *p != '\r' && *p != ' ') ++p;
         const auto digits = static_cast<size_t>(p - value);

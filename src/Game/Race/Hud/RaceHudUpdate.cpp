@@ -116,8 +116,10 @@ void RaceHud::update(const HudRace& race, float dt) {
             if (m_revMeter >= 0) s.setMeter(m_revMeter, kRevMeterScale * share);
         }
         rivalsAndAid(race, p, i, *car, dt);
-        // The speed (m/s along the car), shown in miles or kilometres an hour, cut toward zero.
-        float lights = body.localVelocity[2];
+        // The speed (m/s along the car), shown in miles or kilometres an hour, cut toward zero. Stock problem: without
+        // a SPEED%d element the ABS light compares the signed m/s with 5; the fixed build takes the shown units always
+        // (no window of the game has an ABSLIGHT%d).
+        float lights = std::fabs(body.localVelocity[2]) * (mph ? 2.235f : 3.6f);
         if (p.speed >= 0) {
             const float v = std::fabs(body.localVelocity[2]);
             if (p.speedo >= 0) {
@@ -251,8 +253,9 @@ void RaceHud::update(const HudRace& race, float dt) {
         if (p.nosMeter >= 0) s.setMeter(p.nosMeter, body.nitroLeft * 0.06666667f);
         if (race.type != RaceType::Cruise) {
             if (r.newLap) {
-                // Every new lap: the first player's messages cleared, the panels in again, the lap's message.
-                m_messages[0].clear();
+                // Every new lap: the first player's messages cleared, the panels in again, the lap's message. The
+                // fixed build clears the player's own (split screen: the first player's lost theirs at each lap).
+                m_messages[i].clear();
                 p.fade = keepsPanels(race.type) ? kNeverFades : 4.0f;
                 HudMessages& m = m_messages[i];
                 const float best = r.bestLap;

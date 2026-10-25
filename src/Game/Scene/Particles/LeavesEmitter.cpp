@@ -131,7 +131,7 @@ LeavesEmitter::LeavesEmitter(ParticleSystem& system, const EffectDef& d) : Emitt
     }
     // Each leaf's corners of its texture: entry % NUM_TEXTURES of an atlas four across, the quad's turn by the leaf's
     // index x 4 cut to a whole number. Stock problem: only the first leaf takes the turn 0, every other the last;
-    // the turns 1 and 2 are never taken.
+    // the turns 1 and 2 are never taken. The fixed build turns the leaves by their index % 4: each turn in turn.
     const auto n = static_cast<uint32_t>(d.textures);
     const float across = 1.0f / static_cast<float>(((n - 1) & 3) + 1);
     const float down = 1.0f / static_cast<float>(((n - 1) >> 2) + 1);
@@ -149,7 +149,7 @@ LeavesEmitter::LeavesEmitter(ParticleSystem& system, const EffectDef& d) : Emitt
             const auto set = [q](float a, float b, float c, float e, float f, float g, float h, float k) {
                 q[0].u = a, q[0].v = b, q[1].u = c, q[1].v = e, q[2].u = f, q[2].v = g, q[3].u = h, q[3].v = k;
             };
-            switch (x87::chop(static_cast<float>(i) * 4.0f)) {
+            switch (i % 4) {
                 case 0:
                     set(u0, v0, u1, v0, u0, v1, u1, v1);
                     break;
@@ -419,10 +419,11 @@ bool LeavesEmitter::frame(render::Camera& camera) {
     m_system.engine().renderer().beginMaterialPass(*m_material, 0);
     device.updateVertexBuffer(m_buffer, r.vertices.data(), static_cast<uint32_t>(m_vertexCount * sizeof(Vertex)));
     device.setRenderState(RenderState::CullMode, Cull::None);
-    // 0x00508970. Stock problem: the count of triangles is the leaves', so only the first half of them is drawn.
+    // 0x00508970. Stock problem: the count of triangles is the leaves', so only the first half of them is drawn. The
+    // fixed build draws two triangles a leaf: every leaf.
     device.setStream(m_buffer, sizeof(Vertex));
     device.setIndices(m_system.quadIndices(m_points));
-    device.drawIndexed(Primitive::TriangleList, r.count * 4, 0, r.count);
+    device.drawIndexed(Primitive::TriangleList, r.count * 4, 0, r.count * 2);
     // 0x00509B25: drawn, its bounds again in olive (0xFF373700).
     if (g_drawBounds) drawCircle(camera, device, m_bounds.middle, m_bounds.radius, 0xFF373700u);
     return true;

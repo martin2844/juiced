@@ -101,10 +101,13 @@ void InstantSetup::leave() {
     m_map.release();
 }
 
-// The pages' common start: the menu shown and emptied.
+// The pages' common start (0x0045C4BC, 0x0045C739, 0x0045CD2F, 0x0045D01F, 0x0045D300, 0x0045D5D4, 0x0045D884):
+// the menu shown and emptied (0x005AEEF0), and its transition started again, so each page's items come in from
+// black.
 void InstantSetup::menuCleared(ui::Screen& s) {
     s.setHidden("menu", false);
     s.clearMenu("menu");
+    s.restartTransition("menu");
 }
 
 // 0x0045C450, the location page (+0x138 1). Filling: the route models taken off the map (0x0045BD10), the menu
@@ -163,8 +166,9 @@ void InstantSetup::showLocations(CustomRaceHost& host, ui::Screen& s) {
 // list: a reversed point-to-point "POINT-TO-POINT Reversed", a reversed route "ROUTE <n> Reversed" (n counting the
 // reversed ones from 1), a point-to-point "POINT-TO-POINT" (none in a solo race), another "ROUTE <its place + 1>"; the
 // item of the race's route highlighted (Stock problem: by its place among all the routes, though the routes left out
-// have no item); +0x18 -1; HELP "select route" (59). Each frame a highlighted item other than +0x18: +0x18 its place,
-// its name less ".wld" on the map (0x0045B720) and as the race's route (31 characters); LOCKED hidden.
+// have no item; the fixed build's by its item, none when it has none); +0x18 -1; HELP "select route" (59). Each frame a
+// highlighted item other than +0x18: +0x18 its place, its name less ".wld" on the map (0x0045B720) and as the race's
+// route (31 characters); LOCKED hidden.
 void InstantSetup::showRoutes(CustomRaceHost& host, ui::Screen& s) {
     GameData* data = host.gameData();
     const TextTable& texts = host.gameTexts();
@@ -180,6 +184,7 @@ void InstantSetup::showRoutes(CustomRaceHost& host, ui::Screen& s) {
         m_fill = false;
         menuCleared(s);
         int32_t highlight = -1;
+        int32_t items = 0;
         const std::vector<std::string> routes = trackRoutes(d.race.track);
         int32_t reversed = 1;
         for (size_t i = 0; i < routes.size(); ++i) {
@@ -200,13 +205,13 @@ void InstantSetup::showRoutes(CustomRaceHost& host, ui::Screen& s) {
             } else {
                 text = texts.at(kTextRoute) + toWide(std::format(" {} ", i + 1));
             }
-            if ((network() != nullptr || !routeLocked(d.arcade, d.tables, name)) &&
-                !(pointToPoint && d.race.type == RaceType::Solo)) {
-                s.addCommandItem("menu", text, static_cast<float>(i), name);
-            }
+            const bool item = (network() != nullptr || !routeLocked(d.arcade, d.tables, name)) &&
+                              !(pointToPoint && d.race.type == RaceType::Solo);
+            if (item) s.addCommandItem("menu", text, static_cast<float>(i), name);
             std::string bare = name;
             if (const size_t at = bare.find(".wld"); at != std::string::npos) bare.resize(at);
-            if (_stricmp(bare.c_str(), d.race.route.c_str()) == 0) highlight = static_cast<int32_t>(i);
+            if (item && _stricmp(bare.c_str(), d.race.route.c_str()) == 0) highlight = items;
+            if (item) ++items;
         }
         m_shown = -1;
         if (highlight > -1) s.selectMenuItem("menu", static_cast<size_t>(highlight));
@@ -446,7 +451,8 @@ int32_t InstantSetup::findRoute(CustomRaceHost& host, const char* kind) {
 // the race), the time of day, the weather, the opponents, the race (the difficulty's page goes to the route). The
 // race: a cruise looks for its "cruise" route, else "No Cruise Route Found"; a sprint for its "sprint" route.
 // Stock problem: the sprint's check takes the route found at place 1 for none ("No Sprint Route Found"), not -1; a
-// track without a sprint route keeps the route it had. More players: split_selcar; else loading, the race's +0x54 0
+// track without a sprint route keeps the route it had. The fixed build tests for none as the cruise's (the game's
+// tracks have their sprint at place 9 or 10). More players: split_selcar; else loading, the race's +0x54 0
 // for a sprint, else the automatic box. BACK (CLICK) by the type and page: solo the route to the location, the time to
 // the route, the weather to the time, else instant_seltype; a cruise the difficulty to the location, else
 // instant_seltype (mode 7); a sprint the location to instant_seltype (mode 7), the time to the location, the weather
@@ -595,7 +601,7 @@ void InstantSetup::update(CustomRaceHost& host, ui::Screen& s, uint32_t event) {
                 return;
             }
         } else if (race.type == RaceType::Sprint) {
-            if (findRoute(host, "sprint") == 1) {
+            if (findRoute(host, "sprint") <= -1) {
                 host.message(MessageType::Continue, L"No Sprint Route Found", false, nullptr);
                 return;
             }

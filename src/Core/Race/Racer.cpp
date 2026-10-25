@@ -638,7 +638,10 @@ void steer(Competitor& c, Frame& f) {
 
         if (c.reverseTime == 0.0f && !c.neighbours.empty()) {
             // Away from a car beside (±2.5 m across, ±3 m along) that is ahead in the lap; a swerve on top; in a
-            // race of type 6 away from one close ahead that is reached in under 2.5 s.
+            // race of type 6 away from one close ahead that is reached in under 2.5 s. Stock problem: the swerve is
+            // added for each neighbour (three cars near, three swerves); the fixed build adds it once, where the
+            // first neighbour's turn takes it.
+            bool swerved = false;
             for (const std::unique_ptr<Neighbour>& np : c.neighbours) {
                 const Neighbour& n = *np;
                 const float lx = n.local[0];
@@ -647,7 +650,10 @@ void steer(Competitor& c, Frame& f) {
                     c.distance() < n.other->distance()) {
                     steering = lx < 0.0f ? 0.25f + steering : steering - 0.25f;
                 }
-                if (c.swerveTimer != 0.0f) steering = c.swerveSide * c.swerveTimer + steering;
+                if (c.swerveTimer != 0.0f && !swerved) {
+                    steering = c.swerveSide * c.swerveTimer + steering;
+                    swerved = true;
+                }
                 if (f.rules.type == RaceType::Sprint && lz > 600.0f && n.contactTime < 2.5f) {
                     float push = 0.0f;
                     const float k = (1.0f - n.contactTime * 0.5f) * 0.3926991f;
@@ -1439,7 +1445,7 @@ void RaceState::driverLevels(float frameTime) {
             rec.nerves = pressure * rec.nerveGain * frameTime + rec.nerves;
             // 0x004BEDFF: crossing 1.9 the orders asked for as the chatter asks (0x004BEA60) for no racer (-1): the
             // orders opened, no line flashed.
-            if (before < 1.9f && rec.nerves >= 1.9f) ordersFlash(-1);
+            if (before < 1.9f && rec.nerves >= 1.9f) ordersFlash(-1, frameTime);
         } else {
             rec.nerves = rec.nerves - frameTime * rec.nerveLoss * 3.0f;
         }
@@ -1593,8 +1599,9 @@ RaceState::Events RaceState::update(float dt, float frameTime, CrtRandom& random
         // On the network the count holds until the session's stage 12 (the race).
         if (!m_rules.network || (m_rules.netStage && m_rules.netStage() == net::SessionStage::Racing))
             count = count - dt;
-        // Stock problem: a count that lands on exactly 0 never starts the race.
-        if (count < 0.0f) {
+        // Stock problem: a count that lands on exactly 0 never starts the race (the cars are let go, nothing else
+        // of the start happens). The fixed build starts it at 0 too.
+        if (count <= 0.0f) {
             count = 0.0f;
             start();
             e.go = true;
@@ -1664,8 +1671,8 @@ Competitor* RaceState::atPlace(int32_t place) const {
     return i >= 0 && static_cast<size_t>(i) < order.size() ? order[static_cast<size_t>(i)] : nullptr;
 }
 
-void RaceState::ordersFlash(int32_t racer) {
-    if (m_rules.career != nullptr) m_rules.career->drivers.chatterFlash.push_back(racer);
+void RaceState::ordersFlash(int32_t racer, float frameTime) {
+    if (m_rules.ordersFlash) m_rules.ordersFlash(racer, frameTime);
 }
 
 void RaceState::chatterFrame(float frameTime, CrtRandom& random) {
@@ -1763,7 +1770,7 @@ int32_t RaceState::crewLine(ChatterEntry& p, float t, CrtRandom& random) {
             } else {
                 s = 0x13;
             }
-            ordersFlash(p.racer);
+            ordersFlash(p.racer, t);
             p.delay = 2.0f;
         }
         p.skip = 0;
@@ -1780,7 +1787,7 @@ int32_t RaceState::crewLine(ChatterEntry& p, float t, CrtRandom& random) {
         const int32_t place = comp->place;
         const auto last = static_cast<int32_t>(session.count);
         if (place != p.lastPlace && p.delay < 0.0f) {
-            ordersFlash(p.racer);
+            ordersFlash(p.racer, t);
             if (p.lastPlace == -1 || place == 1 || place < p.lastPlace) {
                 static const int32_t kGained[5] = {0, 3, 5, 7, 9};
                 s = place >= 1 && place <= 5 ? kGained[place - 1] : 1;
@@ -1836,7 +1843,7 @@ int32_t RaceState::crewLine(ChatterEntry& p, float t, CrtRandom& random) {
     // 6. Spun: the crewmate's order 1 (0x004BF2F0).
     p.spinTimer = p.spinTimer - t;
     if (comp->spun && p.spinTimer < 0.0f && p.delay < 0.0f) {
-        ordersFlash(p.racer);
+        ordersFlash(p.racer, t);
         p.spinTimer = 20.0f;  // [0x00718A1C]
         p.delay = 2.0f;
         s = 0x0A;
@@ -1846,7 +1853,7 @@ int32_t RaceState::crewLine(ChatterEntry& p, float t, CrtRandom& random) {
     // 7. In traffic.
     p.trafficTimer = p.trafficTimer - t;
     if (comp->trafficTime > 0.5f && p.trafficTimer < 0.0f && p.delay < 0.0f) {
-        ordersFlash(p.racer);
+        ordersFlash(p.racer, t);
         s = 0x1E;
         p.trafficTimer = 20.0f;
         p.delay = 2.0f;
@@ -1854,32 +1861,32 @@ int32_t RaceState::crewLine(ChatterEntry& p, float t, CrtRandom& random) {
     // 8. Pressed.
     p.behindTimer = p.behindTimer - t;
     if ((comp->behindTime > 2.0f || racer.nerves > 1.9f) && p.behindTimer < 0.0f && p.delay < 0.0f) {
-        ordersFlash(p.racer);
+        ordersFlash(p.racer, t);
         s = 0x1D;
         p.behindTimer = 20.0f;
         p.delay = 2.0f;
     }
     // 9. The contacts, each flag cleared.
     if (racer.rammed == 1 && p.delay < 0.0f) {
-        ordersFlash(p.racer);
+        ordersFlash(p.racer, t);
         p.delay = 2.0f;
         s = 0x19;
         racer.rammed = 0;
     }
     if (racer.rammed == 2 && p.delay < 0.0f) {
-        ordersFlash(p.racer);
+        ordersFlash(p.racer, t);
         p.delay = 2.0f;
         s = 0x1A;
         racer.rammed = 0;
     }
     if (racer.crashed == 1 && p.delay < 0.0f) {
-        ordersFlash(p.racer);
+        ordersFlash(p.racer, t);
         p.delay = 2.0f;
         s = 0x0E;
         racer.crashed = 0;
     }
     if (racer.crashed == 2 && p.delay < 0.0f) {
-        ordersFlash(p.racer);
+        ordersFlash(p.racer, t);
         p.delay = 2.0f;
         s = 0x0C;
         racer.crashed = 0;

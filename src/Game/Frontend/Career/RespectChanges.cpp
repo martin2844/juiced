@@ -108,7 +108,8 @@ void RespectChanges::enter(CareerHost& host, ui::Screen& s) {
 // The entry of the step into the record: its kind, change, crew and the crew's respect now; the crew's respect
 // becomes that plus the change (none below 0).
 // Stock problem: a privilege's entry (kinds 20 .. 27, 0x004BBFC0) holds its crew in the change and 0 as the crew: the
-// player's crew's respect grows by that crew's number.
+// player's crew's respect grows by that crew's number. The fixed build leaves the respect of a privilege's entry be
+// (its window counts nothing: count shows a rise or a fall only).
 void RespectChanges::take(CareerHost& /*host*/, Career& career) {
     const CareerNotes& notes = career.respectChanges;
     const auto k = static_cast<size_t>(std::clamp(m_step, 0, 49));
@@ -117,6 +118,7 @@ void RespectChanges::take(CareerHost& /*host*/, Career& career) {
     m_crew = notes.b[k];
     const int32_t crew = x87::chop(m_crew);
     if (crew < 0 || crew > 8) return;
+    if (m_kind >= 20 && m_kind <= 27) return;
     Crew& c = career.crews[static_cast<size_t>(crew)];
     m_respect = static_cast<float>(c.respect);
     float now = static_cast<float>(c.respect) + m_change;
@@ -125,9 +127,10 @@ void RespectChanges::take(CareerHost& /*host*/, Career& career) {
 }
 
 // 0x004D1050: the entry shown: of kinds 0 .. 19 (a rise, then a fall) the fades of the other crews' rows shown,
-// type "RESPECT INCREASE" or "RESPECT DECREASE", comment the crew's name and what it thinks (lines 277 + kind or
-// 287 + kind - 10), green or red, the crew's component highlighted (the second for kind 13); of kinds 20 .. 27 by the
-// crew of its +0x14 "GAINED PRIVILEGE" (269 + kind - 20) or "LOST PRIVILEGE" (273 + kind - 24). The crew leader's
+// type "RESPECT INCREASE" or "RESPECT DECREASE" and counter green or red (comment keeps its .ui colour), comment the
+// crew's name and what it thinks (lines 277 + kind or 287 + kind - 10), the crew's component highlighted (the second
+// for kind 13); of kinds 20 .. 27 by the crew of its +0x14 "GAINED PRIVILEGE" (269 + kind - 20) or "LOST PRIVILEGE"
+// (273 + kind - 24). The crew leader's
 // voice line said at once (the speech object's +0x14 with the crew rounded and 0x1E, 0x1F (0x20 for kind 13), or the
 // privilege's crew and the kind + 2; none for kinds 4 and 14 of crews past 1).
 void RespectChanges::show(CareerHost& host, ui::Screen& s) {
@@ -138,7 +141,7 @@ void RespectChanges::show(CareerHost& host, ui::Screen& s) {
         for (int i = 1; i < 9; ++i) s.setHidden(std::format("fade{}", i), i == crew);
         s.setText("type", texts.at(title));
         if (const int e = s.find("type"); e >= 0) s.setFontColour(e, colour);
-        if (const int e = s.find("comment"); e >= 0) s.setFontColour(e, colour);
+        if (const int e = s.find("counter"); e >= 0) s.setFontColour(e, colour);
         const size_t name = kTextCrewNames + static_cast<size_t>(std::max(crew, 0));
         s.setText("comment", texts.at(name) + texts.at(line));
         return crew;
@@ -380,7 +383,8 @@ void RespectChanges::update(CareerHost& host, ui::Screen& s, uint32_t event) {
 
 // 0x004D0000: leaving CMSRespectChanges: both message lists emptied, the front end's music back, crews
 // 1 .. 8's respect their respect now (+0x74) and the history's step (0x004BD8A0). Stock problem: 0x004BAEE0 has
-// taken a step already; the history takes two for the event.
+// taken a step already; the history takes two for the event (three after CMSMeetingSummary's). The fixed build takes
+// no step here: 0x004BAEE0's is the event's one.
 void RespectChanges::leave(CareerHost& host) {
     GameData* data = host.gameData();
     if (data == nullptr || !data->career) return;
@@ -389,7 +393,6 @@ void RespectChanges::leave(CareerHost& host) {
     clearNotes(career, career.meeting);
     host.setMusicVolume(host.settingsMusic(), false);
     for (size_t i = 1; i < 9; ++i) career.crews[i].respect = career.crews[i].respectNow;
-    recordHistory(career);
 }
 
 }  // namespace oj::frontend

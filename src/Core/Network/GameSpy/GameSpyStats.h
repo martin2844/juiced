@@ -78,7 +78,7 @@ struct Game {
 // The service's host and port: "<game>.gamestats.gamespy.com" (s_gamestats_gamespy_com 0x0071AC08 after the game's
 // name and a dot) and 29920. Only the tests point them elsewhere.
 struct Service {
-    std::string host;  // "" → "<game>.gamestats.gamespy.com"
+    std::string host;  // "" → "<game>.gamestats.<domain>" (the stock's gamespy.com)
     uint16_t port = 29920;
 };
 Service& service();

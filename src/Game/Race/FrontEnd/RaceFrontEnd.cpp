@@ -197,9 +197,12 @@ void RaceFrontEnd::windowFrame(float dt, uint32_t event, uint32_t event2) {
     case RaceWindowId::StartReplay:
     case RaceWindowId::RestartReplay:
         // 0x00455D60 / 0x00456030: its frames less 1; at 0 with the window's transitions over the play starts
-        // (Stock problem: past 0 the count goes on down and the play never starts).
-        if (--replayFrames == 0 && (screenWindow == nullptr || screenWindow->transitionsDone()) &&
+        // (Stock problem: past 0 the count goes on down and the play never starts). The fixed build holds the count
+        // at 0 until the transitions are over and starts the play once (the count -1 after).
+        if (replayFrames > 0) --replayFrames;
+        if (replayFrames == 0 && (screenWindow == nullptr || screenWindow->transitionsDone()) &&
             m_host.raceState() != nullptr) {
+            replayFrames = -1;
             m_host.startReplay(window.id == RaceWindowId::StartReplay);
         }
         break;
@@ -294,10 +297,11 @@ void RaceFrontEnd::leaveWindow() {
         break;
     case RaceWindowId::RaceResults:
         // 0x00453420, hud_race_results' leave: an online career's crew race reports our player's finish to the
-        // statistics (0x004ECD70; sent with the next report).
+        // statistics (0x004ECD70), sent at once in the fixed build (the stock's waited for the next report's send).
         if (net::matchmaking() != nullptr && net::onlineHosted().mode == net::OnlineKind::Career &&
             net::onlineHosted().career.team > 1 && net::stats::reporter() != nullptr) {
             net::stats::raceFinished();
+            net::stats::reporter()->send();
         }
         break;
     case RaceWindowId::OptionsInGame:

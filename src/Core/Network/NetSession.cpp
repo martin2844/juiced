@@ -25,7 +25,13 @@ enum Message : uint8_t {
     kStart = 0x0E, kLoaded = 0x0F, kGo = 0x10, kClock = 0x11, kClockAnswer = 0x12, kFinish = 0x13, kState = 0x14,
     kModelByte = 0x15, kPlaceOf = 0x17, kLeader = 0x18, kCruiseScore = 0x19, kTrick = 0x1A, kPoints = 0x1B,
     kPeerGone = 0xDE, kPeerCame = 0xDF,
+    // The fixed build's own (ids the stock's session passes over): a machine of the fixed build, a car's contact.
+    kFixedHello = 0x30, kContact = 0x31,
 };
+
+// The fixed build's hello: its mark and the version of what its machines tell each other.
+constexpr uint8_t kFixedMark[4] = {'O', 'J', 'F', 'X'};
+constexpr uint32_t kFixedVersion = 1;
 
 int32_t i32(const uint8_t* p) {
     int32_t v = 0;
@@ -219,6 +225,8 @@ NetSession::NetSession(Transport& transport) : m_transport(transport) {}
 
 void NetSession::start() {
     m_transport.setHandler([this](const uint8_t* data, size_t size, int32_t peer) { handle(data, size, peer); });
+    // The fixed build pings the peers (their one way time for the cars' states; the stock's pings were never on).
+    m_transport.setPinging(true);
     m_transport.setRelayHandler([this](const uint8_t* data, size_t size, int32_t peer) {
         if (size >= 0x0C) voiceRelayCame(data, peer);
     });
@@ -326,6 +334,7 @@ void NetSession::reset(bool all) {
     m_transport.leave();
     if (Matchmaking* mm = matchmaking()) mm->leave();
     m_nodes.clear();
+    m_fixedPeers.clear();
     while (!m_players.empty()) removePlayer(0);
     m_spectator = 0;
     m_stage = SessionStage::Lobby;
@@ -845,9 +854,43 @@ void NetSession::handle(const uint8_t* data, size_t size, int32_t peer) {
     case kPeerCame:
         if (size >= 0x0C) peerCame(data);
         return;
+    case kFixedHello:
+        // The fixed build: a peer of the fixed build (the protocol's version ours); told so back once.
+        if (size >= 0x0C && std::memcmp(data + 4, kFixedMark, 4) == 0 && u32(data + 8) == kFixedVersion &&
+            !fixedPeer(peer)) {
+            m_fixedPeers.push_back(peer);
+            uint8_t q[0x0C] = {kFixedHello};
+            std::memcpy(q + 4, kFixedMark, 4);
+            put32(q + 8, kFixedVersion);
+            m_transport.send(peer, q, sizeof q, true);
+        }
+        return;
+    case kContact:
+        if (size >= 0x20 && fixedPeer(peer) && hooks.contact) {
+            const std::array<float, 3> linear = {f32(data + 8), f32(data + 0x0C), f32(data + 0x10)};
+            const std::array<float, 3> angular = {f32(data + 0x14), f32(data + 0x18), f32(data + 0x1C)};
+            hooks.contact(peer, i32(data + 4), linear, angular);
+        }
+        return;
     default:
         return;  // 0x0D (voice), 0x16 and the others: nothing
     }
+}
+
+bool NetSession::fixedPeer(int32_t peer) const {
+    return std::find(m_fixedPeers.begin(), m_fixedPeers.end(), peer) != m_fixedPeers.end();
+}
+
+bool NetSession::sendContact(int32_t peer, int32_t localIndex, const std::array<float, 3>& linear,
+                             const std::array<float, 3>& angular) {
+    if (!fixedPeer(peer)) return false;
+    uint8_t q[0x20] = {kContact};
+    putI(q + 4, localIndex);
+    for (size_t i = 0; i < 3; ++i) {
+        putF(q + 8 + i * 4, linear[i]);
+        putF(q + 0x14 + i * 4, angular[i]);
+    }
+    return m_transport.send(peer, q, sizeof q, false);
 }
 
 void NetSession::infoAsked(const uint8_t* data, int32_t peer) {
@@ -1070,13 +1113,33 @@ void NetSession::stateCame(const uint8_t* data, int32_t peer) {
     if (offset < -0.1f) offset = -0.1f;
     if (0.1f < offset) offset = 0.1f;
     p->timeOffset = offset * 0.96f;
-    if ((p->state[0x3D] & 0x20) == 0 && hooks.extrapolate) hooks.extrapolate(p->state.data(), p->timeOffset);
+    // Carried on by how late it came and, in the fixed build, by the way here (the peer's one way time: the stock's
+    // cars were that far behind, at 250 km/h and 60 ms some 4 m, so the cars met in other places on each machine).
+    if ((p->state[0x3D] & 0x20) == 0 && hooks.extrapolate) {
+        hooks.extrapolate(p->state.data(), p->timeOffset + oneWay(peer));
+    }
+}
+
+float NetSession::oneWay(int32_t peer) const {
+    const Peer* p = m_transport.peer(peer);
+    if (p == nullptr) return 0.0f;
+    float sum = 0.0f;
+    for (float ping : p->pings) sum += ping;
+    const float half = sum / static_cast<float>(p->pings.size()) * 0.5f;
+    return half < 0.0f ? 0.0f : half > 0.25f ? 0.25f : half;
 }
 
 void NetSession::peerCame(const uint8_t* data) {
     // 0x004E87F0: a new machine and a player for each of its slots.
     const int32_t id = i32(data + 4);
     if (node(id) != nullptr) return;
+    // The fixed build's hello to it (a stock machine passes over the id; a fixed one answers with its own).
+    {
+        uint8_t q[0x0C] = {kFixedHello};
+        std::memcpy(q + 4, kFixedMark, 4);
+        put32(q + 8, kFixedVersion);
+        m_transport.send(id, q, sizeof q, true);
+    }
     m_nodes.push_back({id, 1, 0});
     const auto slots = u32(data + 8);
     for (uint32_t i = 0; i < slots; ++i) {
@@ -1096,6 +1159,7 @@ void NetSession::peerWent(const uint8_t* data) {
     // 0x004E88E0: the machine dropped; its players gone from the race (their cars stopped, the host's career told
     // when one had not finished) or dropped out of a race.
     const int32_t id = i32(data + 4);
+    std::erase(m_fixedPeers, id);
     for (size_t i = 0; i < m_nodes.size(); ++i) {
         if (m_nodes[i].peer == id) {
             m_nodes[i] = m_nodes.back();
@@ -1125,24 +1189,9 @@ void NetSession::peerWent(const uint8_t* data) {
 }
 
 void NetSession::periods() {
-    // 0x004E8310: the states' period by the number of players.
-    float period = 0.2f;
-    switch (m_players.size()) {
-    case 1:
-    case 2:
-    case 3:
-        period = 0.1f;
-        break;
-    case 4:
-        period = 0.12f;
-        break;
-    case 5:
-        period = 0.16f;
-        break;
-    default:
-        period = 0.2f;
-    }
-    for (NetPlayer& p : m_players) p.period = period;
+    // 0x004E8310: the states' period by the number of players: the stock's 0.1 s up to three, 0.12 four, 0.16 five,
+    // 0.2 more (2005's lines); the fixed build's 0.05 s for any (a state 76 bytes: some 10 KB/s each way with six).
+    for (NetPlayer& p : m_players) p.period = 0.05f;
 }
 
 void NetSession::roundEnd() {
@@ -1317,7 +1366,7 @@ void NetSession::carsFrame(float dt) {
             if (running && p.hasState != 0 && p.race.left == 0) {
                 if ((p.state[0x3D] & 0x20) == 0) {
                     if (hooks.extrapolate) hooks.extrapolate(p.state.data(), dt);
-                    if (hooks.smoothState) hooks.smoothState(p.raceCar, p.state.data());
+                    if (hooks.smoothState) hooks.smoothState(p.raceCar, p.state.data(), dt);
                 } else if (hooks.applyState) {
                     hooks.applyState(p.raceCar, p.state.data());
                 }

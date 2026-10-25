@@ -1,7 +1,7 @@
 #pragma once
 // What the functions of Windows 8 the toolset's C++ library calls directly do on Windows 7, with the functions it
 // has: the executable's import slots of CreateFile2, CopyFile2 and GetSystemTimePreciseAsFileTime (Win7Imports.cpp)
-// call these where the system has no function of its own.
+// hold these on every Windows.
 
 #include <cstdint>
 
@@ -39,7 +39,8 @@ struct CopyFile2Parameters {
 int32_t copyFile2(const wchar_t* existing, const wchar_t* copy, const CopyFile2Parameters* parameters);
 
 // GetSystemTimePreciseAsFileTime as GetSystemTimeAsFileTime: the time of the system's last tick, in 100 ns since
-// 1601 (a FILETIME).
+// 1601 (a FILETIME). Only std::chrono::system_clock reads it, which the game does not (its log and saves take
+// GetLocalTime, its waits the steady clock).
 void systemTimePrecise(void* fileTime);
 
 }  // namespace oj::win7

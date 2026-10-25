@@ -11,6 +11,11 @@
 
 namespace oj {
 
+// 0x0044EF7D, a restart from the pause: a sprint starts again from its first heat, the points (+0x138) of the session's
+// racers' cars cleared and the heat -1 (restart_race counts it). Stock problem: their heats' time (+0x134) is kept and
+// decides the new sprint's ties (equal points: the less time first); the fixed build clears it too.
+void restartSprint(const HudRace& race);
+
 // The window hud_pause (factory 0x00720548: enter 0x0044E920, frame 0x0044EEA0): the race's pause menu CONTINUE /
 // FRIENDS / PLAYERS / RESTART / OPTIONS / QUIT. CONTINUE and BACK go on with the race; QUIT and RESTART ask first and
 // lead to closedown and restart_race; OPTIONS opts_ingame_bg, FRIENDS and PLAYERS online_ingame_bg.

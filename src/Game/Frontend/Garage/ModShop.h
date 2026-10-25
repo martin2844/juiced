@@ -33,6 +33,9 @@ public:
     void enter(GarageHost& host, ui::Screen& s);
     // 0x00444690
     void update(GarageHost& host, ui::Screen& s, uint32_t event);
+    // The upgrades the enter made (the tests read them).
+    const std::array<ModShopEntry, 10>& entries() const { return m_entries; }
+    int32_t count() const { return m_count; }
 
 private:
     // A supplier drawn for a kind's parts of a level and its first part (into the catalogue's list).

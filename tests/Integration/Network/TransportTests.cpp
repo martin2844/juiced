@@ -97,3 +97,62 @@ OJ_INTEGRATION_TEST(Transport, Loopback) {
     check(coded && opened && found && joined && both && messages && left,
           "network transport: the code, a search, two joins, reliable and plain messages, a leave");
 }
+
+// A machine whose frames are held by the race's load (here on the main thread; the stock's frames went on): with the
+// load's keep-alive the host keeps it past 25 s of its own time (the keep-alives every 1.5 s), without it the host
+// drops it (timed out).
+OJ_INTEGRATION_TEST(Transport, LoadKeepAlive) {
+    const uint32_t loop = 0x0100007Fu;
+    auto options = [&](uint16_t lan, uint16_t game, uint16_t to) {
+        oj::net::Transport::Options o;
+        o.lanPort = lan;
+        o.gamePort = game;
+        o.ownIp = loop;
+        o.broadcastIp = loop;
+        o.broadcastPort = to;
+        return o;
+    };
+    oj::CrtRandom netRandom;
+    oj::net::Transport host, client;
+    std::string why;
+    bool ok = host.open(options(28676, 28677, 28678), netRandom, &why) &&
+              client.open(options(28678, 28679, 28676), netRandom, &why);
+    auto pump = [&](const std::function<bool()>& done) {
+        for (int i = 0; i < 300 && !done(); ++i) {
+            host.update(0.01f);
+            client.update(0.01f);
+            Sleep(1);
+        }
+        return done();
+    };
+    // The host's 30 s (1 s a step, 100 ms apart) while the client's frames are held.
+    auto held = [&] {
+        for (int i = 0; i < 30 && host.peers().size() == 1; ++i) {
+            host.update(1.0f);
+            Sleep(100);
+        }
+        return host.peers().size() == 1;
+    };
+    bool kept = false, dropped = false;
+    uint32_t sent = 0;
+    if (ok) {
+        host.host(u"OJ test", 1, 6);
+        client.search(netRandom);
+        ok = pump([&] { return !client.sessions().empty(); });
+        if (ok) {
+            client.join(client.sessions()[0].address, 1);
+            ok = pump([&] { return client.inSession() && host.peers().size() == 1; });
+        }
+        if (ok) {
+            {
+                const oj::net::LoadKeepAlive keepAlive(&client);
+                kept = held();
+                sent = keepAlive.sent();
+            }
+            pump([] { return false; });
+            dropped = !held();
+        }
+    }
+    check(ok && kept && sent >= 1 && dropped,
+          "network transport: the load's keep-alive keeps a held machine past 25 s; without it, dropped");
+}

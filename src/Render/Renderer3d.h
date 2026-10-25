@@ -72,7 +72,7 @@ public:
     void fixedFunctionMaterial();                  // 0x00546320
     void setLight1Colour(const Vec4& colour);      // 0x005150C0: c26
     void setLight2Colour(const Vec4& colour);      // 0x00515140: c28
-    void writeLightColours();                      // 0x00514E80: c26 .. c28 at once
+    void writeLightColours();                      // 0x00514E80: c26 .. c28 at once (the fixed build: c26, c28, c30)
     void setLightDirection(const Vec4& direction); // 0x005151D0: c27, c43, c44, c45 .. c49
     void setLight2Direction(const Vec4& direction);  // c29
     void setLight3Direction(const Vec4& direction);  // c31
@@ -156,8 +156,7 @@ private:
     Material* m_current = nullptr;  // [0x0075F16C]
     uint32_t m_lastClass = 0x10009; // [0x00719540]
     uint32_t m_lastPass = 0;        // [0x0075B2B8]
-    std::array<float, 20> m_cloud{};  // 0x007A0B50: c45 .. c49
-    bool m_cloudGuard = false;        // 0x007A0B90, read as c49.x
+    std::array<float, 16> m_cloud{};  // 0x007A0B50: c45 .. c48 (the stock's c49 its guard, 0x007A0B90: not set here)
 };
 
 }  // namespace oj::render

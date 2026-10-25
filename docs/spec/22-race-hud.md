@@ -78,9 +78,9 @@ player's car). Type 2: `SPEEDCHALLENGEBG` colour c30, `SPEEDCHALLENGE` `+0x230` 
 `TOPSCORETITLE` `+0x48`, `WR_TOPSCORETITLE` `+0x50`; without a world record the WR ones are hidden. `best`, `score`,
 `combo`: a fixed advance and colour c34.
 
-The challenges' targets: type 2 the first `LR_TIME` " %d " of the challenge's speed (`[G+0x6C]+0x78`, x 3.6 in KPH,
-cut toward zero) and MPH or KPH; types 0 and 1 the challenge's lap time (`+0x74`); both set `LR_LAPTIME1` to TARGET
-(line 43).
+The challenges' targets: type 2 the first `LR_TIME` " %d " of the challenge's speed (`[G+0x6C]+0x78`, in MPH; x
+1.6093 `[0x006FFE94]` in KPH, cut toward zero) and MPH or KPH; types 0 and 1 the challenge's lap time (`+0x74`); both
+set `LR_LAPTIME1` to TARGET (line 43).
 
 The turbo's dial `TURBO1` (`+0x234`) with a turbo (`V+0x180`) or the car record's `+0x68` (the turbo lost to damage):
 its needle 0xFFFF5050; else every element with `TURBO1` in its name is hidden. `RESPECT`, `RESPECT_ICON`,
@@ -234,6 +234,13 @@ Dpad3 take "High", "Medium", "Low" (`[0x007617E0]`, `[0x007617D0]`, `[0x007617C0
 (its order and the order's time 0; a changed level's time −1); one of them or _LEFT sets the time to −1; the time runs
 down by the window's step and below 0 the state is 1 again.
 
+The orders asked for (`0x004BEA60`: by the drivers' levels, `0x004BEDFF`, a member's nerves crossing 1.9, for no
+racer, -1; by the race's chatter, `0x004B1F60`, for its racer): with the window kept (`+0x38`) each line of the
+racer's car gets the flash time 1 (`0x004BEAB0`, the members' cars taken if not yet) and in state 0 the orders open
+as a tactics key opens them (state 1, ordered, shown, the lines, the time 5 s), at once. The drivers' levels come
+before the state's work in `0x004BDF00`, so that frame then runs state 1's lines and keys; the chatter comes at the
+end of the race's frame, after it.
+
 The same frame, in the career with the race's cars not chosen (the profile's `+0x614` 0: a race the player watches)
 and the camera not in the fly-by or the sweep (modes 9, 10): NEXTCAR (Page Down, `0x004BE04B`) follows the car of the
 place before the followed car's (the last after the first), SELECT (RETURN, `0x004BE13D`) the car of the place after
@@ -268,9 +275,11 @@ Made with the window (`0x0044A100`): `MAP3D` (`+0x240`); unless made already (`+
 is emptied and `UI_<route>_MAP` (the race's route, `[G+0x6C]+0x30`) added at the origin (`0x005B3E60`: a holder of
 0x80 bytes, `0x005B3420`, with the model of `models\<name>.boh` in the element's scene, its place `+0x40` and the
 node's translation set). Without that model every element with `MAP` in its name is hidden. Else for each vehicle of
-the race manager, from the last to the first, `ui_map_car` is added at (0, 1000000, 0) and the material named
-`ui_map_car` (`[G+0x10]` vtable `+0x18`) takes the vehicle's car paint (`+0x4E4` `+0x18`) as its parameter 0 (the
-Colour of Coloured Spec ABlend); the markers share that material, so the first vehicle's paint stays. `+0x248` is
+the race manager, from the last to the first, `ui_map_car` is added at (0, 1000000, 0) with the mesh cache off
+(`[G+0x1C]+0x14` 0: `0x00554D30` -> `0x005596E0` reads the mesh anew, with materials of its own) and the material
+named `ui_map_car` (`[G+0x10]` vtable `+0x18`) takes the vehicle's car paint (`+0x4E4` `+0x18`) as its parameter 0
+(the Colour of Coloured Spec ABlend), then is let go of the materials' cache (vt+0x2C) so that the next marker
+makes another: each marker shows its own vehicle's paint. `+0x248` is
 set; `+0x244` takes the settings' map flag and the `MAP` elements are shown (without their transitions) or hidden by
 it.
 
@@ -631,8 +640,8 @@ race front end watches the controllers again (`[G+0x3C]+0x38` 1).
 
 `closedown` (vtable `0x006F14E8`; the file's LOADING text). Enter (`0x0044F9C0`): three frames to wait (`+0x0C`), the
 replay stopped (`0x00426B80`, `[G+0x9C]+0x828` 0), `[G+4]`'s `+0x20`, `+0x24` and the effects' `+0x98` set, the race
-paused as by the pause (unless it is), the race's timer stopped, the HUD's `+0x38` cleared (leaving, `0x0044FAA0`,
-sets it). Each frame (`0x0044FAC0`): the frames run down; then, with no message window open, the game phase "load"
+paused as by the pause (unless it is), the race's timer stopped, the race front end's `+0x38` cleared (its players'
+controllers not watched, as restart_race's; leaving, `0x0044FAA0`, sets it). Each frame (`0x0044FAC0`): the frames run down; then, with no message window open, the game phase "load"
 (`0x00462C30`) with 1 takes the game's `+0x40`: its first frame (`0x004634B0`) lets the race's objects go and shows
 the loading front end of the race's mode (as the load: `arcade_loading`, `custom_loader` or `loader` and its
 animation) while a job (vtable `0x006F1E1C`, run `0x00461A10`) makes the front end with its first window; once the

@@ -65,16 +65,18 @@ OJ_UNIT_TEST(JuicedConfigData, LanguageChoice) {
           "the names as the game's, in lower case");
 }
 
-// A mode's key: the width 12 bits up, the height, bit 31 for 16 bits per pixel; widths from 4096 lose their high
-// bits as the stock's do.
+// A mode's key: bit 31 for 16 bits per pixel; the stock's width 12 bits up loses the high bits of widths from 4096,
+// the fixed build's width 16 bits up keeps them.
 OJ_UNIT_TEST(JuicedConfigData, ModeKeys) {
     const uint32_t key = config::modeKey(1024, 768, true);
-    check(key == (0x80000000u | (1024u << 12) | 768u), "1024 x 768 x 16's key");
+    check(key == (0x80000000u | (1024u << 16) | 768u), "1024 x 768 x 16's key (fixed)");
     check(config::modeWidth(key) == 1024 && config::modeHeight(key) == 768 && config::modeDepth(key) == 16,
           "its width, height and depth back");
     check(config::modeDepth(config::modeKey(800, 600, false)) == 32, "32 bits without the bit");
     check(config::kDefaultMode == config::modeKey(800, 600, false), "the mode kept at first: 800 x 600 x 32");
-    check(config::modeWidth(config::modeKey(5120, 2880, false)) == 1024, "5120 wide reads as 1024");
+    const uint32_t wide = config::modeKey(5120, 2880, false);
+    check(config::modeWidth(wide) == 5120 && config::modeHeight(wide) == 2880 && config::modeDepth(wide) == 32,
+          "5120 x 2880 kept (fixed)");
 }
 
 // The full screen list's order: width, height, then depth.

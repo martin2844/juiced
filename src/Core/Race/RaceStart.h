@@ -1,6 +1,8 @@
 #pragma once
 // The count before a race's start (the race state's +0x38 / +0x3C; 0x004A0220 at the end of the racers' frame;
 // docs/spec/17-race-camera.md, "The start").
+// Unused: the game's count is RaceState's (RaceState::update, Core/Race/Racer.h), with the competitors' frame and the
+// start; this early port of the count alone is kept as it was, called by nothing (its tests are RaceState's now).
 
 namespace oj {
 
@@ -12,8 +14,8 @@ public:
         bool go = false;
     };
 
-    // 0x004A0220: while above 0 the count goes down by dt; reaching 0 the race starts; each whole second it goes
-    // below (from 3) sounds.
+    // 0x004A0220: while above 0 the count goes down by dt; going below 0 the race starts (Stock problem: landing on
+    // exactly 0 it never does); each whole second it goes below (from 3) sounds.
     Events update(float dt);
 
     // While not 0 the players' cars are held by the handbrake (0x0041E200); from 10 up the drivers' controls are

@@ -10,7 +10,6 @@
 #include "Core/Network/Matchmaking.h"
 #include "Core/Network/OnlineRecords.h"
 #include "Core/Network/VoiceChat.h"
-#include "Core/Race/RaceStart.h"
 
 #include <windows.h>
 
@@ -70,7 +69,8 @@ void TrackView::drive(float dt) {
     static const int physicsTimer =
         oj::debug::profiler() != nullptr ? oj::debug::profiler()->add("Physics") : -1;
     if (oj::debug::Profiler* p = oj::debug::profiler()) p->start(physicsTimer);
-    // 0x00425E87: the physics steps of the smoothed time counted paused or not (the camera's time divides by them).
+    // 0x00425E87: the physics steps of the smoothed time counted paused or not (the stock camera's time divides by
+    // them).
     world->countSteps();
     if (!paused) {
         raceFrame(dt, impacts);
@@ -95,15 +95,16 @@ void TrackView::drive(float dt) {
 }
 
 void TrackView::raceFrame(float dt, bool impacts) {
-    // The game's frame (0x0040CCA0): the drivers' levels (0x004BDF00) before the race's frame, with the crew's
-    // orders of a career race that is not a cruise.
-    race->driverLevels(dt);
-    // 0x004BDF00: [0x0075EF64] turned over; outside the attract replay (mode 4) and a replay's race, not only
-    // watching a network game, the racers' names' time runs down by the frame time and goes to 2 s on a tactics
-    // key (DRIVER_TACTICS_UP .. _LEFT, the controller's +0x74 .. +0x80) or, watching a career race off the network
-    // (the profile's +0x614 0), on the third driver's two keys (+0x84, +0x88); NEXTCAR and SELECT in watchedCar.
+    // The game's frame (0x0040CCA0): the drivers' frame (0x004BDF00) before the race's, with the crew's orders of a
+    // career race that is not a cruise. 0x004BDF00: [0x0075EF64] turned over; outside the attract replay (mode 4)
+    // and a replay's race, not only watching a network game, the racers' names' time runs down by the frame time
+    // and goes to 2 s on a tactics key (DRIVER_TACTICS_UP .. _LEFT, the controller's +0x74 .. +0x80) or, watching a
+    // career race off the network (the profile's +0x614 0), on the third driver's two keys (+0x84, +0x88); NEXTCAR
+    // and SELECT in watchedCar; then the drivers' levels (0x004BE242: 0x004BEAF0, which may open the crew's orders,
+    // 0x004BEA60) before the orders' state (crewOrders).
     driversParity = !driversParity;
-    if (rules.mode != RaceMode::Attract && !rules.replayRace && !(net != nullptr && rules.spectator)) {
+    const bool drivers = rules.mode != RaceMode::Attract && !rules.replayRace && !(net != nullptr && rules.spectator);
+    if (drivers) {
         float& names = namesTime();
         names = names - dt;
         const bool careerWatched = gameData != nullptr && gameData->career && gameData->career->profile.raceCarsChosen == 0;
@@ -113,10 +114,13 @@ void TrackView::raceFrame(float dt, bool impacts) {
         }
     }
     if (rules.mode == RaceMode::Career && !rules.replay) watchedCar();
+    if (drivers) race->driverLevels(dt);
     if (frontEnd.hud != nullptr && rules.mode == RaceMode::Career && rules.type != RaceType::Cruise && !rules.replay) {
         frontEnd.hud->crewOrders(hudRace(), frameActions.tactics, dt);
     }
     world->stepFrame();
+    // The fixed build: the frame's hits between our cars and the others' told to their machines.
+    if (net != nullptr) netContacts(world->stepTime());
     // The bodies' nodes are the models' (0x004F2C00 after every body stepped): the cars' frames below see the
     // models where the step put them.
     placeCars();
@@ -400,11 +404,11 @@ void TrackView::playerFrame(RacePlayer& player, const oj::DriverActions& actions
         player.director.update(player.raceCamera, step, paused, cameraTarget(player), cameraRace(player),
                                player.camera);
         // Stock problem: the camera's time is the frame's step over the physics steps it was split into, so with
-        // two or three steps the views ease two or three times slower.
+        // two or three steps (below 20 frames a second) the views ease two or three times slower. The fixed build
+        // gives it the frame's step.
         // The race's step (+0x74) goes on while paused; the camera takes 0 then (0x00406322), but the free views
         // 14 and 15 take it again (0x004064F7).
-        player.raceCamera.update(cameraTarget(player), cameraRace(player),
-                                 world->stepTime() / static_cast<float>(world->steps()), player.camera);
+        player.raceCamera.update(cameraTarget(player), cameraRace(player), world->stepTime(), player.camera);
         if (player.raceCamera.takeBlobClear()) {
             auto* blobs = dynamic_cast<oj::scene::SmearEmitter*>(player.cameraBlobs.get());
             if (blobs != nullptr) blobs->clear(oj::gameRandom());
@@ -436,7 +440,9 @@ void TrackView::playerFrame(RacePlayer& player, const oj::DriverActions& actions
                                        cameraRace(player), player.camera);
             if (changeView) keepView(player, player.raceCamera.mode());
         }
-        for (const int asked : player.raceCamera.takeWindowAsks()) chooseWindow(asked != 0);
+        for (const int asked : player.raceCamera.takeWindowAsks()) {
+            if (!netPauseShown()) chooseWindow(asked != 0);
+        }
     }
     // 0x0041E200: paused, the controller's motors (+0x10C, +0x110) cleared and nothing more; else it reads the
     // controls only while the player's car is the player's (+8 = 0), then PAUSE (a held action) pauses the race
@@ -521,7 +527,11 @@ void TrackView::playerFrame(RacePlayer& player, const oj::DriverActions& actions
                 frontEnd.windowAsked.clear();
                 frontEnd.askWindow(RaceWindowId::Pause);
                 frontEnd.raceUi.play("CLICK");  // 0x0041F6A7
-                paused = true;
+                // Stock problem: in a network game the pause stops this machine's world as off line (its car and
+                // the others' as it sees them), while the race's clock and the other machines go on. The fixed
+                // build keeps a network game going under the pause window: its car gets no controls while the
+                // window has them (the controller's driver map let go below).
+                paused = net == nullptr;
                 // 0x0041F6EB: the race track's pausing player (+0x10) this one; 0x0041F6F4: its controller let go
                 // (the keyboard's map UI).
                 pausing = &player;
@@ -623,6 +633,8 @@ bool TrackView::lapTimeStatistics(const RacePlayer& player) {
     const size_t at = static_cast<size_t>(player.index);
     const int32_t user = users->playerUser(at < users->localPlayers.size() ? users->localPlayers[at] : -1);
     oj::net::stats::reportLapTime(user, routeIndex, c.bestLap, player.slot->car.model, rating, c.topSpeed);
+    // Let go after the report in the fixed build (the stock's 0x0041FCD8 kept the reference).
+    users->userRelease(user);
     return true;
 }
 
@@ -644,7 +656,10 @@ void TrackView::finishStatistics(const RacePlayer& player) {
         const int32_t score =
             rules.career != nullptr ? static_cast<int32_t>(rules.career->cruise.total) : 0;  // 0x00420390
         if (score == 0) return;  // unsigned: a score below 0 goes on
-        oj::net::stats::reportShowoff(localUser(), location, score, player.slot->car.model);
+        // The user let go after the report in the fixed build (the stock kept the reference).
+        const int32_t user = localUser();
+        oj::net::stats::reportShowoff(user, location, score, player.slot->car.model);
+        users->userRelease(user);
     } else {
         return;
     }

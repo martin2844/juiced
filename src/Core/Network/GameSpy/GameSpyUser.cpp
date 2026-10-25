@@ -1,6 +1,8 @@
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #include "Core/Network/GameSpy/GameSpyUser.h"
 
+#include "Core/Base/Log.h"
+#include "Core/Network/GameSpy/Peerchat.h"
 #include "Core/Network/Matchmaking.h"
 #include "Core/Network/VoiceChat.h"
 
@@ -99,9 +101,11 @@ void parseLocation(std::u16string_view location, std::optional<Address>& address
 // ---- The user object.
 
 OnlineUser::OnlineUser() {
-    // [0x0075B34C] 0. Stock problem: a connection an earlier user object still holds (one kept by its friends) is
-    // left behind, never destroyed.
-    if (gpConnection()) (void)new std::shared_ptr<gp::Connection>(std::move(gpConnection()));
+    // [0x0075B34C] 0: the SDK's one connection is the new object's to make; an earlier object's (one its friends
+    // still hold) goes here, logged out (gpDestroy). The stock left it open, never destroyed, and the earlier
+    // object's sign-out later destroyed the new one's connection (within the new login's callback when the friends
+    // are made again); the fixed build's sign-out lets go only its own.
+    gpConnection().reset();
 }
 
 OnlineUser::~OnlineUser() {
@@ -126,6 +130,7 @@ void OnlineUser::resultToState(gp::Result result) {
 }
 
 void OnlineUser::sendPresence(int32_t playerIndex) {
+    if (m_guest) return;  // the fixed build's guest has no connection (else the state 1: the network lost)
     const OnlinePlayer& p = m_players[static_cast<size_t>(playerIndex)];
     int32_t status = 0;
     std::u16string text = u"Offline";
@@ -255,7 +260,12 @@ void OnlineUser::setCredentials(std::u16string_view nick, std::u16string_view em
 // 0.05). Then the base's frame (the presence's timer).
 void OnlineUser::update(float dt) {
     m_serviceOk = 1;
-    if (std::shared_ptr<gp::Connection> c = gpConnection()) resultToState(c->process());
+    if (std::shared_ptr<gp::Connection> c = gpConnection()) {
+        const gp::Result result = c->process();
+        // Once logged on the fixed build leaves it to the error's callback (a fatal error's code); the stock took the
+        // processing's result too, so a server's error that was not fatal still gave the state 4.
+        if (loggedOn == 0) resultToState(result);
+    }
     if (m_connectAsked != 0) {
         AvailableCheck::Result r = AvailableCheck::Available;
         if (m_check) {
@@ -266,8 +276,12 @@ void OnlineUser::update(float dt) {
         if (r == AvailableCheck::Unavailable || r == AvailableCheck::TemporarilyUnavailable) {
             state = UserState::Unavailable;
             m_connectAsked = 0;
+        } else if (r == AvailableCheck::Available && m_guest) {
+            guestLoggedOn();
+            m_connectAsked = 0;
         } else if (r == AvailableCheck::Available) {
             resultToState(gp::Connection::create(gpConnection(), 0, 0, server));
+            m_connection = gpConnection();
             if (state == UserState::None) {
                 std::shared_ptr<gp::Connection> c = gpConnection();
                 if (c) {
@@ -331,15 +345,14 @@ int32_t OnlineUser::periodicCheck(float dt) {
     }
 }
 
-// 0x0055BAF0: the presence's timer; past 60 s, 0 and the first local player's presence sent (Stock problem: the
-// player is referenced each time and never let go).
+// 0x0055BAF0: the presence's timer; past 60 s, 0 and the first local player's presence sent (the stock referenced
+// the player each time and never let it go; not the fixed build).
 void OnlineUser::baseUpdate(float dt) {
     const double sum = static_cast<double>(dt) + static_cast<double>(presenceTimer);
     presenceTimer = static_cast<float>(sum);
     if (!(sum > 60.0)) return;
     presenceTimer = 0.0f;
     if (localPlayers.empty()) return;
-    playerAddRef(localPlayers[0]);
     sendPresence(localPlayers[0]);
 }
 
@@ -351,8 +364,10 @@ void OnlineUser::baseRelease() {
 }
 
 // 0x0055FA60: a login asked: its available check's socket closed (the check's result 0 when it was open). The
-// connection: logged in, logged out (gpDisconnect) and reset; destroyed (gp.info written when its state is not 0).
-// The service flag 0; the base's release.
+// connection: logged in, logged out (gpDisconnect) and reset; destroyed (gp.info written when its state is not 0:
+// never after the reset, kept so in the fixed build: a cache written would give stale nicks in later sessions). The
+// fixed build lets go only the connection this object made (the stock's, whichever the SDK held). The service flag
+// 0; the base's release.
 void OnlineUser::signOut() {
     if (m_connectAsked != 0) {
         if (m_check && m_check->opened()) {
@@ -361,21 +376,62 @@ void OnlineUser::signOut() {
         }
         m_connectAsked = 0;
     }
-    if (std::shared_ptr<gp::Connection> c = gpConnection()) {
+    std::shared_ptr<gp::Connection> c = gpConnection();
+    if (c && c == m_connection.lock()) {
         resultToState(gp::Result::NoError);
         if (c->state() == gp::State::LoggedIn) c->disconnect();
         gpConnection().reset();
     }
+    c.reset();
+    m_connection.reset();
+    m_guest = false;
     m_serviceOk = 0;
     baseRelease();
 }
 
-// 0x0055E230: the error's code as the state (4 database and 0x0104, 0x0202 11; 6 6; 7 7; 0x0101 8; 0x0102 and 0x0201
-// 9; 0x0103 10; 0x0105 12; 0x0106 13; 0x0107 14; 0x0108 15; any other 1) and not logged on (Stock problem: whatever
-// the error, a refused buddy request too).
+void OnlineUser::setGuest(std::u16string_view nick) {
+    state = UserState::None;
+    signOut();
+    m_nick = std::u16string(nick);
+    m_guest = true;
+    // The available check as an account's login runs it (the server browser and the reporting are made only when it
+    // said available); the next frames log on once it answers.
+    m_check = std::make_unique<AvailableCheck>();
+    m_check->start(kGameName);
+    m_connectAsked = 1;
+}
+
+void OnlineUser::guestLoggedOn() {
+    const auto mixed = static_cast<uint32_t>(GetTickCount()) ^ (static_cast<uint32_t>(GetCurrentProcessId()) << 16);
+    const int32_t u = newUser();
+    m_records[static_cast<size_t>(u)].profile = -2 - static_cast<int32_t>(mixed & 0x3FFFFFFF);
+    m_records[static_cast<size_t>(u)].nick = m_nick;
+    const int32_t p = newPlayer();
+    OnlinePlayer& pl = m_players[static_cast<size_t>(p)];
+    pl.user = u;
+    pl.unused = 0;
+    pl.online = 1;
+    pl.playing = 0;
+    pl.address.reset();
+    pl.session = 0;
+    pl.friendNote = 0;
+    pl.inviteNote = 0;
+    m_serviceOk = 1;
+    loggedOn = 1;
+    if (loggedOnHook) loggedOnHook();
+}
+
+// 0x0055E230: the error's code as the state (0x0104, 0x0202 11; 6 6; 7 7; 0x0101 8; 0x0102 and 0x0201 9; 0x0103 10;
+// 0x0105 12; 0x0106 13; 0x0107 14; 0x0108 15; any other 1) and not logged on. The fixed build: once logged on, only a
+// fatal error (the connection gone) does it, and the database's error (4) is as any other. The stock took every error
+// (a refused buddy request: the network lost, logged off) and gave 4 the state 11, "Invalid password for this email
+// account".
 void OnlineUser::onError(const gp::ErrorArg& arg) {
+    // The fixed build's log line of each error (the server's text with it), for the players' reports.
+    log::info("online: GameSpy error {:#06x}{}: {}", arg.errorCode, arg.fatal ? " (fatal)" : "",
+              gp::toUtf8(arg.errorString));
+    if (loggedOn != 0 && !arg.fatal) return;
     switch (arg.errorCode) {
-    case gp::kDatabase:
     case gp::kLoginBadPassword:
     case gp::kNewUserBadPassword: state = UserState::BadPassword; break;
     case gp::kForcedDisconnect: state = UserState::ForcedDisconnect; break;
@@ -406,16 +462,19 @@ gp::Connection::InfoCallback OnlineUser::infoCallback(int32_t user) {
     };
 }
 
-// 0x0055ECB0: logged in: a record of our profile (its nick asked, blocking, from the cache or the server), a local
-// player of it online, logged on, invitable to the game's product (10362), the logged-on hook.
+// 0x0055ECB0: logged in: a record of our profile (its nick asked, from the cache or the server), a local player of it
+// online, logged on, invitable to the game's product (10362), the logged-on hook. The profiles' nicks are asked not
+// blocking in the fixed build (here and for the buddies, their requests and invitations: the stock processed the
+// connection inside the frame until the answer, without end while the server did not answer), our own the login's
+// nick until the answer (the profile logged in by it).
 void OnlineUser::onConnect(const gp::ConnectResponse& response) {
     if (response.result != gp::Result::NoError) return;
     const int32_t u = newUser();
     m_records[static_cast<size_t>(u)].profile = response.profile;
-    m_records[static_cast<size_t>(u)].nick.clear();
+    m_records[static_cast<size_t>(u)].nick = m_nick;
     userAddRef(u);
     if (std::shared_ptr<gp::Connection> c = gpConnection()) {
-        c->getInfo(m_records[static_cast<size_t>(u)].profile, true, true, infoCallback(u));
+        c->getInfo(m_records[static_cast<size_t>(u)].profile, true, false, infoCallback(u));
     }
     const int32_t p = newPlayer();
     OnlinePlayer& pl = m_players[static_cast<size_t>(p)];
@@ -444,7 +503,7 @@ void OnlineUser::onBuddyStatus(const gp::BuddyStatusArg& arg) {
         m_records[static_cast<size_t>(u)].profile = arg.profile;
         m_records[static_cast<size_t>(u)].nick.clear();
         userAddRef(u);
-        c->getInfo(m_records[static_cast<size_t>(u)].profile, true, true, infoCallback(u));
+        c->getInfo(m_records[static_cast<size_t>(u)].profile, true, false, infoCallback(u));
         std::optional<Address> address;
         int32_t session = 0;
         int32_t same = 0;
@@ -452,6 +511,8 @@ void OnlineUser::onBuddyStatus(const gp::BuddyStatusArg& arg) {
         int32_t e = friends->find(arg.profile);
         if (e == -1) e = friends->newEntry();
         OnlineFriend& f = e == -1 ? g_noFriend : friends->entries()[static_cast<size_t>(e)];
+        // The fixed build: the friend's nick kept until the new record's answer (its info not asked blocking).
+        if (f.user != -1) m_records[static_cast<size_t>(u)].nick = record(f.user).nick;
         userRelease(f.user);
         f.user = u;
         f.online = st.status != 0 ? 1 : 0;
@@ -466,7 +527,7 @@ void OnlineUser::onBuddyStatus(const gp::BuddyStatusArg& arg) {
 }
 
 // 0x0055E8F0: a buddy request: its friend found, or a temporary one made (a new record of the profile, its nick
-// asked); their request noted; our first local player's note (Stock problem: referenced, never let go).
+// asked); their request noted; our first local player's note (the stock referenced the player, never let go).
 void OnlineUser::onBuddyRequest(const gp::BuddyRequestArg& arg) {
     OnlineFriends* friends = referenceFriends();
     int32_t e = friends->find(arg.profile);
@@ -477,7 +538,7 @@ void OnlineUser::onBuddyRequest(const gp::BuddyRequestArg& arg) {
         m_records[static_cast<size_t>(u)].nick.clear();
         userAddRef(u);
         if (std::shared_ptr<gp::Connection> c = gpConnection()) {
-            c->getInfo(m_records[static_cast<size_t>(u)].profile, true, true, infoCallback(u));
+            c->getInfo(m_records[static_cast<size_t>(u)].profile, true, false, infoCallback(u));
         }
         OnlineFriend& f = e == -1 ? g_noFriend : friends->entries()[static_cast<size_t>(e)];
         f.user = u;
@@ -486,13 +547,12 @@ void OnlineUser::onBuddyRequest(const gp::BuddyRequestArg& arg) {
     (e == -1 ? g_noFriend : friends->entries()[static_cast<size_t>(e)]).requestFrom = 1;
     friends->release();
     if (localPlayers.empty()) return;
-    const int32_t p = localPlayers[0];
-    playerAddRef(p);
-    m_players[static_cast<size_t>(p)].friendNote = 1;
+    m_players[static_cast<size_t>(localPlayers[0])].friendNote = 1;
 }
 
 // 0x0055EA70: an invitation to the game's product only: its friend found or made (temporary), the location's address,
-// session and same game, their invitation noted; our first local player's note (referenced, never let go).
+// session and same game, their invitation noted; our first local player's note (the stock's referenced, never let
+// go).
 void OnlineUser::onGameInvite(const gp::GameInviteArg& arg) {
     if (arg.productId != kProductId) return;
     OnlineFriends* friends = referenceFriends();
@@ -504,7 +564,7 @@ void OnlineUser::onGameInvite(const gp::GameInviteArg& arg) {
         m_records[static_cast<size_t>(u)].nick.clear();
         userAddRef(u);
         if (std::shared_ptr<gp::Connection> c = gpConnection()) {
-            c->getInfo(m_records[static_cast<size_t>(u)].profile, true, true, infoCallback(u));
+            c->getInfo(m_records[static_cast<size_t>(u)].profile, true, false, infoCallback(u));
         }
         OnlineFriend& f = e == -1 ? g_noFriend : friends->entries()[static_cast<size_t>(e)];
         f.user = u;
@@ -521,9 +581,7 @@ void OnlineUser::onGameInvite(const gp::GameInviteArg& arg) {
     f.inviteFrom = 1;
     friends->release();
     if (localPlayers.empty()) return;
-    const int32_t p = localPlayers[0];
-    playerAddRef(p);
-    m_players[static_cast<size_t>(p)].inviteNote = 1;
+    m_players[static_cast<size_t>(localPlayers[0])].inviteNote = 1;
 }
 
 // ---- The friends object.
@@ -572,28 +630,30 @@ bool OnlineFriends::sameUser(int32_t a, int32_t b) {
     return m_user->sameUser(at(a).user, at(b).user);
 }
 
+// The fixed build: the local players not referenced (the stock referenced each at every refresh, never let go), the
+// refresh goes on after a friend gone (in its place the list's last, not yet aged).
 void OnlineFriends::update() {
     if (m_user == nullptr) return;
     for (size_t k = 0; k < m_user->localPlayers.size(); ++k) {
         const int32_t p = m_user->localPlayers[k];
-        m_user->playerAddRef(p);
         m_user->player(p).friendNote = 0;
         m_user->player(p).inviteNote = 0;
     }
-    for (size_t k = 0; k < m_list.size(); ++k) {
+    for (size_t k = 0; k < m_list.size();) {
         OnlineFriend& f = m_list[k] == -1 ? g_noFriend : at(m_list[k]);
         if (f.requestSent != 0) {
             ++f.requestAge;
             if (static_cast<uint32_t>(f.requestAge) >= 10) {
                 f.requestSent = 0;
                 listRemove(m_list[k]);
-                return;
+                continue;
             }
         }
         if (f.inviteSent != 0) {
             ++f.inviteAge;
             if (static_cast<uint32_t>(f.inviteAge) >= 10) f.inviteSent = 0;
         }
+        ++k;
     }
 }
 
@@ -683,12 +743,10 @@ std::optional<Address> OnlineFriends::address(int32_t entry) const {
 void OnlineFriends::invite(int32_t entry, const std::optional<Address>& /*address*/, int32_t /*unused*/) {
     if (entry == -1 || m_user == nullptr) return;
     const int32_t profile = m_user->record(at(entry).user).profile;
+    // Our first player's location (the stock referenced the player, never let go; not the fixed build).
     const int32_t p = m_user->localPlayers.empty() ? -1 : m_user->localPlayers[0];
     std::u16string where;
-    if (p != -1) {
-        m_user->playerAddRef(p);
-        where = m_user->location(p);
-    }
+    if (p != -1) where = m_user->location(p);
     if (std::shared_ptr<gp::Connection> c = gpConnection()) c->invitePlayer(profile, kProductId, where);
     at(entry).inviteSent = 1;
     at(entry).inviteAge = 0;
@@ -798,6 +856,7 @@ OnlineHooks& onlineHooks() {
 }
 
 void endOnline() {
+    peerchat::end();  // the fixed build's lobby chat
     endOnlineFriends(true);
     OnlineHooks& h = onlineHooks();
     releaseMatchmaking();

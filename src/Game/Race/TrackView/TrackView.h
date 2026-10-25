@@ -390,10 +390,21 @@ struct TrackView {
     // +0x7C).
     oj::net::NetSession* net = nullptr;
     bool netLoaded = false;
+    // The fixed build's contacts of the online cars: the world's hits of this frame, the race's time, and when our
+    // car last met each peer's (its peer, the time).
+    std::vector<oj::BodyPush> netPushes;
+    float netClock = 0.0f;
+    std::vector<std::pair<int32_t, float>> netMet;
     bool hasCamera() const { return first().slot != nullptr || watching; }
     uint32_t timeOfDay = 2;     // [G+0x6C]+0x6C
     uint32_t weather = 0;       // [G+0x6C]+0x70
     bool paused = false;        // the race state's +0x20 (0x004263E0)
+    // The fixed build's network pause: the game goes on under the pause window (asked or shown), so the camera's
+    // window asks and the network's own pause asks leave it be.
+    bool netPauseShown() const {
+        return net != nullptr && (frontEnd.window.id == RaceWindowId::Pause ||
+                                  frontEnd.windowAsked == oj::raceWindowName(RaceWindowId::Pause));
+    }
     oj::DriverActions frameActions;  // the frame's driver actions
     bool autopilot = false;       // --autopilot
     bool automod = false;         // -automod N ([0x0075EF40], [0x0075EF44])
@@ -401,7 +412,7 @@ struct TrackView {
     oj::scene::Engine* hudEngine = nullptr;
     std::string trackName;
     std::string routeLine;
-    std::vector<oj::Vec4> places;                     // the racers' grid places (race +0x30)
+    std::vector<oj::Vec4> places;                     // the route's grid points (race +0x30: +0x4C, +0xAC)
 
     // "<Track>/<Route>[/<time of day>[/<weather>]]"
     bool start(oj::scene::Engine& engine, const std::string& what);
@@ -436,6 +447,17 @@ struct TrackView {
     void addCar(const oj::CarDynamics& dynamics, const oj::Car& source, oj::Car* kept, const oj::GameData& data,
                 oj::scene::CarModel* model, const oj::Spl::GridPoint& place, oj::CarKind kind, int32_t crew,
                 int32_t record, bool refresh);
+
+    // addCar's record: 0x00485600, -automod's parts, then the parts fitted (0x00485E98) into a copy of the dynamics
+    // and into the record itself; kept takes the brake value the parts give (+0x80), which the car's frame puts on
+    // every wheel while braking (0x0048F080). The car as raced (the record's copy) with its dynamics.
+    struct RaceRecord {
+        oj::Car car;
+        oj::CarDynamics dynamics;
+    };
+    RaceRecord raceRecord(const oj::CarDynamics& dynamics, const oj::Car& source, oj::Car* kept,
+                          const oj::CarDefs& defs, const oj::PartCatalogue& catalogue, int& modifications,
+                          bool refresh);
 
     // The end of 0x00495DE0: every competitor knows the others (0x004A0030), the cars go to the grid (0x004975A0);
     // the race runs from here, through the fly-by. Without a fly-by the count of 6 s and the sweep before the start
@@ -543,6 +565,14 @@ struct TrackView {
     // (0x004E6B60), put back on its line (0x00487080), its race distance (+0x494 +0x98), the model's byte (+0x430
     // +0x170), gone (+0x4E8 1, +0x4EC 0), another machine's (kind 2); the race's type and pause.
     void netHooks(oj::net::NetSession& session);
+    // The fixed build: after the frame's steps, the hits our cars gave another machine's car summed and told to that
+    // machine when it is of the fixed build (its own car takes them only when it did not meet ours itself), the
+    // meetings noted; the world's hits forgotten.
+    void netContacts(float step);
+    // A hit told by a fixed peer for our player of the index: taken unless our car met that peer's within 0.25 s
+    // (its own step gave it then), at most 60000 of momentum.
+    void netContactCame(int32_t peer, int32_t localIndex, const std::array<float, 3>& linear,
+                        const std::array<float, 3>& angular);
 
     // 0x004B0A50: the players in the race by their cruise scores, the first three with a score of 0 or more on the
     // window's mplay1 .. 3: "<n><st|nd|rd> <name> <score with its thousands marked>".
@@ -727,6 +757,7 @@ struct TrackView {
     // nearest); within its radius (0x00418BF0) the track's first atmosphere goes to the zone's by 1 up to 0.75 of the
     // radius, then down to 0 at the radius (the set's +0x58, +0x5C, +0x64).
     // Stock problem: out of every zone's radius nothing is set, so the last blend stays as the camera leaves a zone.
+    // The fixed build sets no blend there.
     void atmosZonesFrame(RacePlayer& player);
 
     // 0x00487220: each exhaust's node at its place moved in y by -0.2 x the body's acceleration in its own y (+0x2AC),
@@ -854,7 +885,8 @@ struct TrackView {
 
     // The fly-by of the route (the race's camera step 0x00405BE0); the grid camera after it. The player's camera takes
     // the height's share of the width (0x00424965 → 0x0041DE30 → 0x00401760): on a wide screen 0.5625 (0.28125 with
-    // two players), else 0.75 (0.375).
+    // two players), else 0.75 (0.375). The fixed build plays no fly-by for a replay read by loadreplay (a replay's race
+    // not the attract's): it starts as a replay after a race, the sweep before the start then the view kept.
     void startIntro(const std::string& routeName, bool wide);
 
     // 0x00401A39 .. 0x00401BF1, as the player's camera is made (0x0041DE30 in the race track's making, on the loading

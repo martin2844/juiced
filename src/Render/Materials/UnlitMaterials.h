@@ -156,9 +156,12 @@ public:
     enum class Kind { Modulate, VertexColour, Specular };
     TwoTexture(const ExeTables::MaterialClass& c, Renderer3d& r, const ProgramLookup& programs, Kind kind)
         : Material(c.id, c.flags, r),
+          // Stock problem: the stock asks for Material_2TexModulate(Spec), the game's files and the programs loaded
+          // at the start are Material_2TexModulare(Spec), so the classes had no program. The fixed build asks for the
+          // files' names (no material of the game's files is of these classes: nothing changes for the game itself).
           m_program(programs(kind == Kind::VertexColour ? "Material_VertCol2Tex"
-                             : kind == Kind::Specular   ? "Material_2TexModulateSpec"
-                                                        : "Material_2TexModulate")),
+                             : kind == Kind::Specular   ? "Material_2TexModulareSpec"
+                                                        : "Material_2TexModulare")),
           m_vertexColour(kind == Kind::VertexColour),
           m_specular(kind == Kind::Specular) {}
 

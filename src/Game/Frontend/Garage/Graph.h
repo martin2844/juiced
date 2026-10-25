@@ -37,7 +37,8 @@ public:
     // there 0.
     void advance();
     // 0x004F8940 without the legend (its font none): a line of 0x80FFFFFF from (+0x70, +0x74) to (2 x the points,
-    // +0x74) in pixels (Stock problem: neither scaled to the screen nor moved by +0x70); then each series of the order
+    // +0x74) in pixels (Stock problem: neither scaled to the screen nor moved by +0x70; the fixed build's from (x, y)
+    // to (2 x the points + x, y) of 640 x 480, as the series); then each series of the order
     // list (0x004F8410), in its colour of [0x007191E0] (its number modulo 10) at 0xFF when shown, else 0x30.
     void draw(render::IRenderDevice& device, bool shadow) const;
 

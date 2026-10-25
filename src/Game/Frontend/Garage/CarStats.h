@@ -20,6 +20,8 @@ public:
     void enter(WindowHost& host, ui::Screen& s);
     // 0x004C4770
     void update(WindowHost& host, ui::Screen& s, uint32_t event);
+    // 0x004C4710: the blinking elements' alpha back to 1 (the Menu's item is kept by the windows' leave).
+    void leave(ui::Screen& s);
     // 0x004C5260: car_StatsLogos over the windows.
     static void enterLogos(WindowHost& host, ui::Screen& s);
 

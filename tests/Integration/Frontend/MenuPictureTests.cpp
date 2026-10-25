@@ -65,3 +65,17 @@ OJ_INTEGRATION_TEST(MenuPicture, HighPictureMissing) {
     check(off != 0 && s.texture("ui_dial_choose") == 0, "ui_dials_off in the game's files, ui_dial_choose not");
     check(highlighted && !untextured, "the highlighted dial drawn with ui_dials_off, no dial without a texture");
 }
+
+// The fixed build's highlighted dial (0x0043ED70): ui_dials_choose, which the game's files have.
+OJ_INTEGRATION_TEST(MenuPicture, DialsChoose) {
+    oj::test::InGameFolder folder;
+    if (!folder.valid()) return;
+    RecordingDevice device;
+    const oj::Language language = *oj::Language::byName("english");
+    oj::ui::Screen s(device, language);
+    if (!s.load("hudcolourmenu")) {
+        check(false, "hudcolourmenu.ui read from the game's folder");
+        return;
+    }
+    check(s.texture("ui_dials_choose") != 0, "ui_dials_choose in the game's files");
+}

@@ -144,8 +144,15 @@ void TrackScene::drawCube(render::Camera& camera, const render::GameTexture& cub
     device.setRenderState(RenderState::ZEnable, 1);
     const Vec4 focus = camera.focus;
     if (cube.id != 0) {
-        // 0x005C9190: the faces' cameras at the focus; c10 the first face's projection.
-        for (render::Camera& f : m_faces) f.setPosition(focus[0], focus[1], focus[2]);
+        // 0x005C9190: the faces' cameras at the focus; c10 the first face's projection. Stock problem: c10 is taken
+        // before the faces get this camera's near and far planes, so it has the planes of the cube drawn before. The
+        // fixed build gives the faces their planes first.
+        for (render::Camera& f : m_faces) {
+            f.setPosition(focus[0], focus[1], focus[2]);
+            f.setNear(camera.nearPlane());
+            f.setFar(camera.farPlane());
+            f.update();
+        }
         r.setVertexConstants(10, m_faces[0].projection().data(), 4);
         collectCube(region, focus, std::sqrt(m_cubeRange));
         PostEffects& post = m_engine.postEffects();

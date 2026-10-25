@@ -16,12 +16,12 @@ constexpr char kCrewCharacters[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqr
 }  // namespace
 
 // 0x004C3B70: the first 19 crew logos of the table 0x00718A28 (ui_chooselogo_01 .. _18, then _20: logo 19 is never
-// offered), value = their place in it.
+// offered), value = their place in it. The fixed build's table has logo 19 in its place (ExeTables): all 20.
 void ChooseLogo::enter(ProfileHost& host, ui::Screen& s) {
     s.clearMenu("Menu");
     const GameData* data = host.gameData();
     const std::vector<std::string>* logos = data != nullptr ? &data->tables.logos : nullptr;
-    for (size_t i = 0; logos != nullptr && i < 19 && i < logos->size(); ++i) {
+    for (size_t i = 0; logos != nullptr && i < 20 && i < logos->size(); ++i) {
         const std::string& name = (*logos)[i];
         s.addMenuItem("Menu", L"", static_cast<float>(i), name, name);
     }

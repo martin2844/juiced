@@ -112,13 +112,13 @@ void Skippable::update(StartupHost& host, ui::Screen& s, bool pressed) {
 
 // 0x00467260 (the time cleared while the device is lost, which it is not here): past 100 s on the title the
 // attract replay next (attracts\attract1, then 2; Stock problem: the count goes back to the first at 2, so
-// attract3 is never played) is the race (mode 4, one player) and loading is asked; a name not taken
-// (0x004296F0 always takes it) would start the time again.
+// attract3 is never played; the fixed build's 1, 2, 3) is the race (mode 4, one player) and loading is asked;
+// a name not taken (0x004296F0 always takes it) would start the time again.
 void Title::update(StartupHost& host, bool playerTaken) {
     GameData* data = host.gameData();
     m_attractTime = host.frameTime() + m_attractTime;
     if (m_attractTime > 100.0f && data != nullptr) {
-        if (data->attractNext >= 2) data->attractNext = 0;
+        if (data->attractNext >= 3) data->attractNext = 0;
         data->race.mode = RaceMode::Attract;
         data->race.players = 1;
         static const char* const kAttracts[] = {"attracts\\attract1", "attracts\\attract2", "attracts\\attract3"};

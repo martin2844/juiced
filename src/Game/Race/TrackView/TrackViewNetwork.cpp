@@ -31,7 +31,11 @@ bool TrackView::netSweep(RacePlayer& player) {
 }
 
 void TrackView::netDetach() {
+    if (world != nullptr) world->pushes = nullptr;
+    netPushes.clear();
+    netMet.clear();
     if (net != nullptr) {
+        net->hooks.contact = nullptr;
         for (oj::net::NetPlayer& p : net->players()) p.raceCar = nullptr;
         net->hooks.carState = nullptr;
         net->hooks.applyState = nullptr;
@@ -154,7 +158,7 @@ void TrackView::netBeforeWindows(float dt) {
     } else if (n->transport.state() == oj::net::State::HostTimedOut && frontEnd.netMessage == nullptr) {
         frontEnd.windowAsked.clear();
         frontEnd.message.reset();
-        if (!allFinished() && !rules.replayRace && !paused) frontEnd.askWindow(RaceWindowId::Pause);
+        if (!allFinished() && !rules.replayRace && !paused && !netPauseShown()) frontEnd.askWindow(RaceWindowId::Pause);
         n->session.reset(false);
         input->useUi();
         frontEnd.netNote(oj::ui::MessageType::Continue, frontEnd.hudLine(oj::kTextHostFailed), &netNoteAnswer);
@@ -274,7 +278,7 @@ bool TrackView::netAfterWindows() {
         frontEnd.watchesControllers() && user->state == oj::net::UserState::ForcedDisconnect &&
         frontEnd.netMessage == nullptr) {
         frontEnd.windowAsked.clear();
-        if (!allFinished() && !rules.replayRace && !paused) frontEnd.askWindow(RaceWindowId::Pause);
+        if (!allFinished() && !rules.replayRace && !paused && !netPauseShown()) frontEnd.askWindow(RaceWindowId::Pause);
         if (rules.replayRace && !replay.done()) {
             replay.fast = 0;
             replay.timeScale = 1.0f;
@@ -328,8 +332,8 @@ void TrackView::netHooks(oj::net::NetSession& session) {
     session.hooks.applyState = [this](void* car, const uint8_t* state) {
         oj::net::applyState(*static_cast<oj::RaceCar*>(car), state, world.get(), &netHorn);
     };
-    session.hooks.smoothState = [this](void* car, const uint8_t* state) {
-        oj::net::smoothState(*static_cast<oj::RaceCar*>(car), state, world.get(), &netHorn);
+    session.hooks.smoothState = [this](void* car, const uint8_t* state, float dt) {
+        oj::net::smoothState(*static_cast<oj::RaceCar*>(car), state, world.get(), &netHorn, dt);
     };
     session.hooks.extrapolate = [](uint8_t* state, float dt) { oj::net::extrapolate(state, dt); };
     session.hooks.putBack = [this](void* car) {
@@ -349,6 +353,15 @@ void TrackView::netHooks(oj::net::NetSession& session) {
         c.netPaused = false;
     };
     session.hooks.remote = [](void* car) { return static_cast<oj::RaceCar*>(car)->kind == oj::CarKind::Remote; };
+    // The fixed build's contacts: the world keeps its hits, a fixed peer's told hits come to our cars.
+    netPushes.clear();
+    netMet.clear();
+    netClock = 0.0f;
+    if (world != nullptr) world->pushes = &netPushes;
+    session.hooks.contact = [this](int32_t peer, int32_t localIndex, const std::array<float, 3>& linear,
+                                   const std::array<float, 3>& angular) {
+        netContactCame(peer, localIndex, linear, angular);
+    };
     session.hooks.raceType = [this] { return rules.type; };
     session.hooks.racePaused = [this] { return paused; };
     // The race front end there ([G+0x3C]) and its notes to the first player's messages, with no colour of their
@@ -417,6 +430,92 @@ void TrackView::netHooks(oj::net::NetSession& session) {
         };
         c.board = [this] { netCruiseBoard(); };
     }
+}
+
+void TrackView::netContacts(float step) {
+    netClock += step;
+    if (net == nullptr || netPushes.empty()) {
+        netPushes.clear();
+        return;
+    }
+    // Our cars' bodies and the others' (their peer and their index there).
+    struct Car {
+        const oj::RigidBody* body;
+        int32_t peer;
+        int32_t localIndex;
+    };
+    std::vector<const oj::RigidBody*> ours;
+    std::vector<Car> theirs;
+    for (const oj::net::NetPlayer& p : net->players()) {
+        const auto* car = static_cast<const oj::RaceCar*>(p.raceCar);
+        if (car == nullptr || car->body == nullptr) continue;
+        if (p.peer == -1) {
+            ours.push_back(car->body);
+        } else if (car->kind == oj::CarKind::Remote) {
+            theirs.push_back({car->body, p.peer, p.localIndex});
+        }
+    }
+    auto isOurs = [&](const oj::RigidBody* b) { return std::find(ours.begin(), ours.end(), b) != ours.end(); };
+    auto theirsOf = [&](const oj::RigidBody* b) -> const Car* {
+        for (const Car& c : theirs) {
+            if (c.body == b) return &c;
+        }
+        return nullptr;
+    };
+    auto met = [&](int32_t peer) {
+        for (auto& [p, t] : netMet) {
+            if (p == peer) {
+                t = netClock;
+                return;
+            }
+        }
+        netMet.push_back({peer, netClock});
+    };
+    // The frame's hits on each other car from ours, summed.
+    struct Hit {
+        const Car* car;
+        std::array<float, 3> linear{};
+        std::array<float, 3> angular{};
+    };
+    std::vector<Hit> hits;
+    for (const oj::BodyPush& push : netPushes) {
+        if (isOurs(push.to)) {
+            if (const Car* from = theirsOf(push.from)) met(from->peer);
+            continue;
+        }
+        if (!isOurs(push.from)) continue;
+        const Car* to = theirsOf(push.to);
+        if (to == nullptr) continue;
+        met(to->peer);
+        auto it = std::find_if(hits.begin(), hits.end(), [&](const Hit& h) { return h.car == to; });
+        if (it == hits.end()) it = hits.insert(hits.end(), Hit{to});
+        for (size_t i = 0; i < 3; ++i) {
+            it->linear[i] += push.linear[i];
+            it->angular[i] += push.angular[i];
+        }
+    }
+    netPushes.clear();
+    for (const Hit& h : hits) net->sendContact(h.car->peer, h.car->localIndex, h.linear, h.angular);
+}
+
+void TrackView::netContactCame(int32_t peer, int32_t localIndex, const std::array<float, 3>& linear,
+                               const std::array<float, 3>& angular) {
+    if (net == nullptr || paused) return;
+    for (const auto& [p, t] : netMet) {
+        if (p == peer && netClock - t < 0.25f) return;
+    }
+    oj::CarBody* body = nullptr;
+    for (const oj::net::NetPlayer& p : net->players()) {
+        const auto* car = static_cast<const oj::RaceCar*>(p.raceCar);
+        if (p.peer == -1 && p.localIndex == localIndex && car != nullptr) body = car->body;
+    }
+    if (body == nullptr) return;
+    const float size = std::sqrt(linear[0] * linear[0] + linear[1] * linear[1] + linear[2] * linear[2]);
+    if (!(size > 0.0f) || size > 60000.0f) return;
+    body->setMomentum({body->momentum[0] + linear[0], body->momentum[1] + linear[1], body->momentum[2] + linear[2],
+                       body->momentum[3]});
+    body->setAngularMomentum({body->angularMomentum[0] + angular[0], body->angularMomentum[1] + angular[1],
+                              body->angularMomentum[2] + angular[2], body->angularMomentum[3]});
 }
 
 void TrackView::netCruiseBoard() {

@@ -13,4 +13,11 @@ namespace oj::config {
 // value read is given where it was asked for even then.
 HRESULT directXVersion(uint32_t* major, uint32_t* minor, char* letter);
 
+// DirectX 9.0c or later from directXVersion's answer. The stock (0x0040543B) asks for the major 9 or more and the
+// letter 'c' or later whatever the major: DirectX 10 .. 12 report a blank letter (Windows 11: 12.0 and a space), so it
+// took none of them for one (a stock problem; OpenJuiceConfig departs from it). Here a major past 9 is enough, the
+// letter counts only for 9 (either case); without an answer (read not S_OK) the Direct3D 9 interface the tool made with
+// D3D_SDK_VERSION (32, which runtimes before 9.0c refuse) answers it: true.
+bool directX9cOrLater(HRESULT read, uint32_t major, char letter);
+
 }  // namespace oj::config

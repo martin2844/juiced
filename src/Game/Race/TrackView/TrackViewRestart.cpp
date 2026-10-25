@@ -70,11 +70,12 @@ void TrackView::restartRace() {
     paused = false;
     frontEnd.screenWindow.reset();
     // 0x00401E80 for each player's camera: a solo race or a cruise the first player's kept view (the settings'
-    // +0x8C, whichever the player), a sprint's later heats the sweep before the start with the race's count 8.
+    // +0x8C, whichever the player; the fixed build's: the player's own), a sprint's later heats the sweep before the
+    // start with the race's count 8.
     if (rules.type == RaceType::Solo || rules.type == RaceType::Cruise) {
         for (std::unique_ptr<RacePlayer>& each : players) {
             RacePlayer& player = *each;
-            player.raceCamera.take(viewKept(first()), true, cameraTarget(player), cameraRace(player),
+            player.raceCamera.take(viewKept(player), true, cameraTarget(player), cameraRace(player),
                                    player.camera);
             for (const int asked : player.raceCamera.takeWindowAsks()) chooseWindow(asked != 0);
         }

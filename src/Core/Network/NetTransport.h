@@ -12,6 +12,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <functional>
+#include <memory>
 #include <optional>
 #include <string>
 #include <vector>
@@ -161,6 +162,8 @@ public:
     uint16_t gamePort() const { return m_options.gamePort; }
 
 private:
+    friend class LoadKeepAlive;
+
     struct Queued {  // a reliable packet waiting for its answer (+0xA4)
         uint32_t sequence = 0;
         float timer = 0.0f;
@@ -230,6 +233,25 @@ private:
     uint32_t m_counter = 0;       // +0xF0
     State m_state = State::Normal;
     float m_errorTimer = -1.0f;   // +0xF8
+};
+
+// Not of the game: the race loads on the main thread here, the stock's on its loading thread (0x00463BB0 queued on
+// 0x0059A6F0) while the main loop's frames went on, the transport's among them: its keep-alive every 1.5 s, so a
+// long load never reached the peers' 25 s of silence (0x00599470) that drop a machine. While one of these lives (the
+// load's blocking part), a thread of its own says the keep-alive to the peers as the frame would; nothing else is
+// sent or read meanwhile (what comes waits in the socket, the reliable packets are sent again).
+class LoadKeepAlive {
+public:
+    explicit LoadKeepAlive(const Transport* transport);
+    ~LoadKeepAlive();
+    LoadKeepAlive(const LoadKeepAlive&) = delete;
+    LoadKeepAlive& operator=(const LoadKeepAlive&) = delete;
+    // The keep-alives said so far (for the tests).
+    uint32_t sent() const;
+
+private:
+    struct Worker;
+    std::unique_ptr<Worker> m_worker;
 };
 
 // 0x00597690: Winsock started again (2.2; the one before let go), [0x0075F754] set and the network's loss

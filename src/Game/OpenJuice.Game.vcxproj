@@ -131,6 +131,7 @@
     <ClInclude Include="Frontend\Menus\VidTutorial.h" />
     <ClInclude Include="Frontend\Messages.h" />
     <ClInclude Include="Frontend\Network\LinkWindows.h" />
+    <ClInclude Include="Frontend\Network\LobbyChat.h" />
     <ClInclude Include="Frontend\Network\NetworkHost.h" />
     <ClInclude Include="Frontend\Network\OnlineCareerWindows.h" />
     <ClInclude Include="Frontend\Network\OnlineCrewRaceSetup.h" />
@@ -241,6 +242,7 @@
     <ClInclude Include="UI\UiScreen.h" />
     <ClInclude Include="UI\UiSound.h" />
     <ClInclude Include="UI\WindowManager.h" />
+    <ClInclude Include="UI\WindowFixes.h" />
     <ClCompile Include="App\CrashLog.cpp" />
     <ClCompile Include="App\DebugPages.cpp" />
     <ClCompile Include="App\GameLoop.cpp" />
@@ -317,6 +319,7 @@
     <ClCompile Include="Frontend\Menus\VidTutorial.cpp" />
     <ClCompile Include="Frontend\Messages.cpp" />
     <ClCompile Include="Frontend\Network\LinkWindows.cpp" />
+    <ClCompile Include="Frontend\Network\LobbyChat.cpp" />
     <ClCompile Include="Frontend\Network\OnlineCareerWindows.cpp" />
     <ClCompile Include="Frontend\Network\OnlineCrewRaceSetup.cpp" />
     <ClCompile Include="Frontend\Network\OnlineFriendOptions.cpp" />
@@ -402,6 +405,7 @@
     <ClCompile Include="Scene\Particles\SparksEmitter.cpp" />
     <ClCompile Include="Scene\Particles\TracksEmitter.cpp" />
     <ClCompile Include="Scene\PostEffects.cpp" />
+    <ClCompile Include="Scene\PostEffectsSplit.cpp" />
     <ClCompile Include="Scene\Projector.cpp" />
     <ClCompile Include="Scene\Scene3d.cpp" />
     <ClCompile Include="Scene\Silhouette.cpp" />
@@ -424,6 +428,7 @@
     <ClCompile Include="UI\UiScreen.cpp" />
     <ClCompile Include="UI\UiSound.cpp" />
     <ClCompile Include="UI\WindowManager.cpp" />
+    <ClCompile Include="UI\WindowFixes.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <!-- The objects OpenJuice.vcxproj links in place of this library (UseLibraryDependencyInputs): the game's own,

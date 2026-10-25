@@ -109,7 +109,8 @@ void Driver::fillList(SaveHost& host, ui::Screen& s) {
 //   cleared and asked again, the saving off, +0x54 0.5; 20: "Are you sure you want to delete driver <name>?" (type 4,
 //   on NO, into the answer) once; 21: MENU back to "CREATE NEW DRIVER", "Delete successful!" (1496), the list to be
 //   filled again; 22: "Could not delete driver." (Stock problem: the close flag the "Deleting..." note had set
-//   closes this one the next frame), MENU back, the list again, +0x54 0.5; 23: "Deleting..." (type 0) once, busy;
+//   closes this one the next frame; the fixed build closes the note before it), MENU back, the list again, +0x54
+//   0.5; 23: "Deleting..." (type 0) once, busy;
 //   1 .. 3 (not on the PC): the list again, 2 a note (type 2) once.
 // SELECT (the list ready, not busy, no message): a driver: its slot read ("next"), CLICK; "CREATE NEW DRIVER" with
 // fewer than 10 drivers: the list left, the device started again, the name window (NEW DRIVER NAME, "Player"),
@@ -210,8 +211,8 @@ void Driver::update(SaveHost& host, ui::Screen& s, uint32_t event) {
                 m_refill = 1;
                 break;
             case SaveFlag::DeleteError:
-                host.message(MessageType::Continue, host.jetText(save::flagText(flag)), false, nullptr);
                 if (m_current == m_deleting && host.messageUp()) host.closeMessage();
+                host.message(MessageType::Continue, host.jetText(save::flagText(flag)), false, nullptr);
                 host.setSaveBusy(0);
                 if (hasMenu) {
                     s.clearMenu("menu");

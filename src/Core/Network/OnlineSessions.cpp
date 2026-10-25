@@ -390,14 +390,10 @@ bool readSession(int32_t position, int32_t& access, std::array<char16_t, 16>& na
     access = static_cast<int32_t>(r->closed);
     if (const MatchAttribute* a = findAttribute(*r, 0)) {
         // At most 16 characters and a 0 after them (Stock problem: after 16 the 0 is the low half of +0x24, the
-        // playing flag), then +0x22 0.
+        // playing flag; the fixed build leaves it), then +0x22 0.
         size_t n = 0;
         for (; n < a->text.size() && n < 16 && a->text[n] != 0; ++n) name[n] = a->text[n];
-        if (n < 16) {
-            name[n] = 0;
-        } else {
-            playing = static_cast<int32_t>(static_cast<uint32_t>(playing) & 0xFFFF0000u);
-        }
+        if (n < 16) name[n] = 0;
         name[15] = 0;
     }
     readInt(*r, 1, playing);

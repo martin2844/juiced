@@ -226,7 +226,9 @@ screen.
 
 An element's `+0x58` hides it. `0x005A9BB0` shows a hidden element of a name (without regard to case);
 `0x005A9C20` the hidden elements whose name holds a part (case counts); with "animate" their transition starts again
-(time and delay left = their lengths, progress and alpha 0, not going out), else it rests at its end (progress 1).
+(time and delay left = their lengths, progress and alpha 0, not going out). Without, `0x005A9C20` puts it at its end
+(time left 0, progress 1, not going out), while `0x005A9BB0` leaves it as it is: an element still coming in with its
+window goes on fading in.
 `0x005A9AD0` hides the elements whose name holds a part: with "animate" one with a transition goes out (time left =
 the duration, progress 0, no delay) and is hidden by the box draw once the progress reaches 1; without, at once.
 `0x005AA0E0` sends every transition of the window out that is not going out. `0x005AA120`: every transition of the

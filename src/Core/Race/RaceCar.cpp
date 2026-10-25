@@ -93,6 +93,9 @@ static void impactContacts(RaceCar& car, ContactPools& pools, RaceState& race, C
     car.bodyContact = false;
     float sx = 0.0f, sy = 0.0f, sz = 0.0f;
     uint32_t touching = 0;
+    // Stock problem: the other body is read from the step's last rigid contact, touching or not (one that came apart
+    // in the step counted as a body's, one beside it lost a body's). The fixed build reads the last touching contact
+    // (the bodies' contacts come after the route's).
     const Contact* last = nullptr;
     for (size_t k = 0; k < count; ++k) {
         const Contact& c = pools.rigid[body.rigidFirst + k];
@@ -101,10 +104,10 @@ static void impactContacts(RaceCar& car, ContactPools& pools, RaceState& race, C
             sx = c.arm[0] * 100.0f + sx;
             sy = c.arm[1] * 100.0f + sy;
             sz = c.arm[2] * 100.0f + sz;
+            last = &c;
         }
         const float y = c.point[1] * 100.0f;
         if (y < car.lowest) car.lowest = y;
-        last = &c;
     }
     auto none = [&car] {
         car.contactSide = 0;
@@ -164,7 +167,7 @@ static void impactContacts(RaceCar& car, ContactPools& pools, RaceState& race, C
     if (lift < 1.0f) {
         lift = 1.0f;
     } else if (lift > 2.0f) {
-        lift = over;  // Stock problem: past 2 the excess takes the place of the bound.
+        lift = 2.0f;  // Stock problem: past 2 the excess took the place of the bound; the fixed build's 2.
     }
     float amount = lift + over;
     if (race.rules().replayRace) {
@@ -175,6 +178,11 @@ static void impactContacts(RaceCar& car, ContactPools& pools, RaceState& race, C
     }
     countHit(race, other, car, amount);
     if (other != nullptr) countHit(race, &car, *other, amount);
+    // Stock problem: the car's impact (+0x174, the camera's shake, the rumble, the wheel's jolt x 255, the wheels'
+    // smoke) was set after the pieces, always the last one's 50. The fixed build's is the hit's amount, at most the
+    // stock's 50 (a light hit a lighter jolt; the smoke, the rumble and the shake's size are full from 1 on, the
+    // shake's period from 2.5).
+    const float hit = amount < 50.0f ? amount : 50.0f;
     // Pieces of 50: the first takes what is left over them (all of it below 50).
     uint32_t pieces = static_cast<uint32_t>(x87::chop(amount * 0.02f));
     if (pieces < 1) {
@@ -193,7 +201,7 @@ static void impactContacts(RaceCar& car, ContactPools& pools, RaceState& race, C
         }
         amount = 50.0f;
     }
-    car.impact = amount;
+    car.impact = hit;
     car.hitPoint = direction;
     if (race.rules().type == RaceType::PerfectLap) {
         // A time trial ends at the first hit.
@@ -483,14 +491,18 @@ bool neonFlicker(RaceCar& car, CrtRandom& random) {
 
 void tiltGuard(RaceCar& car) {
     CarBody& body = *car.body;
-    const float pitch = body.angles[0] * 0.31830987f;
+    // Stock problem: the pitch (an arcsine, within ±pi / 2) over pi squared never passes 0.3, so its torque never
+    // came, and the square lost its side. The fixed build takes the pitch over its own range, pi / 2 (as the roll
+    // over pi, its atan2's), and keeps its side: past 49.3 degrees a torque towards level, growing to the 60 degrees
+    // hold below.
+    const float pitch = body.angles[0] * 0.63661975f;
     const float roll = body.angles[2] * 0.31830987f;
     float over = pitch * pitch - 0.3f;
     int32_t past = 0;
     if (over < 0.0f) {
         over = 0.0f;
     } else if (over > 0.0f) {
-        past = 1;
+        past = pitch < 0.0f ? -1 : 1;
     }
     body.externalTorque[0] = (over * static_cast<float>(past)) * -40000.0f + body.externalTorque[0];
     body.externalTorque[2] = -40000.0f * roll + body.externalTorque[2];

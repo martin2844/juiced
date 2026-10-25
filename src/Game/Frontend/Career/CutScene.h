@@ -72,8 +72,8 @@ private:
     void script(CareerHost& host, ui::Screen& s);
     // 0x004C7870: the camera by its stage: 1 looks at (0, 0, 0) at once and moves 450 cm a second along x, the front
     // end's black 1 - the stage's time while under 1 s; 2 looks at (0, 50, 100), 25 cm a second back along x, the black
-    // likewise; 3 looks at (0, 0, 0), 150 cm a second along z, the black likewise (and the music told, not made); 4 the
-    // black 1.
+    // likewise; 3 looks at (0, 0, 0), 150 cm a second along z, the black likewise and the 3D world's sounds paused; 4
+    // the black 1.
     void camera(CareerHost& host, ui::Screen& s);
     // 0x004A4060: the test track's race (type 9, 99999 laps, the morning, dry, Angel SuperSpeedway's Speedway_R1, one
     // player, the settings' +0x84 for +0x54), loading asked for, the cruise's +0x10 set.

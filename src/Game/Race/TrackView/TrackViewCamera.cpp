@@ -20,7 +20,14 @@ void TrackView::cameraTakes(RacePlayer& player, RaceSlot* car) {
         car->sound->setFocus(true, car->road, car->horn, soundHolders(*car), squealOf(*car));
     }
     for (std::unique_ptr<RaceSlot>& s : cars) {
-        if (s.get() != car && s->sound) s->sound->setFocus(false, s->road, s->horn, soundHolders(*s), squealOf(*s));
+        if (s.get() == car || !s->sound) continue;
+        // Stock problem: every other car's sounds turned away, a car another player's camera follows too (split
+        // screen: the second camera turned the first player's car away). The fixed build leaves that one.
+        bool followed = false;
+        for (const std::unique_ptr<RacePlayer>& p : players) {
+            if (p.get() != &player && p->soundCamera == s.get()) followed = true;
+        }
+        if (!followed) s->sound->setFocus(false, s->road, s->horn, soundHolders(*s), squealOf(*s));
     }
     player.soundCamera = car;
 }
@@ -153,10 +160,11 @@ oj::scene::CameraRace TrackView::cameraRace(RacePlayer& player) {
 void TrackView::startIntro(const std::string& routeName, bool wide) {
     wideScreen = wide;
     const bool two = rules.players == 2;
+    const bool savedReplay = rules.replayRace && rules.mode != RaceMode::Attract;
     for (std::unique_ptr<RacePlayer>& p : players) {
         p->camera.setAspect(wide ? (two ? 0.28125f : 0.5625f) : (two ? 0.375f : 0.75f));
-        // 0x00401E80: on the network the first mode is the sweep (10), not the fly-by (9).
-        p->introPlaying = (net == nullptr || rules.type == RaceType::Solo || rules.type == RaceType::Cruise) &&
+        p->introPlaying = !savedReplay &&
+                          oj::startView(rules.type, rules.heat, net != nullptr) == oj::StartView::FlyBy &&
                           p->intro.load(routeName);
         p->introStarted = false;
     }

@@ -47,7 +47,8 @@ void Screen::setNeedleColour(int element, uint32_t argb) {
 // the needle is a quad of the needle texture about the pivot (+0xE4, +0xE8 of the box), the length (+0xD8) up from it,
 // the tail (+0xE0) down and the half width (+0xDC) each side, all of the box's height in pixels, turned by the angle;
 // first a black copy 2 pixels right and up, then the needle in its colour (0x005181B0: the first corner's x and y and
-// the second's y and x, in that order, moved onto the screen's edges within 2 pixels as x, y, x and y).
+// the second's y and x, in that order, moved onto the screen's edges within 2 pixels as x, y, x and y). The fixed
+// build moves the second corner's x as an x and its y as a y.
 void Screen::drawDial(const Element& e, State& s) {
     if (s.dial.needleTexture.empty()) {
         return;
@@ -83,8 +84,8 @@ void Screen::drawDial(const Element& e, State& s) {
         for (int i = 0; i < 4; ++i) vx[i] = x[i] + dx, vy[i] = y[i] + dy;
         vx[0] = snapEdge(vx[0], sw);
         vy[0] = snapEdge(vy[0], sh);
-        vy[1] = snapEdge(vy[1], sw);
-        vx[1] = snapEdge(vx[1], sh);
+        vx[1] = snapEdge(vx[1], sw);
+        vy[1] = snapEdge(vy[1], sh);
         const render::QuadVertex corners[4] = {
             {vx[0], vy[0], 0.0f, 0.0f, colour},
             {vx[1], vy[1], 1.0f, 0.0f, colour},

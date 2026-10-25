@@ -309,6 +309,9 @@ struct RaceRules {
     bool spectator = false;
     std::function<net::SessionStage()> netStage;
     std::function<void(const Competitor&)> netFinished;
+    // 0x004BEA60 on the race HUD's crew orders (Game/Race/Hud): the racer's lines flashed and, the orders closed,
+    // the orders opened, at once (the frame's time for their lines).
+    std::function<void(int32_t racer, float frameTime)> ordersFlash;
 
     // [ctx+0x64]+0xA0: the game options' A.I. DIFFICULTY (the settings' +0x4C; the options window gives 0 NORMAL and
     // 1 HARD). The stock code tests it against 0 in some places and against 1 in others.
@@ -362,7 +365,8 @@ public:
     // 0x0049FDF0's count: 4.005 s for a replay's race or one of type 4, 4 s for type 3 and past 9, else 14 s.
     float startCount() const;
 
-    // 0x004A0220: the count, every competitor's frame (0x0049EF00), the places, the leader and spins.
+    // 0x004A0220: the count, every competitor's frame (0x0049EF00), the places, the leader and spins. The start
+    // comes as the count goes below 0 (the fixed build's: reaches 0).
     struct Events {
         bool beep = false;  // a whole second of the count passed (hk_airhorn at 44000 Hz)
         bool go = false;    // the start (55000 Hz)
@@ -425,7 +429,7 @@ private:
     int32_t crewLine(ChatterEntry& p, float t, CrtRandom& random);
     Competitor* competitorOf(int32_t racer) const;
     Competitor* atPlace(int32_t place) const;  // 0x0049FD90
-    void ordersFlash(int32_t racer);           // 0x004BEA60
+    void ordersFlash(int32_t racer, float frameTime);  // 0x004BEA60
     void events(float frameTime);  // 0x004A0130
 
     const Route* m_route;
@@ -434,8 +438,9 @@ private:
 };
 
 // 0x00489740: the body's tilt held: a torque of -40000 ((pitch / pi)^2 - 0.3) about x when above 0 (Stock problem:
-// the pitch, an arcsine, never gets there; the square loses its side) and -40000 roll / pi about z; pitch and roll
-// past 60 degrees clamped with their angular momentum taken away.
+// the pitch, an arcsine, never gets there; the square loses its side. The fixed build's pitch over pi / 2 with its
+// side: from 49.3 degrees on) and -40000 roll / pi about z; pitch and roll past 60 degrees clamped with their angular
+// momentum taken away.
 void tiltGuard(RaceCar& car);
 
 // 0x00487D50: the slipstream: the body's drag factor back to 1; the first other car of the race's list (from its

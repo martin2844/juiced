@@ -27,7 +27,7 @@ OJ_UNIT_TEST(WorldClock, Pause) {
 }
 
 // Stock problem: the lead is the last pause's length, not the sum, so after a second pause the world's time jumps on by
-// the first.
+// the first. The fixed build adds the pauses up: the time goes on from where it was held.
 OJ_UNIT_TEST(WorldClock, SecondPause) {
     WorldClock clock;
     clock.stop(true, 10.0f);
@@ -36,5 +36,5 @@ OJ_UNIT_TEST(WorldClock, SecondPause) {
     clock.stop(true, 20.0f);
     check(clock.read(25.0f) == 15.0f, "the second pause holds the time");
     clock.stop(false, 23.0f);
-    check(clock.lead == 3.0f && clock.read(23.0f) == 20.0f, "the second pause's length only: on by the first's 5");
+    check(clock.lead == 8.0f && clock.read(23.0f) == 15.0f, "the pauses' lengths added: on from the held time");
 }

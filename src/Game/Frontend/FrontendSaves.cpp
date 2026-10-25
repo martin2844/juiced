@@ -13,6 +13,7 @@
 #include "Core/Base/GameFiles.h"
 #include "Core/Saves/GraphicsConfig.h"
 #include "Core/Base/Log.h"
+#include "Core/Saves/OnlineAccount.h"
 #include "Core/Saves/Save.h"
 #include "Core/Base/Text.h"
 
@@ -67,7 +68,18 @@ void Frontend::buildProfile(save::SaveSource& source) {
         std::string error;
         if (!archive.read(*file, &error)) archive.entries.clear();
     }
-    archive.entries["settings.dat"] = optionSettings().write();
+    // The fixed build: the GameSpy account protected in its own entry (Core/Saves/OnlineAccount), settings.dat's
+    // fields of it written empty (the stock's plain text); an account Windows does not protect is not kept.
+    save::Settings settings = optionSettings();
+    const save::OnlineAccount account = save::OnlineAccount::of(settings);
+    archive.entries.erase(save::kOnlineAccountEntry);
+    if (!account.empty()) {
+        if (std::vector<uint8_t> entry = save::protectAccount(account); !entry.empty()) {
+            archive.entries[save::kOnlineAccountEntry] = std::move(entry);
+        }
+        save::OnlineAccount{}.into(settings);
+    }
+    archive.entries["settings.dat"] = settings.write();
     archive.entries["ArcadeUnlock.sav"] = m_data->arcade.progress().write();
     archive.entries["UIHelp.sav"] = m_data->help.write();
     if (m_data->career) archive.entries["CMSGlobal.sav"] = m_data->career->write();
@@ -99,6 +111,12 @@ bool Frontend::applyProfile(const save::SaveSlot& slot, const save::SaveSource& 
         save::Settings settings;
         // settings.dat (0x00409C90): the driver's settings, the crew's name into the game's texts.
         if (settings.read(found->second)) {
+            // The fixed build: the protected account over settings.dat's fields (a stock save's plain account is
+            // taken as it is and protected at the next save; one that does not decrypt, another Windows user's, is
+            // none).
+            if (const auto entry = archive.entries.find(save::kOnlineAccountEntry); entry != archive.entries.end()) {
+                save::unprotectAccount(entry->second).value_or(save::OnlineAccount{}).into(settings);
+            }
             setCrewNameTexts(widenSigned(settings.crewName()));
             driverSettings() = settings;
         }
@@ -153,11 +171,17 @@ void Frontend::writeRegCf1() {
         .write(reinterpret_cast<const char*>(reg.data()), static_cast<std::streamsize>(reg.size()));
 }
 
-// 0x005A3410
+// 0x005A3410. Stock problem: the detail is read but the renderer's factor ([0x0079E670]) keeps the start's (60 %)
+// until the graphics options are left; the fixed build makes the factor from the detail read.
 void Frontend::readRegCf1() {
     if (const auto reg = GameFiles(m_saveFolder).read(L"reg.cf1")) {
         save::RegCf1 graphics;
-        if (graphics.read(*reg)) graphicsFromRegCf1(graphicsConfig(), graphics);
+        if (graphics.read(*reg)) {
+            GraphicsConfig& c = graphicsConfig();
+            graphicsFromRegCf1(c, graphics);
+            c.lodBias = detailFactor(c.detail);
+            setDetailFactor(c.lodBias);
+        }
     }
 }
 

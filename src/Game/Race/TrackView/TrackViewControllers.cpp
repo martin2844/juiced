@@ -23,8 +23,9 @@ bool TrackView::controllerWatch() {
         if (replay.playing != 0) replay.timeScale = 1.0f;
         if (!frontEnd.openCritical(1, text)) return false;
         frontEnd.windowAsked.clear();
-        if (!allFinished() && !rules.replay && !paused) {
-            paused = true;
+        if (!allFinished() && !rules.replayRace && !paused) {
+            // The fixed build's network game goes on under the pause window (as a pause asked for, TrackViewFrame).
+            paused = net == nullptr;
             frontEnd.askWindow(RaceWindowId::Pause);
         } else {
             oj::Jukebox& music = oj::jukebox();
@@ -33,7 +34,7 @@ bool TrackView::controllerWatch() {
                 if (music.handle != 0) music.player()->pause(music.handle);
             }
         }
-        if (rules.replay && frontEnd.critical != nullptr && !replay.done()) {
+        if (rules.replayRace && frontEnd.critical != nullptr && !replay.done()) {
             replay.fast = 0;
             replay.timeScale = 1.0f;
             replay.state = oj::ReplayState::Stopped;
@@ -51,7 +52,7 @@ bool TrackView::controllerWatch() {
             frontEnd.noControllerNote = true;
             frontEnd.noControllerNote2 = true;
             if (pausing == nullptr || pausing->index != 1) input->useUi(first().controller);
-            if (rules.replay) {
+            if (rules.replayRace) {
                 frontEnd.askWindow(RaceWindowId::Replay);
                 input->useUi(first().controller);
             }

@@ -648,6 +648,10 @@ or a race of type 4, else `CMSOnlineCrewRaceSetup`) until the grid walk was ente
 `link_lobby`'s enter), then `CMSOnlineGridWalk`. The race setup's GO goes through `careerload` with the career's
 screen 8, the grid walk.
 
+- `CMSOnlineCrewRaceSetup` (enter `0x004D6090`, update `0x004D6550`): the offline window's drivers, the player taken
+  at once and never given back, no CLICK; its enter hides only `driver<n>value` and `selection<n>`, so past the
+  members `border<n>` and `crewpic<n>` stay as the .ui has them (a white box in its border; the offline window,
+  `0x004D8AC0`, hides them).
 - `CMSOnlineGridWalk` (enter `0x004D3310`, update `0x004D40B0`, leave `0x004D3850`): six car views (Car3d1 .. 6, the
   camera at (0, 150, -560)), `<n>Info` the player's name, `bph<n>` the car's display name (" (P)" for a prototype;
   the rating's "<n> bhp" written first and replaced at once), `ready<n>` / `notready<n>`. Each slot's car is made

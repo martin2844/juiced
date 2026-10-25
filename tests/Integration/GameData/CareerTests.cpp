@@ -6,6 +6,7 @@
 #include "Core/Base/GameFiles.h"
 #include "Core/Base/Random.h"
 #include "Core/Career/Career.h"
+#include "Core/Career/CareerEvents.h"
 #include "Core/Career/CareerInit.h"
 #include "Core/Cars/CarCollection.h"
 #include "Core/Cars/CarDefs.h"
@@ -21,6 +22,7 @@
 
 #include <windows.h>
 
+#include <algorithm>
 #include <array>
 #include <bit>
 #include <cmath>
@@ -146,8 +148,9 @@ OJ_INTEGRATION_TEST(Career, NewCareer) {
         check(tie && unset && wonCar && pink->garage.size() == garage && pink->onlinePinkSlip == 0,
               "online pink slip: a tie, a win and a loss");
     }
-    // A session's results with no crew first (0x004B9E20 at 0x004BA195): the odds before the table are
-    // the last racer's order, order time and level timer (the stake) and the session's +0x264.
+    // A session's results with no crew first (0x004B9E20 at 0x004BA195): the stock's odds before the table
+    // were the last racer's order, order time and level timer (the stake) and the session's +0x264; the
+    // fixed build reads and writes nothing then.
     {
         auto cruise = std::make_unique<oj::Career>(c);
         oj::RaceSession& s = cruise->session;
@@ -169,10 +172,8 @@ OJ_INTEGRATION_TEST(Career, NewCareer) {
         const int32_t staked = results(2.0f, 0, 1.5f);
         const int32_t none = results(0.0f, 0, 1.5f);
         const int32_t nan = results(2.0f, 0, 0.0f);
-        check(staked == std::bit_cast<int32_t>(static_cast<float>(0x40000000)) && none == 0 &&
-                  std::isnan(std::bit_cast<float>(nan)),
-              "session results without a first crew: the last racer's fields as the odds, the float "
-              "won into the session's +0x264");
+        check(staked == 0 && none == 0 && nan == 0,
+              "session results without a first crew (fixed): nothing won into the session's +0x264");
     }
     // The cheats (0x004A6E50) on the new career: money, the full crew, the cars (its two and one of each
     // model 1 .. 52), the respect.
@@ -331,45 +332,48 @@ OJ_INTEGRATION_TEST(Career, StartAndNewDriver) {
     }
 }
 
-// Hosted meetings from older native builds accidentally kept challenge index zero.
-OJ_INTEGRATION_TEST(HostedRace, RaceTypesAndRealChallenges) {
-    const auto& shared = oj::test::sharedGameData();
+// The phone's events (0x004A2DC0 the host rights race, 0x004A2F80 the pink slip race) take the class of the player's
+// best car: 0x004A9A70 on the career's first crew, the player's, whose list is the garage (not the calling crew's,
+// whose list is every opponent's car: class 1 for a new career's class 8 garage).
+OJ_INTEGRATION_TEST(Career, PhoneEventsClass) {
+    const oj::test::SharedGameData& shared = oj::test::sharedGameData();
     if (!shared.carDefsRead) return;
+    const oj::GameFiles& game = oj::test::gameFiles();
+    if (!game.valid()) return;
     auto career = std::make_unique<oj::Career>();
     oj::CrtRandom random;
-    int counter = 1, mate = 0;
+    random.seed(42);
+    int counter = 1;
+    int currentMate = 0;
     oj::CarMaking making{shared.defs, shared.catalogue, random, counter};
-    oj::CareerContext context{shared.tables, making, *shared.dynamics, oj::test::gameFiles(), mate};
-    auto& event = career->calendar.events[0];
-    event.used = 1;
-    event.round.used = 1;
-    event.round.laps = 1;
-    event.round.drivers = 3;
-    event.timeOfDay = 1;
-    event.weather = 2;
-    for (auto kind : {oj::EventKind::Sprint, oj::EventKind::Circuit, oj::EventKind::PointToPoint}) {
-        for (int index : {-1, 0}) {
-            event.type = event.round.type = kind;
-            event.challengeIndex = static_cast<int8_t>(index);
-            oj::RaceSetup race;
-            oj::startRace(*career, context, race, 1, 0);
-            auto expected = kind == oj::EventKind::Sprint ? oj::RaceType::Sprint :
-                kind == oj::EventKind::Circuit ? oj::RaceType::Circuit : oj::RaceType::PointToPoint;
-            check(race.type == expected && event.challengeIndex == -1 && race.laps == 1,
-                  "hosted races retain their selected type, including older saved events");
-            if (kind == oj::EventKind::Sprint)
-                check(race.heat == 0 && race.heats == 3 && race.gearbox == 0,
-                      "hosted sprint starts heat one of three with manual gears");
+    oj::CareerContext context{shared.tables, making, *shared.dynamics, game, currentMate};
+    oj::newCareer(*career, context, "Tester");
+    oj::Career& c = *career;
+    const auto bestClass = [](const std::vector<oj::Car>& cars) {
+        float best = 0.0f;
+        for (const oj::Car& car : cars) best = std::max(best, oj::Car::asFloat(car.rating));
+        return oj::ratingClass(best);
+    };
+    const int garageClass = bestClass(c.garage);
+    const int opponentsClass = bestClass(c.opponentCars);
+    const auto made = [&](int crew, bool host) -> const oj::CalendarEvent* {
+        int day = 0;
+        int month = 0;
+        oj::nextFreeDay(c.calendar, day, month);
+        oj::phoneEvent(c, context, crew, month, day, host);
+        for (const oj::CalendarEvent& e : c.calendar.events) {
+            if (e.used != 0 && e.month == month && e.dayOfMonth == day) return &e;
         }
-    }
-    event.type = event.round.type = oj::EventKind::Challenge;
-    event.crew = 1;
-    event.challenge = 1;
-    event.challengeIndex = 0;
-    career->crews[1].challenges[0].type = oj::ChallengeType::LapTime;
-    career->crews[1].challenges[0].value = 60;
-    oj::RaceSetup race;
-    oj::startRace(*career, context, race, 1, 0);
-    check(race.type == oj::RaceType::TimedLap && race.lapTime == 60 && event.challengeIndex == 0,
-          "real crew challenges retain their time limit and challenge index");
+        return nullptr;
+    };
+    const oj::CalendarEvent* hosted = made(1, true);
+    const oj::CalendarEvent* pinks = made(2, false);
+    check(garageClass != opponentsClass, "a new career: the garage's best class (" + std::to_string(garageClass + 1) +
+                                             ") is not the opponents' (" + std::to_string(opponentsClass + 1) + ")");
+    check(hosted != nullptr && hosted->hostedByPlayer == 1 && hosted->crew == 1 && hosted->carClass == garageClass,
+          "the host rights race: the class of the player's best car (" +
+              std::to_string(hosted != nullptr ? hosted->carClass + 1 : 0) + ")");
+    check(pinks != nullptr && pinks->pinkSlip == 1 && pinks->crew == 2 && pinks->carClass == garageClass,
+          "the pink slip race: the class of the player's best car (" +
+              std::to_string(pinks != nullptr ? pinks->carClass + 1 : 0) + ")");
 }

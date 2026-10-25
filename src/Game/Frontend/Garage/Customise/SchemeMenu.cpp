@@ -39,8 +39,9 @@ std::array<uint32_t, 17> carLook(const Car& c) {
 
 // A look on the car and its model: 0x0043C750 (the kept look back) and schememenu's apply (the settings' scheme; its
 // decal 0 keeps the car's but for a prototype, 0x004A8F50, which takes 0). The decal (0x0048BB00), the wheels
-// (0x0048B860), the decal colour, the model's parts, the wheel colour (or the wheels' own), the
-// paint, the tint, the neon's colour and the neon shown or not.
+// (0x0048B860), the decal colour, the model's parts, the wheel colour (a look without one puts the wheels' kept
+// colours back, 0x0043C92C, 0x0043CE0D: 0x0048C530), the paint, the tint, the neon's colour and the neon shown or
+// not.
 void SchemeMenu::onCar(GarageHost& host, Car& car, const std::array<uint32_t, 17>& look, bool applying) {
     GameData* data = host.gameData();
     Garage& garage = host.garage();
@@ -68,7 +69,11 @@ void SchemeMenu::onCar(GarageHost& host, Car& car, const std::array<uint32_t, 17
     if (model != nullptr) {
         model->colourDecal(car);
         model->sponsorDecals(car, data->catalogue);
-        model->colourWheels(car);
+        if (look[13] != 0) {
+            model->colourWheels(car);
+        } else {
+            model->restoreWheelColours();
+        }
     }
     car.neon = look[16];
     car.body[9] = static_cast<uint8_t>(look[15]);

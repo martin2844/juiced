@@ -309,6 +309,9 @@
     <ClCompile Include="Frontend\Network\LinkWindows.cpp">
       <Filter>Frontend\Network</Filter>
     </ClCompile>
+    <ClCompile Include="Frontend\Network\LobbyChat.cpp">
+      <Filter>Frontend\Network</Filter>
+    </ClCompile>
     <ClCompile Include="Frontend\Network\OnlineCareerWindows.cpp">
       <Filter>Frontend\Network</Filter>
     </ClCompile>
@@ -564,6 +567,9 @@
     <ClCompile Include="Scene\PostEffects.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
+    <ClCompile Include="Scene\PostEffectsSplit.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
     <ClCompile Include="Scene\Projector.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
@@ -628,6 +634,9 @@
       <Filter>UI</Filter>
     </ClCompile>
     <ClCompile Include="UI\WindowManager.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\WindowFixes.cpp">
       <Filter>UI</Filter>
     </ClCompile>
   </ItemGroup>
@@ -855,6 +864,9 @@
       <Filter>Frontend</Filter>
     </ClInclude>
     <ClInclude Include="Frontend\Network\LinkWindows.h">
+      <Filter>Frontend\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Frontend\Network\LobbyChat.h">
       <Filter>Frontend\Network</Filter>
     </ClInclude>
     <ClInclude Include="Frontend\Network\NetworkHost.h">
@@ -1185,6 +1197,9 @@
       <Filter>UI</Filter>
     </ClInclude>
     <ClInclude Include="UI\WindowManager.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\WindowFixes.h">
       <Filter>UI</Filter>
     </ClInclude>
   </ItemGroup>

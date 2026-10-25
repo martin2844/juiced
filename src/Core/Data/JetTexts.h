@@ -13,6 +13,7 @@ enum JetText : size_t {
     kJetPleaseWait = 3,          // "Please wait..."
     kJetAtLeast = 4,             // " At least "
     kJetAreRequired = 5,         // " are required"
+    kJetDeleteReplay = 8,        // "Are you sure you want to delete replay " (read by the fixed build's loadreplay)
     kJetHiScoresNotLoaded = 13,  // "Unable to load hi-scores!"
     kJetCannotSave = 14,         // "You will not be able to save your progress."
     kJetFlags = 63,              // flag 0's ("Checking hard disk..."); flag k's 63 + k

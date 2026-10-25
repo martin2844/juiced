@@ -71,3 +71,38 @@ OJ_INTEGRATION_TEST(Replay, AttractReplay) {
               "replay: the attract replay saved again is its files; read back from them");
     }
 }
+
+// The fixed build plays attracts\attract3 (0x00467260 never reached it): its header and cars read and its blocks
+// played to the end as the others'.
+OJ_INTEGRATION_TEST(Replay, ThirdAttractReplay) {
+    const oj::GameFiles& game = oj::test::gameFiles();
+    if (!game.valid()) return;
+    const auto hdr = game.read(L"attracts\\attract3.hdr");
+    const auto dat = game.read(L"attracts\\attract3.dat");
+    check(hdr && dat, "replay: attracts\\attract3 in the game's files");
+    if (!hdr || !dat) return;
+    oj::Replay replay;
+    const bool loaded = replay.load(bytesOf(*hdr), bytesOf(*dat));
+    oj::ReplayRace race;
+    race.cars.assign(replay.header.cars, nullptr);
+    race.mode = static_cast<oj::RaceMode>(replay.header.mode);
+    race.type = static_cast<oj::RaceType>(replay.header.type);
+    int frames = 0;
+    bool pause = false;
+    bool carsHeld = true;
+    while (replay.state == oj::ReplayState::Playing && frames < 100000) {
+        replay.step(race, 1.0f / 60.0f, pause);
+        for (uint32_t i = 0; i < replay.cars; ++i) {
+            carsHeld = carsHeld && replay.next[i].car == static_cast<int32_t>(i) &&
+                       std::isfinite(replay.next[i].position[0]);
+        }
+        ++frames;
+    }
+    std::printf("     replay: %s %s, %u cars, mode %u type %u, %.2f s, %d frames to its end at %.2f s\n",
+                replay.header.track.c_str(), replay.header.route.c_str(), replay.header.cars, replay.header.mode,
+                replay.header.type, replay.header.length, frames, replay.readTime);
+    check(loaded && replay.header.cars > 0 && replay.savedCars.size() == replay.header.cars &&
+              replay.state == oj::ReplayState::Stopped && carsHeld &&
+              replay.readTime > replay.header.length - 1.0f && replay.readTime <= replay.header.length,
+          "replay: attract3's header, cars and frames read to its end");
+}

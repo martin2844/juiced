@@ -731,6 +731,15 @@ bool unlockSteps(CareerProfile& p, size_t car, int changes, const ExeTables& tab
     return false;
 }
 
+int mirrorLevel(const CareerProfile& p, size_t car) {
+    if (car >= p.unlockStep.size()) return -1;
+    const uint32_t step = p.unlockStep[car];
+    if (step >= 37) return 100;
+    if (step >= 26) return 1;
+    if (step >= 14) return 0;
+    return -1;
+}
+
 void clearNotes(Career& career, CareerNotes& notes) {
     notes.count = 0;
     for (size_t i = 1; i < 9; ++i) career.crews[i].respectGain.fill(0.0f);
@@ -800,11 +809,12 @@ void newCareer(Career& career, CareerContext& context, const std::string& driver
     // 0x004B2C20: the flyers, the player's crew logo the one chosen (the table 0x00718A28; stock problem: a choice
     // past its 19 reads past it; the file's logo kept here).
     if (const auto flyers = readText(context.files, "CMSFlyers.txt")) career.flyers = readFlyersFile(*flyers);
-    static constexpr std::array<const char*, 19> kChosenLogos = {
+    // The fixed build: logo 19 in its place (ExeTables), 20 logos.
+    static constexpr std::array<const char*, 20> kChosenLogos = {
         "ui_chooselogo_01", "ui_chooselogo_02", "ui_chooselogo_03", "ui_chooselogo_04", "ui_chooselogo_05",
         "ui_chooselogo_06", "ui_chooselogo_07", "ui_chooselogo_08", "ui_chooselogo_09", "ui_chooselogo_10",
         "ui_chooselogo_11", "ui_chooselogo_12", "ui_chooselogo_13", "ui_chooselogo_14", "ui_chooselogo_15",
-        "ui_chooselogo_16", "ui_chooselogo_17", "ui_chooselogo_18", "ui_chooselogo_20",
+        "ui_chooselogo_16", "ui_chooselogo_17", "ui_chooselogo_18", "ui_chooselogo_19", "ui_chooselogo_20",
     };
     if (context.logo < kChosenLogos.size()) career.flyers.crews[0].logo = kChosenLogos[context.logo];
 

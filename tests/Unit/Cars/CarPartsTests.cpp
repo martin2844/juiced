@@ -16,14 +16,15 @@ using oj::test::check;
 
 }  // namespace
 
-// The car parts' objects (0x004191C0) by their nodes' names: the axes, the constants, the bits (the right skirt
-// takes the left's, a stock problem) and the files' name of an exhaust; the chassis and the decal none.
+// The car parts' objects (0x004191C0) by their nodes' names: the axes, the constants, the bits (the stock's right skirt
+// took the left's; the fixed build's its own) and the files' name of an exhaust; the chassis and the decal none.
 OJ_UNIT_TEST(CarParts, PartObjects) {
     const oj::CarPartObject fbump = oj::CarPartObject::make("FBUMP");
     const oj::CarPartObject rbump = oj::CarPartObject::make("RBUMP");
     const oj::CarPartObject bonnet = oj::CarPartObject::make("BONNET");
     const oj::CarPartObject spoiler = oj::CarPartObject::make("SPOILER");
     const oj::CarPartObject skirt = oj::CarPartObject::make("SSKIRT_R");
+    const oj::CarPartObject left = oj::CarPartObject::make("SSKIRT_L");
     const oj::CarPartObject exhaust = oj::CarPartObject::make("EXHAUST_S");
     const oj::CarPartObject decal = oj::CarPartObject::make("DECAL");
     const oj::CarPartObject chassis = oj::CarPartObject::make("3000GT_CHASS");
@@ -31,7 +32,8 @@ OJ_UNIT_TEST(CarParts, PartObjects) {
         fbump.axes == 7 && fbump.bit == 1 && fbump.amount == std::bit_cast<float>(0x399D4952u) &&
         fbump.softness == 1.2f && rbump.axes == 7 && rbump.bit == 2 &&
         rbump.amount == std::bit_cast<float>(0x3951B717u) && bonnet.axes == 1 && bonnet.bit == 4 &&
-        spoiler.axes == 1 && spoiler.bit == 8 && spoiler.softness == 0.5f && skirt.axes == 5 && skirt.bit == 0x10 &&
+        spoiler.axes == 1 && spoiler.bit == 8 && spoiler.softness == 0.5f && skirt.axes == 5 && skirt.bit == 0x20 &&
+        left.axes == 5 && left.bit == 0x10 &&
         skirt.files == "SSKIRT_R" && exhaust.axes == 3 && exhaust.bit == 0 && exhaust.softness == 0.5f &&
         exhaust.files == "exhaust" && decal.axes == 0 && chassis.axes == 0 && chassis.attached;
     // The wobble (0x00419780): without a zone no turn, the phase moving on by dt x 4 / 0.0125; a zone's dents of

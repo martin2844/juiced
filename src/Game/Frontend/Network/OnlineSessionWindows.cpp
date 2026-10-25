@@ -4,6 +4,7 @@
 
 #include "Game/Frontend/Network/OnlineSessionWindows.h"
 
+#include "Core/Base/Text.h"
 #include "Core/Career/Career.h"
 #include "Core/Cars/CarDefs.h"
 #include "Core/Data/GameTexts.h"
@@ -32,8 +33,9 @@ std::wstring wide(std::u16string_view text) {
     return std::wstring(text.begin(), text.end());
 }
 
+// An 8-bit text widened character by character (0x0040ACE0); the fixed build reads it in the names' code page.
 std::wstring latin(const std::string& text) {
-    return std::wstring(text.begin(), text.end());
+    return oj::widenSigned(text);
 }
 
 // swprintf("%d ") and the text "bhp" (the classes' shown values).
@@ -906,7 +908,7 @@ void OnlineResults::enter(NetworkHost& host, ui::Screen& s) {
     m_joining = 0;
     m_highlighted.reset();
     details(host, s);
-    s.showContaining("GAMESPY", false);
+    s.show("GAMESPY", false);  // 0x00478B14: 0x005A9BB0 with 0, the logo fades in with the window
 }
 
 // 0x00478B30: "Menu"'s highlight kept, the rows' addresses let go, M_HOST_NAME emptied, the highlighted address let go.

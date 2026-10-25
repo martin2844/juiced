@@ -5,7 +5,12 @@
 #include <ws2tcpip.h>
 
 #include <algorithm>
+#include <atomic>
+#include <chrono>
+#include <condition_variable>
 #include <cstring>
+#include <mutex>
+#include <thread>
 
 #pragma comment(lib, "ws2_32.lib")
 
@@ -657,8 +662,10 @@ void Transport::peersFrame(float dt) {
 }
 
 void Transport::pingFrame(float dt) {
+    // Every 5 s in the stock (whose pings were never on); every second in the fixed build, its session's pings
+    // giving the cars' states their peers' one way times.
     m_pingTimer = dt + m_pingTimer;
-    if (5.0f < m_pingTimer) {
+    if (1.0f < m_pingTimer) {
         ++m_pingNumber;
         m_pingTimer = 0.0f;
         uint8_t q[8] = {kPing};
@@ -734,6 +741,56 @@ bool& networkLost() {
 
 bool networkDown() {
     return g_networkLost;
+}
+
+struct LoadKeepAlive::Worker {
+    std::thread thread;
+    std::mutex mutex;
+    std::condition_variable wake;
+    bool stop = false;
+    std::atomic<uint32_t> sent{0};
+};
+
+LoadKeepAlive::LoadKeepAlive(const Transport* transport) {
+    // As the frame's (Transport::update): with the host known, to every peer, coded, unreliable.
+    if (transport == nullptr || !transport->m_hostKnown || transport->m_game == ~uintptr_t{0}) return;
+    std::vector<Address> to;
+    for (const Peer& p : transport->m_peers) to.push_back(p.address);
+    if (to.empty()) return;
+    const SOCKET s = sock(transport->m_game);
+    m_worker = std::make_unique<Worker>();
+    Worker* w = m_worker.get();
+    w->thread = std::thread([w, s, to = std::move(to)] {
+        std::unique_lock<std::mutex> lock(w->mutex);
+        while (!w->wake.wait_for(lock, std::chrono::milliseconds(1500), [w] { return w->stop; })) {
+            for (const Address& a : to) {
+                uint8_t q[1] = {kKeepAlive};
+                Transport::code(q, sizeof q);
+                sockaddr_in at{};
+                at.sin_family = AF_INET;
+                at.sin_port = a.port;
+                at.sin_addr.s_addr = a.ip;
+                if (sendto(s, reinterpret_cast<const char*>(q), sizeof q, 0, reinterpret_cast<const sockaddr*>(&at),
+                           sizeof at) != SOCKET_ERROR) {
+                    ++w->sent;
+                }
+            }
+        }
+    });
+}
+
+LoadKeepAlive::~LoadKeepAlive() {
+    if (!m_worker) return;
+    {
+        std::lock_guard<std::mutex> lock(m_worker->mutex);
+        m_worker->stop = true;
+    }
+    m_worker->wake.notify_all();
+    m_worker->thread.join();
+}
+
+uint32_t LoadKeepAlive::sent() const {
+    return m_worker ? m_worker->sent.load() : 0;
 }
 
 }  // namespace oj::net

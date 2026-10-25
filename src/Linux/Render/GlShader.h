@@ -2,6 +2,8 @@
 #include "Gl.h"
 #include <array>
 #include <memory>
+#include <map>
+#include <vector>
 #include <mojoshader.h>
 namespace oj::gles {
 struct Registers {
@@ -11,12 +13,16 @@ struct Registers {
 };
 class Shader {
   public:
-    explicit Shader(const uint32_t *code);
+    explicit Shader(const uint32_t *code, uint32_t cubeMask = 0);
+    Shader& forCubeSamplers(uint32_t mask);
     ~Shader();
     Shader(const Shader &) = delete;
     GLuint id = 0;
     const MOJOSHADER_parseData *parsed = nullptr;
     std::string source;
+    std::vector<uint32_t> legacyCode;
+    uint32_t samplerMask = 0;
+    std::map<uint32_t, std::unique_ptr<Shader>> variants;
     void uniforms(GLuint program, const Registers &registers) const;
     int attribute(GLuint program, uint8_t usage, uint8_t index) const;
 };

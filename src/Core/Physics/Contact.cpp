@@ -252,10 +252,10 @@ void Contact::tyreForce() {
                         if (steer == 0.0f) {
                             if (reversing) {
                                 // Stock problem: backwards without steering the longitudinal force is taken off and
-                                // added back, so it is lost.
+                                // added back, so it is lost. The fixed build takes it off once, as a steered
+                                // wheel's whole force backwards.
                                 friction[0] = friction[0] - side * fade;
                                 friction[2] = friction[2] - along * fade;
-                                friction[2] = along * fade + friction[2];
                             } else {
                                 friction[0] = side * fade + friction[0];
                                 friction[2] = along * fade + friction[2];

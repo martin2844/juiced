@@ -3,7 +3,7 @@
 #include "Core/Formats/Ocd.h"
 #include "Core/Physics/PhysicsWorld.h"
 
-#include <bit>
+#include <algorithm>
 #include <cmath>
 #include <utility>
 
@@ -289,18 +289,23 @@ uint32_t clipPolygon(const Vec4* in, uint32_t count, Vec4* out, const ClippingPl
     auto side = [&](const Vec4& v) { return (n[2] * v[2] + n[0] * v[0]) + n[1] * v[1]; };
     // 0x005394E0: the edge from `from` to `to` (as a segment of length 1) where it crosses the plane, in place of
     // out[made]. Stock problem: an edge parallel to the plane or crossing it past its end writes no corner, yet the
-    // corner is counted: out[made] keeps what the buffer held.
+    // corner is counted: out[made] keeps what the buffer held. The side test put the edge's ends on two sides, so the
+    // fixed build holds the crossing to the edge (its start when the edge runs along the plane).
     uint32_t made = 0;
     auto cross = [&](const Vec4& from, const Vec4& to) {
         const Vec4 d{to[0] - from[0], to[1] - from[1], to[2] - from[2], to[3]};
         const float towards = (n[2] * d[2] + n[1] * d[1]) + n[0] * d[0];
+        float t = 0.0f;
         if (towards != 0.0f) {
             const float dx = o[0] - from[0];
-            const float t = (((o[2] - from[2]) * n[2] + (o[1] - from[1]) * n[1]) + dx * n[0]) / towards;
-            if (!(t < 0.0f) && t <= 1.0f) {
-                out[made] = {from[0] + d[0] * t, from[1] + d[1] * t, from[2] + d[2] * t, from[3]};
+            t = (((o[2] - from[2]) * n[2] + (o[1] - from[1]) * n[1]) + dx * n[0]) / towards;
+            if (t < 0.0f) {
+                t = 0.0f;
+            } else if (t > 1.0f) {
+                t = 1.0f;
             }
         }
+        out[made] = {from[0] + d[0] * t, from[1] + d[1] * t, from[2] + d[2] * t, from[3]};
         ++made;
     };
     const float first = (n[2] * in[0][2] + n[1] * in[0][1]) + in[0][0] * n[0];
@@ -357,9 +362,10 @@ bool sphereOnFace(const Vec4* polygon, uint32_t count, const Vec4& normal, const
     if (inside) return true;
     // 0x00538760 on each edge (a segment of length 1): the middle of where the edge's line meets the sphere, held
     // to the edge. Stock problem: the least distance so far starts as the count less 1 read as a float (a few
-    // 1e-45), and only the hits after the first compare with it: the first edge met keeps its point.
+    // 1e-45), and only the hits after the first compare with it: the first edge met keeps its point. The fixed
+    // build's least distance is the first hit's: the nearest edge gives the point.
     bool found = false;
-    float nearest = std::bit_cast<float>(count - 1);
+    float nearest = 3.4028235e38f;
     for (uint32_t i = 0; i < count; ++i) {
         const Vec4& p = polygon[i];
         const Vec4& e = edges[i];
@@ -374,13 +380,14 @@ bool sphereOnFace(const Vec4* polygon, uint32_t count, const Vec4& normal, const
             t = 1.0f;
         }
         const Vec4 q{p[0] + e[0] * t, p[1] + e[1] * t, p[2] + e[2] * t, p[3]};
+        const float qx = q[0] - centre[0], qy = q[1] - centre[1], qz = q[2] - centre[2];
+        const float squared = (qz * qz + qy * qy) + qx * qx;
         if (!found) {
             hit.point = q;
+            nearest = squared;
             found = true;
             continue;
         }
-        const float qx = q[0] - centre[0], qy = q[1] - centre[1], qz = q[2] - centre[2];
-        const float squared = (qz * qz + qy * qy) + qx * qx;
         if (squared < nearest) {
             nearest = squared;
             hit.point = q;
@@ -617,10 +624,12 @@ void TrackCollision::collide(RigidBody& body) {
             }
         }
         // Stock problem: the mesh's touches with a wall carry no zone and take the offset of the last face tested
-        // (0 without faces).
+        // (0 without faces). The fixed build's take no offset, as the sphere colliders' and the lines' touches with
+        // a wall, and the wall's zone.
         if (body.lying) {
-            meshPass(lower, nullptr, zone.friction, zone.bounce);
-            meshPass(upper, nullptr, zone.friction, zone.bounce);
+            offset = 0.0f;
+            meshPass(lower, &zone, zone.friction, zone.bounce);
+            meshPass(upper, &zone, zone.friction, zone.bounce);
         }
     }
 
@@ -762,6 +771,7 @@ uint32_t TrackCollision::clipFace(const Vec4& a, const Vec4& b, const Vec4& c,
     uint32_t inA = 3, inB = 0;
     // Stock problem: the planes cut the first buffer into the second and back, and the spheres take the first
     // buffer with its count: after an odd number of planes the last cut is not used (one plane: the face uncut).
+    // The fixed build brings the last cut back into the first buffer.
     for (size_t i = 0; i < cuts.size(); ++i) {
         if ((i & 1) == 0) {
             room(m_clipB, inA);
@@ -770,6 +780,11 @@ uint32_t TrackCollision::clipFace(const Vec4& a, const Vec4& b, const Vec4& c,
             room(m_clipA, inB);
             inA = clipPolygon(m_clipB.data(), inB, m_clipA.data(), cuts[i]);
         }
+    }
+    if ((cuts.size() & 1) != 0) {
+        room(m_clipA, inB);
+        std::copy(m_clipB.begin(), m_clipB.begin() + inB, m_clipA.begin());
+        inA = inB;
     }
     return inA;
 }

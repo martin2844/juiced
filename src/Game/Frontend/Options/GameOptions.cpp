@@ -38,14 +38,14 @@ void GameOptions::enter(OptionsHost& host, ui::Screen& s) {
 }
 
 // 0x00481770 (the second player's pause of a race of more players: its event and its UP / DOWN moving the highlight):
-// the meter's +0xF8 on the highlighted SENSITIVITY_BUT (it slides, 0x005B6580). A new
-// highlighted button (+0x2C) writes the texts: VIB, AUTO, AUTO2, AIDS "YES" (105) or "NO" (106) by +0x78, +0x84, +0x88,
-// +0x7C; MAP the same by +0x80 in orange 0xFFE86A17 (with more than one player "NO" in 0xFF808000); UNITS "MPH" or
-// "KPH" (1494, 1495) by +0x94; DIFF "NORMAL" (179) for +0xA0 0, else "HARD" (1975). +0x54 counts down by the frame time
-// (held to 0 .. 1) and the controller rumbles while it is over 0 (0x0041DD60; not followed). BACK: the kept values back
-// (stock problem: +0x88 takes +0x84's, and +0xA0 is not given back), the sensitivity with STEERING, CLICK and opts_menu
-// (mode 7). SELECT on DON_BUT: the sensitivity STEERING's shown value, CLICK and opts_menu. LEFT or RIGHT on a button
-// flips its value (CLICK; MAP with more than one player NO) and +0x2C 0.
+// the meter's +0xF8 on the highlighted SENSITIVITY_BUT (it slides, 0x005B6580). A new highlighted button (+0x2C) writes
+// the texts: VIB, AUTO, AUTO2, AIDS "YES" (105) or "NO" (106) by +0x78, +0x84, +0x88, +0x7C; MAP the same by +0x80 in
+// orange 0xFFE86A17 (with more than one player "NO" in 0xFF808000); UNITS "MPH" or "KPH" (1494, 1495) by +0x94; DIFF
+// "NORMAL" (179) for +0xA0 0, else "HARD" (1975). +0x54 counts down by the frame time (held to 0 .. 1) and the
+// controller rumbles while it is over 0 (0x0041DD60; not followed). BACK: the kept values back (stock problem: +0x88
+// takes +0x84's, and +0xA0 is not given back; the fixed build gives each its own and the difficulty back), the
+// sensitivity with STEERING, CLICK and opts_menu (mode 7). SELECT on DON_BUT: the sensitivity STEERING's shown value,
+// CLICK and opts_menu. LEFT or RIGHT on a button flips its value (CLICK; MAP with more than one player NO) and +0x2C 0.
 void GameOptions::update(OptionsHost& host, ui::Screen& s, uint32_t event) {
     // 0x004817C4: the second player's pause of a race of more players takes the second player's event (+0x8C) and its
     // UP and DOWN move the highlight here (to the button's neighbours +0x154 / +0x174, SELECT): the window manager
@@ -91,9 +91,10 @@ void GameOptions::update(OptionsHost& host, ui::Screen& s, uint32_t event) {
         set.setU32(save::Settings::kSteeringWheel, m_wheel);
         set.setU32(save::Settings::kMap, m_map);
         if (s.find("AUTO") >= 0) set.setU32(save::Settings::kAutomatic, m_automatic);
-        if (s.find("AUTO2") >= 0) set.setU32(save::Settings::kAutomatic + 4, m_automatic);
+        if (s.find("AUTO2") >= 0) set.setU32(save::Settings::kAutomatic + 4, m_automatic2);
         set.setU32(save::Settings::kMph, m_units);
         set.setU32(save::Settings::kAids, m_aids);
+        set.setU32(save::Settings::kDifficulty, m_difficulty);
         if (s.find("STEERING") >= 0) set.setU32(save::Settings::kSensitivity, std::bit_cast<uint32_t>(m_sensitivity));
         host.sound("CLICK");
         host.request(host.optionsMenu(), SwitchMode::Swap);

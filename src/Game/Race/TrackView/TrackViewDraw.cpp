@@ -127,7 +127,7 @@ void TrackView::drawView(oj::render::IRenderDevice& device, RacePlayer& player, 
         // The fly-by's first frame holds the count at 99 (it runs down from there while the fly-by plays).
         if (!player.introStarted && race) race->count = 99.0f;
         player.introStarted = true;
-        player.introPlaying = player.intro.update(paused ? 0.0f : dt, player.camera, wideScreen);
+        player.introPlaying = player.intro.update(paused ? 0.0f : dt, player.camera, wideScreen, first().director);
         if (!player.introPlaying) {
             oj::log::info("race: the fly-by ended at {:.2f} s", seconds);
             gridCamera(player);
@@ -143,6 +143,10 @@ void TrackView::drawView(oj::render::IRenderDevice& device, RacePlayer& player, 
     const auto y1 = static_cast<uint32_t>(player.viewBottom * h);
     scene->drawCarCube(player.camera, seconds);
     player.postView.clear = player.viewClear;
+    // The fixed build's glow at 0.7 where the headlights are on (as the cars' lightsOn: night or wet).
+    const oj::render::AtmosphereSet* set = scene->atmosphere();
+    player.postView.headlights =
+        set != nullptr && set->current != nullptr && (set->current->night != 0 || set->current->wet != 0);
     oj::scene::PostEffects& post = scene->engine().postEffects();
     post.begin(player.camera, player.postView, x0, y0, x1 - x0, y1 - y0, player.director.blendOn,
                alwaysDepthOfField);
@@ -153,19 +157,6 @@ void TrackView::drawView(oj::render::IRenderDevice& device, RacePlayer& player, 
         }
     };
     post.end(player.camera, player.postView, player.director.blendAmount, alwaysDepthOfField, smears);
-    if (player.introPlaying && player.intro.fade() > 0.0f) {
-        const auto alpha =
-            static_cast<uint32_t>(std::nearbyint(std::min(player.intro.fade(), 1.0f) * 255.0f)) & 0xFF;
-        const float l = static_cast<float>(x0), t = static_cast<float>(y0);
-        const float r = static_cast<float>(x1), b = static_cast<float>(y1);
-        const oj::render::QuadVertex corners[4] = {
-            {l, t, 0.0f, 0.0f, alpha << 24},
-            {r, t, 1.0f, 0.0f, alpha << 24},
-            {l, b, 0.0f, 1.0f, alpha << 24},
-            {r, b, 1.0f, 1.0f, alpha << 24},
-        };
-        device.drawQuad(corners, 0, oj::render::Blend::Alpha);
-    }
 }
 
 void TrackView::gridCamera(RacePlayer& player) {

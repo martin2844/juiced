@@ -13,8 +13,8 @@
 namespace oj {
 
 // The window hud_challenge_results (factory 0x00720AA4: enter 0x00450B60, frame 0x00450F80): the challenge's outcome
-// in MSG1 and MSG2, the menu RESTART / REPLAY / QUIT: QUIT leads to closedown at once, RESTART asks and leads to
-// restart_race, REPLAY to start_replay.
+// in MSG1 and MSG2, the menu RESTART / REPLAY / QUIT: QUIT leads to closedown at once (the fixed build's: asks
+// first), RESTART asks and leads to restart_race, REPLAY to start_replay.
 class ChallengeResults {
 public:
     ChallengeResults(ui::WindowManager& windows, const TextTable& texts);

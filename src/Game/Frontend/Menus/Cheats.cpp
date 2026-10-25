@@ -55,7 +55,8 @@ void Cheats::enter(WindowHost& host, ui::Screen& s) {
 
 // 0x004C55B0: +0x20 set: extras. The highlighted button Ln shows TOPARROWn and BOTTOMARROWn and hides every other
 // arrow. BACK (CLICK) extras; UP and DOWN (SELECT) turn the highlighted letter on (Z then ".", "." then A) or back (A
-// then ".", "." then Z); none highlighted turns +0x20's low byte. Then the letters (0x004C5CB0).
+// then ".", "." then Z); none highlighted turns +0x20's low byte (the fixed build's: nothing). Then the letters
+// (0x004C5CB0).
 void Cheats::update(WindowHost& host, ui::Screen& s, uint32_t event) {
     if (m_leaving != 0) host.request("extras", SwitchMode::Replace);
     int current = -1;
@@ -74,11 +75,11 @@ void Cheats::update(WindowHost& host, ui::Screen& s, uint32_t event) {
     if (event == input::kBack) {
         host.sound("CLICK");
         host.request("extras", SwitchMode::Replace);
-    } else if (event == input::kUp || event == input::kDown) {
+    } else if ((event == input::kUp || event == input::kDown) && current >= 0) {
         // Stock problem: with no letter's button highlighted the place is 4 (0x004C5BF6), so the byte after the
-        // letters is turned: +0x20's low byte, which then sends the window back to extras.
-        char spare = static_cast<char>(m_leaving & 0xFF);
-        char& letter = current >= 0 ? m_letters[static_cast<size_t>(current)] : spare;
+        // letters is turned: +0x20's low byte, which then sends the window back to extras. The fixed build turns a
+        // letter only when one is highlighted.
+        char& letter = m_letters[static_cast<size_t>(current)];
         host.sound("SELECT");
         if (event == input::kUp) {
             ++letter;
@@ -89,7 +90,6 @@ void Cheats::update(WindowHost& host, ui::Screen& s, uint32_t event) {
             if (letter == '@') letter = '.';
             if (letter == '-') letter = 'Z';
         }
-        if (current < 0) m_leaving = (m_leaving & ~0xFF) | static_cast<uint8_t>(spare);
     }
     letters(host, s, event);
 }

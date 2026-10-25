@@ -3,6 +3,7 @@
 
 #include "Game/Frontend/Garage/Customise/Styling.h"
 
+#include "Core/Career/CareerInit.h"
 #include "Core/Data/GameTexts.h"
 #include "Game/Frontend/WindowTools.h"
 
@@ -210,7 +211,11 @@ void ModMenu::update(GarageHost& host, ui::Screen& s, uint32_t event) {
     Car* car = garage.car(host);
     if (car == nullptr || car->def == nullptr || data == nullptr || !data->career) return;
     const auto model = static_cast<size_t>(std::clamp(car->def->id, 0, 52));
-    const int level = data->career->profile.partsB[model][static_cast<size_t>(std::clamp(garage.styleCategory, 0, 9))];
+    // The fixed build's wing mirrors (7) open by their own steps (mirrorLevel): the unlock schedule never raises
+    // theirs.
+    const auto category = static_cast<size_t>(std::clamp(garage.styleCategory, 0, 9));
+    const int level = garage.styleCategory == 7 ? mirrorLevel(data->career->profile, model)
+                                                : data->career->profile.partsB[model][category];
     float value = -1.0f;
     bool hasItem = false;
     if (s.find("Menu") >= 0 && s.menuSize("Menu") != 0) {

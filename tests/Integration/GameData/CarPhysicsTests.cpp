@@ -31,6 +31,7 @@
 #include <cstdio>
 #include <cstring>
 #include <filesystem>
+#include <initializer_list>
 #include <optional>
 #include <string>
 #include <utility>
@@ -97,6 +98,148 @@ OJ_INTEGRATION_TEST(CarPhysics, EngineInNeutral) {
     check(running && car.engineSpeed == d->torqueSpeeds.front() && !car.engineOn &&
               car.position[1] < 10.0f,
           "car body: the engine up to its redline in neutral and back to idle, the car falls");
+}
+// The tilt held (0x00489740, the fixed build's): a car pitched 54 degrees nose up or down in the air turns back
+// towards level faster with the hold than without it (the stock's pitch torque never came: its pitch over pi
+// squared never passed 0.3).
+OJ_INTEGRATION_TEST(CarPhysics, TiltHeld) {
+    const oj::CarDynamics* d = oj::test::eclipseDynamics();
+    if (d == nullptr) return;
+    bool ok = true;
+    for (float start : {0.95f, -0.95f}) {
+        float pitch[2] = {};
+        for (int held = 0; held < 2; ++held) {
+            oj::CarBody body(*d, {0.0f, 100.0f, 0.0f, 0.0f});
+            body.setAngles({start, 0.0f, 0.0f, 0.0f});
+            oj::RaceCar car;
+            car.body = &body;
+            for (int i = 0; i < 30; ++i) {
+                if (held != 0) oj::tiltGuard(car);
+                body.step(1.0f / 60.0f);
+            }
+            pitch[held] = body.angles[0];
+        }
+        std::printf("     pitched %.2f rad in the air: after 0.5 s %.3f without the hold, %.3f with it\n", start,
+                    pitch[0], pitch[1]);
+        ok = ok && std::fabs(pitch[1]) < std::fabs(pitch[0]) - 0.01f;
+    }
+    check(ok, "car tilt (fixed): pitched past 49 degrees in the air the hold turns the car towards level");
+}
+// A tyre rolling backwards (0x004F7C40, the fixed build's): sliding back at 15 m/s with the wheel straight, the Magic
+// Formula's longitudinal force is kept as for a wheel steered a hair (the stock's was taken off and added back: none).
+OJ_INTEGRATION_TEST(CarPhysics, TyreBackwards) {
+    const oj::CarDynamics* d = oj::test::eclipseDynamics();
+    if (d == nullptr) return;
+    const oj::ContactDef* tyre = nullptr;
+    for (const oj::ContactDef& c : d->body.contacts) {
+        if (c.type == oj::ContactDef::Tyre && tyre == nullptr) tyre = &c;
+    }
+    auto along = [&](float steer) {
+        oj::Contact c;
+        c.def = tyre;
+        c.normal = {0.0f, 1.0f, 0.0f, 0.0f};
+        c.localNormal = {0.0f, 1.0f, 0.0f, 0.0f};
+        c.velocity = {0.0f, 0.0f, -15.0f, 0.0f};
+        c.load = 4000.0f;
+        c.mu = 1.0f;
+        c.gravity = 1.0f;
+        c.gravityInverse = 1.0f;
+        c.radius = 0.33f;
+        c.wheelSpin = -30.0f;
+        c.steer = steer;
+        c.tyreForce();
+        return c.friction[2];
+    };
+    const float straight = tyre != nullptr ? along(0.0f) : 0.0f;
+    const float steered = tyre != nullptr ? along(1e-4f) : 0.0f;
+    std::printf("     a tyre sliding back at 15 m/s: the longitudinal force %.1f straight, %.1f steered a hair\n",
+                straight, steered);
+    check(tyre != nullptr && std::fabs(straight) > 100.0f && std::fabs(straight - steered) < std::fabs(steered) * 0.01f,
+          "tyre (fixed): rolling backwards with the wheel straight keeps its longitudinal force");
+}
+// A tyre contact's drive and the traction control (0x004F6050, 0x004F6F30; the fixed build's): by the contact's own
+// wheel. The stock took the wheel at the contact's place in the step's list, so with a wheel in the air the drive slid
+// along the list: a rear-driven 350Z with its front wheels up gave its rear tyres (the list's first two, the front
+// wheels' places) neither the throttle nor the traction control; a front-driven Integra with its front left wheel up
+// drove its rear left tyre (the front right's place) and not its front right.
+OJ_INTEGRATION_TEST(CarPhysics, DriveOfTheContactsOwnWheel) {
+    const oj::test::SharedGameData& g = oj::test::sharedGameData();
+    if (!g.carDefsRead) return;
+    // The throttle each tyre contact takes (by its wheel's ID, -1 for a wheel up) with the contacts of the wheels down
+    // alone in the step's list, and whether the traction control cuts in with those contacts slipping by 2.
+    struct Drive {
+        float throttle[4] = {-1.0f, -1.0f, -1.0f, -1.0f};
+        bool asr = false;
+    };
+    const auto drive = [&](const char* model, std::initializer_list<int32_t> down) -> std::optional<Drive> {
+        const oj::CarDef* def = g.defs.byModel(model);
+        const oj::CarDynamics* d = def != nullptr ? g.dynamics->of(*def) : nullptr;
+        if (d == nullptr) return std::nullopt;
+        oj::CarDynamics withAsr = *d;
+        withAsr.asr = true;
+        withAsr.asrFactor = 1.0f;
+        oj::ContactPools pools;
+        FlatGround flat;
+        oj::CarBody body(withAsr, {0.0f, 1.0f, 0.0f, 0.0f});
+        body.pools = &pools;
+        body.collision = &flat;
+        for (const int32_t id : down) {
+            const oj::ContactDef* tyre = nullptr;
+            for (const oj::ContactDef& c : body.dynamics().body.contacts) {
+                if (c.type == oj::ContactDef::Tyre && c.id == id) tyre = &c;
+            }
+            if (tyre == nullptr) return std::nullopt;
+            oj::Contact& c = pools.tyre[pools.tyreUsed++];
+            c.def = tyre;
+            c.slip = 2.0f;
+        }
+        body.tyreFirst = 0;
+        body.tyreCount = pools.tyreUsed;
+        body.throttle = 1.0f;
+        body.forces(1.0f / 60.0f);
+        Drive out;
+        for (size_t i = 0; i < body.tyreCount; ++i) {
+            const int32_t id = body.tyre(i).def->id;
+            if (id >= 0 && id < 4) out.throttle[id] = body.tyre(i).throttle;
+        }
+        body.setLocalVelocity({0.0f, 0.0f, 10.0f, 0.0f});
+        body.asrMode = false;
+        body.step(1.0f / 60.0f);
+        out.asr = body.asrActive;
+        return out;
+    };
+    const std::optional<Drive> rearDown = drive("350Z_STOCK", {2, 3});
+    const std::optional<Drive> allDown = drive("350Z_STOCK", {0, 1, 2, 3});
+    const std::optional<Drive> frontLeftUp = drive("INTEGRA_STOCK", {1, 2, 3});
+    if (!rearDown || !allDown || !frontLeftUp) {
+        check(false, "the 350Z's and the Integra's dynamics and tyre contacts");
+        return;
+    }
+    std::printf("     350Z, front wheels up: the rear tyres' throttle %.1f %.1f, the traction control %s\n",
+                rearDown->throttle[2], rearDown->throttle[3], rearDown->asr ? "on" : "off");
+    std::printf("     Integra, front left up: the throttle front right %.1f, rear left %.1f, rear right %.1f\n",
+                frontLeftUp->throttle[1], frontLeftUp->throttle[2], frontLeftUp->throttle[3]);
+    check(rearDown->throttle[2] == 1.0f && rearDown->throttle[3] == 1.0f && rearDown->asr,
+          "drive (fixed): a rear-driven car's rear tyres take the throttle and the traction control, front wheels up");
+    check(allDown->throttle[0] == 0.0f && allDown->throttle[1] == 0.0f && allDown->throttle[2] == 1.0f &&
+              allDown->throttle[3] == 1.0f,
+          "drive: with every wheel down the rear-driven car's rear tyres alone take the throttle");
+    check(frontLeftUp->throttle[1] == 1.0f && frontLeftUp->throttle[2] == 0.0f && frontLeftUp->throttle[3] == 0.0f,
+          "drive (fixed): a front-driven car's front right tyre alone takes the throttle, its front left up");
+}
+// A turbo given back (0x004896A0, a restart after the damage took it): the stock's at 1.3 whatever the car's own; the
+// fixed build's the Turbo the car was made with.
+OJ_INTEGRATION_TEST(CarPhysics, TurboGivenBack) {
+    const oj::CarDynamics* d = oj::test::eclipseDynamics();
+    if (d == nullptr) return;
+    oj::CarDynamics fitted = *d;
+    fitted.turbo = 1.4f;
+    oj::CarBody body(fitted, {0.0f, 1.0f, 0.0f, 0.0f});
+    body.loseTurbo();
+    const float lost = body.dynamics().turbo;
+    body.restoreTurbo();
+    check(lost == 1.0f && body.dynamics().turbo == 1.4f,
+          "turbo (fixed): given back as the car's own after it was lost");
 }
 // On flat ground the car settles on its springs, then drives off in first gear.
 OJ_INTEGRATION_TEST(CarPhysics, FlatGround) {
@@ -422,6 +565,53 @@ OJ_INTEGRATION_TEST(CarPhysics, EngstromR1) {
             pushed = along(ahead) - start > 2.0f && closest > 2.0f && behind.nearBodies.size() == 1;
         }
         check(pushed, "two cars on Engstrom R1: the one behind drives into the other and pushes it");
+
+        // A race car's impacts (0x004916F0, the fixed build's): of its two rigid contacts the first touches the other
+        // car and the last has come apart, so the other body is the first's (the stock read the last's: none); a
+        // change of 1000 cm/s against a body is an energy of 8000, the AI's hit 1.5 x (2 + (8000 - 400) x 0.003) =
+        // 37.2, its impact that (the stock's 50, the last piece's).
+        bool impacted = false;
+        if (!route.grid.empty()) {
+            oj::CarBody mine(*d, {});
+            oj::CarBody theirs(*d, {});
+            const oj::Route raceRoute(route);
+            oj::RaceRules rules;
+            rules.mode = oj::RaceMode::Custom;
+            rules.type = oj::RaceType::Circuit;
+            oj::RaceState race(raceRoute, 1, rules);
+            oj::RaceCar mineCar;
+            oj::RaceCar theirCar;
+            mineCar.body = &mine;
+            theirCar.body = &theirs;
+            oj::CrtRandom random;
+            mineCar.revs.make(random, 0.0f);
+            theirCar.revs.make(random, 0.0f);
+            race.add(mineCar, random, 0.0f);
+            race.add(theirCar, random, 0.0f);
+            oj::makeEffects(mineCar, oj::EffectLibrary{}, oj::SurfaceEffects{}, rules.mode, rules.type, false,
+                            random, false);
+            race.linkNeighbours();
+            race.reset(random, 0.0f);
+            mineCar.competitor->raceTime = 1.0f;
+            oj::startJolt(mineCar);
+            mineCar.jolt.velocity = {0.0f, 0.0f, 1000.0f, 0.0f};
+            oj::ContactPools pools;
+            pools.rigid[0].compression = 0.01f;
+            pools.rigid[0].other = &theirs;
+            pools.rigid[0].arm = {0.0f, 0.0f, 2.0f, 0.0f};
+            pools.rigid[0].localNormal = {0.0f, 0.0f, 1.0f, 0.0f};
+            pools.rigid[1].compression = -0.01f;
+            pools.rigid[1].arm = {0.0f, 0.0f, 2.0f, 0.0f};
+            pools.rigid[1].localNormal = {0.0f, 0.0f, 1.0f, 0.0f};
+            pools.rigidUsed = 2;
+            mine.rigidFirst = 0;
+            mine.rigidCount = 2;
+            oj::wheelEffects(mineCar, 1.0f / 60.0f, 1.0f / 60.0f, random, pools, &race, true);
+            std::printf("     a race car's impacts: a body's contact %s, the impact %.2f\n",
+                        mineCar.bodyContact ? "seen" : "not seen", mineCar.impact);
+            impacted = mineCar.bodyContact && std::fabs(mineCar.impact - 37.2f) < 0.01f;
+        }
+        check(impacted, "a race car's impacts (fixed): the touching contact's body, the impact the hit's amount");
         check(started, "race start on Engstrom R1: the car settles on its grid place and drives off");
         check(walled, "walls of Engstrom R1: driving straight on, the car stays on the route");
         check(rayStops, "camera ray on Engstrom R1: the nearest wall between two points");

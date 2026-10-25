@@ -51,7 +51,10 @@ void Graph::advance() {
 }
 
 void Graph::draw(render::IRenderDevice& device, bool shadow) const {
-    device.drawLine(x, y, static_cast<float>(points) * 2.0f, y, 0x80FFFFFF);
+    // The fixed build: the line under the points' places (x to 2 x the points + x, of 640 x 480) scaled as the series.
+    const float sx = static_cast<float>(device.width()) * 0.0015625f;
+    const float sy = static_cast<float>(device.height()) * 0.0020833334f;
+    device.drawLine(sx * x, sy * y, sx * (static_cast<float>(points) * 2.0f + x), sy * y, 0x80FFFFFF);
     for (uint32_t number : order) {
         const Series& s = series[number];
         const uint32_t rgb = kSeriesColours[number % 10] & 0x00FFFFFF;

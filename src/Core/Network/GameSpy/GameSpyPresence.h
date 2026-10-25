@@ -285,14 +285,15 @@ struct Profile {
 // The SDK's GPConnection (0xBF4 bytes; the game's [0x0075B34C]).
 class Connection : public std::enable_shared_from_this<Connection> {
 public:
-    // Where the connection manager is: the SDK's [0x0071B258] "gpcm.gamespy.com" and 29900, the profile cache gp.info
+    // Where the connection manager is: the SDK's [0x0071B258] "gpcm.gamespy.com" (the fixed build's on
+    // kServiceDomain) and 29900, the profile cache gp.info
     // of the current directory ([0x0071B298]) and the search manager ([0x0071B218] "gpsp.gamespy.com", 29901). The
     // game never changes them; only the tests give others (their stand-ins on the loopback and a file of their own).
     struct Server {
-        std::string host = "gpcm.gamespy.com";
+        std::string host = std::string("gpcm.") + kServiceDomain;
         uint16_t port = 29900;
         std::string infoFile = "gp.info";
-        std::string searchHost = "gpsp.gamespy.com";
+        std::string searchHost = std::string("gpsp.") + kServiceDomain;
         uint16_t searchPort = 29901;
     };
 
@@ -325,8 +326,9 @@ public:
     // server's challenge.
     Result connect(std::u16string_view nick, std::u16string_view email, std::u16string_view password, bool firewall,
                    bool blocking, ConnectCallback callback);
-    // gpConnectNewUserW (0x00569160): \newuser\, then the login. Stock problem: the email is narrowed into 32 bytes
-    // followed by the password's, so an email of 32 characters or more is its first 32 then the password.
+    // gpConnectNewUserW (0x00569160): \newuser\, then the login. The email whole in the fixed build (the stock
+    // narrowed it into 32 bytes followed by the password's: an email of 32 characters or more was its first 32 then
+    // the password).
     Result connectNewUser(std::u16string_view nick, std::u16string_view uniquenick, std::u16string_view email,
                           std::u16string_view password, std::u16string_view cdkey, bool firewall, bool blocking,
                           ConnectCallback callback);
@@ -338,7 +340,7 @@ public:
     // until the answer (Stock problem: with Sleep(10) and no end while the server does not answer).
     Result getInfo(int32_t profile, bool checkCache, bool blocking, InfoCallback callback);
     // gpSetStatusW (0x00569900 -> 0x00569670): \status\, dropped when the status and both strings are the last sent
-    // (Stock problem: the strings sent are never kept, so only the status with both strings empty is dropped).
+    // (the stock never kept the strings sent, so only the status with both strings empty was dropped).
     Result setStatus(int32_t status, std::u16string_view statusString, std::u16string_view locationString);
     // gpSetInvitableGames (0x00569970): \inviteto\.
     Result setInvitableGames(const std::vector<int32_t>& products);

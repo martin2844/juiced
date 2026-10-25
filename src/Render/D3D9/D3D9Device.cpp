@@ -7,9 +7,13 @@
 #include <wincodec.h>
 
 #include <algorithm>
+#include <atomic>
+#include <chrono>
 #include <cstring>
 #include <format>
 #include <map>
+#include <mutex>
+#include <thread>
 #include <vector>
 
 #pragma comment(lib, "windowscodecs.lib")
@@ -228,13 +232,24 @@ public:
     }
 
     bool beginFrame() override {
+        // The frame holds the device to its end; a frame that does not begin lets it go at once. The loading thread
+        // waiting for the device goes first (a frame paced by the present has little time between frames).
+        if (m_waiting > 0) std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        m_deviceLock.lock();
         if (!restore()) {
+            m_deviceLock.unlock();
             return false;
         }
         m_device->Clear(0, nullptr, m_clearFlags, 0xFF000000, 1.0f, 0);
         const HRESULT hr = m_device->BeginScene();
-        if (FAILED(hr)) failed("BeginScene", hr);
-        return SUCCEEDED(hr);
+        if (FAILED(hr)) {
+            failed("BeginScene", hr);
+            m_deviceLock.unlock();
+            return false;
+        }
+        m_inFrame = true;
+        ++m_services;  // 0x00514C96
+        return true;
     }
 
     void endFrame() override {
@@ -244,6 +259,23 @@ public:
             log::warning("d3d9: the device is lost");
             m_lost = true;
         }
+        m_inFrame = false;
+        m_deviceLock.unlock();
+    }
+
+    void letLoadingRun() override {
+        if (!onDeviceThread()) return;
+        ++m_services;  // 0x0045A38A
+        if (!m_inFrame) return;
+        m_deviceLock.unlock();
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        m_deviceLock.lock();
+    }
+
+    void waitForService() override {
+        if (onDeviceThread()) return;
+        const uint64_t before = m_services;
+        while (m_services == before) std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
 
     void resize(uint32_t width, uint32_t height) override {
@@ -293,6 +325,7 @@ public:
     }
 
     TextureId createTexture(const TextureData& data) override {
+        const auto use = useDevice();
         const Layout layout = layoutOf(data, 1);
         if (layout.levels == 0) {
             return 0;
@@ -314,6 +347,7 @@ public:
     }
 
     TextureId createCubeTexture(const TextureData& data) override {
+        const auto use = useDevice();
         const Layout layout = layoutOf(data, 6);
         if (layout.levels == 0) {
             return 0;
@@ -338,6 +372,7 @@ public:
     }
 
     void destroyTexture(TextureId id) override {
+        const auto use = useDevice();
         if (id != 0 && id <= m_textures.size()) {
             release(m_textures[id - 1]);
             std::erase_if(m_targets, [id](const Target& t) { return t.id == id; });
@@ -346,6 +381,7 @@ public:
     }
 
     TextureId createRenderTarget(uint32_t width, uint32_t height, bool cube) override {
+        const auto use = useDevice();
         if (width == 0 || height == 0) return 0;
         Target t{0, width, height, cube};
         IDirect3DBaseTexture9* texture = makeTarget(t);
@@ -437,6 +473,7 @@ public:
     }
 
     TextureId createDynamicTexture(uint32_t width, uint32_t height, uint32_t format) override {
+        const auto use = useDevice();
         Dynamic d{0, width, height, format, true};
         IDirect3DTexture9* texture = makeDynamic(d);
         if (texture == nullptr) return 0;
@@ -446,6 +483,7 @@ public:
         return d.id;
     }
     bool lockTexture(TextureId id, void** bits, int32_t* pitch) override {
+        const auto use = useDevice();
         if (id == 0 || id > m_textures.size() || m_textures[id - 1] == nullptr) return false;
         D3DLOCKED_RECT locked{};
         if (FAILED(static_cast<IDirect3DTexture9*>(m_textures[id - 1])->LockRect(0, &locked, nullptr, 0))) {
@@ -456,6 +494,7 @@ public:
         return true;
     }
     void unlockTexture(TextureId id) override {
+        const auto use = useDevice();
         if (id != 0 && id <= m_textures.size() && m_textures[id - 1] != nullptr) {
             static_cast<IDirect3DTexture9*>(m_textures[id - 1])->UnlockRect(0);
         }
@@ -555,6 +594,7 @@ public:
     }
 
     bool capture(const std::wstring& file) override {
+        const auto use = useDevice();
         IDirect3DSurface9* back = nullptr;
         if (FAILED(m_device->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &back))) {
             return false;
@@ -593,6 +633,7 @@ public:
     }
 
     ShaderId createVertexShader(const uint32_t* code) override {
+        const auto use = useDevice();
         IDirect3DVertexShader9* shader = nullptr;
         if (FAILED(m_device->CreateVertexShader(reinterpret_cast<const DWORD*>(code), &shader))) {
             return 0;
@@ -602,6 +643,7 @@ public:
     }
 
     ShaderId createPixelShader(const uint32_t* code) override {
+        const auto use = useDevice();
         IDirect3DPixelShader9* shader = nullptr;
         if (FAILED(m_device->CreatePixelShader(reinterpret_cast<const DWORD*>(code), &shader))) {
             return 0;
@@ -611,6 +653,7 @@ public:
     }
 
     DeclarationId createDeclaration(const VertexElement* elements) override {
+        const auto use = useDevice();
         static_assert(sizeof(VertexElement) == sizeof(D3DVERTEXELEMENT9));
         IDirect3DVertexDeclaration9* declaration = nullptr;
         if (FAILED(m_device->CreateVertexDeclaration(reinterpret_cast<const D3DVERTEXELEMENT9*>(elements),
@@ -622,6 +665,7 @@ public:
     }
 
     BufferId createVertexBuffer(const void* data, uint32_t bytes) override {
+        const auto use = useDevice();
         IDirect3DVertexBuffer9* buffer = nullptr;
         if (bytes == 0 || FAILED(m_device->CreateVertexBuffer(bytes, D3DUSAGE_WRITEONLY, 0, D3DPOOL_MANAGED, &buffer,
                                                                nullptr))) {
@@ -637,6 +681,7 @@ public:
     }
 
     BufferId createIndexBuffer(const uint16_t* indices, uint32_t count) override {
+        const auto use = useDevice();
         IDirect3DIndexBuffer9* buffer = nullptr;
         const UINT bytes = count * 2;
         if (count == 0 || FAILED(m_device->CreateIndexBuffer(bytes, D3DUSAGE_WRITEONLY, D3DFMT_INDEX16,
@@ -653,6 +698,7 @@ public:
     }
 
     void updateVertexBuffer(BufferId id, const void* data, uint32_t bytes) override {
+        const auto use = useDevice();
         auto* buffer = static_cast<IDirect3DVertexBuffer9*>(bufferAt(id));
         void* p = nullptr;
         if (buffer != nullptr && bytes != 0 && SUCCEEDED(buffer->Lock(0, bytes, &p, 0))) {
@@ -665,6 +711,7 @@ public:
         return m_device != nullptr && SUCCEEDED(m_device->CreateQuery(D3DQUERYTYPE_OCCLUSION, nullptr));
     }
     QueryId createOcclusionQuery() override {
+        const auto use = useDevice();
         IDirect3DQuery9* query = nullptr;
         if (FAILED(m_device->CreateQuery(D3DQUERYTYPE_OCCLUSION, &query))) return 0;
         m_queries.push_back(query);
@@ -687,6 +734,7 @@ public:
     }
 
     void destroyBuffer(BufferId id) override {
+        const auto use = useDevice();
         if (id != 0 && id <= m_buffers.size()) {
             release(m_buffers[id - 1]);
         }
@@ -774,6 +822,16 @@ public:
     }
 
 private:
+    bool onDeviceThread() const { return std::this_thread::get_id() == m_thread; }
+    // The device held for a call; another thread's call counted while it waits.
+    std::unique_lock<std::recursive_mutex> useDevice() {
+        if (onDeviceThread()) return std::unique_lock(m_deviceLock);
+        ++m_waiting;
+        std::unique_lock lock(m_deviceLock);
+        --m_waiting;
+        return lock;
+    }
+
     IUnknown* shaderAt(ShaderId id) const { return id != 0 && id <= m_shaders.size() ? m_shaders[id - 1] : nullptr; }
     IDirect3DResource9* bufferAt(BufferId id) const {
         return id != 0 && id <= m_buffers.size() ? m_buffers[id - 1] : nullptr;
@@ -1070,6 +1128,13 @@ private:
     DWORD m_clearFlags = D3DCLEAR_ZBUFFER;  // [0x00719360]: the depth, and the stencil when the format has one
     std::string m_adapter;
     bool m_lost = false;
+    std::thread::id m_thread = std::this_thread::get_id();  // the thread that made the device
+    // Held by the frame (beginFrame .. endFrame) and by each call making, freeing, locking or writing a resource, so
+    // that the loading thread's calls go between the frames (the device is not made multithreaded without -mtd3d).
+    std::recursive_mutex m_deviceLock;
+    std::atomic<int> m_waiting = 0;  // other threads waiting for the device
+    std::atomic<uint64_t> m_services = 0;  // the device's thread's runs of the renderer's queue (frames, waits)
+    bool m_inFrame = false;
     uint32_t m_failures = 0;
     uint32_t m_resets = 0;
     bool m_resetPending = false;

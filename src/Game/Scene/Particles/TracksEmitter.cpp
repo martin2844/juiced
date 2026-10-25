@@ -294,7 +294,7 @@ bool TracksEmitter::frame(render::Camera& camera) {
 // alphas the entry's bytes x the level, u 0 and 1 by turns, v 0 and 1 across. The level starts at (entries - the
 // entries drawn last frame) x the step (COLOUR_START's alpha / the ring's entries) and grows by the step to the alpha
 // / 255 after each entry. Stock problem: the first entry drawn takes the level before it is held to that, its alphas
-// wrapping past a byte.
+// wrapping past a byte. The fixed build holds the level before each entry takes it.
 bool TracksEmitter::drawTrack(Track& t, render::Camera& camera) {
     if (t.def == nullptr || m_ring.empty()) return true;
     const float step = t.def->colourStart[3] / static_cast<float>(m_entries);
@@ -322,10 +322,11 @@ bool TracksEmitter::drawTrack(Track& t, render::Camera& camera) {
                 const float px = static_cast<float>(static_cast<int8_t>(slot[0])) * 2.2f + floatAt(e, 0);
                 const float py = static_cast<float>(static_cast<int8_t>(slot[1])) * 2.2f + floatAt(e, 4);
                 const float pz = static_cast<float>(static_cast<int8_t>(slot[2])) * 2.2f + floatAt(e, 8);
+                const float cap = d.colourStart[3] * 0.003921569f;
+                if (!(fade <= cap)) fade = cap;
                 const float fa = static_cast<float>(slot[3]) * fade;
                 const float fb = static_cast<float>(slot[4]) * fade;
                 fade = fade + step;
-                const float cap = d.colourStart[3] * 0.003921569f;
                 if (!(fade <= cap)) fade = cap;
                 const float wx = static_cast<float>(static_cast<int8_t>(slot[6])) * d.startSize;
                 const float wz = static_cast<float>(static_cast<int8_t>(slot[5])) * d.startSize;

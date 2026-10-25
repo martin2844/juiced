@@ -173,12 +173,19 @@ void RigidBody::constrain(std::vector<float>& s, float dt) {
     s[kMomentum + 2] = clampKeep(s[kMomentum + 2], m * -150.0f, m * 150.0f);
     // The angular velocity of the state through the inverse inertia of the body set last, held, and back.
     // Stock problem: the inertia is not the held state's, and the round trip changes L also when nothing is held.
-    Vec4 w = transformPoint(inverseWorldInertia,
-                            {s[kAngularMomentum], s[kAngularMomentum + 1], s[kAngularMomentum + 2], 0.0f});
+    // The fixed build takes the inertia of the held state's orientation and leaves L as it is unless a part of the
+    // angular velocity is held.
+    Quat q{s[kOrientation], s[kOrientation + 1], s[kOrientation + 2], s[kOrientation + 3]};
+    normalize(q);
+    const Mat34 turn = rotationOf(q);
+    const Mat34 held = multiply(multiply(turn, inverseInertia), transposeRotation(turn));
+    Vec4 w = transformPoint(held, {s[kAngularMomentum], s[kAngularMomentum + 1], s[kAngularMomentum + 2], 0.0f});
+    const Vec4 free = w;
     w[0] = clampKeep(w[0], -12.566371f, 12.566371f);
     w[1] = clampKeep(w[1], -4.712389f, 4.712389f);
     w[2] = clampKeep(w[2], -12.566371f, 12.566371f);
-    const Vec4 l = transformPoint(inverse(inverseWorldInertia), w);
+    if (w[0] == free[0] && w[1] == free[1] && w[2] == free[2]) return;
+    const Vec4 l = transformPoint(inverse(held), w);
     for (size_t i = 0; i < 3; ++i) s[kAngularMomentum + i] = l[i];
 }
 
@@ -429,6 +436,11 @@ bool RigidBody::impulseWith(RigidBody& o, float vn, const Vec4& point, const Vec
     const Vec4 l2{o.angularMomentum[0] + t2[0], o.angularMomentum[1] + t2[1], o.angularMomentum[2] + t2[2],
                   o.angularMomentum[3]};
     o.setAngularMomentum({l2[0] - angular[0], l2[1] - angular[1], l2[2] - angular[2], l2[3]});
+    // The fixed build: the hit kept for the online cars (each body's share).
+    if (world != nullptr && world->pushes != nullptr) {
+        world->pushes->push_back({this, &o, push, {t1[0] + angular[0], t1[1] + angular[1], t1[2] + angular[2], 0.0f}});
+        world->pushes->push_back({&o, this, back, {t2[0] - angular[0], t2[1] - angular[1], t2[2] - angular[2], 0.0f}});
+    }
     return true;
 }
 
@@ -609,7 +621,10 @@ void RigidBody::step(float dt) {
     if (!(speed < 0.3f)) return;
     float loss = dt + dt;
     if (0.0f > loss) loss = 0.0f;
-    const float left = speed - loss;
+    // Stock problem: below 2 dt what is left is below 0 and the body turns the other way (a car at rest shakes by up
+    // to 2 dt m/s); the fixed build stops it at 0.
+    float left = speed - loss;
+    if (left < 0.0f) left = 0.0f;
     setLocalVelocity({ux * left, uy * left, uz * left, v[3]});
 }
 

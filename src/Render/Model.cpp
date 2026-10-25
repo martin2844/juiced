@@ -70,40 +70,55 @@ void Mesh::draw(Renderer3d& r, Camera& camera, ModelNode& node, uint32_t mode, b
 
     IRenderDevice& device = r.device();
     device.setIndices(m_indices);
-    for (Part& part : m_parts) {
-        if (r.passKind == 0) {
-            // 0x00559145: the node's flag 8 (its argument, not the distance) with a part of flag 4 in the mesh.
-            const uint32_t expected = (knocked && m_hasKnockedParts) ? 4u : 0u;
-            if (!(scaled >= part.lodIn) || !(scaled < part.lodOut)) continue;
-            if ((part.flags & 1) != 0 || (part.flags & 4) != expected) continue;
-            if (mode == 1 && part.material != nullptr && (part.material->flags() & 0x24) != 0) continue;
-            if (mode == 2 && part.material != nullptr && (part.material->flags() & 0x24) == 0) continue;
-        } else if (r.passKind == 1) {
-            if ((part.flags & 2) == 0) continue;
-        } else {
-            continue;
-        }
-        device.setStream(part.vertices, part.stride);
-        if (part.declaration != r.lastDeclaration) {
-            device.setDeclaration(part.declaration);
-            r.lastDeclaration = part.declaration;
-        }
-        Material* material = r.override != nullptr ? r.override : part.material;
-        if (material == nullptr) continue;
-        // 0x005594C6: a node with +0xC0 bit 0x10 (a car part knocked off; nothing sets it) draws a material of the
-        // class 0 (Car Body) double-sided, its parameter 8 set to 1 for good.
-        if ((node.flags & 0x10) != 0 && material->classId() == kCarBody) {
-            const uint32_t one = 1;
-            material->setParam(8, &one);
-        }
-        const uint32_t passes = material->passes();
-        for (uint32_t pass = 0; pass < passes; ++pass) {
-            r.beginMaterialPass(*material, pass);
-            if (part.faceType == 0) {
-                device.drawIndexed(Primitive::TriangleStrip, part.vertexCount, part.indexStart, part.indexCount - 2);
-            } else if (part.faceType == 1) {
-                device.drawIndexed(Primitive::TriangleList, part.vertexCount, part.indexStart, part.indexCount / 3);
+    // Stock problem: the late parts (mode 2) are drawn in their order, the car's glass writing no depth: what is
+    // drawn after it behind it (the far side's decals, the smoke of the wheels) goes over it, and the glass looks
+    // gone. The fixed build draws the late parts in two rounds, a car's glass (Car Glass) first, writing its depth
+    // while it is drawn, then the others (the scenes draw every car's opaque parts before any car's late ones).
+    const uint32_t rounds = mode == 2 && r.passKind == 0 ? 2u : 1u;
+    for (uint32_t round = 0; round < rounds; ++round) {
+        for (Part& part : m_parts) {
+            if (r.passKind == 0) {
+                // 0x00559145: the node's flag 8 (its argument, not the distance) with a part of flag 4 in the mesh.
+                const uint32_t expected = (knocked && m_hasKnockedParts) ? 4u : 0u;
+                if (!(scaled >= part.lodIn) || !(scaled < part.lodOut)) continue;
+                if ((part.flags & 1) != 0 || (part.flags & 4) != expected) continue;
+                if (mode == 1 && part.material != nullptr && (part.material->flags() & 0x24) != 0) continue;
+                if (mode == 2 && part.material != nullptr && (part.material->flags() & 0x24) == 0) continue;
+                if (rounds == 2) {
+                    const bool glass = part.material != nullptr && part.material->classId() == kCarGlass;
+                    if (glass != (round == 0)) continue;
+                }
+            } else if (r.passKind == 1) {
+                if ((part.flags & 2) == 0) continue;
+            } else {
+                continue;
             }
+            device.setStream(part.vertices, part.stride);
+            if (part.declaration != r.lastDeclaration) {
+                device.setDeclaration(part.declaration);
+                r.lastDeclaration = part.declaration;
+            }
+            Material* material = r.override != nullptr ? r.override : part.material;
+            if (material == nullptr) continue;
+            // 0x005594C6: a node with +0xC0 bit 0x10 (a car part knocked off; nothing sets it) draws a material of the
+            // class 0 (Car Body) double-sided, its parameter 8 set to 1 for good.
+            if ((node.flags & 0x10) != 0 && material->classId() == kCarBody) {
+                const uint32_t one = 1;
+                material->setParam(8, &one);
+            }
+            const uint32_t passes = material->passes();
+            const bool glassDepth = rounds == 2 && material->classId() == kCarGlass;
+            for (uint32_t pass = 0; pass < passes; ++pass) {
+                r.beginMaterialPass(*material, pass);
+                if (glassDepth) device.setRenderState(RenderState::ZWriteEnable, 1);
+                if (part.faceType == 0) {
+                    device.drawIndexed(Primitive::TriangleStrip, part.vertexCount, part.indexStart,
+                                       part.indexCount - 2);
+                } else if (part.faceType == 1) {
+                    device.drawIndexed(Primitive::TriangleList, part.vertexCount, part.indexStart, part.indexCount / 3);
+                }
+            }
+            if (glassDepth) device.setRenderState(RenderState::ZWriteEnable, 0);
         }
     }
 }

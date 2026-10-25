@@ -38,7 +38,8 @@ public:
     // [3] 0x004F2810: one step of dt seconds: the touches with the world, the rigid contacts' shares of the weight,
     // the impacts, the integration, the push out of the deepest contact; then the sleep (a body with Sleep values
     // still for 3 s leaves the world's active list) and, unless it went to sleep, the slow body's brake: under
-    // 0.3 m/s in its frame its speed loses 2 dt (Stock problem: below 2 dt it turns to the other way).
+    // 0.3 m/s in its frame its speed loses 2 dt (Stock problem: below 2 dt it turns to the other way; the fixed
+    // build's stops at 0).
     virtual void step(float dt);
 
     // 0x004F2DC0 / 0x004F2EC0: a new momentum / angular momentum and the velocities that follow, also in the state.

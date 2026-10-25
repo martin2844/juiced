@@ -38,7 +38,8 @@ bool supports(IKsPropertySet* properties, const GUID& set, uint32_t id) {
 }
 
 // 0x00405550: a buffer of 64 bytes (mono, 22050 Hz, 16 bits, in the hardware, 3D) and its property set; with one the
-// device (and the primary buffer, none here) AddRef'd for good (Stock problem: never released), the EAX 4.0 context,
+// device (and the primary buffer, none here) AddRef'd for good (Stock problem: never released; not in the fixed
+// build), the EAX 4.0 context,
 // FX slots and source asked for, then the device's flags (cleared without 0x10). The buffer's interfaces released.
 void probe() {
     WAVEFORMATEX format{};
@@ -61,10 +62,7 @@ void probe() {
         buffer->QueryInterface(IID_IDirectSoundBuffer8, reinterpret_cast<void**>(&buffer8)) >= 0 &&
         buffer8->QueryInterface(IID_IDirectSound3DBuffer, reinterpret_cast<void**>(&buffer3d)) >= 0 &&
         buffer3d->QueryInterface(IID_IKsPropertySet, reinterpret_cast<void**>(&properties)) >= 0) {
-        g_eaxOn = true;
-        g_device->AddRef();
-        if (g_primary != nullptr) g_primary->AddRef();
-        g_eaxOn = true;
+        g_eaxOn = true;  // the fixed build takes no reference of the device for good (eaxAvailable lets it go)
         g_eaxOn = supports(properties, eax::kContext, eax::kContextAllParameters) && g_eaxOn;
         g_eaxOn = supports(properties, eax::kFxSlot0, eax::kFxSlotAllParameters) && g_eaxOn;
         g_eaxOn = supports(properties, eax::kFxSlot1, eax::kFxSlotAllParameters) && g_eaxOn;
@@ -89,14 +87,21 @@ void probe() {
 
 }  // namespace
 
+// The fixed build lets the device and the library go after each question (the answer is the same).
 bool eaxAvailable() {
     g_library = LoadLibraryA("eax.dll");
     if (g_library == nullptr) return false;
+    bool answer = false;
     const auto create = reinterpret_cast<EaxCreate>(GetProcAddress(g_library, "EAXDirectSoundCreate8"));
-    if (create == nullptr) return false;
-    if (create(nullptr, &g_device, nullptr) != S_OK || g_device == nullptr) return false;
-    probe();
-    return ((g_flags >> 4) & 1) != 0;
+    if (create != nullptr && create(nullptr, &g_device, nullptr) == S_OK && g_device != nullptr) {
+        probe();
+        answer = ((g_flags >> 4) & 1) != 0;
+    }
+    if (g_device != nullptr) g_device->Release();
+    g_device = nullptr;
+    FreeLibrary(g_library);
+    g_library = nullptr;
+    return answer;
 }
 
 }  // namespace oj::config

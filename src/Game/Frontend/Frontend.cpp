@@ -328,9 +328,12 @@ void Frontend::leaveState(const std::string& state) {
     if (is(m_state, "characterPostRace") && !is(state, "characterPostRace") && m_data != nullptr) {
         m_postRace.leave(*this);
     }
-    if (is(m_state, "careerload") && !is(state, "careerload")) {
-        // 0x00435930: the next window comes in under black that clears over a second.
+    if ((is(m_state, "careerload") || is(m_state, "garageload")) && !is(state, m_state.c_str())) {
+        // 0x00435930, the leave of the record careerload and garageload share (0x0071FC60): the next window (the
+        // garage's too) comes in under black that clears over a second; the front end's +0x38 1 (its controllers
+        // watched).
         m_screenFade = 1.0f;
+        m_watchControllers = true;
     }
 }
 
@@ -588,11 +591,14 @@ void Frontend::update(float dt, const FrontendInput& in) {
     if (!m_racePause && m_data != nullptr) jukebox().update(m_data->playlist, m_gameFrameTime, !jukebox().previewing);
 }
 
-// An event while a window still moves in ends its transitions (0x005A9E80); menus take their directions
-// (0x005B11A0); buttons move the highlight to the neighbour they name (0x005A9F70).
+// An event while a window still moves ends the transitions of the windows open and its own (0x005A9E80: a window
+// under it going out is hidden then, so that it is shown again when the window over it closes); menus take their
+// directions (0x005B11A0); buttons move the highlight to the neighbour they name (0x005A9F70).
 void Frontend::updateWindow(ui::Screen& screen, const FrontendInput& in) {
     if (in.ui.event != input::kNone) {
-        screen.finishTransitions();
+        std::vector<ui::Screen*> open{m_screen.get()};
+        for (const Popup& popup : m_popups) open.push_back(popup.screen.get());
+        ui::endTransitions(screen, open);
     }
     // Both play SELECT through the window's sound when the highlight moves. A message's menu takes the second player's
     // event too (the window's +0x8C).

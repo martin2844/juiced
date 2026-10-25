@@ -33,9 +33,8 @@ SmokeEmitter::SmokeEmitter(ParticleSystem& system, const EffectDef& d) : Particl
     }
     for (Vec4* c : {&m_sunColour, &m_shadeColour}) {
         Vec4& v = *c;
+        // Stock problem: the alpha is scaled twice (x 0.64). The fixed build scales it once, as the colour.
         v = {v[0] * 0.8f, v[1] * 0.8f, v[2] * 0.8f, v[3] * 0.8f};
-        // Stock problem: the alpha is scaled twice.
-        v[3] = v[3] * 0.8f;
     }
 }
 

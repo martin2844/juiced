@@ -281,8 +281,7 @@ void ServerBrowser::halt() {
 int ServerBrowser::connectToMaster() {
     const ServiceHosts& hosts = serviceHosts();
     const std::string host =
-        hosts.list.empty() ? std::format("{}.ms{}.gamespy.com", m_queryForGame, masterHash(m_queryForGame) % 20)
-                           : hosts.list;
+        hosts.list.empty() ? masterListHost(m_queryForGame) : hosts.list;
     uint32_t ip = inet_addr(host.c_str());
     if (ip == INADDR_NONE) {
         const hostent* h = gethostbyname(host.c_str());

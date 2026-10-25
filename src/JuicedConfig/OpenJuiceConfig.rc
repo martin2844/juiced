@@ -46,8 +46,8 @@ BEGIN
     BLOCK "040904b0"
     BEGIN
       VALUE "ProductName", "OpenJuice"
-      VALUE "ProductVersion", OJ_VERSION_TEXT " (Juiced " OJ_GAME_VERSION_TEXT ", " OJ_RELEASE_NAME ")"
-      VALUE "FileDescription", "OpenJuiceConfig, the settings of Juiced " OJ_GAME_VERSION_TEXT " (" OJ_BUILD_TEXT ")"
+      VALUE "ProductVersion", OJ_VERSION_TEXT " (" OJ_BASED_ON_TEXT ", " OJ_RELEASE_NAME ")"
+      VALUE "FileDescription", "OpenJuiceConfig, the settings of " OJ_PRODUCT_TEXT " for Juiced (" OJ_BUILD_TEXT ")"
       VALUE "FileVersion", OJ_VERSION_TEXT
       VALUE "InternalName", "OpenJuiceConfig"
       VALUE "OriginalFilename", OJ_FILE_NAME

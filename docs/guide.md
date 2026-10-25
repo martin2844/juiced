@@ -36,9 +36,10 @@ has, for each version:
 Either the 32-bit or the 64-bit executable will do. The 32-bit one plays the game's movies with the game's own
 `binkw32.dll`; the 64-bit one decodes them itself.
 
-To see which build you have: the executable's Properties, Details: the description reads "OpenJuice for Juiced 1.00
-(64-bit)" (or 1.01, 32-bit, debug), the product version "1.00.2 (Juiced 1.00, Bug fixes)": the game's version, then
-OpenJuice's release. The first line of `OpenJuice.log` says the same. What each release changed: `CHANGELOG.md`.
+To see which build you have: the executable's Properties, Details: the description reads "OpenJuice unofficial
+patch 1.02 for Juiced (64-bit)" (or 32-bit, debug), the product version "1.02.5 (based on Juiced 1.01, Bug fixes)":
+the patch's version with the release, then the game it is built on. The first line of `OpenJuice.log` says the
+same. What each release changed: `CHANGELOG.md`.
 
 ## Building
 
@@ -67,10 +68,11 @@ none are saved yet, OpenJuice starts `JuicedConfig.exe` first, as the stock game
 `OpenJuiceConfig.exe` (and `OpenJuiceConfig64.exe`) is OpenJuice's copy of `JuicedConfig.exe`, the same window
 writing the same settings (`docs/spec/30-juiced-config.md`). Put it in the game's folder too; renamed
 `JuicedConfig.exe` (keep the original under another name), it is the one the game starts. Its texts are in the
-game's language, picked as the game picks it (`[Game] Language` of `OpenJuice.ini` too). As the original, it opens
-only where DxDiag reports DirectX 9.0c or later by its version letter; Windows 11 reports DirectX 12 with a blank
-letter, so there it shows that DirectX 9.0c is needed, as the original does there. The debug builds (`_d`) take
-`--skip-directx-check`, which opens the window anyway.
+game's language, picked as the game picks it (`[Game] Language` of `OpenJuice.ini` too). It opens where DirectX 9.0c
+or later is installed. The original takes DxDiag's version letter for it whatever the version, and DirectX 10 .. 12
+report a blank letter, so on Windows Vista and later (Windows 11: DirectX 12) the original shows that DirectX 9.0c is
+needed; OpenJuiceConfig takes any DirectX past 9 for it. The debug builds (`_d`) take `--skip-directx-check`, which
+opens the window whatever the check finds.
 
 ## OpenJuice.ini
 

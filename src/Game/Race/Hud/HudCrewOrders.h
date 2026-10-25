@@ -29,10 +29,18 @@ public:
     void enter(const HudRace& race);
     // The crew's orders in the drivers' levels' frame (0x004BDF00): RaceHud::crewOrders.
     void frame(const HudRace& race, const std::array<bool, 6>& tactics, float dt);
+    // 0x004BEA60, as the drivers' levels (0x004BEDFF, a member's nerves crossing 1.9: no racer, -1) and the race's
+    // chatter (0x004B1F60) ask: with the orders' window kept (+0x38) each line of the racer's car flashed (its slot's
+    // float 1, 0x004BEAB0) and, the orders closed, the orders opened as a tactics key opens them. At once: the
+    // levels' asking comes before the frame's state (0x004BDF00), which then runs the open orders' lines and keys.
+    void flash(const HudRace& race, int32_t racer, float dt);
     // The HUD's leave (0x0044A450): the orders' window and lines (the race drivers' +0x38 .. +0x5C) cleared.
     void leave();
 
 private:
+    // 0x004BE290's and 0x004BEA60's: state 1, the members ordered by their place (0x004BE9F0), their pictures shown
+    // (0x004BDBC0), the lines (0x004BE720), the time 5 s.
+    void open(const HudRace& race, float dt);
     // 0x004BDBC0
     void showOrders(ui::Screen& s, bool hidden);
     // 0x004BE720

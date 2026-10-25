@@ -258,8 +258,10 @@ int32_t initStatsAsync(int32_t gamePort, uint32_t timeoutMs) {
     s.connectionId = static_cast<int32_t>(GetTickCount());
     if (s.socket.opened()) closeStatsConnection();
     s.buffer.clear();
-    // "gamestats.gamespy.com" is no address: the game's name and a dot before it.
-    const std::string host = service().host.empty() ? gameName() + ".gamestats.gamespy.com" : service().host;
+    // "gamestats.gamespy.com" is no address: the game's name and a dot before it (the fixed build's on
+    // kServiceDomain).
+    const std::string host =
+        service().host.empty() ? gameName() + ".gamestats." + kServiceDomain : service().host;
     const uint32_t ip = resolveHost(host);
     if (ip == 0) return kNoDns;
     if (!s.socket.connect(ip, service().port)) return kNoSocket;

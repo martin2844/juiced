@@ -206,6 +206,7 @@ public:
     void play(Instance* i);              // +0x18 (0x005BC1C0)
     void stop(Instance* i);              // +0x1C (0x005BC300)
     void pauseAll(bool paused);          // +0x20 (0x005BCFB0) / +0x24 (0x005BD320)
+    bool paused() const { return m_paused; }
     // +0x28 (0x005BC8E0): the clock (0x005BC3C0), the ends (0x005BC650), the emitters and the culling below 0.01
     // (0x005BCAF0), the loudest (priority x volume) given buffers, the listener committed, the stopping stopped.
     void update(const Listener& listener, uint32_t flags);

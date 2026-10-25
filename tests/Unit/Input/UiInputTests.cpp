@@ -15,8 +15,8 @@ using oj::test::check;
 
 }  // namespace
 
-// The UI input: a held DOWN gives an event, then again once 0.25 s have run out and every 0.1 s (frames of
-// 1/60 s: 17 and 8 frames), RETURN selects.
+// The UI input: a held DOWN gives an event, then again once 0.25 s have run out and every 0.075 s (0x004082F0; frames
+// of 1/60 s: 17 and 6 frames), RETURN selects.
 OJ_UNIT_TEST(UiInput, KeyboardSequence) {
     const char* controls =
         "[BeginActionMap]\r\nName UI\r\nDevice ACTION_MAP\r\n"
@@ -54,7 +54,7 @@ OJ_UNIT_TEST(UiInput, KeyboardSequence) {
         events += std::to_string(in.uiFrame(1.0f / 60.0f).event);
     }
     std::printf("     events %s\n", events.c_str());
-    check(events == "200000000000000002000000020005", "UI input: repeat of a held direction, select");
+    check(events == "200000000000000002000002000005", "UI input: repeat of a held direction, select");
     // One event a poll: DOWN's and RETURN's ups first, then the shift key, then a letter.
     in.poll({{0xD0, false}, {0x1C, false}, {0x2A, true}});
     in.poll({});

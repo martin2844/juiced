@@ -105,9 +105,10 @@ void SmearEmitter::simulate(render::Camera& camera) {
     CrtRandom& random = gameRandom();
     for (size_t i = 0; i < m_blobs.size(); ++i) {
         Blob& b = m_blobs[i];
-        // Stock problem: the bottom of the view is taken at x1 + its margin, not y1.
+        // Stock problem: the bottom of the view is taken at x1 + its margin, not y1 (a blob below the view stays out of
+        // it until it is far down). The fixed build takes y1.
         if (i < count && (!(b.life < 1.0f) || x0 - marginX > b.x || y0 - marginY > b.y || marginX + x1 < b.x ||
-                          marginY + x1 < b.y)) {
+                          marginY + y1 < b.y)) {
             b.life = 0.0f;
             b.size = ((static_cast<float>(random.next()) * m_growth) * kRandomScale + m_size) * grow;
             b.first = 0;
@@ -132,8 +133,10 @@ void SmearEmitter::simulate(render::Camera& camera) {
         const float vx = swayX + (static_cast<float>(std::sin(static_cast<double>(angle))) * radial - 0.1f * accX);
         b.x = (vx * b.size) * dt + b.x;
         b.y = (vy * b.size) * dt + b.y;
-        // Its alpha the life left x 0.4, its low byte only (Stock problem: past its life it wraps to opaque).
-        const auto alpha = static_cast<uint32_t>(x87::chop(((1.0f - b.life) * 0.4f) * 255.0f)) & 0xFFu;
+        // Its alpha the life left x 0.4, its low byte only (Stock problem: past its life it wraps to opaque: a blob
+        // past the count shown, never made again, is drawn nearly opaque). The fixed build holds the life left at 0.
+        const float left = b.life < 1.0f ? 1.0f - b.life : 0.0f;
+        const auto alpha = static_cast<uint32_t>(x87::chop((left * 0.4f) * 255.0f)) & 0xFFu;
         b.colour = (b.colour & 0x00FFFFFFu) | (alpha << 24);
         b.life = (((m_shown * 0.2f + 0.8f) * (10.0f + length)) * 0.01f) * dt + b.life;
         // Over 10 from the trail's last point, a pair half the blob's size each side of it.

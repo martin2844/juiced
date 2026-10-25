@@ -776,7 +776,8 @@ void firstEvent(Career& career, CareerContext& context) {
 
 namespace {
 
-// 0x004A9A70: the best rating of the crew's list of cars.
+// 0x004A9A70: the best rating of the crew's list of cars: the garage for the player's crew (+0x78 0), else every
+// opponent's car.
 float bestRating(const Career& career, const Crew& crew) {
     float best = 0.0f;
     for (const Car& car : crew.id == 0 ? career.garage : career.opponentCars) {
@@ -805,7 +806,7 @@ void phoneEvent(Career& career, CareerContext& context, int crew, int month, int
     } else {
         e.pinkSlip = 1;
     }
-    e.carClass = ratingClass(bestRating(career, c));
+    e.carClass = ratingClass(bestRating(career, career.crews[0]));
     e.type = EventKind::Circuit;
     if (fraction(random) < c.probP2P) e.type = EventKind::PointToPoint;
     if (fraction(random) < c.probSprint) e.type = EventKind::Sprint;

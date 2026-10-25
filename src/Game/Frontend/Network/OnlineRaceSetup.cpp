@@ -2,6 +2,7 @@
 
 #include "Game/Frontend/Network/OnlineRaceSetup.h"
 
+#include "Core/Base/Text.h"
 #include "Core/Data/GameTexts.h"
 #include "Core/Network/Matchmaking.h"
 #include "Game/Frontend/Career/RaceSetup.h"
@@ -14,11 +15,9 @@ namespace oj::frontend {
 namespace {
 
 // 0x0049A850: each byte widened with its sign. Stock problem: a byte from 0x80 up (a description in the ANSI code
-// page) becomes 0xFF80 .. 0xFFFF, not its character.
+// page) becomes 0xFF80 .. 0xFFFF, not its character. The fixed build reads it in the names' code page.
 std::wstring widenSigned(const std::string& text) {
-    std::wstring wide;
-    for (char c : text) wide.push_back(static_cast<wchar_t>(static_cast<int16_t>(static_cast<int8_t>(c))));
-    return wide;
+    return oj::widenSigned(text);
 }
 
 std::wstring wide(std::u16string_view text) {

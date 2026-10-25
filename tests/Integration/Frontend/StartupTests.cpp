@@ -102,8 +102,8 @@ OJ_INTEGRATION_TEST(Startup, TitlePressGoesToDriver) {
           "startup: the title's PRESS ENTER, then driver");
 }
 
-// The title past 100 s: the attract replays as a race of mode 4, one player, attract1 then attract2 then attract1
-// again (Stock problem: the count goes back at 2, attract3 is never played).
+// The title past 100 s: the attract replays as a race of mode 4, one player, attract1, attract2, attract3, then
+// attract1 again (Stock problem: the count went back at 2, attract3 never played; the fixed build plays it).
 OJ_INTEGRATION_TEST(Startup, TitleAttractReplays) {
     oj::test::InGameFolder folder;
     if (!folder.valid()) return;
@@ -112,7 +112,7 @@ OJ_INTEGRATION_TEST(Startup, TitleAttractReplays) {
     host.data = &data;
     std::string played;
     bool raced = true;
-    for (int i = 0; i < 3; ++i) {
+    for (int i = 0; i < 4; ++i) {
         oj::frontend::Title window;
         host.requests.clear();
         host.dt = 60.0f;
@@ -123,8 +123,31 @@ OJ_INTEGRATION_TEST(Startup, TitleAttractReplays) {
                 data.race.players == 1;
         played += data.replayName + " ";
     }
-    check(raced && played == "attracts\\attract1 attracts\\attract2 attracts\\attract1 " && data.attractsStarted == 3,
-          "startup: the title's attract replays 1, 2, 1 (" + played + ")");
+    check(raced && played == "attracts\\attract1 attracts\\attract2 attracts\\attract3 attracts\\attract1 " &&
+              data.attractsStarted == 4,
+          "startup: the title's attract replays 1, 2, 3, 1 (" + played + ")");
+}
+
+// Back to the title the save system's settings go back to a new driver's (0x00467060 with 0x004097F0): a save's music
+// at 0 is forgotten and the music takes 0.9; the paint scheme's first values (the constructor's) stay.
+OJ_INTEGRATION_TEST(Startup, TitleForgetsTheSavesSettings) {
+    oj::test::InGameFolder folder;
+    if (!folder.valid()) return;
+    FakeStartupHost host;
+    const auto s = host.open("start");
+    if (!s) return;
+    oj::save::Settings saved = oj::save::Settings::defaults(host.lang.index);
+    saved.setU32(oj::save::Settings::kMusicVolume, 0);
+    saved.setU32(oj::save::Settings::kEffectsVolume, 0);
+    saved.setU32(oj::save::Settings::kScheme, 0x12345678);
+    host.settings = saved;
+    oj::frontend::Title window;
+    window.enter(host, *s);
+    check(host.musicVolume == 0.9f && host.settings &&
+              host.settings->u32(oj::save::Settings::kEffectsVolume) == std::bit_cast<uint32_t>(0.75f),
+          "startup: the title's music at a new driver's 0.9, the effects at 0.75");
+    check(host.settings && host.settings->u32(oj::save::Settings::kScheme) == 0x12345678,
+          "startup: the scheme's base (the constructor's) kept");
 }
 
 // Back to the title the save system's settings go back to a new driver's (0x00467060 with 0x004097F0): a save's music

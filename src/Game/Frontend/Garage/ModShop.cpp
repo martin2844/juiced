@@ -73,23 +73,23 @@ int32_t ModShop::drawPart(GarageHost& host, size_t kind, int level) {
 // 0x00442A80: the upgrades. The car's induction, exhaust and turbo kept; each level (-1 none .. 3) of the turbo, then
 // the exhaust, then the induction, all three none left out, none past the levels the profile unlocked for the model
 // (+0x50) nor below the car's: the car takes the three (for a level a part drawn, 0x00498F40 and 0x004990F0, put on
-// unless the car's own is of that level or more; -1 none) and is rated (0x0048E8A0; ITER .. printed for debugging:
-// not followed). A rating whose whole number (to the nearest) passes the car's (cut) and passes the best of its class
-// (7 under 200 .. 0 from 800) found before takes that class: the nitro, the suspension, the brakes and the tyres up
-// to the highest of the three levels and the profile's, each drawn when above the car's; the class's parts the car's
+// unless the car's own is of that level or more; -1 none) and is rated (0x0048E8A0; ITER .. printed for debugging: not
+// followed). A rating whose whole number (to the nearest) passes the car's (cut) and passes the best of its class (7
+// under 200 .. 0 from 800) found before takes that class: the nitro, the suspension, the brakes and the tyres up to the
+// highest of the three levels and the profile's, each drawn when above the car's; the class's parts the car's
 // induction, exhaust and turbo; the cost the parts' COST (the three only when not of the car's levels) and the meters:
 // the three's PHYSICS a and b (/ 255) into accel and speed, the nitro sets speed (0.35, 0.25, 0.1 by its level 2, 1,
-// 0), the suspension's d into handling, the brakes' c into braking, the tyres' c and d into braking and handling;
-// accel x 0.3, handling and braking x 0.4, each held within 0 .. 1; the three of the car's levels none again; a class
-// with no part none again. Stock problem: the meters and the parts drawn before stay with a class taken again, so the
-// meters add up and a part of a weaker set may stay. Then the car's three back and rated again; with the nitro's
-// level unlocked above the car's, a class the car's own rating takes, found by nothing yet, gets the nitro of that
-// level drawn (when above the car's), its cost and speed. Every class found, from 7 to 0, makes an upgrade (+0x04
-// the class + 1, +0x08 1); menu and backmenu emptied, for each upgrade from the last "UPGRADE CLASS <n> " (1792,
-// 1791) with its place, backmenu a bar ui_pan5_green drawn adding; both on their last item. cash the money; BHP,
-// PRICE, CLASS, CLASSMETER, Speed, Accel, Braking and Handling hidden; CARNAME the model's display name; for each kind
-// with them ICON_, LEVEL_ and LOGO_ hidden; +0x310 none, +0x3B4 -1, the analysis 3 seconds and 3 beeps; ANALYSIS
-// over several lines.
+// 0), the suspension's d into handling, the brakes' c into braking, the tyres' c and d into braking and handling; accel
+// x 0.3, handling and braking x 0.4, each held within 0 .. 1; the three of the car's levels none again; a class with no
+// part none again. Stock problem: the meters and the parts drawn before stay with a class taken again, so the meters
+// add up (and are scaled again) and a part of a weaker set may stay; the fixed build starts the set anew. Then the
+// car's three back and rated again; with the nitro's level unlocked above the car's, a class the car's own rating
+// takes, found by nothing yet, gets the nitro of that level drawn (when above the car's), its cost and speed. Every
+// class found, from 7 to 0, makes an upgrade (+0x04 the class + 1, +0x08 1); menu and backmenu emptied, for each
+// upgrade from the last "UPGRADE CLASS <n> " (1792, 1791) with its place, backmenu a bar ui_pan5_green drawn adding;
+// both on their last item. cash the money; BHP, PRICE, CLASS, CLASSMETER, Speed, Accel, Braking and Handling hidden;
+// CARNAME the model's display name; for each kind with them ICON_, LEVEL_ and LOGO_ hidden; +0x310 none, +0x3B4 -1, the
+// analysis 3 seconds and 3 beeps; ANALYSIS over several lines.
 void ModShop::enter(GarageHost& host, ui::Screen& s) {
     GameData* data = host.gameData();
     const TextTable& texts = host.gameTexts();
@@ -179,6 +179,8 @@ void ModShop::enter(GarageHost& host, ui::Screen& s) {
                 if (whole <= ownRating) continue;
                 Slot& slot = slots[static_cast<size_t>(c)];
                 if (slot.found != 0 && !(rating > slot.rating)) continue;
+                // The fixed build: a class taken again by a stronger set starts its set anew (the draws as before).
+                slot = Slot{};
                 slot.rating = rating;
                 slot.found = 1;
                 offer(kNitro, top, slot.parts[kNitro]);

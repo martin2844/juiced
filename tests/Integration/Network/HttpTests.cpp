@@ -97,8 +97,16 @@ OJ_INTEGRATION_TEST(GameSpyHttp, Requests) {
                          requests.size() == before + 2 && requests[before + 1].starts_with("GET /new HTTP/1.1");
     const bool badOk = oj::net::ghttp::get("", false, done, &bad) == -1 &&
                        run("ftp://127.0.0.1/", {}, bad) && bad.result == oj::net::ghttp::kParseUrlFailed;
+    // The fixed build: a Content-Length with no space after its colon (the stock read "" past the digit, a length of
+    // 0: done with no body) and headers ended by "\n\n" (the stock's body lost its first two bytes).
+    Got tight, bare;
+    const bool tightOk = run(base + "/t", {"HTTP/1.1 200 OK\r\nContent-Length:5\r\n\r\nhello"}, tight) &&
+                         tight.result == oj::net::ghttp::kSuccess && tight.body == "hello";
+    const bool bareOk = run(base + "/b", {"HTTP/1.1 200 OK\r\nContent-Length: 5\n\nhello"}, bare) &&
+                        bare.result == oj::net::ghttp::kSuccess && bare.body == "hello";
     oj::net::ghttp::cleanup();
     check(ok && plainOk && chunkedOk && missingOk && movedOk && badOk &&
               oj::net::ghttp::references() == 0,
           "GameSpy HTTP: the request, a body by length, chunked, a 404, a redirect, a bad URL");
+    check(tightOk && bareOk, "GameSpy HTTP: Content-Length without a space, headers ended by \\n\\n");
 }

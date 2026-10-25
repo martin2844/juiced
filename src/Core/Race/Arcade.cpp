@@ -33,6 +33,12 @@ float real(const ScriptLine& line, size_t i) {
     return i < line.words.size() ? static_cast<float>(std::atof(line.words[i].c_str())) : 0.0f;
 }
 
+// The fixed build: [UnlockTracks] <n> of one of the 17 championships' lists (the stock writes a list of another n
+// over the other lists or the fields after them; the game's file has 1 .. 11).
+bool fixedChampionship(int32_t championship) {
+    return championship >= 0 && championship < 17;
+}
+
 }  // namespace
 
 int32_t Arcade::i32(size_t offset) const {
@@ -118,11 +124,14 @@ void Arcade::load(std::string_view arcadeRaces, const ExeTables& tables) {
             tracks = 0;
             bonusTracks = 0;
         } else if (same(k, "Track")) {
-            // 0x0042C490. Stock problem: more than 20 run into the next championship's list.
+            // 0x0042C490. Stock problem: more than 20 run into the next championship's list. The fixed build passes
+            // them over (the game's file has three at most).
+            if (tracks >= 20 || !fixedChampionship(unlockChampionship)) continue;
             put(kTracks + static_cast<size_t>(tracks + unlockChampionship * 20) * 4, routeByName(tables, line.word(0)));
             ++tracks;
         } else if (same(k, "BonusTrack")) {
-            // 0x0042C4D0
+            // 0x0042C4D0 (the fixed build: as Track)
+            if (bonusTracks >= 20 || !fixedChampionship(unlockChampionship)) continue;
             put(kBonusTracks + static_cast<size_t>(bonusTracks + unlockChampionship * 20) * 4,
                 routeByName(tables, line.word(0)));
             ++bonusTracks;
@@ -152,8 +161,10 @@ void Arcade::load(std::string_view arcadeRaces, const ExeTables& tables) {
         } else if (same(k, "NumLaps")) {
             put(race + kRaceLaps, number(line, 0));  // 0x0042C120
         } else if (same(k, "Car")) {
-            // 0x0042C170: an entry of 5 dwords from +0x2C (stock problem: more than 6 run into the race's paint).
+            // 0x0042C170: an entry of 5 dwords from +0x2C (stock problem: more than 6 run into the race's paint; the
+            // fixed build passes them over, the game's file has six at most).
             const int32_t count = i32(race + kRaceCarCount);
+            if (count >= 6) continue;
             const size_t entry = race + kRaceCars + static_cast<size_t>(count) * kEntrySize;
             const bool player = same(line.word(0), "player");
             put(entry + kEntryPlayer, player ? 1 : 0);

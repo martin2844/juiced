@@ -142,8 +142,9 @@ bool RainEmitter::frame(render::Camera& camera) {
     if (m_material != nullptr) m_system.engine().renderer().beginMaterialPass(*m_material, 0);
     device.setStream(m_buffer, sizeof(Vertex));
     device.setIndices(m_system.quadIndices(m_points));
-    // Stock problem: two triangles fewer than the quads made: the last streak is not drawn.
-    if (count > 1) device.drawIndexed(Primitive::TriangleList, count * 4, 0, count * 2 - 2);
+    // Stock problem: two triangles fewer than the quads made: the last streak is not drawn. The fixed build draws two
+    // triangles a streak.
+    device.drawIndexed(Primitive::TriangleList, count * 4, 0, count * 2);
     m_last = m_place;
     return true;
 }
@@ -178,18 +179,18 @@ bool SplashEmitter::frame(render::Camera& camera) {
     for (uint32_t i = 0; i < count && i < m_points; ++i) {
         Vec4 p = m_spots[i];
         // Stock problem: the distance (z² + x² / 2 from the camera) against twice RANDOM_DRIFT² decides nothing:
-        // a splash moves when the camera jumped or its frames start again.
+        // a splash moves when the camera jumped or its frames start again. The fixed build also puts a splash left
+        // farther than that (behind a moving camera) on the road again at once.
         const float dx = m_place[0] - p[0];
         const float dz = m_place[2] - p[2];
         const float far = dz * dz + dx * dx * 0.5f;
-        (void)far;
         auto frameNow = static_cast<uint32_t>(x87::chop(m_frames[i]));
         if (frameNow >= static_cast<uint32_t>(m_textures)) {
             m_frames[i] = 0.0f;
             frameNow = 0;
         }
         m_frames[i] = m_speed + m_frames[i];
-        if (m_jumped || frameNow == 0) p = placeOnGround(i);
+        if (m_jumped || frameNow == 0 || far > m_reach) p = placeOnGround(i);
         const float wx = right[0] * m_width, wy = right[1] * m_width, wz = right[2] * m_width;
         const float u0 = static_cast<float>(frameNow & 3) * m_across;
         const float v0 = static_cast<float>(frameNow >> 2) * m_down;

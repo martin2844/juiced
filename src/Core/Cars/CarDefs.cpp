@@ -129,8 +129,10 @@ void CarDefs::load(std::string_view text, const ExeTables& tables, CrtRandom& ra
                 part.model = line.word(1);
                 part.label = "Option";
                 if (line.words.size() < 3) {
-                    // 0x004995F0: rand() % 3 == 2 gives NUUK (48), anything else AERO (47).
-                    part.brand = static_cast<uint32_t>(random.next()) % 3 == 2 ? 0x30 : 0x2F;
+                    // 0x004995F0: rand() % 3 == 2 gives NUUK (48), anything else AERO (47) (Stock problem: compared
+                    // with 3 for SWEET, 49, which never comes). The fixed build gives each a third: 1 SWEET.
+                    const uint32_t r = static_cast<uint32_t>(random.next()) % 3;
+                    part.brand = r == 2 ? 0x30 : r == 1 ? 0x31 : 0x2F;
                 } else {
                     part.brand = -1;
                     for (const ExeTables::Brand& b : tables.brands) {

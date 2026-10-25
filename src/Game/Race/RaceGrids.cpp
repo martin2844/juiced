@@ -70,7 +70,6 @@ void customGrid(TrackView& view, oj::GameData& data, oj::scene::Engine& engine) 
         const oj::Spl::GridPoint& at = place(number);
         auto model = oj::scene::CarModel::load(engine, car, data.catalogue, random, false);
         oj::scene::CarModel* shown = view.scene->addCar(std::move(model), at);
-        view.places.push_back({at.x, at.y, at.z, at.heading});
         const oj::CarDynamics* dynamics = data.dynamics && car.def != nullptr ? data.dynamics->of(*car.def) : nullptr;
         if (dynamics != nullptr) {
             view.addCar(*dynamics, car, kept, data, shown, at, kind, static_cast<int32_t>(number),
@@ -278,7 +277,6 @@ void netGrid(TrackView& view, oj::GameData& data, oj::scene::Engine& engine, oj:
         const oj::Spl::GridPoint& at = lines.grid[static_cast<size_t>(std::max(p.race.gridPlace, 0)) % lines.grid.size()];
         auto model = oj::scene::CarModel::load(engine, *raced, data.catalogue, random, false);
         oj::scene::CarModel* shown = view.scene->addCar(std::move(model), at);
-        view.places.push_back({at.x, at.y, at.z, at.heading});
         const oj::CarDynamics* dynamics = data.dynamics && raced->def != nullptr ? data.dynamics->of(*raced->def) : nullptr;
         if (dynamics == nullptr) continue;
         const oj::CarKind kind =
@@ -319,7 +317,6 @@ void replayGrid(TrackView& view, oj::GameData& data, oj::scene::Engine& engine) 
         const oj::Spl::GridPoint& at = lines.grid[i % lines.grid.size()];
         auto model = oj::scene::CarModel::load(engine, car, data.catalogue, random, false);
         oj::scene::CarModel* shown = view.scene->addCar(std::move(model), at);
-        view.places.push_back({at.x, at.y, at.z, at.heading});
         const oj::CarDynamics* dynamics = data.dynamics ? data.dynamics->of(*car.def) : nullptr;
         if (dynamics != nullptr) {
             view.addCar(*dynamics, car, nullptr, data, shown, at, oj::CarKind::Ai, static_cast<int32_t>(i),
@@ -384,7 +381,6 @@ void arcadeGrid(TrackView& view, oj::GameData& data, oj::scene::Engine& engine) 
         }
         auto model = oj::scene::CarModel::load(engine, car, data.catalogue, random, false);
         oj::scene::CarModel* shown = view.scene->addCar(std::move(model), place);
-        view.places.push_back({place.x, place.y, place.z, place.heading});
         const oj::CarDynamics* dynamics = data.dynamics && car.def != nullptr ? data.dynamics->of(*car.def) : nullptr;
         if (dynamics != nullptr) {
             view.addCar(*dynamics, car, &car, data, shown, place,
@@ -413,7 +409,8 @@ std::string windowAfterRace(oj::GameData& data) {
     const oj::RaceSetup& race = data.race;
     if (oj::net::NetGame* net = oj::net::netGame();
         net != nullptr && (race.mode == RaceMode::Arcade || race.mode == RaceMode::Custom)) {
-        return net->session.players().empty() ? "link_search" : "link_lobby";
+        if (!net->session.players().empty()) return "link_lobby";
+        return oj::net::matchmaking() != nullptr ? "online_main" : "link_search";
     }
     switch (race.mode) {
     case RaceMode::Arcade: {

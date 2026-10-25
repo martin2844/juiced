@@ -192,8 +192,9 @@ looking back, turn a quarter turn to the side of `+0xCC` (above 0 +π/2, below 0
 ## Before the start (`0x00405300`)
 
 Mode 10 follows the fly-by (`15-tracks.md`) with the count at 6 s. With the reset the camera leaves the car's node and
-works out a sweep across the front of the grid from the racers' places (race `+0x30`: the places at `+0x4C`, 16 bytes
-each, their number at `+0xAC`; the first place's heading at `+0x58`): c = cos h and s = sin h as floats
+works out a sweep across the front of the grid from the route's grid points (the route at race `+0x30`, its
+`GRIDPOINT` lines read by `0x004A1410`: the points at `+0x4C`, 16 bytes each, their number at `+0xAC`, all of them
+whatever the cars on the grid; the first point's heading at `+0x58`): c = cos h and s = sin h as floats
 (`0x004078D0`, `0x00407960`), nc = c × -1; the middle of the places (each coordinate summed as share × value in the
 places' order, share = 1 / number); over the places, with d the middle less the place, the largest
 |(dx nc + dz s) + dy × 0| (across) and |(dz c + dx s) + dy × 0| (along); along + 400. The base is (x + s × along,

@@ -12,6 +12,15 @@
 
 namespace oj {
 
+// The fixed build's record of a hit between two bodies (RigidBody::impulseWith): the momentum and the angular
+// momentum `to` took from `from` (the world's frame), for the online cars' contacts told to the other machines.
+struct BodyPush {
+    const RigidBody* to = nullptr;
+    const RigidBody* from = nullptr;
+    Vec4 linear{};
+    Vec4 angular{};
+};
+
 class PhysicsWorld {
 public:
     explicit PhysicsWorld(const Cld& cld) : m_cld(cld), m_collision(cld) {}
@@ -69,6 +78,8 @@ public:
     const std::vector<RigidBody*>& active() const { return m_active; }
 
     float stepTime() const { return m_time; }
+    // The fixed build: where the hits between bodies are kept while set (an online race's; none otherwise).
+    std::vector<BodyPush>* pushes = nullptr;
     // The steps the last frame was split into ([0x0071593C]).
     unsigned steps() const { return m_steps; }
 

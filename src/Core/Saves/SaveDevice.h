@@ -160,13 +160,18 @@ public:
 
     // The folder SAVE (the stock game's <AppData>\THQ\Juiced\SAVE).
     void setFolder(std::filesystem::path save) { m_save = std::move(save); }
+    // The fixed build's folder of the replays (<My Documents>\THQ\Juiced\Replays, made when one is written): the
+    // replays' device lists, reads, writes and deletes its folders there, not in SAVE; none, SAVE as the stock.
+    void setReplayFolder(std::filesystem::path replays) { m_replayFolder = std::move(replays); }
 
     // The profile device's step ([game + 0x60] +0x08, 0x004FA430) and the records' ([game + 0xA4] +0x04, 0x004FAB20):
     // the source made or taken, the manager's step, a read applied; the state after it.
     DeviceState stepProfile(SaveRequest& request, SaveGameSide& game);
     DeviceState stepHighScores(SaveRequest& request, SaveGameSide& game);
     // The replays' device ([game + 0xA0] +0x08, 0x004FA860; made by 0x004FA8E0, vtable 0x006F6DC8): the manager's
-    // kind 1; a write's source named "R" and the local time ("R%04d%02d%02d%02d%02d%02d") with the date's text
+    // kind 1; a write's source named "R" and the local time ("R%04d%02d%02d%02d%02d%02d"; the fixed build's
+    // "Replay_" and the time as "%02d-%02d-%04d_%02d-%02d-%02d", day, month, year, hour, minute, second, "_2", "_3" ..
+    // after it for a folder there already) with the date's text
     // "%d/%d/%02d %2d:%02d" (month, day, year, the hour past 12 less 12, minute) given to the replays' object
     // (0x004FA600); a read taken by it (0x004FA810), else the read counts as corrupt and the device starts again.
     DeviceState stepReplay(SaveRequest& request, SaveGameSide& game);
@@ -203,8 +208,11 @@ private:
     DeviceState read(SaveRequest& request, SaveGameSide& game);   // 0x004FE510
     DeviceState write(SaveRequest& request, SaveGameSide& game);  // 0x004FEA10
     std::wstring slotFolder(const SaveRequest& request) const;
+    // The folder the kind's saves are in: the replays' folder for the replays when given, else SAVE.
+    const std::filesystem::path& root() const;
 
     std::filesystem::path m_save;
+    std::filesystem::path m_replayFolder;
     Side m_side;
     SaveReplays* m_replayObject = nullptr;  // the replays' device's +0x0C
     std::unique_ptr<SaveSource> m_source;  // the device's +0x2C

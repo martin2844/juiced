@@ -51,6 +51,11 @@ void Screen::setFontColour(int element, uint32_t argb) {
     s.text.high = argb;
 }
 
+uint32_t Screen::fontColourOf(int element) const {
+    const State& s = m_states[static_cast<size_t>(element)];
+    return s.text.fontColours ? s.text.font : 0;
+}
+
 void Screen::setFixedAdvance(int element, int advance) {
     const Element& e = m_window.elements[static_cast<size_t>(element)];
     for (const char* line : {"Font", "HighFont"}) {

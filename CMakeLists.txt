@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.24)
-project(Juiced VERSION 0.3.3 LANGUAGES C CXX)
+project(Juiced VERSION 1.2.5 LANGUAGES C CXX)
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
   include(cmake/Linux.cmake)
   return()

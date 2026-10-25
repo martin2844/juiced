@@ -73,7 +73,8 @@ void TrackView::makeCarSounds() {
     raceSounds.view = this;
     oj::raceSounds() = &raceSounds;
     // 0x0041E0B0, each player in turn: its camera takes its car (0x00401DB0) and the car's sounds are turned to it
-    // again (the second player's camera turns the first's car's away: Stock problem).
+    // again (the second player's camera turns the first's car's away: Stock problem; not in the fixed build's
+    // cameraTakes).
     for (std::unique_ptr<RacePlayer>& each : players) {
         RacePlayer& player = *each;
         player.soundCamera = nullptr;
@@ -354,10 +355,14 @@ void TrackView::soundListener() {
     for (size_t i = 0; i < players.size() && i < 4; ++i) {
         RacePlayer& player = *players[i];
         // 0x0042068C: the place the camera's world matrix's (+0x38); the matrix the camera's view (its +0x48,
-        // 0x00552A50: +0xC8, the world matrix's inverse, made as the camera was last drawn), whose rows take the
-        // listener's offset to the world and the voices' places to the listener's axes.
+        // 0x00552A50: +0xC8, the world matrix's inverse), whose rows take the listener's offset to the world and the
+        // voices' places to the listener's axes. The stock keeps a pointer to it and reads it as the sounds step;
+        // OpenJuice's camera makes its view only as it is drawn, after the sounds, so the view is made here from the
+        // world matrix of this frame: kept from the last draw, a turned view (looking back) turned the listener a frame
+        // after the emitters' reset, and the jump went into the voices' Doppler (the engine's pitch up to 30% off for
+        // a frame at each look back).
         const oj::Mat34& w = player.camera.world();
-        const oj::Mat34& v = player.camera.view();
+        const oj::Mat34 v = oj::inverseRigid(w);
         float x = 0.0f, z = 0.0f;
         player.raceCamera.listenerOffset(x, z);
         const oj::audio::Vec4 place{w[3] + (z * v[8] + x * v[0] + v[4] * 0.0f),

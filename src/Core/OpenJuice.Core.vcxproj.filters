@@ -57,6 +57,9 @@
     <ClCompile Include="Base\Matrix.cpp">
       <Filter>Base</Filter>
     </ClCompile>
+    <ClCompile Include="Base\LoadingThread.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
     <ClCompile Include="Base\Random.cpp">
       <Filter>Base</Filter>
     </ClCompile>
@@ -168,6 +171,9 @@
     <ClCompile Include="Network\GameSpy\GameSpyHttp.cpp">
       <Filter>Network\GameSpy</Filter>
     </ClCompile>
+    <ClCompile Include="Network\GameSpy\Peerchat.cpp">
+      <Filter>Network\GameSpy</Filter>
+    </ClCompile>
     <ClCompile Include="Network\GameSpy\GameSpyNatNeg.cpp">
       <Filter>Network\GameSpy</Filter>
     </ClCompile>
@@ -267,6 +273,9 @@
     <ClCompile Include="Saves\HighScores.cpp">
       <Filter>Saves</Filter>
     </ClCompile>
+    <ClCompile Include="Saves\OnlineAccount.cpp">
+      <Filter>Saves</Filter>
+    </ClCompile>
     <ClCompile Include="Saves\Profile.cpp">
       <Filter>Saves</Filter>
     </ClCompile>
@@ -315,6 +324,9 @@
       <Filter>Base</Filter>
     </ClInclude>
     <ClInclude Include="Base\Matrix.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Base\LoadingThread.h">
       <Filter>Base</Filter>
     </ClInclude>
     <ClInclude Include="Base\Random.h">
@@ -443,6 +455,9 @@
     <ClInclude Include="Network\GameSpy\GameSpyHttp.h">
       <Filter>Network\GameSpy</Filter>
     </ClInclude>
+    <ClInclude Include="Network\GameSpy\Peerchat.h">
+      <Filter>Network\GameSpy</Filter>
+    </ClInclude>
     <ClInclude Include="Network\GameSpy\GameSpyNatNeg.h">
       <Filter>Network\GameSpy</Filter>
     </ClInclude>
@@ -546,6 +561,9 @@
       <Filter>Saves</Filter>
     </ClInclude>
     <ClInclude Include="Saves\HighScores.h">
+      <Filter>Saves</Filter>
+    </ClInclude>
+    <ClInclude Include="Saves\OnlineAccount.h">
       <Filter>Saves</Filter>
     </ClInclude>
     <ClInclude Include="Saves\Profile.h">

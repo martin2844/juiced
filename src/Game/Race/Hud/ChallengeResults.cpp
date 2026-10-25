@@ -87,7 +87,7 @@ bool ChallengeResults::enter(const HudRace& race, RaceHud* hud) {
 // for closedown; a restart (+0x10) with it has the race's respect worked out (0x004BCD90) and asks for restart_race;
 // the flag and the answer cleared. SELECT (CLICK): QUIT quits at once, RESTART asks "RESTART RACE?" / "ARE YOU SURE?",
 // REPLAY asks for start_replay. Stock problem: QUIT makes the text "QUIT RACE?" / "ARE YOU SURE?" and drops it, asking
-// nothing.
+// nothing. The fixed build asks it, as RESTART its own.
 RaceWindowFrame ChallengeResults::frame(const HudRace& race, uint32_t uiEvent) {
     RaceWindowFrame out;
     if (m_screen == nullptr) return out;
@@ -121,7 +121,8 @@ RaceWindowFrame ChallengeResults::frame(const HudRace& race, uint32_t uiEvent) {
     const std::string command = s.menuItemCommand(m, s.selectedMenuItem(m));
     if (_stricmp(command.c_str(), "quit") == 0) {
         m_quit = 1;
-        m_answer = 1;
+        out.question = m_texts.at(kTextQuitRace) + L"\n" + m_texts.at(kTextAreYouSure);
+        out.answer = &m_answer;
     } else if (_stricmp(command.c_str(), "replay") == 0) {
         if (out.window.empty()) {
             out.window = "start_replay";

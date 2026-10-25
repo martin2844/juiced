@@ -18,16 +18,31 @@ using oj::test::check;
 
 }  // namespace
 
-// HandbrakeMu (0x004F5700): atof's double compared with 100 and 10000, rounded to a float as it is stored, so
-// 100.000001 (a float of 100) becomes 10000.
+// HandbrakeMu (0x004F5700): the stock made a value between 100 and 10000 10000; the fixed build keeps the file's
+// value (rounded to a float as it is stored).
 OJ_UNIT_TEST(Dynamics, HandbrakeMu) {
     const auto parsed = oj::parseDynamics(
-        "[BeginCar]\n[BeginWheel]\nHandbrakeMu 100.000001\n[EndWheel]\n[BeginWheel]\nHandbrakeMu 100\n[EndWheel]\n"
+        "[BeginCar]\n[BeginWheel]\nHandbrakeMu 4000\n[EndWheel]\n[BeginWheel]\nHandbrakeMu 100\n[EndWheel]\n"
         "[BeginWheel]\nHandbrakeMu 9999.9999999\n[EndWheel]\n[BeginWheel]\nHandbrakeMu 20000\n[EndWheel]\n[EndCar]\n");
-    check(parsed && parsed->wheels.size() == 4 && parsed->wheels[0].handbrakeMu == 10000.0f &&
+    check(parsed && parsed->wheels.size() == 4 && parsed->wheels[0].handbrakeMu == 4000.0f &&
               parsed->wheels[1].handbrakeMu == 100.0f && parsed->wheels[2].handbrakeMu == 10000.0f &&
               parsed->wheels[3].handbrakeMu == 20000.0f,
-          "dynamics: HandbrakeMu between 100 and 10000 by atof's double becomes 10000");
+          "dynamics (fixed): HandbrakeMu as the file gives it");
+}
+// dynamic_box, dynamic_bin01, dynamic_bin02, dynamic_rbump: [BeginMeshCollidee] closed by [EndSphereCollidee]. The
+// stock made a sphere collidee of radius 0 and left the mesh collidee's SurfaceType, Mu and Restitution 0; the fixed
+// build closes the mesh collidee with it. A sphere collidee's own block still makes a sphere.
+OJ_UNIT_TEST(Dynamics, MeshCollideeClosedBySphere) {
+    const auto parsed = oj::parseObjectDynamics(
+        "[BeginDynamicObject]\nName BIN01\nMass 70\n[BeginMeshCollider]\nID 0\n[EndMeshCollider]\n"
+        "[BeginMeshCollidee]\nSurfaceType METAL\nMu 1.0\nRestitution 0.5\n[EndSphereCollidee]\n"
+        "[BeginSphereCollidee]\nMu 0.25\nRadius 9\n[EndSphereCollidee]\n[EndSphereCollidee]\n"
+        "[BeginRigidContact]\nContactId 0\nMu 0.7\n[EndRigidContact]\n[EndDynamicObject]\n");
+    const oj::CollisionDef& c = parsed ? parsed->body.collision : oj::CollisionDef{};
+    check(parsed && c.meshCollideeSurface == 7 && c.meshCollideeMu == 1.0f && c.meshCollideeRestitution == 0.5f &&
+              c.sphereCollidees.size() == 2 && c.sphereCollidees[0].radius == 9.0f &&
+              c.sphereCollidees[0].mu == 0.25f && c.sphereCollidees[1].radius == 9.0f,
+          "dynamics (fixed): a mesh collidee closed by [EndSphereCollidee] takes its Mu and Restitution");
 }
 // The sphere colliders, the sphere collidees and the clipping planes of a definition (0x00536CA0, 0x00536D00,
 // 0x00536DE0): the records kept between the blocks, a missing Radius 0, Centre read by no block; the body's

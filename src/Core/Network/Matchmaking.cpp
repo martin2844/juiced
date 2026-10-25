@@ -14,6 +14,7 @@
 #include <cmath>
 #include <cstring>
 #include <format>
+#include <vector>
 
 namespace oj::net {
 
@@ -23,6 +24,25 @@ constexpr uint8_t kJoin = 0;
 constexpr uint8_t kRefused = 1;
 constexpr uint8_t kNegotiate = 2;
 constexpr uint8_t kPeer = 3;
+
+// The fixed build: this machine's addresses (the host name's, five at most, found once), its own sessions told apart
+// in the lists.
+const std::vector<uint32_t>& ownAddresses() {
+    static const std::vector<uint32_t> addresses = [] {
+        std::vector<uint32_t> out;
+        char name[256] = {};
+        gethostname(name, sizeof name);
+        if (const hostent* h = gethostbyname(name); h != nullptr) {
+            for (int i = 0; i < 5 && h->h_addr_list[i] != nullptr; ++i) {
+                uint32_t ip = 0;
+                std::memcpy(&ip, h->h_addr_list[i], 4);
+                out.push_back(ip);
+            }
+        }
+        return out;
+    }();
+    return addresses;
+}
 
 void put32(uint8_t* p, uint32_t v) {
     std::memcpy(p, &v, 4);
@@ -505,8 +525,14 @@ bool Matchmaking::startSearch(int32_t, int32_t, int32_t) {
     ensureBrowser();
     std::vector<uint8_t> fields = {50, 51, 52, 53};
     for (const SearchAttribute& a : m_searchAttributes) fields.push_back(static_cast<uint8_t>(a.id + 54));
-    // Stock problem: without a browser (the available check not 1) the stock clears and updates through a null one.
-    if (!m_browser) return true;
+    // Without a browser (the available check not 1) the stock cleared and updated through a null one; the fixed
+    // build's search is over at once with nothing found (the quick match's question, the results' empty list: before,
+    // the search's wait never ended).
+    if (!m_browser) {
+        listIn = 1;
+        detailsIn = 1;
+        return true;
+    }
     m_browser->clear();
     const std::string filterText = gsUcs2ToUtf8(filter);
     m_browser->update(true, true, fields.data(), static_cast<int>(fields.size()), filterText.c_str(), 0, 0);
@@ -665,6 +691,11 @@ void Matchmaking::clearResults() {
     sorted.clear();
 }
 
+bool ownSession(const SbServer& server, uint32_t myPublicIp, uint16_t gamePort, const std::vector<uint32_t>& own) {
+    return myPublicIp != 0 && server.publicIp == myPublicIp && ntohs(server.privatePort) == gamePort &&
+           std::find(own.begin(), own.end(), server.privateIp) != own.end();
+}
+
 void Matchmaking::searchCallback(int reason, SbServer* server) {
     if (reason == ServerBrowser::kUpdateComplete) {
         listIn = 1;
@@ -672,6 +703,14 @@ void Matchmaking::searchCallback(int reason, SbServer* server) {
         return;
     }
     if (reason != ServerBrowser::kServerAdded && reason != ServerBrowser::kServerUpdated) return;
+    // The fixed build passes over a session of this machine: our public address, its private one ours with our game
+    // port. OpenSpy keeps a session whose game ended without its last heartbeat (a crash, the window closed while
+    // hosting) for minutes, and the quick match took one's own dead session and failed after the join's wait ("The
+    // connection to the host has failed.").
+    if (m_browser && m_transport != nullptr &&
+        ownSession(*server, m_browser->myPublicIp(), m_transport->gamePort(), ownAddresses())) {
+        return;
+    }
     SearchResult r;
     r.address = Address{server->publicIp, server->publicPort};
     r.server = server;

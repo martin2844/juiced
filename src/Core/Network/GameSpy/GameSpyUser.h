@@ -130,9 +130,17 @@ public:
                         bool newUser);
     // 0x0055EF50: the player's location string (+0x140).
     const std::u16string& location(int32_t player);
+    // The fixed build's guest (the user, 2026-10-24: online without a GameSpy account, the matchmaking only): signed
+    // out and the available check started (as a login's: the server browser is made only after its "available");
+    // once it answers available the next frame logs on without a connection under the nick, a record of a profile of
+    // its own below -1 (GameSpy's are above 0: the others' machines tell the guests apart by it) and a local player
+    // online, the logged-on hook; unavailable, the state 5. A guest sends no presence and has no statistics; the
+    // windows leave out the friends and the scoreboards.
+    void setGuest(std::u16string_view nick);
+    bool guest() const { return m_guest; }
 
-    // +0x24: while None a call's GP result (0x0055E1E0); Unavailable the service; whenever an error comes its code's
-    // (0x0055E230).
+    // +0x24: while None a call's GP result (0x0055E1E0); Unavailable the service; an error's code (0x0055E230: before
+    // the login any error, then a fatal one).
     UserState state = UserState::None;
     int32_t loggedOn = 0;  // +0x0C
     // +0x10: called once logged on (the game's 0x004EE990).
@@ -155,6 +163,7 @@ public:
 private:
     void resultToState(gp::Result result);  // 0x0055E1E0
     int32_t periodicCheck(float dt);        // 0x0055F780
+    void guestLoggedOn();                   // the fixed build's guest, the available check answered
     void baseUpdate(float dt);              // 0x0055BAF0
     void baseRelease();                     // 0x0055BB60
     void onError(const gp::ErrorArg& arg);                   // 0x0055E230
@@ -174,6 +183,9 @@ private:
     std::vector<OnlinePlayer> m_players;      // +0x130
     std::u16string m_location;                // +0x140
     std::unique_ptr<AvailableCheck> m_check;  // the SDK's one check ([0x0075B570] ..)
+    // Not of the game: the connection this object made (the fixed build's sign-out lets go only its own).
+    std::weak_ptr<gp::Connection> m_connection;
+    bool m_guest = false;  // the fixed build's guest
     int32_t m_checkRunning = 0;  // +0x1C0
     float m_checkTimer = 10.0f;  // +0x1C4
     int32_t m_serviceOk = 1;     // +0x1C8
@@ -215,8 +227,8 @@ public:
     void entryRelease(int32_t entry);     // +0x0C (0x00560320): at no references its user let go
     bool sameUser(int32_t a, int32_t b);  // +0x10 (0x00560360)
     void askList() { listAsked = 1; }     // +0x14 (0x0055FE20)
-    // +0x18 (0x005603C0): the local players' notes cleared; each friend's request waiting ages, gone after 10 (Stock
-    // problem: the refresh then ends, the friends after it not aged); an invitation waiting ages, off after 10.
+    // +0x18 (0x005603C0): the local players' notes cleared; each friend's request waiting ages, gone after 10 (the
+    // stock's refresh then ended, the friends after it not aged); an invitation waiting ages, off after 10.
     void update();
     int32_t entryUser(int32_t entry);     // +0x1C (0x00560570): referenced
     int32_t findUser(int32_t user);       // +0x20 (0x005605F0): the friend of that user (its entry referenced)

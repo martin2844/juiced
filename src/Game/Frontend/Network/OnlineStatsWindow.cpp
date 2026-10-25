@@ -22,11 +22,9 @@ bool same(const std::string& a, const char* b) {
 }
 
 // 0x0049A850: each byte widened with its sign. Stock problem: a byte from 0x80 up (a description in the ANSI code
-// page) becomes 0xFF80 .. 0xFFFF, not its character.
+// page) becomes 0xFF80 .. 0xFFFF, not its character. The fixed build reads it in the names' code page.
 std::wstring widenSigned(const std::string& text) {
-    std::wstring wide;
-    for (char c : text) wide.push_back(static_cast<wchar_t>(static_cast<int16_t>(static_cast<int8_t>(c))));
-    return wide;
+    return oj::widenSigned(text);
 }
 
 // [0x00715D44]: the rows asked for the table's top.

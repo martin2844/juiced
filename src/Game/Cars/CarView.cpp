@@ -3,8 +3,10 @@
 #include "Core/Base/Log.h"
 #include "Core/Base/Matrix.h"
 
+#include <chrono>
 #include <cmath>
 #include <optional>
+#include <thread>
 
 namespace oj::scene {
 
@@ -71,7 +73,15 @@ CarView::CarView(Engine& engine, ui::Screen& screen, const Setup& setup, const P
       m_tables(tables) {}
 
 CarView::~CarView() {
-    if (!m_screenAlive.expired()) clear();
+    if (!m_screenAlive.expired()) {
+        clear();
+    } else {
+        drop();
+    }
+    // The loads still running read this view and write their jobs: waited for, the device let go to them.
+    for (const std::shared_ptr<Job>& j : m_dropped) {
+        loadingThread().wait(*j->task, [this] { m_engine.device().letLoadingRun(); });
+    }
 }
 
 View3d* CarView::view() {
@@ -80,27 +90,18 @@ View3d* CarView::view() {
 
 void CarView::show(const Car& car, uint32_t* current, uint32_t place, float yaw, float rate, bool fade,
                    CrtRandom& loading) {
-    m_job.reset();
+    drop();
     if (view() == nullptr) return;
     if (current != nullptr) *current = place;
-    auto job = std::make_unique<Job>();
+    auto job = std::make_shared<Job>();
     job->car = &car;
+    job->loaded = car;
     job->yaw = yaw;
     job->rate = rate;
+    job->loading = &loading;
     // 0x004593A0: LOGO and ORIGIN hidden while the car loads.
     if (!m_setup.logo.empty()) m_screen.setHidden(m_setup.logo, true);
     if (!m_setup.origin.empty()) m_screen.setHidden(m_setup.origin, true);
-    // The load (0x00459730, on the loading thread: its own rand()): cars\<car>_ui\models\<model>.boh, gen_neon, the
-    // mirror image (0x00459070: the model's copy, every mesh node mirrored, +0xC0 | 1, turned upside down about Y),
-    // the car's model objects (0x0048A0A0) and arcade_shadow, with the cars' folders in use.
-    {
-        const CarFolders folders(m_engine);
-        job->model = CarModel::load(m_engine, car, m_catalogue, loading, true);
-        job->neon = m_engine.loadModel("gen_neon", loading);
-        job->mirror = CarModel::load(m_engine, car, m_catalogue, loading, true);
-        if (job->mirror) job->mirror->mirror();
-        job->shadow = m_engine.loadModel("arcade_shadow", loading);
-    }
     // LOGO "ui_<manufacturer>" (the names at 0x007162F8) for a make over 0; ORIGIN the flag of the region.
     if (car.def != nullptr) {
         const int make = car.def->make;
@@ -121,6 +122,8 @@ void CarView::show(const Car& car, uint32_t* current, uint32_t place, float yaw,
             m_screen.setText(m_setup.name, name);
         }
     }
+    Job* const queued = job.get();
+    job->task = loadingThread().queue([this, queued] { load(*queued); });
     m_job = std::move(job);
     if (!fade) {
         m_fade = 0.0f;
@@ -128,7 +131,36 @@ void CarView::show(const Car& car, uint32_t* current, uint32_t place, float yaw,
     }
 }
 
+void CarView::drop() {
+    freeDropped();
+    if (!m_job) return;
+    if (!loadingThread().cancel(m_job->task) && !m_job->task->done()) m_dropped.push_back(m_job);
+    m_job.reset();
+}
+
+void CarView::freeDropped() {
+    std::erase_if(m_dropped, [](const std::shared_ptr<Job>& j) { return j->task->done(); });
+}
+
+// The load (0x00459730, on the loading thread: its own rand()): after a first 10 ms (its wait for the car loads'
+// token [0x00715C3C], 0x00459750 .. 0x004597FE, which the one loading thread here makes a single wait),
+// cars\<car>_ui\models\<model>.boh, gen_neon, the mirror image (0x00459070: the model's copy, every mesh node
+// mirrored, +0xC0 | 1, turned upside down about Y), the car's model objects (0x0048A0A0) and arcade_shadow, with the
+// cars' folders in use (the engine's loads held the while) and the mesh cache off (0x004598B3: [G+0x1C]+0x14 0, left
+// off till a scene car or a part is read; here for these loads alone): gen_neon and arcade_shadow read anew with
+// materials of their own, so two views at once (the betting window's, the grid walk's) colour each its own neon.
+void CarView::load(Job& j) {
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    const CarFolders folders(m_engine);
+    j.model = CarModel::load(m_engine, j.loaded, m_catalogue, *j.loading, true);
+    j.neon = m_engine.loadModel("gen_neon", *j.loading, true);
+    j.mirror = CarModel::load(m_engine, j.loaded, m_catalogue, *j.loading, true);
+    if (j.mirror) j.mirror->mirror();
+    j.shadow = m_engine.loadModel("arcade_shadow", *j.loading, true);
+}
+
 void CarView::frame(float dt, CrtRandom& random) {
+    freeDropped();
     if (m_job) {
         if (m_fade > 0.0f) {
             m_fade = m_fade - (dt + dt);
@@ -136,12 +168,13 @@ void CarView::frame(float dt, CrtRandom& random) {
         }
         if (m_fade == 0.0f) {
             emptyView();
-            attach(random);
+            if (m_job->task->done()) attach(random);
         }
     } else if (m_fade < 1.0f) {
         m_fade = (dt + dt) + m_fade;
         if (!(m_fade <= 1.0f)) m_fade = 1.0f;
     }
+    if (refitting()) putRefit(random);
 }
 
 void CarView::setCameraPlace(const oj::Vec4& place) {
@@ -150,10 +183,15 @@ void CarView::setCameraPlace(const oj::Vec4& place) {
 }
 
 void CarView::finish(float dt, CrtRandom& random) {
-    // A frame time of 0 would wait for ever in the stock code; here the fade ends after many frames.
+    // A frame time of 0 would wait for ever in the stock code; here the fade ends after many frames. Faded out, the
+    // load is waited for 5 ms at a time, the device let go to it.
     for (int frames = 0; busy(); ++frames) {
         if (frames == 100000) m_fade = 0.0f;
         frame(dt, random);
+        if (busy() && m_fade == 0.0f) {
+            m_engine.device().letLoadingRun();
+            std::this_thread::sleep_for(std::chrono::milliseconds(5));
+        }
     }
 }
 
@@ -166,35 +204,46 @@ void CarView::repaint(const Car& car) {
     if (m_shown->mirror) m_shown->mirror->paint(car);
 }
 
-void CarView::refit(Car& car, const CarDefs& defs, CrtRandom& random) {
+void CarView::refit(Car& car, const CarDefs& defs) {
+    if (busy() || !m_shown || !m_shown->model) return;
+    m_shown->model->tint(car);
+    m_refit = {&car, &defs};
+}
+
+void CarView::putRefit(CrtRandom& random) {
+    const Refit r = m_refit;
+    m_refit = {};
     if (!m_shown) return;
+    Car& car = *r.car;
     for (CarModel* model : {m_shown->model.get(), m_shown->mirror.get()}) {
         if (model == nullptr) continue;
         model->paint(car);
         model->refitParts(car, m_catalogue);
+        // 0x0045A9D9, 0x0045A9E7: the primer's job after the parts'.
+        model->primerToBody();
         model->colourWheels(car);
         model->colourDecal(car);
-        model->tint(car);
+        if (model == m_shown->mirror.get()) model->tint(car);
         model->sponsorDecals(car, m_catalogue);
     }
-    // The view's frame puts the chassis of the model and of its mirror image at the car's lowering once the parts' load
-    // is over (0x0045A027, as after a car is attached, 0x00459F82): the automatic modification's 0.8 (1.0 for a
-    // prototype) and the parts cleared's 0 show.
+    if (m_shown->neon) {
+        if (static_cast<int8_t>(car.body[9]) > -1) {
+            showNeon(true);
+            // Stock problem: without a [NeonColour] the count divides by 0; here the colour stays.
+            if (!r.defs->neons.empty()) {
+                const auto count = static_cast<uint32_t>(r.defs->neons.size());
+                const uint32_t at = static_cast<uint32_t>(random.next()) % count;
+                car.neon = r.defs->neons[at];
+            }
+            colourNeon(car.neon);
+        } else {
+            showNeon(false);
+        }
+    }
+    // 0x0045A027: the chassis of the model and of its mirror image at the car's lowering, as after a car is put in
+    // (0x00459F82): the automatic modification's 0.8 (1.0 for a prototype) and the parts cleared's 0 show.
     if (m_shown->model) dropHeight(*m_shown->model, car);
     if (m_setup.mirror && m_shown->mirror) dropHeight(*m_shown->mirror, car);
-    if (!m_shown->neon) return;
-    if (static_cast<int8_t>(car.body[9]) > -1) {
-        showNeon(true);
-        // Stock problem: without a [NeonColour] the count divides by 0; here the colour stays.
-        if (!defs.neons.empty()) {
-            const auto count = static_cast<uint32_t>(defs.neons.size());
-            const uint32_t at = static_cast<uint32_t>(random.next()) % count;
-            car.neon = defs.neons[at];
-        }
-        colourNeon(car.neon);
-    } else {
-        showNeon(false);
-    }
 }
 
 void CarView::colourNeon(uint32_t argb) {
@@ -222,7 +271,7 @@ void CarView::showNeon(bool shown) {
 }
 
 void CarView::clear() {
-    m_job.reset();
+    drop();
     emptyView();
 }
 
@@ -248,7 +297,7 @@ void CarView::dropHeight(CarModel& model, const Car& car) {
 
 void CarView::attach(CrtRandom& random) {
     View3d* v = view();
-    std::unique_ptr<Job> job = std::move(m_job);
+    std::shared_ptr<Job> job = std::move(m_job);
     const auto draw = static_cast<uint32_t>(random.next()) % 3;
     if (v == nullptr || !job->model) {
         m_shown = std::move(job);
@@ -264,7 +313,8 @@ void CarView::attach(CrtRandom& random) {
         root->invalidate();
         v->setTurnRates(at, 0.0f, j.rate, 0.0f);
         poseCar(model, draw);
-        v->worldDraws.push_back([&model](render::Renderer3d& r, render::Camera& c) { model.draw(r, c, 0); });
+        v->worldDraws.push_back(
+            [&model](render::Renderer3d& r, render::Camera& c, uint32_t mode) { model.draw(r, c, mode); });
     };
     if (m_setup.mirror && j.mirror) listCar(*j.mirror);
     listCar(*j.model);
@@ -272,8 +322,8 @@ void CarView::attach(CrtRandom& random) {
     if (j.shadow && j.shadow->root != nullptr && m_setup.shadow) {
         v->listNode(j.shadow->root, false);
         Model& shadow = *j.shadow;
-        v->worldDraws.push_back([&shadow](render::Renderer3d& r, render::Camera& c) {
-            for (auto& node : shadow.meshNodes) node->draw(r, c, 0);
+        v->worldDraws.push_back([&shadow](render::Renderer3d& r, render::Camera& c, uint32_t mode) {
+            for (auto& node : shadow.meshNodes) node->draw(r, c, mode);
         });
     }
     if (next < v->listedCount()) {
@@ -288,8 +338,8 @@ void CarView::attach(CrtRandom& random) {
         if (j.neon && j.neon->root != nullptr) {
             Model& neon = *j.neon;
             v->listNode(neon.root, true);
-            v->worldDraws.push_back([&neon](render::Renderer3d& r, render::Camera& c) {
-                for (auto& node : neon.meshNodes) node->draw(r, c, 0);
+            v->worldDraws.push_back([&neon](render::Renderer3d& r, render::Camera& c, uint32_t mode) {
+                for (auto& node : neon.meshNodes) node->draw(r, c, mode);
             });
             std::array<float, 3> carLow{}, carHigh{}, neonLow{}, neonHigh{};
             render::Node* chassis = j.model->node("_CHASS");
@@ -416,8 +466,8 @@ std::unique_ptr<CarModel> GarageView::loadCar(const Car& car, CrtRandom& loading
 int GarageView::listModel(Model& model, bool parent) {
     View3d* v = view();
     if (v == nullptr || model.root == nullptr) return -1;
-    v->worldDraws.push_back([&model](render::Renderer3d& r, render::Camera& c) {
-        for (auto& node : model.meshNodes) node->draw(r, c, 0);
+    v->worldDraws.push_back([&model](render::Renderer3d& r, render::Camera& c, uint32_t mode) {
+        for (auto& node : model.meshNodes) node->draw(r, c, mode);
     });
     return v->listNode(model.root, parent);
 }
@@ -425,7 +475,8 @@ int GarageView::listModel(Model& model, bool parent) {
 int GarageView::listCar(CarModel& model) {
     View3d* v = view();
     if (v == nullptr || model.root() == nullptr) return -1;
-    v->worldDraws.push_back([&model](render::Renderer3d& r, render::Camera& c) { model.draw(r, c, 0); });
+    v->worldDraws.push_back(
+        [&model](render::Renderer3d& r, render::Camera& c, uint32_t mode) { model.draw(r, c, mode); });
     return v->listNode(model.root(), false);
 }
 
@@ -631,9 +682,9 @@ void GarageView::listNeon() {
     View3d* v = view();
     if (v == nullptr || !m_neon || m_neon->root == nullptr) return;
     Model* neon = m_neon.get();
-    v->worldDraws.push_back([this, neon](render::Renderer3d& r, render::Camera& c) {
+    v->worldDraws.push_back([this, neon](render::Renderer3d& r, render::Camera& c, uint32_t mode) {
         if (!m_neonShown) return;
-        for (auto& node : neon->meshNodes) node->draw(r, c, 0);
+        for (auto& node : neon->meshNodes) node->draw(r, c, mode);
     });
     v->listNode(neon->root, false);
 }

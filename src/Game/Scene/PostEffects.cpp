@@ -50,14 +50,15 @@ uint32_t alphaOf(float value) {
 // The exposure's measure ([0x00722A88] +0x10 ..): the histogram of the measure's blue bytes, the 2 % low and high
 // ends (+0x410, +0x414), the mean (+0x418), the high end again (+0x41C), the exposure (+0x420, [0x00722EA8]) and
 // its speed (+0x424, [0x00722EAC]); both 0 as the game starts (Stock problem: the first frame with the glow is black
-// until a camera first leaves a car's node).
+// until a camera first leaves a car's node). The fixed build starts the exposure at 1, as a camera leaving a car's
+// node and a copy without the glow set it.
 struct ExposureMeasure {
     std::array<float, 256> histogram{};
     float low = 0.0f;
     float high = 0.0f;
     float mean = 0.0f;
     float high2 = 0.0f;
-    float exposure = 0.0f;
+    float exposure = 1.0f;
     float speed = 0.0f;
 };
 ExposureMeasure g_exposure;
@@ -252,6 +253,7 @@ PostEffects::PostEffects(Engine& engine)
 }
 
 PostEffects::~PostEffects() {
+    destroySplit();
     if (m_buffer != 0) m_device.destroyBuffer(m_buffer);
     if (m_buffer2 != 0) m_device.destroyBuffer(m_buffer2);
     for (Target* t : {&m_targets[0], &m_targets[1], &m_blurSmall, &m_blurWide}) {
@@ -286,6 +288,8 @@ void PostEffects::take(const Target* target) {
     m_taken = id;
     for (uint32_t stage = 0; stage < 4; ++stage) m_device.setTexture(stage, 0);
     m_device.setRenderTarget(static_cast<render::TextureId>(id), 0);
+    // The fixed build's split view: the back buffer at the view's place (taking a target gives its whole size).
+    if (m_split != nullptr && id == 0) backViewport();
 }
 
 void PostEffects::takeTarget(render::TextureId target) {
@@ -299,14 +303,14 @@ void PostEffects::takeTarget(render::TextureId target) {
 void PostEffects::resume() {
     render::Viewport port;
     if (m_drawing) {
-        const Target& frame = m_targets[m_frame];
+        const Target& frame = frameTarget();
         take(&frame);
         port.width = frame.width;
         port.height = frame.height;
     } else {
         take(nullptr);
-        port.x = static_cast<uint32_t>(m_x0);
-        port.y = static_cast<uint32_t>(m_y0);
+        port.x = m_split != nullptr ? m_viewX : static_cast<uint32_t>(m_x0);
+        port.y = m_split != nullptr ? m_viewY : static_cast<uint32_t>(m_y0);
         port.width = static_cast<uint32_t>(m_x1 - m_x0);
         port.height = static_cast<uint32_t>(m_y1 - m_y0);
     }
@@ -333,7 +337,9 @@ void PostEffects::begin(const render::Camera& camera, View& view, uint32_t x, ui
         }
         m_taken = -1;
     }
-    Target& frame = m_targets[m_frame];
+    // The fixed build's split screen (PostEffectsSplit.cpp): a view not the whole screen its own pair.
+    splitBegin(view, x, y, width, height);
+    Target& frame = frameTarget();
     if (frame.texture.id != 0) {
         bool want = false;
         if (depthOfFieldOn(camera, alwaysDepthOfField)) {
@@ -381,20 +387,24 @@ void PostEffects::begin(const render::Camera& camera, View& view, uint32_t x, ui
     m_r.setVertexConstants(23, c23, 1);
     std::memcpy(m_c22, c22, sizeof(c22));
     std::memcpy(m_c23, c23, sizeof(c23));
-    m_x0 = static_cast<float>(x);
-    m_y0 = static_cast<float>(y);
-    m_x1 = static_cast<float>(x + width);
-    m_y1 = static_cast<float>(y + height);
+    // A split view's passes at its own places from (0, 0) (the fixed build's).
+    const uint32_t left = m_split != nullptr ? 0 : x;
+    const uint32_t top = m_split != nullptr ? 0 : y;
+    m_x0 = static_cast<float>(left);
+    m_y0 = static_cast<float>(top);
+    m_x1 = static_cast<float>(left + width);
+    m_y1 = static_cast<float>(top + height);
 }
 
 void PostEffects::end(const render::Camera& camera, View& view, float cutAmount, bool alwaysDepthOfField,
                       const std::function<void(float, float, float, float)>& smears) {
     const GraphicsConfig& c = graphicsConfig();
     // 0x00516DDD: the scene's target (or the back buffer) taken, the viewport again, no depth test.
-    take(m_drawing ? &m_targets[m_frame] : nullptr);
+    take(m_drawing ? &frameTarget() : nullptr);
     render::Viewport port;
-    port.x = static_cast<uint32_t>(m_x0);
-    port.y = static_cast<uint32_t>(m_y0);
+    // A split view's back buffer at its place, its target from (0, 0) (the fixed build's).
+    port.x = m_split != nullptr && !m_drawing ? m_viewX : static_cast<uint32_t>(m_x0);
+    port.y = m_split != nullptr && !m_drawing ? m_viewY : static_cast<uint32_t>(m_y0);
     port.width = m_viewWidth;
     port.height = m_viewHeight;
     m_device.setViewport(port);
@@ -406,7 +416,9 @@ void PostEffects::end(const render::Camera& camera, View& view, float cutAmount,
         if (depthOfFieldOn(camera, alwaysDepthOfField)) depthOfField(camera, m_x0, m_y0);
         const bool glowOn = view.glow && c.noShaders == 0 && c.shaders != 0 && c.glow != 0;
         copyToBack(m_x1, m_y1, glowOn);
-        if (glowOn) glow(m_x0, m_y0, m_x1, m_y1, view.glowFirst);
+        if (glowOn) {
+            glow(m_x0, m_y0, m_x1, m_y1, view.glowFirst, glowStrength(c.glow) * (view.headlights ? 0.7f : 1.0f));
+        }
     }
     if (cutAmount != 0.0f && m_engine.shaderClasses() != 0x10000) {
         cutBlend(cutAmount, m_x0, m_y0, m_x1, m_y1);
@@ -422,7 +434,7 @@ void PostEffects::end(const render::Camera& camera, View& view, float cutAmount,
         // 0x00515B70 with 0, then the frame's target becomes the previous one.
         m_drawing = false;
         m_taken = -1;
-        m_frame = 1 - m_frame;
+        flipFrame();
     }
     // 0x0051708A: the interface's states.
     render::IRenderDevice& d = m_device;
@@ -448,14 +460,16 @@ void PostEffects::end(const render::Camera& camera, View& view, float cutAmount,
     d.setTextureStageState(2, TextureStageState::AlphaOp, TextureOp::Disable);
     freshState();
     m_r.forgetSamplers();
-    // The interface's view that follows takes the back buffer (0x0051F660 with the view's target).
+    // The interface's view that follows takes the back buffer (0x0051F660 with the view's target); the split view's
+    // place is let go first (the fixed build's).
+    m_split = nullptr;
     take(nullptr);
 }
 
 void PostEffects::motionBlur(float edge, float middle, float x0, float y0, float x1, float y1) {
     freshState();
-    take(&m_targets[m_frame]);
-    m_motionBlur->setTexture(0, &m_targets[1 - m_frame].texture);
+    take(&frameTarget());
+    m_motionBlur->setTexture(0, &previousTarget().texture);
     m_r.beginMaterialPass(*m_motionBlur, 0);
     if (m_r.lastDeclaration != m_declaration2d) {
         m_device.setDeclaration(m_declaration2d);
@@ -495,9 +509,9 @@ void PostEffects::motionBlur(float edge, float middle, float x0, float y0, float
 }
 
 void PostEffects::copyToBack(float width, float height, bool glow) {
-    take(&m_targets[m_frame]);
+    take(&frameTarget());
     for (uint32_t stage = 0; stage < 4; ++stage) m_r.applySampler(m_clamped, stage);
-    const render::GameTexture& texture = m_targets[m_frame].texture;
+    const render::GameTexture& texture = frameTarget().texture;
     if (m_measure != 0) {
         if (glow) {
             const float half = g_exposure.exposure * 0.5f;
@@ -507,16 +521,20 @@ void PostEffects::copyToBack(float width, float height, bool glow) {
                 m_exposureProgram = m_engine.program("Material_Exposure");
                 m_exposureLoaded = true;
             }
-            // Stock problem: placed at -0.5 / width, -0.5 / height pixels, not half a pixel.
-            drawToBack(texture, -0.5f / width, -0.5f / height, width, height, false, m_exposureProgram);
+            // Stock problem: placed at -0.5 / width, -0.5 / height pixels, not half a pixel. The fixed build places it
+            // half a pixel up and left, each pixel's centre on its texel's (the scene's target has the screen's size).
+            drawToBack(texture, -0.5f, -0.5f, width, height, false, m_exposureProgram);
         } else {
             g_exposure.speed = 0.0f;
             g_exposure.exposure = 1.0f;
-            drawToBack(texture, 0.0f, 0.0f, width, height, false, nullptr);
+            // Stock problem: at 0, 0 (Material_TexShape2D's vertices go through c22 and c23 as the exposure's: each
+            // pixel's centre on the corner of four texels, the bilinear filter blurring the picture while an effect
+            // draws the scene into the target). The fixed build places it half a pixel up and left, as above.
+            drawToBack(texture, -0.5f, -0.5f, width, height, false, nullptr);
         }
-        measureExposure(static_cast<float>(m_targets[m_frame].width), static_cast<float>(m_targets[m_frame].height));
+        measureExposure(static_cast<float>(frameTarget().width), static_cast<float>(frameTarget().height));
     } else {
-        drawToBack(texture, 0.0f, 0.0f, width, height, false, nullptr);
+        drawToBack(texture, -0.5f, -0.5f, width, height, false, nullptr);  // the fixed build: as above
     }
     for (uint32_t stage = 0; stage < 4; ++stage) m_r.applySampler(m_wrapped, stage);
 }
@@ -574,8 +592,10 @@ void PostEffects::drawToBack(const render::GameTexture& texture, float x, float 
 void PostEffects::measureExposure(float width, float height) {
     // 0x005213B5: the measure's target taken straight on the device, no depth. Stock problem: the target taken last
     // still holds the back buffer, so the glow's blur over the view and, without the glow, the cut's transition go
-    // into the measure.
+    // into the measure. The fixed build notes the measure as the target taken, so the next take of the back buffer
+    // sets it again: the glow's blur and the cut's transition go onto the screen.
     m_device.setRenderTarget(m_measure, 0);
+    m_taken = static_cast<int64_t>(m_measure);
     // 0x00520900: the scene's middle (u, v 0.2 .. 0.8) over the whole measure through the luminance.
     render::IRenderDevice& d = m_device;
     d.setTextureStageState(0, TextureStageState::ColourOp, TextureOp::SelectArg1);
@@ -669,11 +689,14 @@ void PostEffects::blurQuad(uint32_t colour, float x0, float y0, float x1, float 
     constexpr float d = 0.00390625f;   // 1 / 256
     constexpr float lo = 0.99609375f;  // 1 - 1 / 256
     constexpr float hi = 1.00390625f;  // 1 + 1 / 256
+    // Stock problem: the four u v sets repeat two offsets at the first and last corners and swap the second and third
+    // between the other two, so the blur is uneven across the quad. The fixed build gives each set one offset at every
+    // corner: (-d, -d), (+d, -d), (-d, +d), (+d, +d) of 1 / 256 around the texel.
     const BlurVertex v[4] = {
-        {x0, y0, z, 1.0f, colour, {-d, -d, d, d, -d, -d, d, d}},
-        {x1, y0, z, 1.0f, colour, {lo, -d, lo, d, hi, -d, hi, d}},
+        {x0, y0, z, 1.0f, colour, {-d, -d, d, -d, -d, d, d, d}},
+        {x1, y0, z, 1.0f, colour, {lo, -d, hi, -d, lo, d, hi, d}},
         {x0, y1, z, 1.0f, colour, {-d, lo, d, lo, -d, hi, d, hi}},
-        {x1, y1, z, 1.0f, colour, {lo, lo, lo, lo, hi, hi, hi, hi}},
+        {x1, y1, z, 1.0f, colour, {lo, lo, hi, lo, lo, hi, hi, hi}},
     };
     m_device.updateVertexBuffer(m_buffer2, v, sizeof(v));
     m_device.setTextureStageState(3, TextureStageState::TextureTransformFlags, TextureTransform::Disable);
@@ -690,7 +713,7 @@ void PostEffects::depthOfField(const render::Camera& camera, float x0, float y0)
     m_r.forgetSamplers();
     freshState();
     take(&m_blurWide);
-    blurPass(m_targets[1 - m_frame].texture);
+    blurPass(previousTarget().texture);
     render::IRenderDevice& d = m_device;
     d.setRenderState(RenderState::ColourWriteEnable, ColourWrite::Rgb);
     d.setRenderState(RenderState::AlphaBlendEnable, 0);
@@ -698,7 +721,7 @@ void PostEffects::depthOfField(const render::Camera& camera, float x0, float y0)
     blurQuad(0xFFFFFFFFu, x0, y0, static_cast<float>(m_blurWide.width), static_cast<float>(m_blurWide.height), 0.0f);
     m_r.forgetSamplers();
     freshState();
-    const Target& frame = m_targets[m_frame];
+    const Target& frame = frameTarget();
     take(&frame);
     blurPass(m_blurWide.texture);
     d.setRenderState(RenderState::AlphaBlendEnable, 1);
@@ -741,8 +764,10 @@ void PostEffects::depthOfField(const render::Camera& camera, float x0, float y0)
 
 // 0x00521C80: after its first frame the small blur target blurred and added over the target taken last (0x9F alpha);
 // then the previous frame into the small blur target with the alpha LightBlur x 204, over 0.55 of what it held
-// (none in the first frame) where the device has a blend factor, else as it is.
-void PostEffects::glow(float x0, float y0, float x1, float y1, bool first) {
+// (none in the first frame) where the device has a blend factor, else as it is. The fixed build's strength: the
+// blur added with 0x9F x the strength (2DBlur's alpha is the vertices', its colour the four samples' mean: the glow
+// grows with the alpha), 0x9F at 1.
+void PostEffects::glow(float x0, float y0, float x1, float y1, bool first, float strength) {
     for (uint32_t stage = 0; stage < 4; ++stage) m_r.applySampler(m_clamped, stage);
     take(nullptr);
     m_blur->setParam(0, &kMinusTwo);
@@ -754,7 +779,7 @@ void PostEffects::glow(float x0, float y0, float x1, float y1, bool first) {
     }
     if (!first) {
         m_r.beginMaterialPass(*m_blur, 0);
-        const uint32_t grey = 0x9F9F9F9Fu;
+        const uint32_t grey = static_cast<uint32_t>(std::lround(159.0f * strength)) << 24 | 0x9F9F9Fu;
         const Vertex2d v[4] = {
             {x0, y0, grey, 0.0f, 0.0f},
             {x1, y0, grey, 1.0f, 0.0f},
@@ -780,7 +805,7 @@ void PostEffects::glow(float x0, float y0, float x1, float y1, bool first) {
     take(&m_blurSmall);
     const uint32_t opaque = 1;
     const uint32_t additive = 0;
-    m_texShape->setTexture(0, &m_targets[1 - m_frame].texture);
+    m_texShape->setTexture(0, &previousTarget().texture);
     m_texShape->setParam(1, &opaque);
     m_texShape->setParam(0, &additive);
     m_r.beginMaterialPass(*m_texShape, 0);
@@ -819,7 +844,7 @@ void PostEffects::glow(float x0, float y0, float x1, float y1, bool first) {
 
 void PostEffects::cutBlend(float amount, float x0, float y0, float x1, float y1) {
     take(nullptr);
-    m_motionBlur->setTexture(0, &m_targets[1 - m_frame].texture);
+    m_motionBlur->setTexture(0, &previousTarget().texture);
     m_r.beginMaterialPass(*m_motionBlur, 0);
     if (m_r.lastDeclaration != m_declaration2d) {
         m_device.setDeclaration(m_declaration2d);

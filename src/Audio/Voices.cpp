@@ -621,11 +621,13 @@ int Manager::acquire(Instance* i) {
     if (user != 0) {
         // 0x005BCF45: the slot still has an instance: that one's voice stopped and it starting again (0x005BC360),
         // none for this one this frame. Stock problem: the voice findFree took stays busy; a set of one voice whose
-        // start time is still 0 (never played) can then give none (stealOldest finds nothing) for the race.
+        // start time is still 0 (never played) can then give none (stealOldest finds nothing) for the race. The fixed
+        // build gives the voice back, as when no slot is found.
         if (Instance* other = userInstance(user)) {
             stopVoice(other);
             move(other, kStarting);
         }
+        set.release(voice);
         return 3;
     }
     i->m_handle = handle;

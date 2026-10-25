@@ -48,6 +48,8 @@ public:
     void crewOrders(const HudRace& race, const std::array<bool, 6>& tactics, float dt) {
         m_orders.frame(race, tactics, dt);
     }
+    // 0x004BEA60 as the race asks (RaceRules::ordersFlash): the racer's lines flashed, the orders opened.
+    void ordersFlash(const HudRace& race, int32_t racer, float dt) { m_orders.flash(race, racer, dt); }
     void draw(float seconds, float dt);
 
     ui::Screen& screen() { return m_screen; }

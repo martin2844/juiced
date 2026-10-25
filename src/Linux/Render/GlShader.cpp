@@ -49,7 +49,7 @@ GLuint link(GLuint vs, GLuint ps) {
     }
     return program;
 }
-Shader::Shader(const uint32_t *code) {
+Shader::Shader(const uint32_t *code, uint32_t cubeMask) {
     auto original = MOJOSHADER_parse("bytecode", "main", reinterpret_cast<const unsigned char *>(code), 0, nullptr, 0,
                                      nullptr, 0, nullptr, nullptr, nullptr);
     if (original->error_count) {
@@ -59,6 +59,8 @@ Shader::Shader(const uint32_t *code) {
     }
     bool vertex = original->shader_type == MOJOSHADER_TYPE_VERTEX;
     size_t words = original->output_len / 4;
+    const bool legacyPixel = !vertex && original->major_ver == 1;
+    if (legacyPixel) legacyCode.assign(code, code + words);
     MOJOSHADER_freeParseData(original);
     std::vector<uint32_t> lowered;
     if (code[0] == 0xffff0101) {
@@ -82,14 +84,18 @@ Shader::Shader(const uint32_t *code) {
     }
     MOJOSHADER_swizzle swizzles[] = {{MOJOSHADER_USAGE_COLOR, 0, {2, 1, 0, 3}},
                                      {MOJOSHADER_USAGE_COLOR, 1, {2, 1, 0, 3}}};
+    std::vector<MOJOSHADER_samplerMap> samplerTypes;
+    if (legacyPixel) for (int i = 0; i < 16; ++i)
+        if (cubeMask & (1u << i)) samplerTypes.push_back({i, MOJOSHADER_SAMPLER_CUBE});
     parsed = MOJOSHADER_parse("glsles3", "main", reinterpret_cast<const unsigned char *>(code), words * 4,
-                              vertex ? swizzles : nullptr, vertex ? 2 : 0, nullptr, 0, nullptr, nullptr, nullptr);
+                              vertex ? swizzles : nullptr, vertex ? 2 : 0, samplerTypes.data(), samplerTypes.size(), nullptr, nullptr, nullptr);
     if (parsed->error_count) {
         std::string error = parsed->errors[0].error;
         MOJOSHADER_freeParseData(parsed);
         parsed = nullptr;
         throw std::runtime_error(error);
     }
+    for (int i = 0; i < parsed->sampler_count; ++i) samplerMask |= 1u << parsed->samplers[i].index;
     source.assign(parsed->output, parsed->output_len);
     // Pixel math requires high precision for the game's large world-space values.
     if (auto p = source.find("precision mediump float;"); p != std::string::npos)
@@ -131,6 +137,13 @@ void main(){oj_initialize();oj_main();if(oj_alpha.x>0.0){float a=_gl_FragData_0.
         parsed = nullptr;
         throw;
     }
+}
+Shader& Shader::forCubeSamplers(uint32_t mask) {
+    mask &= samplerMask;
+    if (legacyCode.empty() || !mask) return *this;
+    auto& variant = variants[mask];
+    if (!variant) variant = std::make_unique<Shader>(legacyCode.data(), mask);
+    return *variant;
 }
 Shader::~Shader() {
     if (id)

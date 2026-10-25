@@ -41,7 +41,8 @@ public:
     uint32_t frameNum() const;
     // +0x10 (0x00559A80): +0x34, the frames stepped without waiting for their time (PlayFast).
     void setFast(bool fast) { m_fast = fast; }
-    // +0x14 (0x0055A790): the volume (+0x60) and the Bink's (0x005B8B50: the volume in hundredths of decibels).
+    // +0x14 (0x0055A790): the volume (+0x60) and the Bink's (0x005B8B50: the volume in hundredths of decibels; the
+    // fixed build's x 32768, as the step's).
     void setVolume(float volume);
     // 0x00559A60: held (+0x24 1) and stepped twice.
     void restart();

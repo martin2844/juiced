@@ -164,7 +164,11 @@ void main(){)";
         framebuffer();
         glBindVertexArray(vao);
         GLuint v = fixed ? fixedVS : shaders.at(vs)->id;
-        GLuint f = (!simple && ps) ? shaders.at(ps)->id : fixedFragment(v, simple);
+        uint32_t cubeMask = 0;
+        for (unsigned i = 0; i < bound.size(); ++i)
+            if (textures.contains(bound[i]) && textures.at(bound[i]).cube) cubeMask |= 1u << i;
+        gles::Shader* pixel = (!simple && ps) ? &shaders.at(ps)->forCubeSamplers(cubeMask) : nullptr;
+        GLuint f = pixel ? pixel->id : fixedFragment(v, simple);
         auto pair = std::make_pair(v, f);
         if (!programs.contains(pair))
             programs[pair] = gles::link(v, f);
@@ -172,8 +176,7 @@ void main(){)";
         glUseProgram(program);
         if (!fixed)
             shaders.at(vs)->uniforms(program, vertexRegisters);
-        if (ps && !simple)
-            shaders.at(ps)->uniforms(program, pixelRegisters);
+        if (pixel) pixel->uniforms(program, pixelRegisters);
         glUniform1f(glGetUniformLocation(program, "oj_flip"), target ? -1.f : 1.f);
         glUniform3f(glGetUniformLocation(program, "oj_alpha"), states[15], states[24] / 255.f, states[25]);
         glUniform1i(glGetUniformLocation(program, "oj_texture"), 0);
@@ -369,9 +372,10 @@ std::string GlesDevice::adapterName() const {
     return s ? (const char *)s : "OpenGL ES";
 }
 std::string GlesDevice::description() const {
-    return "Native OpenGL ES 3 / MojoShader";
+    return "Native OpenGL 4.1 / MojoShader";
 }
 bool GlesDevice::beginFrame() {
+    letLoadingRun();
     int w, h;
     SDL_GetWindowSizeInPixels(p->window, &w, &h);
     if (w <= 0 || h <= 0)
@@ -459,6 +463,7 @@ bool GlesDevice::textureFormatOk(uint32_t, uint32_t f) const {
     return f == 21 || f == 22 || f == 23 || f == Ddt::kDxt1 || f == Ddt::kDxt3 || f == Ddt::kDxt5;
 }
 TextureId GlesDevice::createTexture(const TextureData &d) {
+    if (std::this_thread::get_id() != owner) return onOwner([&] { return createTexture(d); });
     if (!d.width || !d.height || !d.pixels)
         return 0;
     Impl::Texture t;
@@ -502,6 +507,7 @@ TextureId GlesDevice::createTexture(const TextureData &d) {
     return id;
 }
 TextureId GlesDevice::createCubeTexture(const TextureData &d) {
+    if (std::this_thread::get_id() != owner) return onOwner([&] { return createCubeTexture(d); });
     if (!d.width || d.width != d.height || !d.pixels)
         return 0;
     Impl::Texture t;
@@ -537,6 +543,7 @@ TextureId GlesDevice::createCubeTexture(const TextureData &d) {
     return id;
 }
 void GlesDevice::destroyTexture(TextureId id) {
+    if (std::this_thread::get_id() != owner) return onOwner([&] { return destroyTexture(id); });
     auto it = p->textures.find(id);
     if (it == p->textures.end())
         return;
@@ -554,6 +561,7 @@ void GlesDevice::destroyTexture(TextureId id) {
         setRenderTarget(0, 0);
 }
 TextureId GlesDevice::createRenderTarget(uint32_t w, uint32_t h, bool cube) {
+    if (std::this_thread::get_id() != owner) return onOwner([&] { return createRenderTarget(w, h, cube); });
     if (!w || !h)
         return 0;
     Impl::Texture t;
@@ -587,9 +595,11 @@ void GlesDevice::setRenderTarget(TextureId id, uint32_t face) {
     p->viewport = {0, 0, p->tw(), p->th(), 0, 1};
 }
 uint32_t GlesDevice::targetWidth(TextureId id) const {
+    if (std::this_thread::get_id() != owner) return onOwner([&] { return targetWidth(id); });
     return id ? p->textures.at(id).w : p->w;
 }
 uint32_t GlesDevice::targetHeight(TextureId id) const {
+    if (std::this_thread::get_id() != owner) return onOwner([&] { return targetHeight(id); });
     return id ? p->textures.at(id).h : p->h;
 }
 uint32_t GlesDevice::resets() const {
@@ -616,6 +626,7 @@ bool GlesDevice::readTarget(TextureId id, std::vector<uint8_t> &pixels, uint32_t
     return ok;
 }
 TextureId GlesDevice::createDynamicTexture(uint32_t w, uint32_t h, uint32_t) {
+    if (std::this_thread::get_id() != owner) return onOwner([&] { return createDynamicTexture(w, h, 0); });
     std::vector<uint32_t> data(w * h);
     TextureData d{PixelFormat::A8R8G8B8, w, h, 1, (const uint8_t *)data.data(), data.size() * 4};
     auto id = createTexture(d);
@@ -624,6 +635,7 @@ TextureId GlesDevice::createDynamicTexture(uint32_t w, uint32_t h, uint32_t) {
     return id;
 }
 bool GlesDevice::lockTexture(TextureId id, void **bits, int32_t *pitch) {
+    if (std::this_thread::get_id() != owner) return onOwner([&] { return lockTexture(id, bits, pitch); });
     if (!p->textures.contains(id))
         return false;
     auto &t = p->textures.at(id);
@@ -634,6 +646,7 @@ bool GlesDevice::lockTexture(TextureId id, void **bits, int32_t *pitch) {
     return true;
 }
 void GlesDevice::unlockTexture(TextureId id) {
+    if (std::this_thread::get_id() != owner) return onOwner([&] { return unlockTexture(id); });
     auto &t = p->textures.at(id);
     auto data = t.cpu;
     for (size_t i = 0; i < data.size(); i += 4)
@@ -642,15 +655,18 @@ void GlesDevice::unlockTexture(TextureId id) {
     glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, t.w, t.h, GL_RGBA, GL_UNSIGNED_BYTE, data.data());
 }
 ShaderId GlesDevice::createVertexShader(const uint32_t *code) {
+    if (std::this_thread::get_id() != owner) return onOwner([&] { return createVertexShader(code); });
     auto shader = std::make_unique<gles::Shader>(code);
     auto id = p->next++;
     p->shaders[id] = std::move(shader);
     return id;
 }
 ShaderId GlesDevice::createPixelShader(const uint32_t *code) {
+    if (std::this_thread::get_id() != owner) return onOwner([&] { return createPixelShader(code); });
     return createVertexShader(code);
 }
 DeclarationId GlesDevice::createDeclaration(const VertexElement *e) {
+    if (std::this_thread::get_id() != owner) return onOwner([&] { return createDeclaration(e); });
     auto id = p->next++;
     auto &d = p->declarations[id];
     while (e->stream != 0xff && e->type != 17)
@@ -658,6 +674,7 @@ DeclarationId GlesDevice::createDeclaration(const VertexElement *e) {
     return id;
 }
 BufferId GlesDevice::createVertexBuffer(const void *data, uint32_t bytes) {
+    if (std::this_thread::get_id() != owner) return onOwner([&] { return createVertexBuffer(data, bytes); });
     Impl::Buffer b;
     b.size = bytes;
     glGenBuffers(1, &b.gl);
@@ -668,11 +685,13 @@ BufferId GlesDevice::createVertexBuffer(const void *data, uint32_t bytes) {
     return id;
 }
 BufferId GlesDevice::createIndexBuffer(const uint16_t *indices, uint32_t count) {
+    if (std::this_thread::get_id() != owner) return onOwner([&] { return createIndexBuffer(indices, count); });
     auto id = createVertexBuffer(indices, count * 2);
     p->buffers.at(id).index = true;
     return id;
 }
 void GlesDevice::destroyBuffer(BufferId id) {
+    if (std::this_thread::get_id() != owner) return onOwner([&] { return destroyBuffer(id); });
     auto it = p->buffers.find(id);
     if (it == p->buffers.end())
         return;
@@ -680,6 +699,7 @@ void GlesDevice::destroyBuffer(BufferId id) {
     p->buffers.erase(it);
 }
 void GlesDevice::updateVertexBuffer(BufferId id, const void *data, uint32_t bytes) {
+    if (std::this_thread::get_id() != owner) return onOwner([&] { return updateVertexBuffer(id, data, bytes); });
     auto &b = p->buffers.at(id);
     glBindBuffer(GL_ARRAY_BUFFER, b.gl);
     glBufferData(GL_ARRAY_BUFFER, bytes, data, GL_DYNAMIC_DRAW);
@@ -913,7 +933,7 @@ std::unique_ptr<IRenderDevice> createDevice(Backend, const DeviceDesc &desc, std
     }
 }
 const char *backendName(Backend) {
-    return "OpenGL ES";
+    return "OpenGL";
 }
 } // namespace oj::render
 namespace oj::render::hlsl {
@@ -923,3 +943,15 @@ std::optional<std::vector<uint8_t>> compile(const std::vector<std::byte> &, cons
     return {};
 }
 } // namespace oj::render::hlsl
+
+namespace oj::render {
+void GlesDevice::letLoadingRun() {
+    if (std::this_thread::get_id() != owner) return;
+    std::deque<std::function<void()>> pending;
+    { std::lock_guard lock(workMutex); pending.swap(work); }
+    for (auto& task : pending) task();
+}
+void GlesDevice::waitForService() {
+    if (std::this_thread::get_id() != owner) onOwner([] {});
+}
+}

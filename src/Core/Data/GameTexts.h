@@ -112,6 +112,7 @@ enum GameText : size_t {
     kTextNotAvailable = 432,  // [0x007615D0] "NA"
     kTextQuitReplay = 433,  // "Quit Replay?"
     kTextSaveReplayPs2 = 434,  // "Do you want to save the replay on memory card..."
+    kTextSaveReplay = 435,  // "Save replay?"
     kTextRespectReasons = 437,  // " is impressed by your high bet.": (8)
     kTextNewUsed = 445,  // "New"
     kTextConditions = 447,  // "Excellent"
