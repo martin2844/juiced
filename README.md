@@ -10,7 +10,7 @@ Development builds. Compatibility and performance vary by device; no frame-rate 
 
 | Platform | Build | Download / requirements |
 | --- | --- | --- |
-| Android ARM64 | OpenJuice 1.02.5 · android.3 | [APK and optional mods](https://github.com/martin2844/juiced/releases/tag/android-v1.02.5-3) · Android 8+ |
+| Android ARM64 | OpenJuice 1.02.5 · android.4 | [APK and optional mods](https://github.com/martin2844/juiced/releases/tag/android-v1.02.5-4) · Android 8+ |
 | Linux x86_64 / NixOS | OpenJuice 1.02.5 · mods1 | [Nix binary package](https://github.com/martin2844/juiced/releases/tag/linux-v1.02.5-mods1) · Nix and OpenGL drivers required |
 | macOS Apple Silicon | Port 0.3.3 · OpenJuice 1.01.4 | Build pending: [release workflow](https://github.com/martin2844/juiced/actions/workflows/macos-release.yml) · Homebrew FFmpeg required |
 
