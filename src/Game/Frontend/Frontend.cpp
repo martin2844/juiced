@@ -563,7 +563,7 @@ void Frontend::update(float dt, const FrontendInput& in) {
             if (!m_popups.empty()) {
                 updateWindow(*m_popups.back().screen, in);
                 uint32_t popupEvent = in.ui.event;
-#ifdef OJ_MACOS
+#if defined(OJ_MACOS) || defined(OJ_LINUX)
                 // The paint purchase shortcut must not affect text entry or other menus.
                 if (is(m_popups.back().state, "colourmenu") && in.typed == '0')
                     popupEvent = input::kSelect2;

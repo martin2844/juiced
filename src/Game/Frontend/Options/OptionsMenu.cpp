@@ -25,14 +25,14 @@ void OptionsMenu::enter(OptionsHost& host, ui::Screen& s) {
         s.restoreMenu("BackMenu");
         for (size_t i = 0; i < s.menuSize("Menu"); ++i) {
             if (_stricmp(s.menuItemCommand("Menu", i).c_str(), "control") == 0) {
-#ifdef OJ_MACOS
+#if defined(OJ_MACOS) || defined(OJ_LINUX)
                 s.setMenuItemText("Menu", i, L"CONTROLS");
 #else
                 s.setMenuItemText("Menu", i, texts.at(kTextControls));
 #endif
             }
         }
-#ifndef OJ_MACOS
+#if !defined(OJ_MACOS) && !defined(OJ_LINUX)
         if (host.racePause()) {
             // From a race's pause: a highlighted control moves the highlight to the first item; control taken out
             // with BackMenu's first item; a highlight past the items back to the first.

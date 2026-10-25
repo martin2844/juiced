@@ -1,3 +1,6 @@
+#ifdef OJ_LINUX
+#include "Linux/Paths.h"
+#endif
 #include "Mac/Controls.h"
 #include "Core/Base/Log.h"
 #include <algorithm>
@@ -169,8 +172,12 @@ std::string rebind(Bindings &values, size_t action, std::string_view key) {
     return message;
 }
 std::filesystem::path bindingsPath() {
+#ifdef OJ_LINUX
+    return oj::linux_port::configPath() / "controls.ini";
+#else
     const char *home = std::getenv("HOME");
     return std::filesystem::path(home ? home : ".") / "Library/Application Support/Juiced/controls.ini";
+#endif
 }
 Bindings loadBindings(const std::filesystem::path &path) {
     Bindings result = defaultBindings();

@@ -1,4 +1,4 @@
-#ifdef OJ_MACOS
+#if defined(OJ_MACOS) || defined(OJ_LINUX)
 #include "Mac/ControlsOverlay.h"
 #endif
 // The game's main function and its loop: the platform, the front end, the race and the frames between them
@@ -138,7 +138,11 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
         return 0;
     }
 
+#if defined(OJ_LINUX)
+    const oj::render::Backend backend = oj::render::Backend::GLES;
+#else
     const oj::render::Backend backend = oj::render::Backend::Metal;
+#endif
     oj::render::DeviceDesc desc;
     desc.window = platform.window();
     desc.windowed = settings.windowed != 0;
@@ -205,7 +209,7 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
         } else {
             controlMaps =
                 oj::parseControls(std::string_view(reinterpret_cast<const char*>(bytes->data()), bytes->size()));
-#ifdef OJ_MACOS
+#if defined(OJ_MACOS) || defined(OJ_LINUX)
             oj::mac::applyBindings(controlMaps, oj::mac::loadBindings(oj::mac::bindingsPath()));
 #endif
             input.load(controlMaps);
@@ -419,7 +423,7 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
 
     uint64_t rendered = 0;
     bool frontendUi = false;  // the front end's +0x18: the UI map registered
-#ifdef OJ_MACOS
+#if defined(OJ_MACOS) || defined(OJ_LINUX)
     std::unique_ptr<oj::mac::ControlsOverlay> controlsEditor;
     oj::input::Input::Map controlsPreviousMap = oj::input::Input::Map::None;
 #endif
@@ -431,7 +435,7 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
             Sleep(16);
             continue;
         }
-#ifdef OJ_MACOS
+#if defined(OJ_MACOS) || defined(OJ_LINUX)
         if (oj::mac::takeControlsRequest() && !controlsEditor) {
             controlsPreviousMap = input.map();
             controlsEditor = std::make_unique<oj::mac::ControlsOverlay>(*device, language, oj::mac::bindingsPath());

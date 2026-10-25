@@ -14,7 +14,7 @@ using HWND = HWND__*;
 
 namespace oj::render {
 
-enum class Backend { D3D9, Metal };
+enum class Backend { D3D9, Metal, GLES };
 
 const char* backendName(Backend backend);
 

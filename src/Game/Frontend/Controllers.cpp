@@ -1,4 +1,4 @@
-#ifdef OJ_MACOS
+#if defined(OJ_MACOS) || defined(OJ_LINUX)
 #include "Mac/Controls.h"
 #endif
 // The watch of the players' controllers and the critical notes it opens.
@@ -82,7 +82,7 @@ void Frontend::watchSecondController(bool connected, int32_t device, bool opens)
 // 0x00595717, [0x0075F770] set while it runs, the cursor shown for it; the game loop's, InputDevices::configure).
 // Either way the devices' controllers are made again (0x005957D1: 0x00590EE0) and the map registered again.
 void Frontend::controlsSetUp() {
-#ifdef OJ_MACOS
+#if defined(OJ_MACOS) || defined(OJ_LINUX)
     mac::requestControlsEditor();
 #else
     log::info("frontend: the controls' set up: DirectInput's mapping window");

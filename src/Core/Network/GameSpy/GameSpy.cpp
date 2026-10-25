@@ -1,3 +1,6 @@
+#ifdef OJ_LINUX
+#include "Linux/Paths.h"
+#endif
 #include <fstream>
 #include <filesystem>
 #include "Core/Network/GameSpy/GameSpy.h"
@@ -294,10 +297,14 @@ std::string makeUniqueId(uint32_t seed) {
     return id;
 }
 
-#ifdef OJ_MACOS
+#if defined(OJ_MACOS) || defined(OJ_LINUX)
 std::string uniqueId() {
     const char* home = std::getenv("HOME");
+#ifdef OJ_LINUX
+    const auto folder = oj::linux_port::dataPath();
+#else
     const auto folder = std::filesystem::path(home ? home : ".") / "Library/Application Support/Juiced";
+#endif
     std::error_code ec;
     std::filesystem::create_directories(folder, ec);
     std::string id;

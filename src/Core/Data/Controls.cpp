@@ -74,7 +74,7 @@ constexpr Semantic kSemantics[] = {
     {"DIBUTTON_DRIVINGR_PAUSE", 0x010044FCu, 0},
     {"DIBUTTON_DRIVINGR_STEER_LEFT_LINK", 0x0100CCE4u, 0},
     {"DIBUTTON_DRIVINGR_STEER_RIGHT_LINK", 0x0100CCECu, 0},
-#ifdef OJ_MACOS
+#if defined(OJ_MACOS) || defined(OJ_LINUX)
     // Additional keys offered by the native controls editor.
     {"DIKEYBOARD_1", 0x81000402u, 0},
     {"DIKEYBOARD_2", 0x81000403u, 0},

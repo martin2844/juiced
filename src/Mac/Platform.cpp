@@ -1,3 +1,6 @@
+#ifdef OJ_LINUX
+#include "Linux/Paths.h"
+#endif
 #include "Game/Platform/Platform.h"
 #include "Audio/SoundSystem.h"
 #include "Core/Base/Log.h"
@@ -68,7 +71,11 @@ void readSettings(Settings &s) {
     const char *home = getenv("HOME");
     if (!home)
         return;
+    #ifdef OJ_LINUX
+    auto dir = oj::linux_port::configPath();
+#else
     auto dir = std::filesystem::path(home) / "Library/Application Support/Juiced";
+#endif
     std::filesystem::create_directories(dir);
     auto path = dir / "settings.ini";
     std::ifstream in(path);
@@ -97,7 +104,17 @@ bool Platform::start(const char *title, const LaunchOptions &options, Settings &
         log::error("SDL: {}", SDL_GetError());
         return false;
     }
+    #ifdef OJ_LINUX
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+    SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
+    auto flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL;
+#else
     auto flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_METAL;
+#endif
     if (options.test)
         flags |= SDL_WINDOW_HIDDEN;
     m_window = reinterpret_cast<HWND>(SDL_CreateWindow(title, settings.width, settings.height, flags));

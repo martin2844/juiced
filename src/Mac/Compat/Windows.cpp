@@ -1,3 +1,6 @@
+#ifdef OJ_LINUX
+#include "Core/Base/CasePath.h"
+#endif
 #include "windows.h"
 #include <SDL3/SDL.h>
 #include <codecvt>
@@ -13,9 +16,13 @@ struct NativeHandle {
 };
 static thread_local DWORD lastError = 0;
 std::string nativePath(const std::filesystem::path &p) {
+#ifdef OJ_LINUX
+    return oj::gameNativePath(p).string();
+#else
     auto s = p.string();
     std::replace(s.begin(), s.end(), '\\', '/');
     return s;
+#endif
 }
 DWORD GetLastError() {
     return lastError;

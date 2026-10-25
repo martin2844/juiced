@@ -1,4 +1,5 @@
 #include "Audio/Bank.h"
+#include <cmath>
 
 #include "Audio/Eax.h"
 #include "Audio/SoundSystem.h"
