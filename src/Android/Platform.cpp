@@ -1,6 +1,7 @@
 #include "Game/Platform/Platform.h"
 #include "Android/Gamepad.h"
 #include "Android/TouchControls.h"
+#include "Android/TouchBindings.h"
 #include "Audio/SoundSystem.h"
 #include "Core/Base/Log.h"
 #include "Core/Base/Text.h"
@@ -17,6 +18,8 @@
 #include <windows.h>
 namespace oj {
 namespace {
+constexpr int touchEventTag = 0x4f4a5443;
+std::array<uint8_t, 12> touchKeys = android::resolveTouchBindings({});
 std::vector<input::KeyEvent> events;
 bool focused = true, screenshot = false;
 FreeCameraMouse mouse;
@@ -88,6 +91,30 @@ uint8_t scan(SDL_Scancode c) {
 }
 } // namespace
 void android::overlayInput(bool enabled) { overlayActive = enabled; }
+void android::touchBindings(const std::vector<ActionMap> &maps) {
+    touchKeys = resolveTouchBindings(maps);
+}
+void android::touchDriving(bool driving) {
+#ifdef __ANDROID__
+    static int previous = -1;
+    if (previous == int(driving))
+        return;
+    auto *env = static_cast<JNIEnv *>(SDL_GetAndroidJNIEnv());
+    auto activity = static_cast<jobject>(SDL_GetAndroidActivity());
+    if (!env || !activity)
+        return;
+    auto cls = env->GetObjectClass(activity);
+    auto method = env->GetMethodID(cls, "setTouchDriving", "(Z)V");
+    if (method) {
+        env->CallVoidMethod(activity, method, jboolean(driving));
+        previous = int(driving);
+    }
+    if (env->ExceptionCheck())
+        env->ExceptionClear();
+    env->DeleteLocalRef(cls);
+    env->DeleteLocalRef(activity);
+#endif
+}
 void android::openControllerSettings() {
 #ifdef __ANDROID__
     auto *env = static_cast<JNIEnv *>(SDL_GetAndroidJNIEnv());
@@ -235,11 +262,22 @@ bool Platform::pumpMessages() {
             break;
         case SDL_EVENT_FINGER_DOWN:
         case SDL_EVENT_FINGER_MOTION:
+#ifndef __ANDROID__
             touch.update(e.tfinger.fingerID, e.tfinger.x, e.tfinger.y);
+#endif
             break;
         case SDL_EVENT_FINGER_UP:
         case SDL_EVENT_FINGER_CANCELED:
+#ifndef __ANDROID__
             touch.release(e.tfinger.fingerID);
+#endif
+            break;
+        case SDL_EVENT_USER:
+            if (e.user.code == touchEventTag) {
+                const auto action = reinterpret_cast<intptr_t>(e.user.data1);
+                if (action >= 0 && action < static_cast<intptr_t>(touchKeys.size()))
+                    events.push_back({touchKeys[action], e.user.data2 != nullptr && focused});
+            }
             break;
         case SDL_EVENT_KEY_DOWN:
         case SDL_EVENT_KEY_UP: {
@@ -450,3 +488,17 @@ void Platform::endControlsWindow() {}
 void InputDevices::startWheels(HWND) {}
 void InputDevices::stopWheels() {}
 } // namespace oj
+
+#ifdef __ANDROID__
+extern "C" JNIEXPORT void
+    JNICALL Java_org_openjuice_android_JuicedActivity_nativeTouchAction(JNIEnv *, jclass, jint action, jboolean down) {
+    if (action < 0 || action >= 12)
+        return;
+    SDL_Event event{};
+    event.type = SDL_EVENT_USER;
+    event.user.code = 0x4f4a5443;
+    event.user.data1 = reinterpret_cast<void *>(static_cast<intptr_t>(action));
+    event.user.data2 = reinterpret_cast<void *>(static_cast<intptr_t>(down != 0));
+    SDL_PushEvent(&event);
+}
+#endif

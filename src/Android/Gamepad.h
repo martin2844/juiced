@@ -1,11 +1,14 @@
 #pragma once
 #include <SDL3/SDL.h>
+#include "Core/Data/Controls.h"
 #include <algorithm>
 #include <filesystem>
 #include <fstream>
 #include <map>
 
 namespace oj::android {
+void touchDriving(bool driving);
+void touchBindings(const std::vector<ActionMap>& maps);
 void overlayInput(bool enabled);
 void openControllerSettings();
 struct ControllerConfig {

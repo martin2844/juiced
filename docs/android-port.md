@@ -7,7 +7,7 @@ included in the APK.
 
 ## Installation
 
-1. Install the signed ARM64 APK. Open OpenJuice and choose **Import juiced.zip**.
+1. Install the signed ARM64 APK. Open OpenJuice and choose **Choose juiced.zip**.
 2. Select your ZIP containing the PC game data. A single wrapping folder is
    supported. Keep at least 3 GiB free for the first import; replacing an existing
    installation needs room for both copies. The importer filters Windows binaries,
@@ -15,7 +15,7 @@ included in the APK.
 3. Optionally open **Mods** and import a package ZIP or choose a folder containing
    the mod folders. On the tested Retroid the folder is
    `Documents/OpenJuice/mods`. Android grants access through its system picker.
-4. Choose **Play** for the title/profile/career menus or **Instant race**.
+4. Choose **Start playing** for title/profile/career menus or **Quick race**.
 
 A collection has `controls/mod.ini`, `ferrari/mod.ini`, `wheels/mod.ini`, etc.
 Each package also contains its assets and/or `main.lua`. The six bundled packages
@@ -23,7 +23,7 @@ are controls, custom-logo, driver-photo, Ferrari, neon and wheels. Validation lo
 active scripts and game definitions; it cannot prove every visual asset is correct.
 
 The selected shared folder is an import source. After editing it, press **Refresh
-selected folder**. The application uses an internal validated copy while playing;
+linked folder**. The application uses an internal validated copy while playing;
 it does not modify the source folder. On/off choices are retained when refreshing.
 Invalid imports preserve the previously active installation. The game process holds
 an installation lock while it runs.
@@ -32,13 +32,19 @@ an installation lock while it runs.
 
 The left stick steers, RT accelerates, LT brakes, D-pad navigates, the south face
 button selects, the east button backs out, and Start pauses. **Controls** offers
-button remapping, stick dead-zone adjustment and a native diagnostic screen.
-Touch controls appear when no analog gamepad is connected. The Retroid's GAS/BRAKE
+**Set up gamepad**, with remapping, stick dead-zone adjustment and a live input monitor.
+**Set up touch controls** provides a draggable driving layout with per-button actions,
+size and opacity. Save applies the layout. Auto shows it when no analog gamepad
+is connected; Always also shows it on handhelds; Off hides it. Menus and pause
+automatically use a navigation pad with Select, Back, Tab, page keys and the paint
+purchase shortcut. Driving buttons resolve against the active keyboard map, including
+stock, Modern Controls and saved keyboard bindings. Multiple fingers can steer and
+accelerate together; cancellation, pause and backgrounding release held inputs. The Retroid's GAS/BRAKE
 Android axes are supported in the Java monitor; SDL normalizes the game input.
 
 Game data, controls and saves live in app-private storage. Stock and modded careers
-use separate save roots. **Settings → Export saves** writes a backup ZIP through
-the system picker; **Restore saves** validates and transactionally replaces saves.
+use separate save roots. **Settings → Export save backup** writes a backup ZIP through
+the system picker; **Restore save backup** validates and transactionally replaces saves.
 Updating an APK with the same signing key preserves this data. Uninstalling Android
 applications removes their private data, so export saves before uninstalling.
 
@@ -68,7 +74,8 @@ runs and is absent from release builds.
 
 ## Verification and limits
 
-See [the 2026-10-25 checkpoint](android-checkpoint-2026-10-25.md) for the actual
+See [the UI and touch checkpoint](android-ui-touch-checkpoint-2026-10-25.md) for
+version `1.02.5-android.2` and its screenshots. See [the 2026-10-25 checkpoint](android-checkpoint-2026-10-25.md) for the actual
 Retroid results. The older [Android validation](ANDROID_VALIDATION.md) describes
 prior work from October 21; its measurements are not results for this build.
 

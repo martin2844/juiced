@@ -42,55 +42,6 @@ public final class LauncherActivity extends Activity {
     return new File(getFilesDir(), "mods");
   }
 
-  private TextView text(String value, int size) {
-    TextView t = new TextView(this);
-    t.setText(value);
-    t.setTextSize(size);
-    t.setTextColor(0xffedf2f7);
-    t.setPadding(0, dp(6), 0, dp(10));
-    content.addView(t);
-    return t;
-  }
-
-  private void styleButton(Button b) {
-    android.graphics.drawable.StateListDrawable bg =
-        new android.graphics.drawable.StateListDrawable();
-    int[][] states = {
-      new int[] {android.R.attr.state_focused},
-      new int[] {android.R.attr.state_selected},
-      new int[] {-android.R.attr.state_enabled},
-      new int[] {}
-    };
-    int[] colors = {0xffffd18a, 0xfff5b855, 0xff22384d, 0xff2d4964};
-    for (int i = 0; i < states.length; i++) {
-      android.graphics.drawable.GradientDrawable d =
-          new android.graphics.drawable.GradientDrawable();
-      d.setColor(colors[i]);
-      d.setCornerRadius(dp(5));
-      if (i == 0) d.setStroke(dp(2), 0xffffffff);
-      bg.addState(states[i], d);
-    }
-    b.setBackground(bg);
-    b.setTextColor(
-        new android.content.res.ColorStateList(
-            states, new int[] {0xff14283e, 0xff14283e, 0xff91a0ae, 0xffedf2f7}));
-    b.setPadding(dp(12), dp(8), dp(12), dp(8));
-  }
-
-  private Button button(String label, Runnable run, boolean enabled) {
-    Button b = new Button(this);
-    b.setText(label);
-    b.setAllCaps(false);
-    styleButton(b);
-    b.setMinHeight(dp(48));
-    b.setEnabled(enabled);
-    b.setOnClickListener(v -> run.run());
-    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(-1, -2);
-    params.bottomMargin = dp(8);
-    content.addView(b, params);
-    return b;
-  }
-
   @Override
   public void onCreate(Bundle state) {
     super.onCreate(state);
@@ -104,6 +55,12 @@ public final class LauncherActivity extends Activity {
     } catch (IOException e) {
       ImportJob.status = e.getMessage();
     }
+    render();
+  }
+
+  @Override
+  public void onConfigurationChanged(android.content.res.Configuration c) {
+    super.onConfigurationChanged(c);
     render();
   }
 
@@ -149,124 +106,227 @@ public final class LauncherActivity extends Activity {
   private void render() {
     View focused = getCurrentFocus();
     String focusLabel = focused instanceof Button ? ((Button) focused).getText().toString() : "";
+    boolean wide = getResources().getConfiguration().screenWidthDp >= 600;
     LinearLayout root = new LinearLayout(this);
-    root.setOrientation(LinearLayout.VERTICAL);
-    root.setBackgroundColor(0xff14283e);
-    root.setPadding(dp(20), dp(18), dp(20), dp(12));
-    root.setOnApplyWindowInsetsListener(
-        (view, insets) -> {
-          view.setPadding(
-              dp(20) + insets.getSystemWindowInsetLeft(),
-              dp(18) + insets.getSystemWindowInsetTop(),
-              dp(20) + insets.getSystemWindowInsetRight(),
-              dp(12) + insets.getSystemWindowInsetBottom());
-          return insets;
-        });
-    TextView heading = new TextView(this);
-    heading.setText("OpenJuice");
-    heading.setTextSize(30);
-    heading.setTypeface(Typeface.create("sans-serif-condensed", Typeface.BOLD));
-    heading.setTextColor(0xfff5b855);
-    root.addView(heading);
+    root.setOrientation(wide ? 0 : 1);
+    root.setBackgroundColor(Ui.INK);
+    Ui.insets(root, 0);
+    LinearLayout nav = Ui.column(this);
+    nav.setPadding(dp(16), dp(18), dp(16), dp(12));
+    TextView brand = Ui.label(this, "OpenJuice", 24, Ui.WHITE);
+    brand.setTypeface(Typeface.create("sans-serif-condensed", Typeface.BOLD_ITALIC));
+    nav.addView(brand);
     LinearLayout tabs = new LinearLayout(this);
-    root.addView(tabs);
+    tabs.setOrientation(wide ? 1 : 0);
+    nav.addView(tabs);
     for (String name : new String[] {"Play", "Mods", "Controls", "Settings"}) {
-      Button tab = new Button(this);
-      tab.setText(name);
-      tab.setAllCaps(false);
-      tab.setSelected(page.equals(name));
-      styleButton(tab);
-      tab.setOnClickListener(
-          v -> {
-            page = name;
-            render();
-          });
-      LinearLayout.LayoutParams tp = new LinearLayout.LayoutParams(0, dp(48), 1);
-      tp.setMargins(0, dp(8), dp(6), 0);
-      tabs.addView(tab, tp);
+      Button tab =
+          Ui.button(
+              this,
+              name,
+              page.equals(name),
+              () -> {
+                page = name;
+                render();
+              });
+      if (!wide) {
+        tab.setPadding(0, 0, 0, 0);
+        tab.setTextSize(13);
+        tab.setSingleLine(true);
+      }
+      if (!page.equals(name)) {
+        tab.setBackgroundColor(Ui.INK);
+        tab.setTextColor(Ui.WHITE);
+        tab.setOnFocusChangeListener(
+            (v, f) -> {
+              tab.setBackground(Ui.background(this, f ? 0xff465054 : Ui.INK, 0));
+            });
+      }
+      LinearLayout.LayoutParams t =
+          new LinearLayout.LayoutParams(wide ? -1 : 0, dp(48), wide ? 0 : 1);
+      t.bottomMargin = dp(8);
+      tabs.addView(tab, t);
     }
+    root.addView(nav, new LinearLayout.LayoutParams(wide ? dp(146) : -1, wide ? -1 : -2));
     ScrollView scroll = new ScrollView(this);
-    root.addView(scroll, new LinearLayout.LayoutParams(-1, 0, 1));
-    content = new LinearLayout(this);
-    content.setOrientation(LinearLayout.VERTICAL);
-    content.setPadding(0, dp(12), 0, 0);
+    scroll.setFillViewport(true);
+    scroll.setBackgroundColor(Ui.PAPER);
+    root.addView(scroll, new LinearLayout.LayoutParams(wide ? 0 : -1, wide ? -1 : 0, 1));
+    content = Ui.column(this);
+    content.setPadding(dp(wide ? 28 : 20), dp(20), dp(wide ? 28 : 20), dp(24));
     scroll.addView(content);
     boolean ready = GameDataImport.valid(game()), idle = !ImportJob.busy;
-    status = text(ImportJob.status, 15);
-    status.setTextColor(0xfff5b855);
+    status = Ui.label(this, ImportJob.status, 14, Ui.ORANGE);
     status.setVisibility(ImportJob.status.isEmpty() ? View.GONE : View.VISIBLE);
+    content.addView(status);
     if (ImportJob.busy) {
-      ProgressBar bar = new ProgressBar(this);
-      content.addView(bar);
-      button("Cancel import", () -> ImportJob.cancel = true, true);
+      ProgressBar progress = new ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal);
+      progress.setIndeterminate(true);
+      Ui.add(content, progress);
+      action("Cancel import", false, () -> ImportJob.cancel = true, true);
     }
     if (page.equals("Play")) {
-      text(ready ? "Your garage is ready" : "Bring your copy of Juiced", 25);
-      text(
+      heading(
+          ready ? "Back in the driver's seat" : "Your game. Your garage.",
           ready
-              ? "Start a career or jump into a race. Manage installed packages in Mods."
-              : "Choose juiced.zip to install the game data. Your archive stays untouched. Mods and"
-                  + " saves are stored separately.",
-          16);
+              ? "Juiced is installed and ready to race."
+              : "Import your copy of Juiced to get started.");
       if (ready) {
-        button("Play", () -> launch("game"), idle);
-        button("Instant race", () -> launch("race"), idle);
-        button("Play without mods", () -> launch("stock"), idle);
+        LinearLayout homeContent = content;
+        LinearLayout hero = Ui.column(this);
+        hero.setPadding(dp(20), dp(16), dp(20), dp(16));
+        hero.setBackground(Ui.background(this, Ui.INK, 0));
+        TextView logo = Ui.label(this, "Juiced", 44, Ui.WHITE);
+        logo.setTypeface(Typeface.create("sans-serif-condensed", Typeface.BOLD_ITALIC));
+        hero.addView(logo);
+        hero.addView(
+            Ui.label(this, "Build a crew. Fill your garage. Own the streets.", 15, 0xffc8ceca));
+        Button play = Ui.button(this, "Start playing", true, () -> launch("game"));
+        play.setEnabled(idle);
+        Ui.add(hero, play);
+        if (wide) {
+          LinearLayout columns = new LinearLayout(this);
+          columns.setGravity(Gravity.TOP);
+          columns.addView(hero, new LinearLayout.LayoutParams(0, -2, 1.2f));
+          LinearLayout side = Ui.column(this);
+          side.setPadding(dp(20), 0, 0, 0);
+          columns.addView(side, new LinearLayout.LayoutParams(0, -2, 1));
+          Ui.add(content, columns);
+          content = side;
+        } else Ui.add(content, hero);
+        action("Quick race", false, () -> launch("race"), idle);
+        List<File> packs = ModStore.packages(mods());
+        int active = 0;
+        for (File p : packs) if (!new File(p, "disabled").exists()) active++;
+        note(active + " of " + packs.size() + " mods enabled. Manage your collection in Mods.");
+        action("Play original game", false, () -> launch("stock"), idle);
+        content = homeContent;
+      } else {
+        note(
+            "Choose juiced.zip from your files. The app checks the game before installing it; your"
+                + " ZIP stays untouched.");
+        action("Choose juiced.zip", true, () -> pick(1), idle);
+        Ui.divider(content);
+        note(
+            "You will need your own PC game files and at least 3 GB of free space. Mods can be"
+                + " added after installation.");
       }
-      button(ready ? "Replace game data…" : "Import juiced.zip…", () -> pick(1), idle);
-      text(
-          "Free app storage: "
-              + getFilesDir().getUsableSpace() / (1024 * 1024)
-              + " MiB. Import uses temporary space before replacing an existing installation.",
-          14);
     } else if (page.equals("Mods")) {
-      text("Your mod collection", 25);
-      text(
-          "Choose a mods folder or a package ZIP. Imports are checked against your game before"
-              + " activation. Updating a folder preserves your enabled/disabled choices.",
-          16);
-      button("Choose mods folder…", () -> pick(3), ready && idle);
-      String folder = getPreferences(0).getString("mods-tree", "");
-      if (!folder.isEmpty())
-        button("Refresh selected folder", () -> importMods(Uri.parse(folder), true), ready && idle);
-      button("Import mod ZIP…", () -> pick(2), ready && idle);
-      List<File> packages = ModStore.packages(mods());
-      if (packages.isEmpty()) text("No mods installed. The game works without them.", 16);
-      for (File pkg : packages) {
-        try {
-          Properties manifest = ModStore.manifest(pkg);
-          boolean enabled = !new File(pkg, "disabled").exists();
-          button(
-              (enabled ? "On  ·  " : "Off  ·  ") + manifest.getProperty("name", pkg.getName()),
-              () -> toggle(pkg),
-              idle);
-        } catch (IOException e) {
-          text(pkg.getName() + ": " + e.getMessage(), 16);
-        }
+      heading("Make it yours", "Install packages, then choose what you want in your game.");
+      LinearLayout modBody = content;
+      if (wide) {
+        LinearLayout toolbar = new LinearLayout(this);
+        toolbar.setOrientation(0);
+        Ui.add(content, toolbar);
+        content = toolbar;
       }
-      button("Check active mods", () -> validate(), ready && idle);
+      action("Add mods from ZIP", true, () -> pick(2), ready && idle);
+      action("Choose a mods folder", false, () -> pick(3), ready && idle);
+      if (!getPreferences(0).getString("mods-tree", "").isEmpty())
+        action(
+            "Refresh linked folder",
+            false,
+            () -> importMods(Uri.parse(getPreferences(0).getString("mods-tree", "")), true),
+            ready && idle);
+      content = modBody;
+      if (!ready) note("Install Juiced from Play before adding mods.");
+      Ui.divider(content);
+      List<File> packs = ModStore.packages(mods());
+      if (packs.isEmpty())
+        note("No packages yet. Add a ZIP or select a folder containing your mods.");
+      for (File pkg : packs)
+        try {
+          Properties m = ModStore.manifest(pkg);
+          boolean enabled = !new File(pkg, "disabled").exists();
+          LinearLayout row = new LinearLayout(this);
+          row.setGravity(Gravity.CENTER_VERTICAL);
+          row.setPadding(0, dp(8), 0, dp(8));
+          LinearLayout copy = Ui.column(this);
+          copy.addView(Ui.label(this, m.getProperty("name", pkg.getName()), 18, Ui.INK));
+          copy.addView(
+              Ui.label(
+                  this, m.getProperty("description", modDescription(pkg.getName())), 13, Ui.MUTED));
+          row.addView(copy, new LinearLayout.LayoutParams(0, -2, 1));
+          Button toggle =
+              Ui.button(this, enabled ? "Enabled" : "Disabled", enabled, () -> toggle(pkg));
+          toggle.setContentDescription(
+              (enabled ? "Disable " : "Enable ") + m.getProperty("name", pkg.getName()));
+          toggle.setEnabled(idle);
+          row.addView(toggle, new LinearLayout.LayoutParams(dp(108), dp(48)));
+          Ui.add(content, row);
+        } catch (IOException e) {
+          note(e.getMessage());
+        }
+      if (!packs.isEmpty()) action("Check active mods", false, this::validate, ready && idle);
     } else if (page.equals("Controls")) {
-      text("Play your way", 25);
-      text(
-          "Retroid Pocket 5 and standard Android gamepads: left stick steers, RT accelerates, LT"
-              + " brakes. D-pad navigates menus. South button selects; east goes back. Start"
-              + " pauses. Touch controls appear when no analog controller is connected.",
-          16);
-      button("Test buttons, sticks and graphics", () -> launch("diagnostics"), ready && idle);
-      button(
-          "Controller mapping and dead zone",
+      heading(
+          "Choose how you drive",
+          "Use the screen, a handheld's built-in controls or a connected gamepad.");
+      LinearLayout controlBody = content;
+      LinearLayout right = null;
+      if (wide) {
+        LinearLayout columns = new LinearLayout(this);
+        LinearLayout left = Ui.column(this);
+        right = Ui.column(this);
+        right.setPadding(dp(24), 0, 0, 0);
+        columns.addView(left, new LinearLayout.LayoutParams(0, -2, 1));
+        columns.addView(right, new LinearLayout.LayoutParams(0, -2, 1));
+        Ui.add(content, columns);
+        content = left;
+      }
+      section(
+          "Touch controls",
+          "A menu pad and driving controls, with layouts you can move and remap.");
+      action(
+          "Set up touch controls",
+          true,
+          () -> startActivity(new Intent(this, TouchActivity.class)),
+          idle);
+      if (right != null) content = right;
+      else Ui.divider(content);
+      section("Gamepad", "Steer with the left stick. RT accelerates, LT brakes and Start pauses.");
+      action(
+          "Set up gamepad",
+          false,
           () -> startActivity(new Intent(this, ControllerActivity.class)),
           idle);
+      note("Live button and stick testing is included in gamepad setup.");
+      content = controlBody;
     } else {
-      text("Installation & saves", 25);
-      text(
-          "Native ARM64 · OpenJuice 1.02.5\n"
-              + "720p internal rendering cap\n"
-              + "Original and modded careers have separate save folders.",
-          16);
-      button("Check installed game", () -> validate(), ready && idle);
-      button(
-          "Export saves…",
+      heading("Keep your garage safe", "Manage game files, save backups and app information.");
+      LinearLayout settingsBody = content;
+      LinearLayout saves = null;
+      if (wide) {
+        LinearLayout columns = new LinearLayout(this);
+        LinearLayout install = Ui.column(this);
+        saves = Ui.column(this);
+        saves.setPadding(dp(24), 0, 0, 0);
+        columns.addView(install, new LinearLayout.LayoutParams(0, -2, 1));
+        columns.addView(saves, new LinearLayout.LayoutParams(0, -2, 1));
+        Ui.add(content, columns);
+        content = install;
+      }
+      section(
+          "Game installation",
+          ready
+              ? "Juiced is installed. Replacing the game data keeps your saves."
+              : "No game installed yet.");
+      note(
+          String.format(
+              java.util.Locale.ROOT,
+              "%.1f GB available",
+              getFilesDir().getUsableSpace() / 1073741824.0));
+      action(ready ? "Replace game ZIP" : "Install game ZIP", false, () -> pick(1), idle);
+      action("Check game files", false, this::validate, ready && idle);
+      if (saves != null) content = saves;
+      else Ui.divider(content);
+      section(
+          "Saved games",
+          "Original and modded profiles are kept separately. Export a backup before uninstalling"
+              + " the app.");
+      action(
+          "Export save backup",
+          true,
           () -> {
             Intent i = new Intent(Intent.ACTION_CREATE_DOCUMENT);
             i.setType("application/zip");
@@ -274,21 +334,71 @@ public final class LauncherActivity extends Activity {
             startActivityForResult(i, 4);
           },
           idle);
-      button(
-          "Restore saves…",
+      action(
+          "Restore save backup",
+          false,
           () ->
               new AlertDialog.Builder(this)
+                  .setTitle("Restore saved games?")
                   .setMessage(
-                      "Replace local saves with a backup? A failed restore keeps your current"
-                          + " saves.")
+                      "This replaces local saves with the backup you choose. Export your current"
+                          + " saves first if you want to keep them.")
                   .setNegativeButton("Cancel", null)
                   .setPositiveButton("Choose backup", (d, w) -> pick(5))
                   .show(),
           idle);
-      button("Licenses", () -> licenses(), idle);
+      content = settingsBody;
+      Ui.divider(content);
+      section("About OpenJuice", "Version 1.02.5 · Native Android engine");
+      action("Open-source licenses", false, this::licenses, true);
     }
     setContentView(root);
     if (!focusLabel.isEmpty()) restoreFocus(root, focusLabel);
+  }
+
+  private void heading(String title, String detail) {
+    content.addView(Ui.title(this, title));
+    note(detail);
+  }
+
+  private void section(String title, String detail) {
+    TextView t = Ui.label(this, title, 20, Ui.INK);
+    t.setTypeface(null, Typeface.BOLD);
+    content.addView(t);
+    note(detail);
+  }
+
+  private void note(String value) {
+    content.addView(Ui.label(this, value, 15, Ui.MUTED));
+  }
+
+  private void action(String label, boolean primary, Runnable run, boolean enabled) {
+    Button b = Ui.button(this, label, primary, run);
+    b.setEnabled(enabled);
+    if (content.getOrientation() == 0) {
+      LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(0, -2, 1);
+      p.rightMargin = dp(8);
+      content.addView(b, p);
+    } else Ui.add(content, b);
+  }
+
+  private String modDescription(String id) {
+    switch (id) {
+      case "ferrari":
+        return "Add the Ferrari 458 to your car collection.";
+      case "wheels":
+        return "More wheel choices for your builds.";
+      case "neon":
+        return "Customize underglow colours.";
+      case "controls":
+        return "Modern keyboard bindings.";
+      case "driver-photo":
+        return "Use your own driver portrait.";
+      case "custom-logo":
+        return "Import a custom crew logo.";
+      default:
+        return "Optional game package.";
+    }
   }
 
   private void launch(String mode) {

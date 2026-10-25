@@ -39,18 +39,35 @@ public final class ControllerActivity extends Activity {
   public void onCreate(Bundle state) {
     super.onCreate(state);
     getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-    LinearLayout layout = new LinearLayout(this);
-    layout.setOrientation(1);
-    layout.setPadding(24, 24, 24, 24);
-    TextView title = new TextView(this);
-    title.setText("Controller setup");
-    title.setTextSize(25);
-    layout.addView(title);
-    monitor = new TextView(this);
-    monitor.setText(
-        "Press a button or move a stick. Retroid and Bluetooth gamepads use the same native input"
-            + " path.");
-    layout.addView(monitor);
+    LinearLayout root = Ui.editor(this, "Gamepad setup", null);
+    boolean wide = getResources().getConfiguration().screenWidthDp >= 600;
+    LinearLayout pane = new LinearLayout(this);
+    pane.setOrientation(wide ? 0 : 1);
+    root.addView(pane, new LinearLayout.LayoutParams(-1, 0, 1));
+    LinearLayout testing = Ui.column(this);
+    testing.setPadding(0, Ui.dp(this, 16), Ui.dp(this, wide ? 24 : 0), 0);
+    ScrollView scroll = new ScrollView(this);
+    if (wide) {
+      pane.addView(testing, new LinearLayout.LayoutParams(0, -1, 1));
+      pane.addView(scroll, new LinearLayout.LayoutParams(0, -1, 1.5f));
+    } else pane.addView(scroll, new LinearLayout.LayoutParams(-1, -1));
+    LinearLayout layout = Ui.column(this);
+    layout.setPadding(0, Ui.dp(this, 16), 0, Ui.dp(this, 16));
+    scroll.addView(layout);
+    if (!wide) layout.addView(testing);
+    monitor = Ui.label(this, "Press a button or move a stick to test your gamepad.", 15, Ui.WHITE);
+    monitor.setPadding(Ui.dp(this, 16), Ui.dp(this, 16), Ui.dp(this, 16), Ui.dp(this, 16));
+    monitor.setMinHeight(Ui.dp(this, 100));
+    monitor.setBackground(Ui.background(this, Ui.INK, 0));
+    Ui.add(testing, monitor);
+    Ui.add(
+        testing,
+        Ui.label(
+            this,
+            "Left stick steers. RT accelerates; LT brakes. Assign the remaining buttons here.",
+            15,
+            Ui.MUTED));
+    Ui.add(layout, Ui.label(this, "Button assignments", 22, Ui.INK));
     Properties config = new Properties();
     try (FileReader r = new FileReader(new File(getFilesDir(), "controller.ini"))) {
       config.load(r);
@@ -70,23 +87,25 @@ public final class ControllerActivity extends Activity {
       "Right shoulder"
     };
     for (int i = 0; i < keys.length; i++) {
-      TextView t = new TextView(this);
-      t.setText(labels[i]);
-      layout.addView(t);
-      Spinner spinner = new Spinner(this);
-      spinner.setAdapter(
-          new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, buttons));
+      LinearLayout row = new LinearLayout(this);
+      row.setGravity(Gravity.CENTER_VERTICAL);
+      TextView t = Ui.label(this, labels[i], 16, Ui.INK);
+      row.addView(t, new LinearLayout.LayoutParams(0, -2, 1));
+      Spinner spinner = Ui.spinner(this, buttons);
       int value = defaults[i];
       try {
         value = Integer.parseInt(config.getProperty(keys[i], "" + value));
       } catch (NumberFormatException ignored) {
       }
+      if (state != null) value = state.getInt(keys[i], value);
       spinner.setSelection(Math.max(0, Math.min(10, value)));
-      layout.addView(spinner);
+      row.addView(spinner, new LinearLayout.LayoutParams(0, Ui.dp(this, 52), 1));
+      Ui.add(layout, row);
       mappings.add(spinner);
     }
-    TextView deadLabel = new TextView(this);
-    layout.addView(deadLabel);
+    Ui.divider(testing);
+    TextView deadLabel = Ui.label(this, "", 17, Ui.INK);
+    testing.addView(deadLabel);
     deadzone = new SeekBar(this);
     deadzone.setMax(30);
     int dz = 12;
@@ -94,7 +113,11 @@ public final class ControllerActivity extends Activity {
       dz = Integer.parseInt(config.getProperty("deadzone", "12"));
     } catch (NumberFormatException ignored) {
     }
+    if (state != null) dz = state.getInt("deadzone", dz);
+    dz = Math.max(0, Math.min(30, dz));
     deadzone.setProgress(dz);
+    deadzone.setProgressTintList(android.content.res.ColorStateList.valueOf(Ui.ORANGE));
+    deadzone.setThumbTintList(android.content.res.ColorStateList.valueOf(Ui.ORANGE));
     deadLabel.setText("Stick dead zone: " + dz + "%");
     deadzone.setOnSeekBarChangeListener(
         new SeekBar.OnSeekBarChangeListener() {
@@ -106,10 +129,9 @@ public final class ControllerActivity extends Activity {
 
           public void onStopTrackingTouch(SeekBar s) {}
         });
-    layout.addView(deadzone);
-    Button save = new Button(this);
-    save.setText("Save controls");
-    layout.addView(save);
+    testing.addView(deadzone);
+    Button save = Ui.button(this, "Save gamepad settings", true, () -> {});
+    Ui.add(root, save);
     save.setOnClickListener(
         v -> {
           try {
@@ -128,9 +150,14 @@ public final class ControllerActivity extends Activity {
             monitor.setText(e.getMessage());
           }
         });
-    ScrollView scroll = new ScrollView(this);
-    scroll.addView(layout);
-    setContentView(scroll);
+  }
+
+  @Override
+  protected void onSaveInstanceState(Bundle state) {
+    super.onSaveInstanceState(state);
+    for (int i = 0; i < keys.length; i++)
+      state.putInt(keys[i], mappings.get(i).getSelectedItemPosition());
+    state.putInt("deadzone", deadzone.getProgress());
   }
 
   @Override

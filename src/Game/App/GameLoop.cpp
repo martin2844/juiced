@@ -222,6 +222,9 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
                 oj::mac::applyBindings(controlMaps, oj::mac::loadBindings(oj::mac::bindingsPath()));
 #endif
             input.load(controlMaps);
+#ifdef OJ_ANDROID
+            oj::android::touchBindings(controlMaps);
+#endif
         }
     }
     // The game object seeds rand() again from the platform timer's low 32 bits (0x0040BC25).
@@ -464,6 +467,7 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
         }
 #ifdef OJ_ANDROID
         oj::android::overlayInput(bool(creativeMenu));
+        oj::android::touchDriving(phase == Phase::Race && !trackView.paused && !creativeMenu);
 #endif
         if (creativeMenu) {
             oj::audio::setActive(false);
@@ -500,6 +504,9 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
                 if (result == oj::mac::ControlsOverlay::Result::Saved) {
                     oj::mac::applyBindings(controlMaps, controlsEditor->bindings());
                     input.load(controlMaps);
+#ifdef OJ_ANDROID
+                    oj::android::touchBindings(controlMaps);
+#endif
                 }
                 std::vector<oj::input::KeyEvent> released;
                 for (int code = 1; code < 256; ++code) released.push_back({static_cast<uint8_t>(code), false});

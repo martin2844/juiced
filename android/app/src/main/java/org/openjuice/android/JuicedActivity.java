@@ -1,7 +1,5 @@
 package org.openjuice.android;
 
-import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.os.Bundle;
 import android.view.InputDevice;
 import android.view.View;
@@ -9,6 +7,8 @@ import android.view.ViewGroup;
 import org.libsdl.app.SDLActivity;
 
 public final class JuicedActivity extends SDLActivity {
+  private static native void nativeTouchAction(int action, boolean down);
+
   private java.io.RandomAccessFile installLockFile;
   private java.nio.channels.FileLock installLock;
 
@@ -16,7 +16,8 @@ public final class JuicedActivity extends SDLActivity {
     runOnUiThread(() -> startActivity(new android.content.Intent(this, ControllerActivity.class)));
   }
 
-  private View touchLabels;
+  private TouchView touchLabels;
+  private TouchConfig touchConfig;
   private android.hardware.input.InputManager inputManager;
   private final android.hardware.input.InputManager.InputDeviceListener devices =
       new android.hardware.input.InputManager.InputDeviceListener() {
@@ -42,7 +43,11 @@ public final class JuicedActivity extends SDLActivity {
           && d.getMotionRange(android.view.MotionEvent.AXIS_Y, InputDevice.SOURCE_JOYSTICK) != null)
         controller = true;
     }
-    if (touchLabels != null) touchLabels.setVisibility(controller ? View.GONE : View.VISIBLE);
+    if (touchLabels != null) {
+      touchLabels.clear();
+      boolean show = touchConfig.visibility == 1 || (touchConfig.visibility == 0 && !controller);
+      touchLabels.setVisibility(show ? View.VISIBLE : View.GONE);
+    }
   }
 
   private volatile java.util.concurrent.CountDownLatch imageWait;
@@ -137,76 +142,44 @@ public final class JuicedActivity extends SDLActivity {
     }
     super.onCreate(state);
     getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-    boolean controller = false;
-    for (int id : InputDevice.getDeviceIds()) {
-      InputDevice device = InputDevice.getDevice(id);
-      if (device != null
-          && (device.supportsSource(InputDevice.SOURCE_GAMEPAD)
-              || device.supportsSource(InputDevice.SOURCE_JOYSTICK))) controller = true;
-    }
     if (mLayout != null && !"diagnostics".equals(getIntent().getStringExtra("mode"))) {
-      View labels =
-          new View(this) {
-            final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-
-            @Override
-            protected void onDraw(Canvas canvas) {
-              float width = getWidth(), height = getHeight();
-              float[][] boxes = {
-                {0, .65f, .18f, 1},
-                {.18f, .65f, .36f, 1},
-                {.64f, .65f, .82f, 1},
-                {.82f, .65f, 1, 1},
-                {0, 0, .18f, .2f},
-                {.82f, 0, 1, .2f},
-                {.82f, .22f, 1, .40f},
-                {.64f, .22f, .82f, .40f},
-                {.18f, .22f, .36f, .40f},
-                {0, .22f, .18f, .40f},
-                {0, .42f, .18f, .60f},
-                {.82f, .42f, 1, .60f}
-              };
-              String[] names = {
-                "LEFT",
-                "RIGHT",
-                "BRAKE / DOWN",
-                "GAS / UP",
-                "BACK / PAUSE",
-                "SELECT",
-                "NOS",
-                "HANDBRAKE",
-                "GEAR +",
-                "GEAR -",
-                "CAMERA",
-                "REVERSE"
-              };
-              paint.setTextSize(12 * getResources().getDisplayMetrics().scaledDensity);
-              paint.setTextAlign(Paint.Align.CENTER);
-              for (int i = 0; i < boxes.length; i++) {
-                float[] b = boxes[i];
-                paint.setColor(0x45FFFFFF);
-                paint.setStyle(Paint.Style.STROKE);
-                paint.setStrokeWidth(2);
-                canvas.drawRoundRect(
-                    b[0] * width + 8,
-                    b[1] * height + 8,
-                    b[2] * width - 8,
-                    b[3] * height - 8,
-                    16,
-                    16,
-                    paint);
-                paint.setColor(0xAAFFFFFF);
-                paint.setStyle(Paint.Style.FILL);
-                canvas.drawText(
-                    names[i], (b[0] + b[2]) * width / 2, (b[1] + b[3]) * height / 2, paint);
-              }
-            }
-          };
-      touchLabels = labels;
-      labels.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
-      mLayout.addView(labels, new ViewGroup.LayoutParams(-1, -1));
+      touchConfig = TouchConfig.load(getFilesDir());
+      touchLabels =
+          new TouchView(
+              this,
+              touchConfig,
+              false,
+              (key, down) -> {
+                if (key >= 1000) nativeTouchAction(key - 1000, down);
+                else if (down) onNativeKeyDown(key);
+                else onNativeKeyUp(key);
+              });
+      mLayout.addView(touchLabels, new ViewGroup.LayoutParams(-1, -1));
       inputManager = (android.hardware.input.InputManager) getSystemService(INPUT_SERVICE);
       inputManager.registerInputDeviceListener(devices, new android.os.Handler(getMainLooper()));
+      updateLabels();
+    }
+  }
+
+  public void setTouchDriving(boolean driving) {
+    runOnUiThread(
+        () -> {
+          if (touchLabels != null) touchLabels.driving(driving);
+        });
+  }
+
+  @Override
+  protected void onPause() {
+    if (touchLabels != null) touchLabels.clear();
+    super.onPause();
+  }
+
+  @Override
+  protected void onResume() {
+    super.onResume();
+    if (touchLabels != null) {
+      touchConfig = TouchConfig.load(getFilesDir());
+      touchLabels.config = touchConfig;
       updateLabels();
     }
   }

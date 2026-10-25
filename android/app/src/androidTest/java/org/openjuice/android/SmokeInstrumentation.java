@@ -9,6 +9,8 @@ import java.nio.*;
 import java.nio.file.*;
 
 public final class SmokeInstrumentation extends Instrumentation {
+  private String mode;
+
   private void check(boolean value, String message) {
     if (!value) throw new AssertionError(message);
     Bundle b = new Bundle();
@@ -19,6 +21,7 @@ public final class SmokeInstrumentation extends Instrumentation {
   @Override
   public void onCreate(Bundle args) {
     super.onCreate(args);
+    mode = args == null ? null : args.getString("mode");
     start();
   }
 
@@ -26,6 +29,16 @@ public final class SmokeInstrumentation extends Instrumentation {
   public void onStart() {
     Bundle result = new Bundle();
     try {
+      if ("touch".equals(mode) || "touch-race".equals(mode)) {
+        TouchInstrumentedTest.views(this);
+        if ("touch-race".equals(mode)) TouchInstrumentedTest.race(this);
+        result.putString(
+            "stream",
+            "PASS: touch view multitouch, partial release, cancellation, menu transition and menu"
+                + " key isolation\n");
+        finish(Activity.RESULT_OK, result);
+        return;
+      }
       File files = getTargetContext().getFilesDir(),
           game = new File(files, "game"),
           mods = new File(files, "mods");
