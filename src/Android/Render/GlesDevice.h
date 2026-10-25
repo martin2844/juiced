@@ -1,5 +1,6 @@
 #pragma once
 #include "Render/RenderDevice.h"
+#include <condition_variable>
 #include <deque>
 #include <functional>
 #include <future>
@@ -93,6 +94,7 @@ class GlesDevice final : public IRenderDevice {
     // All OpenGL work stays on the context owner; callers wait with their input data alive.
     const std::thread::id owner = std::this_thread::get_id();
     mutable std::mutex workMutex;
+    mutable std::condition_variable workReady;
     mutable std::deque<std::function<void()>> work;
     template <class F> auto onOwner(F &&fn) const -> decltype(fn()) {
         auto task = std::make_shared<std::packaged_task<decltype(fn())()>>(std::forward<F>(fn));
@@ -101,6 +103,7 @@ class GlesDevice final : public IRenderDevice {
             std::lock_guard lock(workMutex);
             work.emplace_back([task] { (*task)(); });
         }
+        workReady.notify_one();
         return result.get();
     }
     struct Impl;

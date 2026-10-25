@@ -87,3 +87,7 @@ Intro video playback, legacy online/voice services and force-feedback/rumble are
 not validated or supported by this Android release. Rendering retains approximations
 of legacy graphics effects. Compatibility with arbitrary third-party mods and all
 Android GPU drivers is not guaranteed by the catalogue validator.
+
+## Loading fixes (android.4)
+
+Version `1.02.5-android.4` (code 5) removes per-frame serialization of car-preview uploads and resolves Windows-style character movie paths on Android. See the [loading checkpoint](android-loading-checkpoint-2026-10-25.md) for evidence and validation limits.

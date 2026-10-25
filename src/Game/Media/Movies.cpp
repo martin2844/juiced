@@ -3,6 +3,7 @@
 #include "Audio/SoundSystem.h"
 
 #include "Core/Base/Log.h"
+#include "Core/Base/CasePath.h"
 #include "Core/Base/Random.h"
 #include "Game/Media/BinkLibrary.h"
 #include "Render/Renderer3d.h"
@@ -513,7 +514,8 @@ bool Player::open() {
     m_bink = 0;
     const std::filesystem::path folder = std::filesystem::current_path() / "movies";
     std::string file = m_name + ".bik";
-    bool found = std::filesystem::exists(folder / file);
+    auto resolved = gameNativePath(folder / file);
+    bool found = std::filesystem::exists(resolved);
     if (!found && !m_name.empty() && m_name.back() >= '0' && m_name.back() <= '9') {
         const int first = s.m_game.random != nullptr ? (s.m_game.random->next() & 1) : 0;
         const int order[2] = {first, 1 - first};
@@ -521,7 +523,8 @@ bool Player::open() {
             std::string tried = m_name;
             tried.back() = static_cast<char>('1' + order[k]);
             file = tried + ".bik";
-            found = std::filesystem::exists(folder / file);
+            resolved = gameNativePath(folder / file);
+            found = std::filesystem::exists(resolved);
         }
     }
     if (!found) {
@@ -539,17 +542,17 @@ bool Player::open() {
         uint32_t track = static_cast<uint32_t>(s.m_game.languageTrack);
         m_track = track;
         lib.setSoundTrack(1, &track);
-        m_bink = lib.open(folder / file, kOpenFlags);
+        m_bink = lib.open(resolved, kOpenFlags);
         if (m_bink != 0 && lib.field(m_bink, kNumTracks) == 1) {
             lib.close(m_bink);
             const uint32_t zero = 0;
             lib.setSoundTrack(1, &zero);
-            m_bink = lib.open(folder / file, kOpenFlags);
+            m_bink = lib.open(resolved, kOpenFlags);
             m_track = 0;
         }
     } else {
         lib.setSoundTrack(0, nullptr);
-        m_bink = lib.open(folder / file, kOpenFlags);
+        m_bink = lib.open(resolved, kOpenFlags);
     }
     if (m_bink == 0) {
         // Stock problem: a file that Bink does not open leaves +0x30 0, and the open goes on to read the movie's size

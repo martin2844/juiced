@@ -8,6 +8,7 @@
 #include <array>
 #include <bit>
 #include <cmath>
+#include <chrono>
 #include <cstring>
 #include <map>
 #include <stdexcept>
@@ -1007,13 +1008,23 @@ namespace oj::render {
 void GlesDevice::letLoadingRun() {
     if (std::this_thread::get_id() != owner)
         return;
-    std::deque<std::function<void()>> pending;
-    {
-        std::lock_guard lock(workMutex);
-        pending.swap(work);
-    }
-    for (auto &task : pending)
+    // A loader issues synchronous uploads in sequence. Taking a single snapshot
+    // services only one upload per frame, even while both CPU and GPU are idle.
+    // Let the producer enqueue its next request within a bounded loading slice.
+    // Empty queues return immediately; all GL calls still run on the context owner.
+    std::unique_lock lock(workMutex);
+    if (work.empty())
+        return;
+    const auto deadline = std::chrono::steady_clock::now() + std::chrono::milliseconds(4);
+    do {
+        auto task = std::move(work.front());
+        work.pop_front();
+        lock.unlock();
         task();
+        lock.lock();
+        if (std::chrono::steady_clock::now() >= deadline)
+            break;
+    } while (workReady.wait_until(lock, deadline, [this] { return !work.empty(); }));
 }
 void GlesDevice::waitForService() {
     if (std::this_thread::get_id() != owner)
