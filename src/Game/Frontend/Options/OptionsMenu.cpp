@@ -1,4 +1,4 @@
-#if defined(OJ_MACOS) || defined(OJ_LINUX)
+#if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
 #include "Mods/Creative.h"
 #include "Mods/Packages.h"
 #include "Mods/Runtime.h"
@@ -28,7 +28,7 @@ void OptionsMenu::enter(OptionsHost &host, ui::Screen &s) {
     if (s.find("Menu") >= 0) {
         s.restoreMenu("Menu");
         s.restoreMenu("BackMenu");
-#if defined(OJ_MACOS) || defined(OJ_LINUX)
+#if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
         if (mods::packages::available()) {
             s.insertCommandItem("Menu", int(s.menuSize("Menu")) - 1, L"MODS", 0, "mods");
             s.addMenuItem("BackMenu", L"", 0, "", "ui_pan5_ora");
@@ -49,14 +49,14 @@ void OptionsMenu::enter(OptionsHost &host, ui::Screen &s) {
 #endif
         for (size_t i = 0; i < s.menuSize("Menu"); ++i) {
             if (_stricmp(s.menuItemCommand("Menu", i).c_str(), "control") == 0) {
-#if defined(OJ_MACOS) || defined(OJ_LINUX)
+#if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
                 s.setMenuItemText("Menu", i, L"CONTROLS");
 #else
                 s.setMenuItemText("Menu", i, texts.at(kTextControls));
 #endif
             }
         }
-#if !defined(OJ_MACOS) && !defined(OJ_LINUX)
+#if !defined(OJ_MACOS) && !defined(OJ_LINUX) && !defined(OJ_ANDROID)
         if (host.racePause()) {
             // From a race's pause: a highlighted control moves the highlight to the first item; control taken out
             // with BackMenu's first item; a highlight past the items back to the first.
@@ -126,7 +126,7 @@ void OptionsMenu::update(OptionsHost &host, ui::Screen &s, uint32_t event) {
                 continue;
             const std::string item = s.menuItemCommand("Menu", s.selectedMenuItem("Menu"));
             const auto named = [&](const char *name) { return _stricmp(item.c_str(), name) == 0; };
-#if defined(OJ_MACOS) || defined(OJ_LINUX)
+#if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
             if (named("mods")) {
                 mods::requestManager();
                 continue;

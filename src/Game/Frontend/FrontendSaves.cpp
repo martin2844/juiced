@@ -1,4 +1,4 @@
-#if defined(OJ_MACOS) || defined(OJ_LINUX)
+#if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
 #include "Mods/Creative.h"
 #endif
 // The front end's side of the save device (docs/spec/03-saves.md, "The save device"): what a driver's and the
@@ -43,7 +43,7 @@ void Frontend::setUpDriverName(const std::wstring& text) {
     k.checkName = true;
     k.accept = [this](const std::wstring& name) {
         m_profile = save::Profile::create(name, m_language.index, gameRandom());
-#if defined(OJ_MACOS) || defined(OJ_LINUX)
+#if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
         mods::profileName(toUtf8(name));mods::requestPortrait();
 #endif
         log::info("frontend: new driver {}", toUtf8(name));
@@ -112,7 +112,7 @@ bool Frontend::applyProfile(const save::SaveSlot& slot, const save::SaveSource& 
     for (const auto& [name, data] : archive.entries) names += " " + name;
     log::info("frontend: driver {} loaded:{}", toUtf8(slot.name), names);
     if (m_data) m_data->profileName = slot.name;
-#if defined(OJ_MACOS) || defined(OJ_LINUX)
+#if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
     mods::profileName(toUtf8(slot.name));mods::requestPortrait();
 #endif
     driverSettings().reset();

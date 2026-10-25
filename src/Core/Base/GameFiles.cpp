@@ -98,11 +98,16 @@ Located locate(const std::filesystem::path& root, const std::filesystem::path& r
 }
 
 std::optional<std::vector<std::byte>> readLoose(const std::filesystem::path& file) {
-    std::ifstream in(gameNativePath(file), std::ios::binary | std::ios::ate);
+    if (file.empty()) return std::nullopt;
+    const auto native = gameNativePath(file);
+    std::error_code ec;
+    if (!std::filesystem::is_regular_file(native, ec)) return std::nullopt;
+    std::ifstream in(native, std::ios::binary | std::ios::ate);
     if (!in) {
         return std::nullopt;
     }
     const std::streamsize size = in.tellg();
+    if (size < 0) return std::nullopt;
     std::vector<std::byte> data(static_cast<size_t>(size));
     in.seekg(0);
     if (size > 0 && !in.read(reinterpret_cast<char*>(data.data()), size)) {

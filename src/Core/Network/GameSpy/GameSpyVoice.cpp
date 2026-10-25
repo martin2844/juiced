@@ -13,9 +13,15 @@ extern "C" {
 #include "speex_bits.h"
 }
 
+#ifdef _MSC_VER
 #pragma comment(lib, "dsound.lib")
+#endif
+#ifdef _MSC_VER
 #pragma comment(lib, "dxguid.lib")
+#endif
+#ifdef _MSC_VER
 #pragma comment(lib, "ole32.lib")
+#endif
 
 namespace oj::net::gv {
 

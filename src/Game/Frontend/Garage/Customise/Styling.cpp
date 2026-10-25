@@ -1,4 +1,4 @@
-#if defined(OJ_MACOS) || defined(OJ_LINUX)
+#if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
 #include "Mods/Creative.h"
 #endif
 // The styling windows: stylingmenu, the body parts (modmenu), the wheels, the decals and the
@@ -232,7 +232,7 @@ void ModMenu::update(GarageHost& host, ui::Screen& s, uint32_t event) {
         }
         hasItem = true;
         value = s.menuItemValue("Menu", item);
-#if defined(OJ_MACOS) || defined(OJ_LINUX)
+#if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
         if(event==input::kSelect && mods::feature("logo") && int(value)==mods::logoIndex(car->modelName()) && !mods::hasImage(false)) {mods::requestMenu();return;}
 #endif
         if (static_cast<int32_t>(item) != m_shown) {
@@ -425,7 +425,7 @@ void DecalMenu::enter(GarageHost& host, ui::Screen& s) {
             } else {
                 s.addMenuItem("Menu", L"", static_cast<float>(i), picture, picture);
             }
-#if defined(OJ_MACOS) || defined(OJ_LINUX)
+#if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
             if(mods::feature("logo") && int(i)==mods::logoIndex(car->modelName())) {
                 s.setMenuItemText("Menu",s.menuSize("Menu")-1,L"CUSTOM LOGO");
             }

@@ -1,4 +1,4 @@
-#if defined(OJ_MACOS) || defined(OJ_LINUX)
+#if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
 #include "Mods/Creative.h"
 #endif
 #include "Game/Cars/CarModel.h"
@@ -438,7 +438,7 @@ void CarModel::keepWheelColours(const Car& car) {
 
 void CarModel::colourDecal(const Car& car) {
     if (m_slots[kDecal] == nullptr || car.def == nullptr) return;
-#if defined(OJ_MACOS) || defined(OJ_LINUX)
+#if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
     if(mods::enabled() && m_slots[kDecal]->mesh) {
         const bool custom=mods::customLogo(car) && mods::hasImage(false);
         const auto* imported=custom?m_engine.texture(mods::imageName(false),"cartextures"):nullptr;

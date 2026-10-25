@@ -5,7 +5,11 @@
 #include "Core/Base/Text.h"
 #include <SDL3/SDL.h>
 #include <chrono>
+#ifdef OJ_ANDROID
+#include "Android/CodePages.h"
+#else
 #include <iconv.h>
+#endif
 #include <codecvt>
 #include <cstdarg>
 #include <fstream>
@@ -22,6 +26,9 @@ namespace { uint32_t namesPage = 1252; }
 void setNamesCodePage(uint32_t page) { namesPage = page; }
 uint32_t namesCodePage(int language) { return language == 7 ? 1251 : (language == 5 || language == 6) ? 1250 : 1252; }
 static std::wstring widenPage(std::string_view text, uint32_t page) {
+#ifdef OJ_ANDROID
+    return android::widenPage(text,page);
+#else
     text = text.substr(0, text.find('\0'));
     const auto from = "CP" + std::to_string(page);
     iconv_t converter = iconv_open("WCHAR_T", from.c_str());
@@ -40,6 +47,7 @@ static std::wstring widenPage(std::string_view text, uint32_t page) {
     iconv_close(converter);
     result.resize((output - reinterpret_cast<char*>(result.data())) / sizeof(wchar_t));
     return result;
+#endif
 }
 std::wstring widenSigned(std::string_view text) { return widenPage(text, namesPage); }
 std::wstring widenAnsi(std::string_view text) { return widenPage(text, 1252); }
@@ -84,7 +92,9 @@ void cpuName(const char *vendor, uint32_t, uint32_t, std::array<char, 31> &out) 
 uint32_t queryCpu(CpuInfo *info) {
     if (info) {
         *info = {};
-#ifdef OJ_LINUX
+#ifdef OJ_ANDROID
+        cpuName("Native Android", 0, 0, info->name);
+#elif defined(OJ_LINUX)
         cpuName("Native Linux", 0, 0, info->name);
 #else
         cpuName("Apple Silicon", 0, 0, info->name);

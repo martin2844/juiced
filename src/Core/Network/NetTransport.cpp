@@ -12,7 +12,9 @@
 #include <mutex>
 #include <thread>
 
+#ifdef _MSC_VER
 #pragma comment(lib, "ws2_32.lib")
+#endif
 
 namespace oj::net {
 

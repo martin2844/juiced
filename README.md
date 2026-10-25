@@ -2,6 +2,7 @@
 
 This checkout includes a native Linux/NixOS port of upstream **v1.02.5**.
 Build, launcher, validation and platform limitations: [Linux port](docs/linux-port.md).
+Native Android APK, ZIP/mod imports and Retroid controls: [Android port](docs/android-port.md).
 The upstream description follows; platform-specific online account persistence
 and Windows-only facilities are not available in the Linux build.
 

@@ -1,0 +1,35 @@
+plugins { id 'com.android.application' }
+android {
+    namespace 'org.openjuice.android'
+    compileSdk 35
+    buildToolsVersion "35.0.0"
+    ndkVersion '28.2.13676358'
+    defaultConfig {
+        applicationId 'org.openjuice.android'
+        testInstrumentationRunner 'org.openjuice.android.SmokeInstrumentation'
+        minSdk 26
+        targetSdk 35
+        versionCode 2
+        versionName '1.02.5-android.1'
+        ndk { abiFilters(*((project.findProperty('abi') ?: 'arm64-v8a').toString().split(','))) }
+        externalNativeBuild { cmake { arguments '-DANDROID_STL=c++_shared'
+            ['sdlSource': 'FETCHCONTENT_SOURCE_DIR_SDL3', 'mojoSource': 'FETCHCONTENT_SOURCE_DIR_MOJOSHADER', 'ffmpegArchive': 'OJ_FFMPEG_ARCHIVE'].each { property, variable ->
+                if (project.hasProperty(property)) arguments "-D${variable}=${project.property(property)}"
+            }
+            targets 'main', 'SDL3-shared' } }
+    }
+    sourceSets.main.java.srcDirs += '../../third_party/SDL3-android/java'
+    externalNativeBuild { cmake { path '../../CMakeLists.txt'; version '3.31.6' } }
+    signingConfigs {
+        release {
+            if (System.getenv('OJ_KEYSTORE')) {
+                storeFile file(System.getenv('OJ_KEYSTORE'))
+                storePassword System.getenv('OJ_STORE_PASSWORD')
+                keyAlias 'openjuice'
+                keyPassword System.getenv('OJ_KEY_PASSWORD')
+            }
+        }
+    }
+    buildTypes { debug { debuggable true; if (System.getenv('OJ_KEYSTORE')) signingConfig signingConfigs.release }; release { minifyEnabled false; signingConfig signingConfigs.release } }
+    compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
+}

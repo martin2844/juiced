@@ -298,7 +298,7 @@ std::string makeUniqueId(uint32_t seed) {
     return id;
 }
 
-#if defined(OJ_MACOS) || defined(OJ_LINUX)
+#if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
 std::string uniqueId() {
     const char* home = std::getenv("HOME");
 #ifdef OJ_LINUX

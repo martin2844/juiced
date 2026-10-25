@@ -212,7 +212,7 @@ void main(){)";
         glStencilMask(states[59]);
         glStencilFunc(compare(states[56]), states[57], states[58]);
         glStencilOp(stencil(states[53]), stencil(states[54]), stencil(states[55]));
-        glColorMask(states[168] & 1, states[168] & 2, states[168] & 4, states[168] & 8);
+        glColorMask((states[168] & 1) != 0, (states[168] & 2) != 0, (states[168] & 4) != 0, (states[168] & 8) != 0);
         enabled(GL_SCISSOR_TEST, clipped);
         if (clipped)
             glScissor(std::max(0, (int)clip.x0), target ? (int)clip.y0 : (int)th() - (int)clip.y1,

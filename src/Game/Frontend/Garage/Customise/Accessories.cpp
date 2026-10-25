@@ -1,4 +1,4 @@
-#if defined(OJ_MACOS) || defined(OJ_LINUX)
+#if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
 #include "Mods/Creative.h"
 #endif
 // The accessories: the windows' tint, the neon, the dials' colours, the ICE and the horn.
@@ -98,7 +98,7 @@ void NeonMenu::enter(GarageHost &host, ui::Screen &s) {
             if (m_own == neons[i])
                 own = i;
         }
-#if defined(OJ_MACOS) || defined(OJ_LINUX)
+#if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
         if (mods::feature("neon")) {
             s.addMenuItem("COLOURMENU", L"CUSTOM RGB + EFFECTS", unlocked ? 0.f : -1.f, "ui_neon_off",
                           "ui_neon_choose");
@@ -138,12 +138,12 @@ void NeonMenu::update(GarageHost &host, ui::Screen &s, uint32_t event) {
     }
     if (coloursShown && (event == input::kLeft || event == input::kRight)) {
         m_custom = false;
-#if defined(OJ_MACOS) || defined(OJ_LINUX)
+#if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
         mods::clearNeonPreview();
 #endif
     }
     if (garage.texts.bought != 0) {
-#if defined(OJ_MACOS) || defined(OJ_LINUX)
+#if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
         if (!menuShown && mods::feature("neon") &&
             !mods::saveNeon(*car, m_custom ? mods::neon(*car) : mods::Neon{car->neon & 0xffffff, 0, 2}))
             host.message(MessageType::Continue, L"Neon purchased, but the effect settings could not be saved.", false,
@@ -172,7 +172,7 @@ void NeonMenu::update(GarageHost &host, ui::Screen &s, uint32_t event) {
     } else {
         s.setHidden("locked", true);
     }
-#if defined(OJ_MACOS) || defined(OJ_LINUX)
+#if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
     if (event == input::kSelect && coloursShown && mods::feature("neon") &&
         s.selectedMenuItem("COLOURMENU") == data->defs.neons.size()) {
         if (value == -1.f) {
@@ -187,7 +187,7 @@ void NeonMenu::update(GarageHost &host, ui::Screen &s, uint32_t event) {
     }
 #endif
     if (event == input::kBack) {
-#if defined(OJ_MACOS) || defined(OJ_LINUX)
+#if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
         mods::clearNeonPreview();
 #endif
         host.sound("CLICK");

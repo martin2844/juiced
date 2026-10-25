@@ -13,3 +13,10 @@ releases/
 /assets/
 *.log
 .DS_Store
+
+/android/.gradle/
+/android/.cxx/
+/android/app/.cxx/
+/android/app/build/
+/android/build/
+/android/local.properties

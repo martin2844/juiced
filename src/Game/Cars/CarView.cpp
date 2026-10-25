@@ -1,4 +1,4 @@
-#if defined(OJ_MACOS) || defined(OJ_LINUX)
+#if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
 #include "Mods/Creative.h"
 #endif
 #include "Game/Cars/CarView.h"
@@ -178,7 +178,7 @@ void CarView::frame(float dt, CrtRandom& random) {
         if (!(m_fade <= 1.0f)) m_fade = 1.0f;
     }
     if (refitting()) putRefit(random);
-#if defined(OJ_MACOS) || defined(OJ_LINUX)
+#if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
     if(m_shown && m_shown->car && mods::enabled()) {
         colourNeon(mods::neonColour(*m_shown->car,mods::seconds()));
         auto name=mods::neonTexture(*m_shown->car);
@@ -696,7 +696,7 @@ void GarageView::listNeon() {
     Model* neon = m_neon.get();
     v->worldDraws.push_back([this, neon](render::Renderer3d& r, render::Camera& c, uint32_t mode) {
         if (!m_neonShown) return;
-#if defined(OJ_MACOS) || defined(OJ_LINUX)
+#if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
         if(m_neonCar && mods::enabled()) {
             colourNeon(mods::neonColour(*m_neonCar,mods::seconds()));
             auto name=mods::neonTexture(*m_neonCar);

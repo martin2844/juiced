@@ -1,4 +1,7 @@
-#if defined(OJ_MACOS) || defined(OJ_LINUX)
+#ifdef OJ_ANDROID
+#include "Android/Gamepad.h"
+#endif
+#if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
 #include "Mac/ControlsOverlay.h"
 #include "Mods/CreativeMenu.h"
 #include "Mods/Packages.h"
@@ -134,7 +137,7 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
         return 0;
     }
 
-#if defined(OJ_LINUX)
+#if defined(OJ_LINUX) || defined(OJ_ANDROID)
     const oj::render::Backend backend = oj::render::Backend::GLES;
 #else
     const oj::render::Backend backend = oj::render::Backend::Metal;
@@ -214,7 +217,7 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
         } else {
             controlMaps =
                 oj::parseControls(std::string_view(reinterpret_cast<const char*>(bytes->data()), bytes->size()));
-#if defined(OJ_MACOS) || defined(OJ_LINUX)
+#if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
             if (!oj::mods::packages::available() || oj::mods::runtime::feature("controls"))
                 oj::mac::applyBindings(controlMaps, oj::mac::loadBindings(oj::mac::bindingsPath()));
 #endif
@@ -236,7 +239,7 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
         if (!data.load(oj::gameRandom(), &why)) {
             oj::log::warning("game data not loaded: {}", why);
         }
-#if defined(OJ_MACOS) || defined(OJ_LINUX)
+#if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
         oj::mods::addLogoSlots(data.defs);
 #endif
         oj::log::info("game data loaded, {} rand() values drawn", oj::gameRandom().draws());
@@ -442,7 +445,7 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
 
     uint64_t rendered = 0;
     bool frontendUi = false;  // the front end's +0x18: the UI map registered
-#if defined(OJ_MACOS) || defined(OJ_LINUX)
+#if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
     std::unique_ptr<oj::mac::ControlsOverlay> controlsEditor;
     std::unique_ptr<oj::mods::CreativeMenu> creativeMenu;
     oj::input::Input::Map controlsPreviousMap = oj::input::Input::Map::None;
@@ -455,10 +458,13 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
             Sleep(16);
             continue;
         }
-#if defined(OJ_MACOS) || defined(OJ_LINUX)
+#if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
         if (!creativeMenu) {
             if (auto request=oj::mods::takeRequest()) creativeMenu=std::make_unique<oj::mods::CreativeMenu>(*device,language,std::move(*request));
         }
+#ifdef OJ_ANDROID
+        oj::android::overlayInput(bool(creativeMenu));
+#endif
         if (creativeMenu) {
             oj::audio::setActive(false);
             auto keys=platform.takeKeyEvents();
@@ -536,7 +542,7 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
         movies.setActive(platform.active());
         // 0x0040CCF0: the input manager's update (0x005918C0) by the frame's time; [0x0075F780] the window's
         // activation (a test run's hidden window counts as active).
-#if defined(OJ_MACOS) || defined(OJ_LINUX)
+#if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
         for(const auto& key:keys)if(key.down)oj::mods::neonKey(key.code);
 #endif
         input.poll(keys, platform.active() || options.test, dt);

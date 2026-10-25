@@ -1,7 +1,7 @@
 // The paint windows: colourmenu, colourchoose, colourfocus and wheelcolourmenu.
 
 #include "Game/Frontend/Garage/Customise/Paint.h"
-#if defined(OJ_MACOS) || defined(OJ_LINUX)
+#if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
 #include "Mods/Creative.h"
 #include "Mods/Runtime.h"
 #include "Mods/Packages.h"
@@ -78,7 +78,7 @@ void ColourMenu::update(GarageHost& host, ui::Screen& s, uint32_t event) {
         s.showContaining("BUY_", true);
         m_showBuy = 0;
         if (s.find("BUY_TEST") >= 0) {
-#if defined(OJ_MACOS) || defined(OJ_LINUX)
+#if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
             s.setText("BUY_TEST", toWide(mods::runtime::text("paint_buy_label", {}, mods::packages::available() ? "" : "[0] ")) + texts.at(kTextBuyPaint));
 #else
             s.setText("BUY_TEST", texts.at(kTextBuyPaint));
@@ -209,7 +209,7 @@ void ColourChoose::enter(GarageHost &host, ui::Screen &s) {
             s.setPlace(index, p[0], p[1], p[2], p[3]);
     }
     m_chartPlacesSaved = true;
-#if defined(OJ_MACOS) || defined(OJ_LINUX)
+#if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
     if (garage.paintMode == PaintMode::Neon) {
         if (auto *car = garage.car(host)) {
             auto n = mods::neon(*car);
@@ -288,7 +288,7 @@ void ColourChoose::update(GarageHost &host, ui::Screen &s, uint32_t event) {
     Car *car = garage.car(host);
     if (car == nullptr || data == nullptr || !data->career)
         return;
-#if defined(OJ_MACOS) || defined(OJ_LINUX)
+#if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
     if (garage.paintMode == PaintMode::Neon) {
         if (auto shortcut = mods::takeNeonEvent())
             event = shortcut;

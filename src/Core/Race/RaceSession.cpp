@@ -1,4 +1,4 @@
-#if defined(OJ_MACOS) || defined(OJ_LINUX)
+#if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
 #include "Mods/Creative.h"
 #endif
 #include "Core/Race/RaceSession.h"
@@ -91,7 +91,7 @@ void applyCrewScheme(Career& career, const Crew& crew, const CarDefs& defs, cons
             default: break;
         }
         size_t decals = car.def != nullptr ? car.def->parts[kDecal].parts.size() : 0;
-#if defined(OJ_MACOS) || defined(OJ_LINUX)
+#if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
         if (car.def != nullptr) decals = mods::decalCount(*car.def, decals);
 #endif
         car.decalColour = 0;

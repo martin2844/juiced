@@ -9,7 +9,9 @@
 
 #include <cstring>
 
+#ifdef _MSC_VER
 #pragma comment(lib, "crypt32.lib")
+#endif
 
 namespace oj::save {
 

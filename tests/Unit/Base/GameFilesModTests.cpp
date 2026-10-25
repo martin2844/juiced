@@ -24,5 +24,7 @@ OJ_UNIT_TEST(GameFiles, OptionalModOverlay) {
     oj::GameFiles::setLanguageLetter(0);
     oj::GameFiles::setOverrideRoot({});
     oj::test::check(text("scripts/base.txt")=="retail", "disabling overlay restores retail files");
+    oj::test::check(!files.read("scripts"), "directories are not readable assets");
+    oj::test::check(!files.read("missing.txt"), "missing asset without overlay returns no data");
     fs::remove_all(root);
 }

@@ -1,4 +1,4 @@
-#if defined(OJ_MACOS) || defined(OJ_LINUX)
+#if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
 #include "Mods/Creative.h"
 #endif
 #include "Core/Cars/CarCollection.h"
@@ -69,7 +69,7 @@ void autoModify(Car& car, bool prototype, int level, CarMaking& making) {
             continue;
         }
         auto count = static_cast<uint32_t>(car.def != nullptr ? car.def->parts[c].parts.size() : 0);
-#if defined(OJ_MACOS) || defined(OJ_LINUX)
+#if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
         if (c == kDecal && car.def != nullptr) {
             count = static_cast<uint32_t>(mods::decalCount(*car.def, count));
             // Small add-on catalogues may already include a final user-image slot.

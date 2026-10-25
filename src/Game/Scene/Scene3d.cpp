@@ -1,4 +1,4 @@
-#if defined(OJ_MACOS) || defined(OJ_LINUX)
+#if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
 #include "Mods/Creative.h"
 #endif
 #include "Game/Scene/Scene3d.h"
@@ -584,7 +584,7 @@ const render::GameTexture* Engine::texture(const std::string& name) {
     if (it != m_textures.end()) return it->second.get();
     const GameFiles files(std::filesystem::current_path());
     auto bytes = files.read(m_folders.textures / (name + ".ddt"));
-#if defined(OJ_MACOS) || defined(OJ_LINUX)
+#if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
     if(auto image=mods::imageBytes(name))bytes=std::move(image);
 #endif
     Ddt ddt;
@@ -650,7 +650,7 @@ const render::GameTexture* Engine::texture(const std::string& name, const std::f
     if (it != m_textures.end()) return it->second ? it->second.get() : texture(name, shared);
     const GameFiles files(std::filesystem::current_path());
     auto bytes = files.read(folder / (name + ".ddt"));
-#if defined(OJ_MACOS) || defined(OJ_LINUX)
+#if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
     if(auto image=mods::imageBytes(name))bytes=std::move(image);
 #endif
     std::unique_ptr<render::GameTexture> made = bytes ? makeTexture(*bytes) : nullptr;

@@ -1,4 +1,4 @@
-#if defined(OJ_MACOS) || defined(OJ_LINUX)
+#if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
 #include "Mods/Creative.h"
 #endif
 // The windows that choose a new driver's logo and phone.
@@ -28,7 +28,7 @@ void ChooseLogo::enter(ProfileHost& host, ui::Screen& s) {
         const std::string& name = (*logos)[i];
         s.addMenuItem("Menu", L"", static_cast<float>(i), name, name);
     }
-#if defined(OJ_MACOS) || defined(OJ_LINUX)
+#if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
     if(mods::feature("logo"))s.addMenuItem("Menu",L"IMPORT YOUR LOGO",19,"ui_chooselogo_01","ui_chooselogo_01");
 #endif
 }
@@ -38,7 +38,7 @@ void ChooseLogo::enter(ProfileHost& host, ui::Screen& s) {
 void ChooseLogo::update(ProfileHost& host, ui::Screen& s, uint32_t event) {
     std::optional<save::Profile>& profile = host.profile();
     if (event == input::kSelect) {
-#if defined(OJ_MACOS) || defined(OJ_LINUX)
+#if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
         if(mods::feature("logo") && s.selectedMenuItem("Menu")==19){mods::requestMenu();s.selectMenuItem("Menu",0);return;}
 #endif
         if (profile) {

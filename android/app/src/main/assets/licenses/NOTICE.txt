@@ -1,0 +1,20 @@
+Juiced Android port
+Required Notice: Copyright 2026 Sidewinder (https://gitlab.com/sidecr3w/openjuice)
+OpenJuice: PolyForm Noncommercial License 1.0.0. No game assets are included.
+https://polyformproject.org/licenses/noncommercial/1.0.0/
+
+SDL 3: zlib license, commit 829a65d769d935c4852f8159e964312c0957260a
+https://github.com/libsdl-org/SDL
+MojoShader: zlib license, commit ad5dff84830c2863c841f4b1f4e3df78c705b383
+https://github.com/icculus/mojoshader
+Speex 1.0.3: BSD-style license; see Speex.txt.
+
+FFmpeg 7.1.1: LGPL 2.1 or later. Dynamically linked, with no GPL or nonfree components.
+Unmodified source: https://ffmpeg.org/releases/ffmpeg-7.1.1.tar.xz
+SHA-256: 733984395e0dbbe5c046abda2dc49a5544e7e0e1e2366bba849222ae9e3a03b1
+The port's source repository includes tools/configure-android-ffmpeg.sh and
+cmake/AndroidFFmpeg.cmake for reproducing the shared libraries. The APK is
+rebuildable with modified FFmpeg libraries. Reverse engineering for debugging
+modifications to the LGPL libraries is permitted.
+
+Full component licenses are included beside this notice in assets/licenses/.
