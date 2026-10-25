@@ -2,7 +2,7 @@ name: Build macOS release
 on:
   workflow_dispatch:
 permissions:
-  contents: read
+  contents: write
 jobs:
   macos:
     runs-on: macos-14
@@ -35,3 +35,22 @@ jobs:
           path: |
             OpenJuice-0.3.3-macos-arm64.zip
             SHA256SUMS-macos.txt
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cat > release-notes.md <<'NOTES'
+          Native macOS Apple Silicon development build: port 0.3.3, OpenJuice base 1.01.4.
+
+          OpenJuice was created by Sidewinder (sidecr3w): https://gitlab.com/sidecr3w/openjuice
+          Required Notice: Copyright 2026 Sidewinder (https://gitlab.com/sidecr3w/openjuice)
+
+          Install Homebrew FFmpeg (`brew install ffmpeg`), extract the app and select your own game folder. Game data is not included. This app is ad-hoc signed, not notarized, and depends on Homebrew FFmpeg libraries. Keyboard input is supported; this macOS build does not include the Android controller/touch implementation.
+
+          This is a development build. Compatibility and performance vary; no frame-rate guarantee. Linux and Android are separate builds with a newer upstream base. Build source revision and dynamic library dependencies are recorded inside the archive. The workflow builds the app and runs CTest before publishing.
+          NOTES
+          if ! gh release view macos-v0.3.3 >/dev/null 2>&1; then
+            gh release create macos-v0.3.3 --target "$GITHUB_SHA" --draft --prerelease --title 'OpenJuice for macOS Apple Silicon — port 0.3.3' --notes-file release-notes.md
+          fi
+          gh release upload macos-v0.3.3 OpenJuice-0.3.3-macos-arm64.zip SHA256SUMS-macos.txt --clobber
+          gh release edit macos-v0.3.3 --draft=false --prerelease --notes-file release-notes.md
