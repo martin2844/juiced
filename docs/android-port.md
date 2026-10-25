@@ -34,7 +34,10 @@ The left stick steers, RT accelerates, LT brakes, D-pad navigates, the south fac
 button selects, the east button backs out, and Start pauses. **Controls** offers
 **Set up gamepad**, with remapping, stick dead-zone adjustment and a live input monitor.
 **Set up touch controls** provides a draggable driving layout with per-button actions,
-size and opacity. Save applies the layout. Auto shows it when no analog gamepad
+individual driving/menu button sizes (50–300%) and opacity. Steering, gas and brake
+default to 145%, gears to 140%, and secondary driving buttons to 80–90%.
+Save applies the layout. The Controls-tab switch disables touch immediately;
+enabling it selects Auto. Auto shows it when no analog gamepad
 is connected; Always also shows it on handhelds; Off hides it. Menus and pause
 automatically use a navigation pad with Select, Back, Tab, page keys and the paint
 purchase shortcut. Driving buttons resolve against the active keyboard map, including
@@ -74,7 +77,8 @@ runs and is absent from release builds.
 
 ## Verification and limits
 
-See [the UI and touch checkpoint](android-ui-touch-checkpoint-2026-10-25.md) for
+See [the individual button sizes checkpoint](android-button-sizes-2026-10-25.md)
+for version `1.02.5-android.3`. See [the UI and touch checkpoint](android-ui-touch-checkpoint-2026-10-25.md) for
 version `1.02.5-android.2` and its screenshots. See [the 2026-10-25 checkpoint](android-checkpoint-2026-10-25.md) for the actual
 Retroid results. The older [Android validation](ANDROID_VALIDATION.md) describes
 prior work from October 21; its measurements are not results for this build.

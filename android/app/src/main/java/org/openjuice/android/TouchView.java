@@ -33,27 +33,31 @@ final class TouchView extends View {
     if (driving != value) {
       clear();
       driving = value;
+      selected = -1;
+      if (selection != null) selection.accept(-1);
       invalidate();
     }
   }
 
-  private float radius() {
-    return Math.min(getWidth(), getHeight()) * .067f * config.size;
+  private float radius(int i) {
+    return Math.min(getWidth(), getHeight())
+        * .067f
+        * (driving ? config.sizes[i] : config.menuSizes[i]);
   }
 
   private float x(int i) {
     return Math.max(
-        radius(),
+        radius(i),
         Math.min(
-            getWidth() - radius(),
+            getWidth() - radius(i),
             (driving ? config.positions[i][0] : TouchConfig.MENU[i][0]) * getWidth()));
   }
 
   private float y(int i) {
     return Math.max(
-        radius(),
+        radius(i),
         Math.min(
-            getHeight() - radius(),
+            getHeight() - radius(i),
             (driving ? config.positions[i][1] : TouchConfig.MENU[i][1]) * getHeight()));
   }
 
@@ -66,7 +70,7 @@ final class TouchView extends View {
     float distance = Float.MAX_VALUE;
     for (int i = (driving ? 12 : TouchConfig.MENU.length) - 1; i >= 0; i--) {
       float dx = x - x(i), dy = y - y(i);
-      float hitRadius = editing ? Math.max(radius(), Ui.dp(getContext(), 22)) : radius() * 1.14f;
+      float hitRadius = editing ? Math.max(radius(i), Ui.dp(getContext(), 22)) : radius(i) * 1.14f;
       float d = dx * dx + dy * dy;
       if (d <= hitRadius * hitRadius && d < distance) {
         nearest = i;
@@ -89,7 +93,7 @@ final class TouchView extends View {
       paint.setTextAlign(Paint.Align.CENTER);
       paint.setTextSize(Ui.dp(getContext(), 13));
       c.drawText(
-          driving ? "Drag a button • Tap to remap" : "Menu preview • Up / down / left / right",
+          driving ? "Drag a button • Tap to remap" : "Tap a menu button to resize",
           getWidth() / 2f,
           getHeight() / 2f,
           paint);
@@ -97,7 +101,7 @@ final class TouchView extends View {
     for (int i = 0; i < (driving ? 12 : TouchConfig.MENU.length); i++) {
       int a = action(i);
       boolean down = state.held(a);
-      float r = radius();
+      float r = radius(i);
       paint.setStyle(Paint.Style.FILL);
       paint.setColor(down || editing && selected == i ? Ui.ORANGE : 0xff202a30);
       paint.setAlpha(down ? 225 : (int) (255 * config.opacity));
@@ -130,13 +134,13 @@ final class TouchView extends View {
       return true;
     }
     if (editing) {
-      if (!driving) return true;
+
       if (kind == MotionEvent.ACTION_DOWN) {
         drag = hit(e.getX(), e.getY());
         if (drag >= 0) getParent().requestDisallowInterceptTouchEvent(true);
         selected = drag;
         if (selection != null) selection.accept(selected);
-      } else if (kind == MotionEvent.ACTION_MOVE && drag >= 0) {
+      } else if (kind == MotionEvent.ACTION_MOVE && drag >= 0 && driving) {
         config.positions[drag][0] = Math.max(.04f, Math.min(.96f, e.getX() / getWidth()));
         config.positions[drag][1] = Math.max(.08f, Math.min(.92f, e.getY() / getHeight()));
       } else if (kind == MotionEvent.ACTION_UP) {

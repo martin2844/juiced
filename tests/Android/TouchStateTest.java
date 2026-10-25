@@ -37,6 +37,12 @@ public final class TouchStateTest {
     check(down.isEmpty(), "cancel/focus loss releases all keys");
     Path dir = Files.createTempDirectory("oj-touch-");
     TouchConfig c = new TouchConfig();
+    check(
+        c.sizes[0] > c.sizes[6] && c.sizes[2] > c.sizes[7] && c.sizes[8] > c.sizes[4],
+        "default driving hierarchy");
+    c.sizes[0] = 3f;
+    c.sizes[1] = .5f;
+    c.menuSizes[4] = 2.4f;
     c.visibility = 1;
     c.positions[0][0] = .3f;
     c.actions[0] = 6;
@@ -46,6 +52,32 @@ public final class TouchStateTest {
     check(
         loaded.visibility == 1 && loaded.actions[0] == 6 && loaded.positions[0][0] == .3f,
         "layout and remap round trip");
+    check(
+        loaded.sizes[0] == 3f && loaded.sizes[1] == .5f && loaded.menuSizes[4] == 2.4f,
+        "independent driving and menu sizes round trip");
+    Files.writeString(
+        dir.resolve("touch.properties"), "size=1.2\nvisibility=2\n0.x=0.3\n0.action=6\n");
+    loaded = TouchConfig.load(dir.toFile());
+    float migrated = loaded.sizes[0];
+    check(
+        Math.abs(migrated - 1.74f) < .001f
+            && loaded.positions[0][0] == .3f
+            && loaded.actions[0] == 6
+            && loaded.visibility == 2,
+        "legacy settings preserve layout, mappings and visibility");
+    loaded.save(dir.toFile());
+    loaded = TouchConfig.load(dir.toFile());
+    check(loaded.sizes[0] == migrated, "migration does not compound global scale after saving");
+    Files.writeString(
+        dir.resolve("touch.properties"),
+        "0.size=999\n1.size=-4\n2.size=NaN\nmenu.0.size=Infinity\n");
+    loaded = TouchConfig.load(dir.toFile());
+    check(
+        loaded.sizes[0] == 3
+            && loaded.sizes[1] == .5f
+            && loaded.sizes[2] == 1.45f
+            && loaded.menuSizes[0] == 1.4f,
+        "per-button sizes safely bounded");
     Files.writeString(
         dir.resolve("touch.properties"), "size=NaN\nopacity=Infinity\n0.x=-500\n0.action=999\n");
     loaded = TouchConfig.load(dir.toFile());

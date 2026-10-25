@@ -11,6 +11,8 @@ public final class TouchActivity extends Activity {
   private TouchView preview;
   private Spinner action;
   private TextView selected;
+  private SeekBar buttonSize;
+  private TextView sizeLabel;
 
   @Override
   public void onCreate(Bundle b) {
@@ -61,7 +63,7 @@ public final class TouchActivity extends Activity {
         body,
         Ui.label(
             this,
-            "Choose when controls appear. Tap a driving button to remap it, or drag it to a"
+            "Choose when controls appear. Tap any button to resize it. Drag driving buttons to a"
                 + " comfortable position.",
             14,
             Ui.MUTED));
@@ -95,7 +97,7 @@ public final class TouchActivity extends Activity {
             () -> {
               preview.driving(false);
               action.setEnabled(false);
-              selected.setText("Menu navigation stays available with every driving layout.");
+              selected.setText("Tap a menu button to resize it.");
             });
     drive.setOnClickListener(
         v -> {
@@ -103,7 +105,7 @@ public final class TouchActivity extends Activity {
           Ui.style(drive, true);
           Ui.style(menu, false);
           action.setEnabled(preview.selected >= 0);
-          selected.setText("Tap a driving button to change its action. Drag to move it.");
+          selected.setText("Tap a button to resize it or change its action. Drag to move it.");
         });
     menu.setOnClickListener(
         v -> {
@@ -111,7 +113,7 @@ public final class TouchActivity extends Activity {
           Ui.style(drive, false);
           Ui.style(menu, true);
           action.setEnabled(false);
-          selected.setText("Menu navigation stays available with every driving layout.");
+          selected.setText("Tap a menu button to resize it.");
         });
     modes.addView(drive, new LinearLayout.LayoutParams(0, -2, 1));
     modes.addView(menu, new LinearLayout.LayoutParams(0, -2, 1));
@@ -120,17 +122,51 @@ public final class TouchActivity extends Activity {
     visual.addView(
         preview, new LinearLayout.LayoutParams(-1, wide ? 0 : Ui.dp(this, 220), wide ? 1 : 0));
     selected =
-        Ui.label(this, "Tap a driving button to change its action. Drag to move it.", 15, Ui.MUTED);
+        Ui.label(
+            this, "Tap a button to resize it or change its action. Drag to move it.", 15, Ui.MUTED);
     Ui.add(body, selected);
     action = Ui.spinner(this, TouchConfig.ACTIONS);
     action.setEnabled(false);
+    sizeLabel = Ui.label(this, "Select a button to resize", 16, Ui.INK);
+    Ui.add(body, sizeLabel);
+    buttonSize = new SeekBar(this);
+    buttonSize.setMax(250);
+    buttonSize.setEnabled(false);
+    buttonSize.setContentDescription("Selected button size");
+    buttonSize.setProgressTintList(android.content.res.ColorStateList.valueOf(Ui.ORANGE));
+    buttonSize.setThumbTintList(android.content.res.ColorStateList.valueOf(Ui.ORANGE));
+    Ui.add(body, buttonSize);
+    buttonSize.setOnSeekBarChangeListener(
+        new SeekBar.OnSeekBarChangeListener() {
+          public void onProgressChanged(SeekBar bar, int value, boolean user) {
+            if (preview.selected < 0) return;
+            sizeLabel.setText("Selected button size: " + (value + 50) + "%");
+            if (user) {
+              (preview.driving ? config.sizes : config.menuSizes)[preview.selected] =
+                  (value + 50) / 100f;
+              preview.invalidate();
+            }
+          }
+
+          public void onStartTrackingTouch(SeekBar bar) {}
+
+          public void onStopTrackingTouch(SeekBar bar) {}
+        });
     Ui.add(body, action);
     preview.selection =
         i -> {
-          action.setEnabled(i >= 0);
+          action.setEnabled(i >= 0 && preview.driving);
+          buttonSize.setEnabled(i >= 0);
           if (i >= 0) {
-            selected.setText("Button " + (i + 1) + " · " + TouchConfig.ACTIONS[config.actions[i]]);
-            action.setSelection(config.actions[i]);
+            int a = preview.driving ? config.actions[i] : TouchConfig.MENU_ACTIONS[i];
+            selected.setText("Button " + (i + 1) + " · " + TouchConfig.ACTIONS[a]);
+            if (preview.driving) action.setSelection(a);
+            int percent = Math.round((preview.driving ? config.sizes : config.menuSizes)[i] * 100);
+            buttonSize.setProgress(percent - 50);
+            sizeLabel.setText("Selected button size: " + percent + "%");
+          } else {
+            selected.setText("Tap a button in the preview to customize it.");
+            sizeLabel.setText("Select a button to resize");
           }
         };
     action.setOnItemSelectedListener(
@@ -144,16 +180,6 @@ public final class TouchActivity extends Activity {
           }
 
           public void onNothingSelected(AdapterView<?> p) {}
-        });
-    slider(
-        body,
-        "Button size",
-        75,
-        135,
-        Math.round(config.size * 100),
-        n -> {
-          config.size = n / 100f;
-          preview.invalidate();
         });
     slider(
         body,

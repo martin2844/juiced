@@ -84,6 +84,7 @@ public final class LauncherActivity extends Activity {
         error.delete();
       } catch (IOException ignored) {
       }
+    lastState = "";
     handler.post(refresh);
   }
 
@@ -277,6 +278,51 @@ public final class LauncherActivity extends Activity {
       section(
           "Touch controls",
           "A menu pad and driving controls, with layouts you can move and remap.");
+      TouchConfig touch = TouchConfig.load(getFilesDir());
+      Switch enabled = new Switch(this);
+      enabled.setText("Touch controls enabled");
+      enabled.setThumbTintList(
+          new android.content.res.ColorStateList(
+              new int[][] {{android.R.attr.state_checked}, {}}, new int[] {Ui.ORANGE, Ui.MUTED}));
+      enabled.setTrackTintList(
+          new android.content.res.ColorStateList(
+              new int[][] {{android.R.attr.state_checked}, {}}, new int[] {0xffedb090, Ui.LINE}));
+      enabled.setTextColor(Ui.INK);
+      enabled.setTextSize(16);
+      enabled.setMinHeight(dp(48));
+      enabled.setChecked(touch.visibility != 2);
+      enabled.setEnabled(idle);
+      Ui.add(content, enabled);
+      TextView touchHint =
+          Ui.label(
+              this,
+              touch.visibility == 2
+                  ? "Hidden. Your physical controller stays available."
+                  : touch.visibility == 0
+                      ? "Automatic: hidden while a gamepad is connected."
+                      : "Always visible, including with a gamepad.",
+              14,
+              Ui.MUTED);
+      Ui.add(content, touchHint);
+      enabled.setOnCheckedChangeListener(
+          (button, on) -> {
+            int previous = touch.visibility;
+            touch.visibility = on ? 0 : 2;
+            try {
+              touch.save(getFilesDir());
+              touchHint.setText(
+                  on
+                      ? "Automatic: hidden while a gamepad is connected."
+                      : "Hidden. Your physical controller stays available.");
+            } catch (IOException e) {
+              touch.visibility = previous;
+              render();
+              new AlertDialog.Builder(this)
+                  .setMessage(e.getMessage())
+                  .setPositiveButton("Close", null)
+                  .show();
+            }
+          });
       action(
           "Set up touch controls",
           true,

@@ -63,6 +63,12 @@ final class TouchConfig {
     {.87f, .57f}
   };
   static final int[] MENU_ACTIONS = {12, 13, 14, 15, 4, 5, 16, 17, 18, 19};
+  static final float MIN_SIZE = .5f, MAX_SIZE = 3f;
+  static final float[] DEFAULT_SIZES = {
+    1.45f, 1.45f, 1.45f, 1.45f, .8f, .8f, .8f, .8f, 1.4f, 1.4f, .8f, .9f
+  };
+  final float[] sizes = DEFAULT_SIZES.clone();
+  final float[] menuSizes = {1.4f, 1.4f, 1.4f, 1.4f, .85f, .85f, .8f, .8f, .8f, .8f};
   int visibility = 0;
   float size = 1, opacity = .65f;
   final float[][] positions = new float[12][2];
@@ -90,6 +96,11 @@ final class TouchConfig {
       c.positions[i][1] = number(p, i + ".y", DRIVE[i][1], .08f, .92f);
       c.actions[i] = (int) number(p, i + ".action", i, 0, ACTIONS.length - 1);
     }
+    for (int i = 0; i < c.sizes.length; i++)
+      c.sizes[i] = number(p, i + ".size", c.sizes[i] * c.size, MIN_SIZE, MAX_SIZE);
+    for (int i = 0; i < c.menuSizes.length; i++)
+      c.menuSizes[i] =
+          number(p, "menu." + i + ".size", c.menuSizes[i] * c.size, MIN_SIZE, MAX_SIZE);
     return c;
   }
 
@@ -105,13 +116,16 @@ final class TouchConfig {
   void save(File folder) throws IOException {
     Properties p = new Properties();
     p.setProperty("visibility", "" + visibility);
-    p.setProperty("size", "" + size);
+    p.setProperty("size", "1.0"); // Per-button sizes already include the legacy global scale.
     p.setProperty("opacity", "" + opacity);
     for (int i = 0; i < 12; i++) {
+      p.setProperty(i + ".size", "" + sizes[i]);
       p.setProperty(i + ".x", "" + positions[i][0]);
       p.setProperty(i + ".y", "" + positions[i][1]);
       p.setProperty(i + ".action", "" + actions[i]);
     }
+    for (int i = 0; i < menuSizes.length; i++)
+      p.setProperty("menu." + i + ".size", "" + menuSizes[i]);
     File temp = new File(folder, "touch.properties.tmp");
     try (FileWriter w = new FileWriter(temp)) {
       p.store(w, "OpenJuice touch layout");
