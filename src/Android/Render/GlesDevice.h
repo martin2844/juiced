@@ -38,6 +38,7 @@ class GlesDevice final : public IRenderDevice {
     uint32_t targetHeight(TextureId target) const override;
     uint32_t resets() const override;
     bool readTarget(TextureId target, std::vector<uint8_t> &pixels, uint32_t *pitch) override;
+    bool readTargetDeferred(TextureId target, std::vector<uint8_t> &pixels, uint32_t *pitch) override;
     uint32_t displayFormat() const override;
     uint32_t textureCaps() const override;
     bool textureFormatOk(uint32_t display, uint32_t format) const override;

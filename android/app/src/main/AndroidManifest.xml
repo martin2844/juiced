@@ -12,6 +12,6 @@
         <activity android:name=".ControllerActivity" android:exported="false" />
         <activity android:name=".JuicedActivity" android:process=":game" android:exported="false" android:screenOrientation="sensorLandscape"
             android:configChanges="layoutDirection|locale|fontScale|orientation|uiMode|screenLayout|screenSize|smallestScreenSize|keyboard|keyboardHidden|navigation"
-            android:launchMode="singleTop" />
+            android:launchMode="singleTask" />
     </application>
 </manifest>

@@ -96,6 +96,7 @@ struct GlesDevice::Impl {
         GLuint gl = 0, fbo = 0, depth = 0;
         uint32_t w = 0, h = 0, levels = 1;
         bool cube = false;
+        uint32_t attachedFace = ~0u;
         std::vector<uint8_t> cpu;
     };
     struct Buffer {
@@ -110,6 +111,12 @@ struct GlesDevice::Impl {
     std::map<uint32_t, GLuint> fixedFragments;
     std::map<std::pair<GLuint, GLuint>, GLuint> programs;
     gles::Registers vertexRegisters, pixelRegisters;
+    struct Readback {
+        GLuint buffer = 0;
+        GLsync fence = nullptr;
+    };
+    std::array<Readback, 2> readbacks{};
+    uint32_t readbackTarget = 0, readbackWidth = 0, readbackHeight = 0, readbackIndex = 0;
     uint32_t tw() const { return target ? textures.at(target).w : w; }
     uint32_t th() const { return target ? textures.at(target).h : h; }
     void framebuffer() {
@@ -119,10 +126,14 @@ struct GlesDevice::Impl {
         }
         auto &t = textures.at(target);
         glBindFramebuffer(GL_FRAMEBUFFER, t.fbo);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-                               t.cube ? GL_TEXTURE_CUBE_MAP_POSITIVE_X + face : GL_TEXTURE_2D, t.gl, 0);
-        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-            throw std::runtime_error("Incomplete render target");
+        const uint32_t attachment = t.cube ? face : 0;
+        if (t.attachedFace != attachment) {
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                                   t.cube ? GL_TEXTURE_CUBE_MAP_POSITIVE_X + face : GL_TEXTURE_2D, t.gl, 0);
+            if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+                throw std::runtime_error("Incomplete render target");
+            t.attachedFace = attachment;
+        }
     }
     GLuint fixedFragment(GLuint vertex, bool simple) {
         const std::string source = vertex == fixedVS ? fixedVertex : shaders.at(vs)->source;
@@ -212,7 +223,8 @@ void main(){)";
         glStencilMask(states[59]);
         glStencilFunc(compare(states[56]), states[57], states[58]);
         glStencilOp(stencil(states[53]), stencil(states[54]), stencil(states[55]));
-        glColorMask((states[168] & 1) != 0, (states[168] & 2) != 0, (states[168] & 4) != 0, (states[168] & 8) != 0);
+        glColorMask((states[168] & 1) != 0, (states[168] & 2) != 0, (states[168] & 4) != 0,
+                    (states[168] & 8) != 0);
         enabled(GL_SCISSOR_TEST, clipped);
         if (clipped)
             glScissor(std::max(0, (int)clip.x0), target ? (int)clip.y0 : (int)th() - (int)clip.y1,
@@ -220,7 +232,11 @@ void main(){)";
         float bias = std::bit_cast<float>(states[195]), slope = std::bit_cast<float>(states[175]);
         enabled(GL_POLYGON_OFFSET_FILL, bias != 0 || slope != 0);
         glPolygonOffset(slope, bias * 16777216.f);
+        const uint32_t usedSamplers =
+            (pixel ? pixel->samplerMask : 1u) | (fixed ? 0u : shaders.at(vs)->samplerMask);
         for (unsigned i = 0; i < 16; i++) {
+            if (!(usedSamplers & (1u << i)))
+                continue;
             auto id = textures.contains(bound[i]) ? bound[i] : white;
             auto &t = textures.at(id);
             auto &s = sampling[i];
@@ -347,6 +363,12 @@ GlesDevice::GlesDevice(const DeviceDesc &desc) : p(std::make_unique<Impl>()) {
     log::info("OpenGL renderer: {}", adapterName());
 }
 GlesDevice::~GlesDevice() {
+    for (auto &read : p->readbacks) {
+        if (read.fence)
+            glDeleteSync(read.fence);
+        if (read.buffer)
+            glDeleteBuffers(1, &read.buffer);
+    }
     for (auto &[_, program] : p->programs)
         glDeleteProgram(program);
     p->shaders.clear();
@@ -608,6 +630,66 @@ bool GlesDevice::readTarget(TextureId id, std::vector<uint8_t> &pixels, uint32_t
     p->viewport = view;
     return ok;
 }
+bool GlesDevice::readTargetDeferred(TextureId id, std::vector<uint8_t> &pixels, uint32_t *pitch) {
+    if (!id || !p->textures.contains(id))
+        return false;
+    const auto &texture = p->textures.at(id);
+    const unsigned w = texture.w, h = texture.h;
+    const size_t size = size_t(w) * h * 4;
+    if (p->readbackTarget != id || p->readbackWidth != w || p->readbackHeight != h) {
+        for (auto &read : p->readbacks) {
+            if (read.fence)
+                glDeleteSync(read.fence);
+            read.fence = nullptr;
+            if (!read.buffer)
+                glGenBuffers(1, &read.buffer);
+            glBindBuffer(GL_PIXEL_PACK_BUFFER, read.buffer);
+            glBufferData(GL_PIXEL_PACK_BUFFER, size, nullptr, GL_STREAM_READ);
+        }
+        glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
+        p->readbackTarget = id;
+        p->readbackWidth = w;
+        p->readbackHeight = h;
+        p->readbackIndex = 0;
+    }
+    auto &read = p->readbacks[p->readbackIndex];
+    bool ready = false;
+    if (read.fence) {
+        const GLenum state = glClientWaitSync(read.fence, 0, 0);
+        if (state == GL_TIMEOUT_EXPIRED)
+            return false;
+        glDeleteSync(read.fence);
+        read.fence = nullptr;
+        if (state != GL_WAIT_FAILED) {
+            glBindBuffer(GL_PIXEL_PACK_BUFFER, read.buffer);
+            const void *mapped = glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, size, GL_MAP_READ_BIT);
+            if (mapped) {
+                pixels.resize(size);
+                std::memcpy(pixels.data(), mapped, size);
+                ready = glUnmapBuffer(GL_PIXEL_PACK_BUFFER) == GL_TRUE;
+                if (ready) {
+                    for (size_t i = 0; i < size; i += 4)
+                        std::swap(pixels[i], pixels[i + 2]);
+                    if (pitch)
+                        *pitch = w * 4;
+                }
+            }
+            glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
+        }
+    }
+    const auto old = p->target, face = p->face;
+    const auto view = p->viewport;
+    setRenderTarget(id, 0);
+    glBindBuffer(GL_PIXEL_PACK_BUFFER, read.buffer);
+    glReadPixels(0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    read.fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+    glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
+    setRenderTarget(old, face);
+    p->viewport = view;
+    p->readbackIndex = (p->readbackIndex + 1) % p->readbacks.size();
+    return ready;
+}
+
 TextureId GlesDevice::createDynamicTexture(uint32_t w, uint32_t h, uint32_t) {
     if (std::this_thread::get_id() != owner)
         return onOwner([&] { return createDynamicTexture(w, h, 0); });

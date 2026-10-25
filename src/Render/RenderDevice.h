@@ -197,6 +197,10 @@ public:
     virtual uint32_t resets() const = 0;
     // A flat render target's pixels read back (32-bit, rows of `pitch` bytes); false when they cannot be read.
     virtual bool readTarget(TextureId target, std::vector<uint8_t>& pixels, uint32_t* pitch) = 0;
+    // Exposure tolerates older pixels. Deferred backends may return false while a read is pending.
+    virtual bool readTargetDeferred(TextureId target, std::vector<uint8_t>& pixels, uint32_t* pitch) {
+        return readTarget(target, pixels, pitch);
+    }
 
     // The display mode's D3DFORMAT (IDirect3D9::GetAdapterDisplayMode); 0 when it cannot be read.
     virtual uint32_t displayFormat() const = 0;

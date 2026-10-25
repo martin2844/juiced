@@ -24,6 +24,7 @@ public final class LauncherActivity extends Activity {
             render();
           } else if (status != null) {
             status.setText(ImportJob.status);
+            status.setVisibility(ImportJob.status.isEmpty() ? View.GONE : View.VISIBLE);
           }
           handler.postDelayed(this, 350);
         }
@@ -193,6 +194,7 @@ public final class LauncherActivity extends Activity {
     boolean ready = GameDataImport.valid(game()), idle = !ImportJob.busy;
     status = text(ImportJob.status, 15);
     status.setTextColor(0xfff5b855);
+    status.setVisibility(ImportJob.status.isEmpty() ? View.GONE : View.VISIBLE);
     if (ImportJob.busy) {
       ProgressBar bar = new ProgressBar(this);
       content.addView(bar);

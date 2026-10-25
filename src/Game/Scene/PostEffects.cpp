@@ -622,7 +622,7 @@ void PostEffects::measureExposure(float width, float height) {
     // 0x00512290: the histogram of the measure's first bytes, normalised.
     std::vector<uint8_t> pixels;
     uint32_t pitch = 0;
-    if (!d.readTarget(m_measure, pixels, &pitch)) return;
+    if (!d.readTargetDeferred(m_measure, pixels, &pitch)) return;
     ExposureMeasure& m = g_exposure;
     m.histogram.fill(0.0f);
     for (uint32_t row = 0; row < 64; ++row) {

@@ -117,6 +117,9 @@ public final class JuicedActivity extends SDLActivity {
       if (installLockFile != null) installLockFile.close();
     } catch (java.io.IOException ignored) {
     }
+    // The engine owns process-wide singletons. Finish its dedicated process after
+    // SDL has joined the native thread, so the next Play starts with fresh state.
+    if (isFinishing()) android.os.Process.killProcess(android.os.Process.myPid());
   }
 
   @Override
@@ -244,7 +247,7 @@ public final class JuicedActivity extends SDLActivity {
             : getIntent().getStringExtra("car"),
         "--autopilot",
         "--frames",
-        "900",
+        getIntent().getStringExtra("frames") == null ? "900" : getIntent().getStringExtra("frames"),
         "--capture",
         root + "/android-race.bmp"
       };
