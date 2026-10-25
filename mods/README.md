@@ -10,10 +10,10 @@ does not overwrite existing scripts. The repository's `mods` folder is the sourc
 of those defaults. Direct launch:
 
 ```
-out/juiced --game /path/to/Juiced --mod /path/to/assets --mods /path/to/mods
+out/juiced --game /path/to/Juiced --mods /path/to/mods
 ```
 
-Each subfolder contains `main.lua` returning `{api=1, ...callbacks...}`. A file named
+Each script package contains `main.lua` returning `{api=1, ...callbacks...}`. A file named
 `disabled` inside that subfolder disables it. Loose `.lua` files are also accepted.
 Files load in sorted path order. A hook returning `nil` leaves the previous result
 unchanged; the last non-nil result wins. Unknown API versions and scripts with
