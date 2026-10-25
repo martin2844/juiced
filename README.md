@@ -12,7 +12,7 @@ Development builds. Compatibility and performance vary by device; no frame-rate 
 | --- | --- | --- |
 | Android ARM64 | OpenJuice 1.02.5 · android.3 | [APK and optional mods](https://github.com/martin2844/juiced/releases/tag/android-v1.02.5-3) · Android 8+ |
 | Linux x86_64 / NixOS | OpenJuice 1.02.5 · mods1 | [Nix binary package](https://github.com/martin2844/juiced/releases/tag/linux-v1.02.5-mods1) · Nix and OpenGL drivers required |
-| macOS Apple Silicon | Port 0.3.3 · OpenJuice 1.01.4 | [App bundle](https://github.com/martin2844/juiced/releases/tag/macos-v0.3.3) · Homebrew FFmpeg required |
+| macOS Apple Silicon | Port 0.3.3 · OpenJuice 1.01.4 | Build pending: [release workflow](https://github.com/martin2844/juiced/actions/workflows/macos-release.yml) · Homebrew FFmpeg required |
 
 Android: install the APK and import your own `Juiced.zip` in the launcher. Import optional mods separately. Physical controllers and customizable touch controls are available; touch controls can be disabled.
 
