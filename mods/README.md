@@ -37,11 +37,13 @@ input maps and Lua callbacks stay unchanged until restart. Disabling controls
 restores retail input maps; saved bindings are retained. Disabling neon restores
 the stock effect; saved custom effect settings are retained.
 
-Car, wheel and custom-logo packages change saved catalogue indices. Different
-combinations use different career directories under `variants/`. The complete
-original set retains the existing ModGarage careers, as declared by
-`collection.ini`. Re-enabling that set resumes those careers. Photo, neon and
-controls and host-pink-slips toggles do not split saves. No existing career is converted or deleted.
+All mod combinations and the original-game mode share the same careers in
+`ModSaves`. Changing mods never hides a profile or selects a different save folder.
+Old stock/variant profiles are copied into the shared directory without deleting
+their originals or overwriting existing careers; name collisions keep both copies.
+No catalogue compatibility gate or index remapping is applied. Removing or changing
+a mod can therefore change saved parts or cause a load failure; it does not force
+a separate career. Explicit desktop `--saves` paths remain available.
 
 The launcher copies missing package files into `~/JuicedMods/mods`, preserving
 existing scripts and enable/disable choices. This is the editable installed copy;

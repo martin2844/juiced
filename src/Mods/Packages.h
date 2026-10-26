@@ -21,6 +21,8 @@ bool active(const std::string &id);
 std::string toggle(const std::string &id);
 // Build an isolated overlay from enabled packages; throws on incompatible recipes.
 std::filesystem::path assemble(const std::filesystem::path &game);
-// Catalogue combinations use distinct careers; collection.ini declares the existing save combination.
+// Mod selection never changes the career directory.
 std::filesystem::path saveDirectory(const std::filesystem::path &base);
+// Recover legacy stock/variant careers by copying, never overwriting or deleting originals.
+std::filesystem::path sharedSaveDirectory(const std::filesystem::path &support);
 } // namespace oj::mods::packages

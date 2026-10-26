@@ -32,8 +32,8 @@ def main():
         f'{len(rows)} selectable options from {source_count} source layers, across {len(set(r["car"] for r in rows))} cars; {composite_count} composed designs.',
         '', 'Requires the native vinyl-catalogue extension (Android .9-vinyl-preview).',
         'Import this ZIP through the launcher Mods importer. It starts disabled.',
-        'Enabling changes the catalogue save variant; disabling returns to your previous careers.',
-        'No existing saves are migrated or deleted. Do not copy Custom Logo careers between variants.',
+        'Android .10 and newer share careers across mod configurations; .9 used separate variants.',
+        'Changing catalogue indices can change fitted parts. No compatibility gate or index remapping is applied.',
         '', 'Use stock body parts. Body kits, damage, recolouring and on-device performance remain unverified.',
         'Known multi-layer designs are composed. Independent hood, stripe and badge variants remain selectable.',
         'Some layers contain only hood or roof art. The preview gallery includes three views per option.',
@@ -42,7 +42,7 @@ def main():
   notes[notes.index('Sources and original credits:'):notes.index('Sources and original credits:')]=[
    'Curated edition: only visually reviewed A/B options are included; C/D assets are omitted.',
    'Replaces the full collection; do not enable both editions together.',
-   'Filtering changes decal indices. Do not copy careers from the full collection into this variant.',
+   'Filtering changes decal indices; existing fitted vinyls can change when replacing the full collection.',
    'See selection.json and visual-review.json for exact retained/removed IDs and reasons.', '',
   ]
  provenance=[]

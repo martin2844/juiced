@@ -1,7 +1,7 @@
 # Creative mods (native macOS and Linux module)
 
 Linux uses SDL file selection and GdkPixbuf image decoding. Its launcher installs
-editable packages in `~/.local/share/openjuice/mods`; mod saves are isolated under
+editable packages in `~/.local/share/openjuice/mods`; all careers are shared under
 `~/.local/share/openjuice/ModSaves`. See [Linux setup](../../docs/linux-mods.md).
 The AppKit paths below describe the macOS host.
 
@@ -52,7 +52,8 @@ in the game's own car save. Damage, daylight fading and neon failures still appl
 
 Custom-logo choices are appended, preserving every existing saved decal index.
 Crew livery selection and automatic modification use the original part count and
-never pick personal artwork. The package manager isolates careers when the custom-logo catalogue is disabled. Images aren't embedded into replays or sent
+never pick personal artwork. Mod toggles no longer isolate careers; catalogue
+changes are allowed to affect existing saved part indices. Images aren't embedded into replays or sent
 through multiplayer.
 
 The host implementation lives in `src/Mods`, with small guarded hooks at the

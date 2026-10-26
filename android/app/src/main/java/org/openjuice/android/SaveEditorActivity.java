@@ -212,7 +212,7 @@ public final class SaveEditorActivity extends Activity {
           new LinearLayout.LayoutParams(0, -2, 1));
       body.addView(modes);
       label(
-          modded ? "Profiles for the currently enabled car mods" : "Original-game profiles",
+          modded ? "Your profiles · editing with enabled mods" : "Your profiles · editing with original game data",
           18,
           Ui.INK);
       if (catalog != null) {
@@ -230,7 +230,7 @@ public final class SaveEditorActivity extends Activity {
         }
         if (count == 0)
           label(
-              "No saved profiles here. Save a career in this game mode first, or switch modes.",
+              "No saved profiles yet. Save a career in the game first.",
               16,
               Ui.MUTED);
       }

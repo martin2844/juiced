@@ -82,7 +82,7 @@ int main(int argc, char **argv) {
         std::filesystem::current_path(game);
         auto config = oj::Config::load(support / "OpenJuice.ini");
         config.skipIntroMovies = true;
-        config.saveFolder = support / "saves";
+        config.saveFolder = oj::mods::packages::sharedSaveDirectory(support);
         auto options = oj::parseCommandLine(command.c_str());
         if (!noMods && std::filesystem::is_directory(support / "mods")) {
             auto mods = support / "mods";
@@ -90,11 +90,10 @@ int main(int argc, char **argv) {
             if (oj::mods::packages::available()) {
                 overlay.path = oj::mods::packages::assemble(game);
                 oj::GameFiles::setOverrideRoot(overlay.path);
-                options.saves = oj::mods::packages::saveDirectory(support / "ModSaves").string();
             }
             oj::mods::runtime::load(mods);
             oj::mods::configure(
-                (options.saves.empty() ? support / "ModSaves" : std::filesystem::path(options.saves)) /
+                (options.saves.empty() ? config.saveFolder : std::filesystem::path(options.saves)) /
                 "CreativeMods");
             if (modsMenu)
                 oj::mods::requestManager();

@@ -69,14 +69,13 @@ struct EditorGame {
         oj::GameFiles::setOverrideRoot({});
         oj::mods::runtime::load({});
         oj::mods::packages::discover({});
-        saveRoot = files / "saves";
+        saveRoot = oj::mods::packages::sharedSaveDirectory(files);
         if (modded) {
             oj::mods::packages::discover(files / "mods");
             if (!oj::mods::packages::available()) throw std::runtime_error("No enabled mod setup is available");
             overlay = oj::mods::packages::assemble(files / "game");
             oj::GameFiles::setOverrideRoot(overlay);
             oj::mods::runtime::load(files / "mods");
-            saveRoot = oj::mods::packages::saveDirectory(files / "ModSaves");
         }
         data = std::make_unique<oj::GameData>(files / "game");
         oj::CrtRandom random;

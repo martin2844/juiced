@@ -90,11 +90,11 @@ rejects duplicates/overflow, and reserves a slot for Custom Logo. Workshop entri
 have short captions and full help text. Existing public binaries without this
 extension do not load these extra options.
 
-An asset package changes the catalogue save variant. Enabling it may therefore
-show a separate career list; disabling it restores the old combination. It does
-not delete saves. Never copy an existing Custom Logo career into the new variant
-without remapping that dynamically appended slot. The collection is packaged disabled
-and is not installed onto the Retroid automatically.
+Android .10 and newer share careers across all mod configurations, including the
+original-game mode. Earlier builds separated catalogue save variants. Legacy
+careers are recovered by copying without overwriting originals. There is no
+catalogue compatibility gate or index remapping: adding/removing vinyls may change
+saved fitted decals, including Custom Logo. The collection is packaged disabled.
 
 ## Validation
 

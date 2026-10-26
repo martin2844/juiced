@@ -9,7 +9,6 @@
 namespace oj::mods::packages {
 namespace {
 std::filesystem::path directory;
-std::string defaultSaveSet;
 std::vector<Package> packages;
 std::string read(const std::filesystem::path &path) {
     std::ifstream file(path, std::ios::binary);
@@ -139,12 +138,6 @@ void seedMissing(const std::filesystem::path &defaults, const std::filesystem::p
 void discover(const std::filesystem::path &root) {
     directory = root;
     packages.clear();
-    defaultSaveSet.clear();
-    std::ifstream collection(root / "collection.ini");
-    std::string line;
-    while (std::getline(collection, line))
-        if (line.starts_with("default-save-set="))
-            defaultSaveSet = line.substr(17);
     if (!std::filesystem::is_directory(root))
         return;
     for (const auto &entry : std::filesystem::directory_iterator(root)) {
@@ -270,17 +263,66 @@ std::filesystem::path assemble(const std::filesystem::path &gameRoot) {
     }
 }
 std::filesystem::path saveDirectory(const std::filesystem::path &base) {
-    if (!available())
-        return base;
-    std::string variant;
-    for (const auto &p : packages)
-        if (p.catalogue && p.active) {
-            if (!variant.empty())
-                variant += '+';
-            variant += p.id;
+    return base;
+}
+std::filesystem::path sharedSaveDirectory(const std::filesystem::path &support) {
+    namespace fs = std::filesystem;
+    const auto base = support / "ModSaves";
+    fs::create_directories(base);
+    std::vector<fs::path> roots{support / "saves", support / "LegacyModSaves"};
+    if (fs::is_directory(base / "variants")) {
+        std::vector<fs::path> variants;
+        for (const auto &entry : fs::directory_iterator(base / "variants"))
+            if (!entry.is_symlink() && entry.is_directory()) variants.push_back(entry.path());
+        std::sort(variants.begin(), variants.end());
+        roots.insert(roots.end(), variants.begin(), variants.end());
+    }
+    for (const auto &root : roots) {
+        if (!fs::is_directory(root) || fs::is_symlink(root)) continue;
+        if (fs::is_directory(root / "SAVE")) {
+            for (const auto &entry : fs::directory_iterator(root / "SAVE")) {
+                const auto name = entry.path().filename().string();
+                if (entry.is_symlink() || !entry.is_directory() || !name.starts_with("P") ||
+                    !fs::is_regular_file(entry.path() / "USERDATA")) continue;
+                const auto key = hash(entry.path().lexically_relative(support).generic_string());
+                const auto receipt = base / ".legacy-imports" / key;
+                if (fs::exists(receipt)) continue;
+                const auto plan = base / ".legacy-imports" / (key + ".target");
+                auto destName = name;
+                if (fs::exists(plan)) {
+                    destName = read(plan);
+                    if (destName.empty() || fs::path(destName).filename() != fs::path(destName) ||
+                        !destName.starts_with("P")) throw std::runtime_error("Invalid legacy import target");
+                } else {
+                    if (fs::exists(base / "SAVE" / destName)) {
+                        // Keep both careers on collisions; never overwrite the current profile.
+                        destName += "-import-" + key;
+                        unsigned suffix = 0;
+                        while (fs::exists(base / "SAVE" / destName))
+                            destName = name + "-import-" + key + "-" + std::to_string(++suffix);
+                    }
+                    write(plan, destName);
+                }
+                const auto dest = base / "SAVE" / destName;
+                if (!fs::exists(dest)) {
+                    const auto stage = base / (".import-" + key);
+                    fs::remove_all(stage); // Only our interrupted, unpublished staging copy.
+                    fs::copy(entry.path(), stage, fs::copy_options::recursive | fs::copy_options::skip_symlinks);
+                    fs::create_directories(dest.parent_path());
+                    fs::rename(stage, dest);
+                }
+                write(receipt, dest.filename().string());
+            }
         }
-    if (variant == defaultSaveSet)
-        return base;
-    return base / "variants" / (variant.empty() ? "stock" : variant);
+        // Preserve per-profile creative settings and records without replacing live data.
+        for (const auto &part : {fs::path("CreativeMods"), fs::path("SAVE/HS"), fs::path("reg.cf1")}) {
+            const auto from = root / part, to = base / part;
+            if (!fs::exists(from) || fs::is_symlink(from)) continue;
+            fs::create_directories(to.parent_path());
+            fs::copy(from, to, fs::copy_options::recursive | fs::copy_options::skip_existing |
+                               fs::copy_options::skip_symlinks);
+        }
+    }
+    return base;
 }
 } // namespace oj::mods::packages

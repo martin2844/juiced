@@ -71,7 +71,7 @@ int main(int argc, char** argv) {
         oj::log::info("OpenJuice " OJ_VERSION_TEXT " native Linux x86_64; game data {}", game.string());
         auto config = oj::Config::load(configDir / "OpenJuice.ini");
         config.skipIntroMovies = true;
-        config.saveFolder = dataDir / "saves";
+        config.saveFolder = oj::mods::packages::sharedSaveDirectory(dataDir);
         std::filesystem::create_directories(config.saveFolder);
         std::filesystem::current_path(game);
         auto options = oj::parseCommandLine(command.c_str());
@@ -85,18 +85,15 @@ int main(int argc, char** argv) {
                 if (!mod.empty()) throw std::runtime_error("Use --mods packages or --mod legacy overlay, not both");
                 generated.path = oj::mods::packages::assemble(game);
                 mod = generated.path;
-                const auto saves = options.saves.empty() ? dataDir / "ModSaves" : std::filesystem::absolute(options.saves);
-                options.saves = oj::mods::packages::saveDirectory(saves).string();
                 for (const auto& package : oj::mods::packages::list())
                     oj::log::info("mod package {}: {}", package.id, package.active ? "enabled" : "disabled");
                 oj::log::info("mod overlay {}", mod.string());
             }
             oj::mods::runtime::load(scripts);
-            oj::mods::configure((options.saves.empty() ? dataDir : std::filesystem::path(options.saves)) / "CreativeMods");
+            oj::mods::configure((options.saves.empty() ? config.saveFolder : std::filesystem::path(options.saves)) / "CreativeMods");
             if (modsMenu) oj::mods::requestManager();
         }
         oj::GameFiles::setOverrideRoot(mod);
-        if (!mod.empty() && options.saves.empty()) options.saves = (dataDir / "LegacyModSaves").string();
         if (controls) oj::mac::requestControlsEditor();
         const int result = app::gameMain(options, config);
         oj::log::close();

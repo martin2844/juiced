@@ -29,6 +29,37 @@ int main(int argc, char **argv) {
     }
     const auto temp = fs::temp_directory_path() / ("juiced-packages-" + std::to_string(getpid()));
     try {
+        const auto support = temp / "shared-careers";
+        put(support / "ModSaves/SAVE/PDriver/USERDATA", "current driver");
+        put(support / "ModSaves/SAVE/PDriver/juicey.dat", "current progress");
+        put(support / "saves/SAVE/PDriver/USERDATA", "old stock driver");
+        put(support / "saves/SAVE/PDriver/juicey.dat", "stock progress");
+        put(support / "ModSaves/variants/vinyls/SAVE/PVariant/USERDATA", "variant driver");
+        put(support / "ModSaves/variants/vinyls/SAVE/PVariant/juicey.dat", "variant progress");
+        put(support / "ModSaves/variants/vinyls/CreativeMods/test/creative.ini", "personal settings");
+        const auto shared = mods::packages::sharedSaveDirectory(support);
+        check(shared == support / "ModSaves", "one shared directory independent of installed mods");
+        size_t recovered = 0;
+        for (const auto &entry : fs::directory_iterator(shared / "SAVE")) {
+            ++recovered;
+            check(fs::exists(entry.path() / "juicey.dat"), "recovered profiles include the archive");
+        }
+        check(recovered == 3, "colliding stock and mod careers are both preserved");
+        auto contents = [](const fs::path &p) {
+            std::ifstream in(p); return std::string(std::istreambuf_iterator<char>(in), {});
+        };
+        check(contents(shared / "SAVE/PDriver/juicey.dat") == "current progress" &&
+                  contents(support / "saves/SAVE/PDriver/juicey.dat") == "stock progress",
+              "recovery never overwrites current or original saves");
+        check(fs::exists(shared / "CreativeMods/test/creative.ini"), "creative settings recovered");
+        put(shared / "SAVE/PVariant/juicey.dat", "newer progress");
+        mods::packages::sharedSaveDirectory(support);
+        check(contents(shared / "SAVE/PVariant/juicey.dat") == "newer progress" &&
+                  std::distance(fs::directory_iterator(shared / "SAVE"), fs::directory_iterator{}) == 3,
+              "repeated recovery neither duplicates careers nor rolls back progress");
+        fs::remove_all(shared / "SAVE/PVariant");
+        mods::packages::sharedSaveDirectory(support);
+        check(!fs::exists(shared / "SAVE/PVariant"), "deleted imported careers do not reappear");
         const auto root = temp / "mods";
         put(temp / "defaults/new/main.lua", "bundled");
         put(temp / "defaults/.cache/stage-old/stale", "not runtime defaults");
@@ -119,8 +150,8 @@ int main(int argc, char **argv) {
                 check(data.catalogue.lists[kWheel].parts.size() == (wheels ? 202 : 74),
                       "wheel catalogue follows package state");
                 const auto saves = mods::packages::saveDirectory(temp / "saves");
-                check((saves == temp / "saves") == (ferrari && wheels),
-                      "asset combinations isolate careers and preserve existing full-mod saves");
+                check(saves == temp / "saves",
+                      "asset combinations keep the same careers");
                 std::cout << "COMBINATION " << combination << " loaded\n";
                 GameFiles::setOverrideRoot({});
             }
@@ -141,8 +172,8 @@ int main(int argc, char **argv) {
             mods::runtime::load(root);
             check(mods::runtime::loaded().empty() && mods::packages::assemble(game).empty(),
                   "all mods disabled loads neither scripts nor assets");
-            check(mods::packages::saveDirectory(temp / "saves") == temp / "saves/variants/stock",
-                  "all-off career is isolated");
+            check(mods::packages::saveDirectory(temp / "saves") == temp / "saves",
+                  "all-off keeps the same careers");
             {
                 mods::CreativeMenu menu(device, language, {false, {}, true});
                 for (size_t i = 0; i < mods::packages::list().size(); ++i) {
@@ -158,8 +189,8 @@ int main(int argc, char **argv) {
                   "all script features restored after re-enabling");
             check(mods::packages::toggle("custom-logo").empty(), "disable custom logo");
             mods::packages::discover(root);
-            check(mods::packages::saveDirectory(temp / "saves") != temp / "saves",
-                  "custom decal catalogue toggle also isolates careers");
+            check(mods::packages::saveDirectory(temp / "saves") == temp / "saves",
+                  "custom decal toggle keeps the same careers");
             mods::runtime::load({});
         }
         fs::remove_all(temp);

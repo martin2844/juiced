@@ -18,10 +18,11 @@ The launcher seeds missing files from repository `mods/` into
 `~/.local/share/openjuice/mods`, preserving installed edits and disabled markers.
 Source tools and generated caches are excluded. Original `game-data` is unchanged:
 package assets and patches are assembled into temporary overlays removed on exit.
-Modded saves live in `~/.local/share/openjuice/ModSaves`; catalogue combinations
-other than the default use separate `variants/` directories. Original saves in
-`~/.local/share/openjuice/saves` remain separate. Creative preferences and images
-are stored in `CreativeMods` within the selected mod save directory.
+All careers live in `~/.local/share/openjuice/ModSaves`, with or without mods.
+Old profiles in `saves`, `LegacyModSaves` and `ModSaves/variants` are copied into
+that directory without replacing current profiles or deleting originals. Mod
+catalogue compatibility is not enforced. Creative preferences and images live
+in `CreativeMods` within the shared save directory.
 
 ## Native implementation and rebuild
 
@@ -39,7 +40,7 @@ Explicit flags: `--mods DIR`, `--creative-mods`, `--mod-defaults DIR`,
 ## Verification
 
 - Nix build and all four CTest suites pass; core runner: 188 passed, zero failed.
-- All four Ferrari/wheels combinations, package toggles and save isolation pass.
+- All four Ferrari/wheels combinations and package toggles share one save directory.
 - Ferrari definition, independent ownership/upgrades, model, lights, collision,
   tuning and save roundtrip checks pass against actual assets.
 - All 128 imported wheels fit, select and save; total catalogue is 202 wheels.

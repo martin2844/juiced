@@ -351,7 +351,7 @@ public final class LauncherActivity extends Activity {
       section(
           "Save editor",
           "Adjust money and crew respect, or add cars from the selected game's roster."
-              + " Original-game and modded profiles stay separate.");
+              + " Your profiles stay available when mods change.");
       action(
           "Open save editor",
           true,
@@ -394,7 +394,7 @@ public final class LauncherActivity extends Activity {
       else Ui.divider(content);
       section(
           "Saved games",
-          "Original and modded profiles are kept separately. Export a backup before uninstalling"
+          "The original game and mods share your profiles. Export a backup before uninstalling"
               + " the app.");
       action(
           "Export save backup",
