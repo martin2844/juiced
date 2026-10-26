@@ -1,0 +1,2424 @@
+{
+  "version": 1,
+  "date": "2026-10-26",
+  "collection": "underground-vinyls-v2",
+  "method": "Revisión visual individual de las 241 imágenes de gallery (tres vistas por opción). Clasifica el resultado visible actual sobre carrocería de fábrica, no el mérito del arte original ni el funcionamiento técnico. No valida kits, movimiento ni otras pinturas.",
+  "criteria": {
+    "A": "Casi nativo: composición, escala y colocación limpias, sin defectos visibles relevantes.",
+    "B": "Adaptación perceptible pero aceptable: diseño legible y coherente, sin recortes graves.",
+    "C": "No aceptable: recortes, deformación, mala composición o legibilidad insuficiente.",
+    "D": "No aceptable grave: mapeado roto, grandes fragmentos, texto destruido o resultado prácticamente vacío."
+  },
+  "entries": [
+    {
+      "id": "V2A5A63915E",
+      "car": "PEUGEOT_206",
+      "label": "206_fbi",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Emblemas legibles; escala y capó algo ajenos al estilo original.",
+      "recommendation": "keep",
+      "image": "V2A5A63915E.jpg"
+    },
+    {
+      "id": "V08322E5525",
+      "car": "PEUGEOT_206",
+      "label": "206_glass",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Imagen lateral deformada y composición poco legible.",
+      "recommendation": "remove",
+      "image": "V08322E5525.jpg"
+    },
+    {
+      "id": "VA82E838486",
+      "car": "PEUGEOT_206",
+      "label": "206frenchpolice",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Franja policial coherente y texto legible; adaptación visible.",
+      "recommendation": "keep",
+      "image": "VA82E838486.jpg"
+    },
+    {
+      "id": "VDBE376411C",
+      "car": "PEUGEOT_206",
+      "label": "206melissa",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Retrato recortado contra la ventanilla y poco integrado.",
+      "recommendation": "remove",
+      "image": "VDBE376411C.jpg"
+    },
+    {
+      "id": "V90203A6E16",
+      "car": "300ZX",
+      "label": "240sx-fullstripes",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "La revisión ampliada muestra bloques rectangulares de las franjas en aletas, especialmente la trasera; no se integran con el lateral.",
+      "recommendation": "remove",
+      "image": "V90203A6E16.jpg"
+    },
+    {
+      "id": "VA584CFC451",
+      "car": "300ZX",
+      "label": "240sxfullstripes2",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "La revisión ampliada muestra bloques rectangulares de las franjas en aletas, especialmente la trasera; no se integran con el lateral.",
+      "recommendation": "remove",
+      "image": "VA584CFC451.jpg"
+    },
+    {
+      "id": "V4E1033B11F",
+      "car": "S2000",
+      "label": "2f2f_s2000_vinyl",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Gráfico rosa legible y bien contenido, aunque pequeño.",
+      "recommendation": "keep",
+      "image": "V4E1033B11F.jpg"
+    },
+    {
+      "id": "V158F3652C9",
+      "car": "GTR",
+      "label": "2f2f_skyline_vinyl",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Diseño reconocible; lateral comprimido hacia el zócalo.",
+      "recommendation": "keep",
+      "image": "V158F3652C9.jpg"
+    },
+    {
+      "id": "V3B541F9E6A",
+      "car": "S2000",
+      "label": "2f2f_sukis_s2000",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Envolvente saturada con fragmentos de color en pilares y bordes.",
+      "recommendation": "remove",
+      "image": "V3B541F9E6A.jpg"
+    },
+    {
+      "id": "VCC68ACC696",
+      "car": "SUPRA",
+      "label": "2f2f_supra",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Llamas laterales coherentes; capó tramado poco integrado.",
+      "recommendation": "keep",
+      "image": "VCC68ACC696.jpg"
+    },
+    {
+      "id": "VF171CD74C2",
+      "car": "EVO8",
+      "label": "2f2fevo_hood",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Gráfico de capó limpio, pero aislado y algo artificial.",
+      "recommendation": "keep",
+      "image": "VF171CD74C2.jpg"
+    },
+    {
+      "id": "V4BFD8E2CB4",
+      "car": "EVO8",
+      "label": "2f2fevo_vinyl",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Paneles rectangulares parecen parches, sin integración con puertas.",
+      "recommendation": "remove",
+      "image": "V4BFD8E2CB4.jpg"
+    },
+    {
+      "id": "V7BE5C7CD34",
+      "car": "EVO8",
+      "label": "2f2fevo_vinyl2",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Bloques laterales desplazados y cruzados por cortes de carrocería.",
+      "recommendation": "remove",
+      "image": "V7BE5C7CD34.jpg"
+    },
+    {
+      "id": "VBA046FF86F",
+      "car": "GTR",
+      "label": "2f2fr34_vinyl",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Franjas reconocibles; lateral bajo y comprimido.",
+      "recommendation": "keep",
+      "image": "VBA046FF86F.jpg"
+    },
+    {
+      "id": "V3832E5C727",
+      "car": "GTR",
+      "label": "2f2fr34_vinyl_fade",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Variante tenue coherente, con lateral demasiado bajo.",
+      "recommendation": "keep",
+      "image": "V3832E5C727.jpg"
+    },
+    {
+      "id": "V3758C89EB5",
+      "car": "GTR",
+      "label": "2f2fr34_vinyl_fixed",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Diseño limpio pero comprimido en la zona baja.",
+      "recommendation": "keep",
+      "image": "V3758C89EB5.jpg"
+    },
+    {
+      "id": "V4311DE92BD",
+      "car": "GTR",
+      "label": "2f2fskyliner34",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Patrón lateral legible, aunque estrecho y bajo.",
+      "recommendation": "keep",
+      "image": "V4311DE92BD.jpg"
+    },
+    {
+      "id": "VC479E841FD",
+      "car": "GTR",
+      "label": "2f2fskylinev2",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Capó correcto; lateral demasiado pequeño para parecer nativo.",
+      "recommendation": "keep",
+      "image": "VC479E841FD.jpg"
+    },
+    {
+      "id": "V27B6852012",
+      "car": "SUPRA",
+      "label": "2f2fsupra",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Laterales prácticamente vacíos; trama del capó parece residual.",
+      "recommendation": "remove",
+      "image": "V27B6852012.jpg"
+    },
+    {
+      "id": "V13ADC895AA",
+      "car": "350Z",
+      "label": "350z custom6.dds",
+      "pack": "nd4",
+      "tier": "A",
+      "reason": "Motivo orgánico bien distribuido y consistente entre ambas caras.",
+      "recommendation": "keep",
+      "image": "V13ADC895AA.jpg"
+    },
+    {
+      "id": "VE90F0C37C6",
+      "car": "350Z",
+      "label": "350z-robzombie",
+      "pack": "nd4",
+      "tier": "D",
+      "reason": "Texto cortado y envolvente fotográfica muy deformada.",
+      "recommendation": "remove",
+      "image": "VE90F0C37C6.jpg"
+    },
+    {
+      "id": "V418F8CFD72",
+      "car": "350Z",
+      "label": "350z-stripes",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Franjas generan bloques laterales abruptos en aletas y paragolpes.",
+      "recommendation": "remove",
+      "image": "V418F8CFD72.jpg"
+    },
+    {
+      "id": "V64707D940A",
+      "car": "GOLF",
+      "label": "666",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Motivos laterales cortados y poca continuidad con capó.",
+      "recommendation": "remove",
+      "image": "V64707D940A.jpg"
+    },
+    {
+      "id": "VDE9B8AF0B8",
+      "car": "MX5",
+      "label": "aliasmiatabeta1.0",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Letras y manchas muy tenues; resultado parece incompleto.",
+      "recommendation": "remove",
+      "image": "VDE9B8AF0B8.jpg"
+    },
+    {
+      "id": "VF2F860A81B",
+      "car": "MX5",
+      "label": "aliasmiatafinal",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Inscripciones diminutas y poco legibles, sin composición clara.",
+      "recommendation": "remove",
+      "image": "VF2F860A81B.jpg"
+    },
+    {
+      "id": "VC358D06796",
+      "car": "GOLF",
+      "label": "alien",
+      "pack": "nd4",
+      "tier": "D",
+      "reason": "Letras gigantes cortadas por ventanas y piezas.",
+      "recommendation": "remove",
+      "image": "VC358D06796.jpg"
+    },
+    {
+      "id": "V8D737B08CE",
+      "car": "RX7",
+      "label": "alizee_rx7",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Tipografía limpia y proporcionada sobre ambas puertas.",
+      "recommendation": "keep",
+      "image": "V8D737B08CE.jpg"
+    },
+    {
+      "id": "VBAFAE3450D",
+      "car": "MX5",
+      "label": "angryspongebob",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Cara de capó coherente; lunares laterales simples pero utilizables.",
+      "recommendation": "keep",
+      "image": "VBAFAE3450D.jpg"
+    },
+    {
+      "id": "V4DA4137C59",
+      "car": "MX5",
+      "label": "army-miata",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Gráfico abstracto fluido, aunque con ajuste frontal imperfecto.",
+      "recommendation": "keep",
+      "image": "V4DA4137C59.jpg"
+    },
+    {
+      "id": "V9383C02F1B",
+      "car": "EVO8",
+      "label": "artnfs_lancer",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Fuego muy distinto entre lados y recortes bruscos en pilares.",
+      "recommendation": "remove",
+      "image": "V9383C02F1B.jpg"
+    },
+    {
+      "id": "V84A31773DD",
+      "car": "GTR",
+      "label": "artnfs_skyline",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Fuego estirado, diferente entre caras y cortado en el frontal.",
+      "recommendation": "remove",
+      "image": "V84A31773DD.jpg"
+    },
+    {
+      "id": "V3DE4F880E8",
+      "car": "GTR",
+      "label": "atomicskylinevinyl",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Patrocinadores contenidos y legibles, aunque algo pequeños.",
+      "recommendation": "keep",
+      "image": "V3DE4F880E8.jpg"
+    },
+    {
+      "id": "V909C50CDA4",
+      "car": "GOLF",
+      "label": "audiquattro",
+      "pack": "nd4",
+      "tier": "D",
+      "reason": "Bloques y números cortados, librea incompatible con paneles del coche.",
+      "recommendation": "remove",
+      "image": "V909C50CDA4.jpg"
+    },
+    {
+      "id": "VEABFC46BA3",
+      "car": "CELICA",
+      "label": "badreligion_celica",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Logotipos claros y colocación consistente; aspecto de mod.",
+      "recommendation": "keep",
+      "image": "VEABFC46BA3.jpg"
+    },
+    {
+      "id": "VF7287F82C4",
+      "car": "ECLIPSE",
+      "label": "blackwidow_eclipse",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Telaraña reconocible y continua; detalles centrales algo borrosos.",
+      "recommendation": "keep",
+      "image": "VF7287F82C4.jpg"
+    },
+    {
+      "id": "VA24B480552",
+      "car": "CIVIC_97",
+      "label": "britney_version1.1",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Foto encerrada en un parche y recortada contra moldura.",
+      "recommendation": "remove",
+      "image": "VA24B480552.jpg"
+    },
+    {
+      "id": "VB629A64686",
+      "car": "CIVIC_97",
+      "label": "britneyskin",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Retrato lateral fragmentado y capó poco legible.",
+      "recommendation": "remove",
+      "image": "VB629A64686.jpg"
+    },
+    {
+      "id": "V058010B1A4",
+      "car": "GTR",
+      "label": "calsonic",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Patrocinadores coherentes; número de aleta se corta.",
+      "recommendation": "keep",
+      "image": "V058010B1A4.jpg"
+    },
+    {
+      "id": "VBDC77E07BC",
+      "car": "PEUGEOT_206",
+      "label": "calvinvinyl",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Personajes partidos por ventanillas y capó demasiado saturado.",
+      "recommendation": "remove",
+      "image": "VBDC77E07BC.jpg"
+    },
+    {
+      "id": "VD4F0348B24",
+      "car": "GOLF",
+      "label": "carlsberg",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Logotipo invadiendo pilares y cortado al llegar a ventanas.",
+      "recommendation": "remove",
+      "image": "VD4F0348B24.jpg"
+    },
+    {
+      "id": "V014F5AA537",
+      "car": "CELICA",
+      "label": "celca_rally",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Rotulación frontal invertida y fragmentos del patrón en piezas distintas.",
+      "recommendation": "remove",
+      "image": "V014F5AA537.jpg"
+    },
+    {
+      "id": "VF8B7B47548",
+      "car": "CELICA",
+      "label": "celica_trd",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Logotipos TRD partidos entre aletas, puerta y capó.",
+      "recommendation": "remove",
+      "image": "VF8B7B47548.jpg"
+    },
+    {
+      "id": "VE1370827E1",
+      "car": "CELICA",
+      "label": "celica_trd2",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Repeticiones cortadas y distribución desigual de TRD.",
+      "recommendation": "remove",
+      "image": "VE1370827E1.jpg"
+    },
+    {
+      "id": "VFB5E181486",
+      "car": "CELICA",
+      "label": "celicatrd",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Marca lateral contenida y capó coherente, aunque tenue.",
+      "recommendation": "keep",
+      "image": "VFB5E181486.jpg"
+    },
+    {
+      "id": "V9683ADF176",
+      "car": "GOLF",
+      "label": "che",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Texto lateral limpio y alineado; envolvente de aspecto modificado.",
+      "recommendation": "keep",
+      "image": "V9683ADF176.jpg"
+    },
+    {
+      "id": "VCB6C8A8716",
+      "car": "RX7",
+      "label": "chompyouvinyl",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Motivo enorme en una cara y casi ausente en la otra.",
+      "recommendation": "remove",
+      "image": "VCB6C8A8716.jpg"
+    },
+    {
+      "id": "V8B4AE54D31",
+      "car": "CIVIC_97",
+      "label": "civic-junkmans",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Diseño muy cargado con logo cortado por rueda y paneles.",
+      "recommendation": "remove",
+      "image": "V8B4AE54D31.jpg"
+    },
+    {
+      "id": "V93637A0A8D",
+      "car": "CIVIC_97",
+      "label": "civic_3rd",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Logos centrados y consistentes; capó algo saturado.",
+      "recommendation": "keep",
+      "image": "V93637A0A8D.jpg"
+    },
+    {
+      "id": "V4FFD3B0CFD",
+      "car": "CIVIC_97",
+      "label": "civic_electrical",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Rayo fino bien contenido, aunque pierde presencia a distancia.",
+      "recommendation": "keep",
+      "image": "V4FFD3B0CFD.jpg"
+    },
+    {
+      "id": "VA2216F25A6",
+      "car": "CIVIC_97",
+      "label": "civic_kutet",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Gráfico lateral coherente; algunas líneas se cortan en rueda delantera.",
+      "recommendation": "keep",
+      "image": "VA2216F25A6.jpg"
+    },
+    {
+      "id": "V03E4444DEC",
+      "car": "CIVIC_97",
+      "label": "civic_tk",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Color y motivos consistentes, con composición algo genérica.",
+      "recommendation": "keep",
+      "image": "V03E4444DEC.jpg"
+    },
+    {
+      "id": "VBEDD294572",
+      "car": "CIVIC_97",
+      "label": "civic_yha",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Inscripciones y símbolos fragmentados en puertas y capó.",
+      "recommendation": "remove",
+      "image": "VBEDD294572.jpg"
+    },
+    {
+      "id": "VF4352A2541",
+      "car": "CIVIC_97",
+      "label": "civictyper",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Capó oscuro bien delimitado; opción sencilla, sin defecto evidente.",
+      "recommendation": "keep",
+      "image": "VF4352A2541.jpg"
+    },
+    {
+      "id": "VDA0009CFAD",
+      "car": "CIVIC_97",
+      "label": "civictyper",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Texto lateral muy borroso sobre bloque rectangular.",
+      "recommendation": "remove",
+      "image": "VDA0009CFAD.jpg"
+    },
+    {
+      "id": "V9B0B1EAF95",
+      "car": "CIVIC_97",
+      "label": "civicvinyl",
+      "pack": "nd4",
+      "tier": "D",
+      "reason": "Texto grande cortado en zócalo; envolvente pierde legibilidad.",
+      "recommendation": "remove",
+      "image": "V9B0B1EAF95.jpg"
+    },
+    {
+      "id": "VD286A50430",
+      "car": "GTR",
+      "label": "clarion",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Números y logotipos invaden ruedas; capó mal orientado.",
+      "recommendation": "remove",
+      "image": "VD286A50430.jpg"
+    },
+    {
+      "id": "V79CB404C88",
+      "car": "350Z",
+      "label": "cold",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Imagen de capó borrosa y sin contorno/composición claros.",
+      "recommendation": "remove",
+      "image": "V79CB404C88.jpg"
+    },
+    {
+      "id": "VC0161DCAA9",
+      "car": "GOLF",
+      "label": "colorspini",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Patrón integral continuo; estética estridente pero visualmente utilizable.",
+      "recommendation": "keep",
+      "image": "VC0161DCAA9.jpg"
+    },
+    {
+      "id": "V9701F30AB5",
+      "car": "PEUGEOT_206",
+      "label": "cowboy",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Siluetas recortadas contra ventanas y pasos de rueda.",
+      "recommendation": "remove",
+      "image": "V9701F30AB5.jpg"
+    },
+    {
+      "id": "VC4B1BA530B",
+      "car": "GTR",
+      "label": "craigsskylinevinyl",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Franjas racing coherentes; pequeñas rotulaciones con ajuste imperfecto.",
+      "recommendation": "keep",
+      "image": "VC4B1BA530B.jpg"
+    },
+    {
+      "id": "VA6BB9A6712",
+      "car": "EVO8",
+      "label": "darksiders",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Rotulación excesiva y cortes notorios entre capó y frontal.",
+      "recommendation": "remove",
+      "image": "VA6BB9A6712.jpg"
+    },
+    {
+      "id": "V83B2BB6BD8",
+      "car": "EVO8",
+      "label": "darksiders",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Letras llegan a ventanas y el patrón del capó queda fragmentado.",
+      "recommendation": "remove",
+      "image": "V83B2BB6BD8.jpg"
+    },
+    {
+      "id": "V3E1F09813D",
+      "car": "EVO8",
+      "label": "darksiders",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Texto invadiendo borde superior y símbolos mal encajados en frontal.",
+      "recommendation": "remove",
+      "image": "V3E1F09813D.jpg"
+    },
+    {
+      "id": "V993308E41A",
+      "car": "GOLF",
+      "label": "decal_wide_trd",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "TRD cortado por ventanas y distribuido de forma desigual.",
+      "recommendation": "remove",
+      "image": "V993308E41A.jpg"
+    },
+    {
+      "id": "V01FB62D21A",
+      "car": "GTR",
+      "label": "drugged_skyline",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Símbolos legibles y bien contenidos; patrón sencillo pero coherente.",
+      "recommendation": "keep",
+      "image": "V01FB62D21A.jpg"
+    },
+    {
+      "id": "VDCAB15BA5E",
+      "car": "MX5",
+      "label": "duff_beer_miata_vinyl",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Ilustración reconocible, legible y contenida en puerta/capó.",
+      "recommendation": "keep",
+      "image": "VDCAB15BA5E.jpg"
+    },
+    {
+      "id": "V189EA55179",
+      "car": "GOLF",
+      "label": "dunlop_texture",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Ajedrezado situado contra ventanas, con cortes que parecen restos.",
+      "recommendation": "remove",
+      "image": "V189EA55179.jpg"
+    },
+    {
+      "id": "VDD1012AD13",
+      "car": "GOLF",
+      "label": "dunlop_texture",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Variante clara deja fragmentos de patrón en borde de ventanas.",
+      "recommendation": "remove",
+      "image": "VDD1012AD13.jpg"
+    },
+    {
+      "id": "VA67804607C",
+      "car": "GOLF",
+      "label": "dunlop_texture",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Dunlop cortado por ventanillas y demasiado alto.",
+      "recommendation": "remove",
+      "image": "VA67804607C.jpg"
+    },
+    {
+      "id": "V608ECA1403",
+      "car": "GOLF",
+      "label": "dunlop_texture",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Letras negras cortadas por huecos de ventanas.",
+      "recommendation": "remove",
+      "image": "V608ECA1403.jpg"
+    },
+    {
+      "id": "VAF63A86A4F",
+      "car": "ECLIPSE",
+      "label": "eclipse-peteypablo",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Texto y ladrillos legibles; parche rectangular evidente pero aceptable.",
+      "recommendation": "keep",
+      "image": "VAF63A86A4F.jpg"
+    },
+    {
+      "id": "VA413FB2C09",
+      "car": "ECLIPSE",
+      "label": "eclipse_intro",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Gráfico fluido, bien colocado, con remates imperfectos en extremos.",
+      "recommendation": "keep",
+      "image": "VA413FB2C09.jpg"
+    },
+    {
+      "id": "VC2A03120C9",
+      "car": "ECLIPSE",
+      "label": "eclipsefnf",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Rojo/negro coherente; distribución poco natural pero utilizable.",
+      "recommendation": "keep",
+      "image": "VC2A03120C9.jpg"
+    },
+    {
+      "id": "V8E9D0F0726",
+      "car": "ECLIPSE",
+      "label": "eclipseintrostripe51",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Motivo lateral contenido; contraste y detalle algo débiles.",
+      "recommendation": "keep",
+      "image": "V8E9D0F0726.jpg"
+    },
+    {
+      "id": "V0AEBCE20DB",
+      "car": "GOLF",
+      "label": "eyes",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Ojos partidos entre puertas y aletas; líneas terminan abruptamente.",
+      "recommendation": "remove",
+      "image": "V0AEBCE20DB.jpg"
+    },
+    {
+      "id": "V2F24D3466B",
+      "car": "ECLIPSE",
+      "label": "f&feclipse_vinyl2",
+      "pack": "nd4",
+      "tier": "A",
+      "reason": "Motivo lateral limpio, proporcionado y coherente en ambas caras.",
+      "recommendation": "keep",
+      "image": "V2F24D3466B.jpg"
+    },
+    {
+      "id": "VA9C50634C3",
+      "car": "RX7",
+      "label": "f&frx7",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Arte y texto casi ilegibles, apariencia de restos grises.",
+      "recommendation": "remove",
+      "image": "VA9C50634C3.jpg"
+    },
+    {
+      "id": "VEBA370828B",
+      "car": "RX7",
+      "label": "f&frx7_vinyl",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Lateral coherente pero de contraste muy bajo sobre esta pintura.",
+      "recommendation": "keep",
+      "image": "VEBA370828B.jpg"
+    },
+    {
+      "id": "V4FB2FB9C30",
+      "car": "PEUGEOT_206",
+      "label": "factorx",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Texto gigante recortado al borde de las ventanas.",
+      "recommendation": "remove",
+      "image": "V4FB2FB9C30.jpg"
+    },
+    {
+      "id": "V16BAE23675",
+      "car": "SUPRA",
+      "label": "fafsup",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Gráfico lateral reconocible; ajuste compacto y algo bajo.",
+      "recommendation": "keep",
+      "image": "V16BAE23675.jpg"
+    },
+    {
+      "id": "V98F877AAC2",
+      "car": "ECLIPSE",
+      "label": "fire_eclipse",
+      "pack": "nd4",
+      "tier": "A",
+      "reason": "Dos franjas de capó limpias y bien alineadas.",
+      "recommendation": "keep",
+      "image": "V98F877AAC2.jpg"
+    },
+    {
+      "id": "V7043EB5275",
+      "car": "RX7",
+      "label": "fixedrx7viperstripes",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Franjas superiores producen bloques rectangulares en los laterales.",
+      "recommendation": "remove",
+      "image": "V7043EB5275.jpg"
+    },
+    {
+      "id": "VD3A4FF6530",
+      "car": "GTR",
+      "label": "flashmediadesignskyline",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Textura integral regular y logos contenidos; aspecto poco original.",
+      "recommendation": "keep",
+      "image": "VD3A4FF6530.jpg"
+    },
+    {
+      "id": "V7DA47F25CF",
+      "car": "SUPRA",
+      "label": "fnfsupra",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Gráfico excesivamente tenue; cuesta distinguir un diseño terminado.",
+      "recommendation": "remove",
+      "image": "V7DA47F25CF.jpg"
+    },
+    {
+      "id": "VEA9F86FCB7",
+      "car": "focus",
+      "label": "focus_mcrae",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Rotulación lateral cortada en el zócalo y continuidad frontal deficiente.",
+      "recommendation": "remove",
+      "image": "VEA9F86FCB7.jpg"
+    },
+    {
+      "id": "VE0340245BE",
+      "car": "focus",
+      "label": "focuslogo",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Emblema de capó bien contenido, aunque con textura muy cargada.",
+      "recommendation": "keep",
+      "image": "VE0340245BE.jpg"
+    },
+    {
+      "id": "VFC8F044175",
+      "car": "focus",
+      "label": "focusrs2002",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "RS dividido por la puerta y tamaños distintos entre caras.",
+      "recommendation": "remove",
+      "image": "VFC8F044175.jpg"
+    },
+    {
+      "id": "V80F87F3AB9",
+      "car": "GTR",
+      "label": "furiousdesign",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Camuflaje continuo y coherente sobre toda la carrocería.",
+      "recommendation": "keep",
+      "image": "V80F87F3AB9.jpg"
+    },
+    {
+      "id": "V100866691A",
+      "car": "GTR",
+      "label": "furiousdesign",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Trama integral uniforme; muy ruidosa pero sin fallo evidente de colocación.",
+      "recommendation": "keep",
+      "image": "V100866691A.jpg"
+    },
+    {
+      "id": "VE365D425D0",
+      "car": "GTR",
+      "label": "furiousdesign2",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Gráfico lateral compacto y consistente; algo ajeno al estilo del juego.",
+      "recommendation": "keep",
+      "image": "VE365D425D0.jpg"
+    },
+    {
+      "id": "VBEA33AD6D0",
+      "car": "GTR",
+      "label": "furiousdesign2",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Texto y líneas legibles, composición equilibrada.",
+      "recommendation": "keep",
+      "image": "VBEA33AD6D0.jpg"
+    },
+    {
+      "id": "V3CB2165193",
+      "car": "GTR",
+      "label": "furiousdesign2",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "NISSAN desproporcionado y cortado por ruedas y bordes.",
+      "recommendation": "remove",
+      "image": "V3CB2165193.jpg"
+    },
+    {
+      "id": "V390E3C6A0C",
+      "car": "GTR",
+      "label": "furiousdesign2",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Tipografía y trazos contenidos; contraste algo débil.",
+      "recommendation": "keep",
+      "image": "V390E3C6A0C.jpg"
+    },
+    {
+      "id": "V410F9B89BC",
+      "car": "GOLF",
+      "label": "garfield",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Ilustración cortada bajo ventanas y colores muy agresivos.",
+      "recommendation": "remove",
+      "image": "V410F9B89BC.jpg"
+    },
+    {
+      "id": "V739D44E0E8",
+      "car": "CELICA",
+      "label": "gcmodv1.0",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Texto cursivo legible y correctamente proporcionado.",
+      "recommendation": "keep",
+      "image": "V739D44E0E8.jpg"
+    },
+    {
+      "id": "V1CBEA5BD55",
+      "car": "CELICA",
+      "label": "gcmodv1.0",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Variante clara de texto limpia, con menos contraste.",
+      "recommendation": "keep",
+      "image": "V1CBEA5BD55.jpg"
+    },
+    {
+      "id": "V1532F0E2EF",
+      "car": "CELICA",
+      "label": "gcmodv1.0",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Monograma pequeño pero limpio y simétrico.",
+      "recommendation": "keep",
+      "image": "V1532F0E2EF.jpg"
+    },
+    {
+      "id": "VC1407007FC",
+      "car": "GOLF",
+      "label": "golf_panther",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Animal recortado contra ventana, capó desproporcionado.",
+      "recommendation": "remove",
+      "image": "VC1407007FC.jpg"
+    },
+    {
+      "id": "V7BC23D9C01",
+      "car": "RX7",
+      "label": "gothik1",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Fragmentos aislados difíciles de reconocer; parece incompleto.",
+      "recommendation": "remove",
+      "image": "V7BC23D9C01.jpg"
+    },
+    {
+      "id": "V27CB7C225C",
+      "car": "RX7",
+      "label": "gothik1",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Imagen fantasma muy tenue y deformada en capó/laterales.",
+      "recommendation": "remove",
+      "image": "V27CB7C225C.jpg"
+    },
+    {
+      "id": "V1EA451B6B3",
+      "car": "RX7",
+      "label": "gothik1",
+      "pack": "nd4",
+      "tier": "D",
+      "reason": "Arte prácticamente invisible en las tres vistas.",
+      "recommendation": "remove",
+      "image": "V1EA451B6B3.jpg"
+    },
+    {
+      "id": "V4F2FCB58A5",
+      "car": "CELICA",
+      "label": "halomotorsportscelica",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Logo legible y bien contenido; colores poco integrados con el juego.",
+      "recommendation": "keep",
+      "image": "V4F2FCB58A5.jpg"
+    },
+    {
+      "id": "V550649A2B9",
+      "car": "GTR",
+      "label": "hks",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Trazos continuos, aunque demasiado tenues para nivel A.",
+      "recommendation": "keep",
+      "image": "V550649A2B9.jpg"
+    },
+    {
+      "id": "V5F3769BC81",
+      "car": "GTR",
+      "label": "hks",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Patrón borroso de bloques sin lectura clara.",
+      "recommendation": "remove",
+      "image": "V5F3769BC81.jpg"
+    },
+    {
+      "id": "V37E7328FB6",
+      "car": "WRX2",
+      "label": "impreza_rallisport",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Emblema rally limpio; algo comprimido en un lateral.",
+      "recommendation": "keep",
+      "image": "V37E7328FB6.jpg"
+    },
+    {
+      "id": "V640FAAD492",
+      "car": "WRX2",
+      "label": "imprezawrx",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Logo bien definido; colocado alto y con escala desigual entre vistas.",
+      "recommendation": "keep",
+      "image": "V640FAAD492.jpg"
+    },
+    {
+      "id": "V8A5079F7E3",
+      "car": "INTEGRA",
+      "label": "integra",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Ilustración de capó reconocible, algo apretada contra sus bordes.",
+      "recommendation": "keep",
+      "image": "V8A5079F7E3.jpg"
+    },
+    {
+      "id": "VC43DEA072B",
+      "car": "INTEGRA",
+      "label": "integra",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Texto Wolfpack demasiado ancho y cortado por ruedas.",
+      "recommendation": "remove",
+      "image": "VC43DEA072B.jpg"
+    },
+    {
+      "id": "V0D1D16EBDB",
+      "car": "INTEGRA",
+      "label": "integra",
+      "pack": "nd4",
+      "tier": "D",
+      "reason": "No se distingue un vinilo utilizable en ninguna vista.",
+      "recommendation": "remove",
+      "image": "V0D1D16EBDB.jpg"
+    },
+    {
+      "id": "VE8F7FB044F",
+      "car": "INTEGRA",
+      "label": "integra_tuned",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Gráfico angular coherente; capó muy cargado pero utilizable.",
+      "recommendation": "keep",
+      "image": "VE8F7FB044F.jpg"
+    },
+    {
+      "id": "VF92E975EBA",
+      "car": "CELICA",
+      "label": "intro_celica",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Motivo detallado y proporcionado; algunos remates tocan la rueda.",
+      "recommendation": "keep",
+      "image": "VF92E975EBA.jpg"
+    },
+    {
+      "id": "V9EE143CAF7",
+      "car": "GOLF",
+      "label": "jagermeister-vinyl",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Texto lateral cortado por ventanillas y capó sobredimensionado.",
+      "recommendation": "remove",
+      "image": "V9EE143CAF7.jpg"
+    },
+    {
+      "id": "V77FBCB34CE",
+      "car": "RX7",
+      "label": "japan_vinyl",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Franjas y símbolos contenidos; composición algo dispareja.",
+      "recommendation": "keep",
+      "image": "V77FBCB34CE.jpg"
+    },
+    {
+      "id": "VA4BA08DEF5",
+      "car": "SUPRA",
+      "label": "japansun-supra",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Sol y bandas coherentes; encaje alto contra ventanas.",
+      "recommendation": "keep",
+      "image": "VA4BA08DEF5.jpg"
+    },
+    {
+      "id": "V3BE416CD96",
+      "car": "RSX",
+      "label": "jolie-rsx",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Retrato pierde parte de la cara contra ventana y rueda.",
+      "recommendation": "remove",
+      "image": "V3BE416CD96.jpg"
+    },
+    {
+      "id": "V1C2446C751",
+      "car": "RX7",
+      "label": "kornkar",
+      "pack": "nd4",
+      "tier": "D",
+      "reason": "Collage fragmentado, estirado y sin lectura visual coherente.",
+      "recommendation": "remove",
+      "image": "V1C2446C751.jpg"
+    },
+    {
+      "id": "VD81947EE5C",
+      "car": "300ZX",
+      "label": "kr",
+      "pack": "nd4",
+      "tier": "D",
+      "reason": "Resultado casi vacío; sólo restos mínimos visibles.",
+      "recommendation": "remove",
+      "image": "VD81947EE5C.jpg"
+    },
+    {
+      "id": "V0F674B8B1E",
+      "car": "EVO8",
+      "label": "lancerwrc2004",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Parcheado rectangular y patrocinadores con distribución poco coherente.",
+      "recommendation": "remove",
+      "image": "V0F674B8B1E.jpg"
+    },
+    {
+      "id": "V1899556FC3",
+      "car": "GOLF",
+      "label": "lemans",
+      "pack": "nd4",
+      "tier": "D",
+      "reason": "Número cortado y librea radicalmente distinta entre lados.",
+      "recommendation": "remove",
+      "image": "V1899556FC3.jpg"
+    },
+    {
+      "id": "VD25BBA0320",
+      "car": "350Z",
+      "label": "lightning_350z",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Rayos proporcionados y reconocibles; zona de capó algo rectangular.",
+      "recommendation": "keep",
+      "image": "VD25BBA0320.jpg"
+    },
+    {
+      "id": "VA747ED9146",
+      "car": "PEUGEOT_206",
+      "label": "load-206",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Letras estiradas y fragmentos de ilustración sobre paneles.",
+      "recommendation": "remove",
+      "image": "VA747ED9146.jpg"
+    },
+    {
+      "id": "V58FC353ECB",
+      "car": "GTR",
+      "label": "lostprophetes-skyline",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Rotulación llega a ruedas y borde inferior, imagen muy fragmentada.",
+      "recommendation": "remove",
+      "image": "V58FC353ECB.jpg"
+    },
+    {
+      "id": "V6465D5551E",
+      "car": "MX5",
+      "label": "lpu",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Texto débil y pequeños fragmentos dispersos sin composición clara.",
+      "recommendation": "remove",
+      "image": "V6465D5551E.jpg"
+    },
+    {
+      "id": "V014BE7E724",
+      "car": "GOLF",
+      "label": "matrix",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Símbolos estirados y borrosos; patrón pierde uniformidad.",
+      "recommendation": "remove",
+      "image": "V014BE7E724.jpg"
+    },
+    {
+      "id": "VAA95AA6F11",
+      "car": "MX5",
+      "label": "mazdamx5lol",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Trazos demasiado tenues y fragmentados para un acabado aceptable.",
+      "recommendation": "remove",
+      "image": "VAA95AA6F11.jpg"
+    },
+    {
+      "id": "VEEBBE9DD02",
+      "car": "GOLF",
+      "label": "mclarenf1_1_1",
+      "pack": "nd4",
+      "tier": "D",
+      "reason": "West cortado por el zócalo en un lado y rotulación frontal invertida.",
+      "recommendation": "remove",
+      "image": "VEEBBE9DD02.jpg"
+    },
+    {
+      "id": "VF3F2CDFEA3",
+      "car": "focus",
+      "label": "mcrae",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Librea rally reconocible; ajuste de números y pequeños logos imperfecto.",
+      "recommendation": "keep",
+      "image": "VF3F2CDFEA3.jpg"
+    },
+    {
+      "id": "VD42694A8C4",
+      "car": "MX5",
+      "label": "miata_stripe",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Capó oscuro produce grandes parches en aletas laterales.",
+      "recommendation": "remove",
+      "image": "VD42694A8C4.jpg"
+    },
+    {
+      "id": "V44AAD35315",
+      "car": "MX5",
+      "label": "miataeurostylefull",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Cuña lateral sencilla, proporcionada y bien contenida.",
+      "recommendation": "keep",
+      "image": "V44AAD35315.jpg"
+    },
+    {
+      "id": "VD52546595B",
+      "car": "MX5",
+      "label": "miataeurostylefull",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Bloque de puerta borroso que parece una textura mal adaptada.",
+      "recommendation": "remove",
+      "image": "VD52546595B.jpg"
+    },
+    {
+      "id": "V4DD23C4634",
+      "car": "MX5",
+      "label": "miatamx5stipes",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Franjas longitudinales dejan bloques cuadrados en aletas.",
+      "recommendation": "remove",
+      "image": "V4DD23C4634.jpg"
+    },
+    {
+      "id": "VA14B6A122B",
+      "car": "GOLF",
+      "label": "militaryambulance",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Cruz cortada en zócalo y diagonales inconexas en frontal.",
+      "recommendation": "remove",
+      "image": "VA14B6A122B.jpg"
+    },
+    {
+      "id": "VF51CB34B5E",
+      "car": "MX5",
+      "label": "mx-5stripes",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Franjas y rayos coherentes, aunque recargados.",
+      "recommendation": "keep",
+      "image": "VF51CB34B5E.jpg"
+    },
+    {
+      "id": "V8AAA7E7361",
+      "car": "MX5",
+      "label": "mx-5stripesfixed",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Variante de franjas utilizable; pequeños remates poco naturales.",
+      "recommendation": "keep",
+      "image": "V8AAA7E7361.jpg"
+    },
+    {
+      "id": "V106688EA9C",
+      "car": "CELICA",
+      "label": "nd4spdworld_vinyl",
+      "pack": "nd4",
+      "tier": "D",
+      "reason": "Nombre enorme cortado por ruedas y extremos.",
+      "recommendation": "remove",
+      "image": "V106688EA9C.jpg"
+    },
+    {
+      "id": "V8897750C41",
+      "car": "NEON",
+      "label": "neonpat",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Bandera cortada bajo ventanas y comprimida de forma desigual.",
+      "recommendation": "remove",
+      "image": "V8897750C41.jpg"
+    },
+    {
+      "id": "VAAF1EC85DB",
+      "car": "S2000",
+      "label": "nfs7unwocar",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Logo contenido y legible; capó algo sobredimensionado.",
+      "recommendation": "keep",
+      "image": "VAAF1EC85DB.jpg"
+    },
+    {
+      "id": "VD3E223DA1D",
+      "car": "CIVIC_97",
+      "label": "nfsundergroundcivic",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Personaje cortado por moldura/zócalo y repetido de forma poco integrada.",
+      "recommendation": "remove",
+      "image": "VD3E223DA1D.jpg"
+    },
+    {
+      "id": "VFF42C33287",
+      "car": "INTEGRA",
+      "label": "nfsundergroundintegra",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Esqueleto dividido y colocado a distinta altura según el lado.",
+      "recommendation": "remove",
+      "image": "VFF42C33287.jpg"
+    },
+    {
+      "id": "V58439DF0A2",
+      "car": "GTR",
+      "label": "nfsundergroundskyline",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Patrocinador lateral legible; capó y franjas algo recargados.",
+      "recommendation": "keep",
+      "image": "V58439DF0A2.jpg"
+    },
+    {
+      "id": "V85A6732101",
+      "car": "SUPRA",
+      "label": "nfsuvinylfnfsupra",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Ilustración lateral proporcionada aunque de contraste bajo.",
+      "recommendation": "keep",
+      "image": "V85A6732101.jpg"
+    },
+    {
+      "id": "V0B8FEEDFA7",
+      "car": "GTR",
+      "label": "nismoskyline-2",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Nismo cortado por ruedas y composición demasiado extendida.",
+      "recommendation": "remove",
+      "image": "V0B8FEEDFA7.jpg"
+    },
+    {
+      "id": "VB59A04A2BC",
+      "car": "350Z",
+      "label": "nissan350zgrandprixskin",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Patrocinadores incompletos y dispersos; parece una librea sin terminar.",
+      "recommendation": "remove",
+      "image": "VB59A04A2BC.jpg"
+    },
+    {
+      "id": "V78C361F5AC",
+      "car": "PEUGEOT_206",
+      "label": "nofear-206",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "No Fear cortado contra ventanillas y capó fragmentado.",
+      "recommendation": "remove",
+      "image": "V78C361F5AC.jpg"
+    },
+    {
+      "id": "V2C3DB41C16",
+      "car": "MX5",
+      "label": "nxmx-5",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Motivo de fuego reconocible; composición recargada pero utilizable.",
+      "recommendation": "keep",
+      "image": "V2C3DB41C16.jpg"
+    },
+    {
+      "id": "VA72E1611F8",
+      "car": "MX5",
+      "label": "nxmx-5fixed",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Variante de fuego coherente con franjas, aunque no de acabado nativo.",
+      "recommendation": "keep",
+      "image": "VA72E1611F8.jpg"
+    },
+    {
+      "id": "V85B0055599",
+      "car": "GOLF",
+      "label": "oettinger",
+      "pack": "nd4",
+      "tier": "D",
+      "reason": "Oettinger cortado en zócalo y frente con colores/residuos incoherentes.",
+      "recommendation": "remove",
+      "image": "V85B0055599.jpg"
+    },
+    {
+      "id": "VAC106960DF",
+      "car": "GOLF",
+      "label": "onkelz",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Texto demasiado bajo y cortado en una cara; retrato de capó fragmentado.",
+      "recommendation": "remove",
+      "image": "VAC106960DF.jpg"
+    },
+    {
+      "id": "VD66DA8172A",
+      "car": "GTR",
+      "label": "pennzoil_1998",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Patrocinadores bien colocados; frontal algo apretado.",
+      "recommendation": "keep",
+      "image": "VD66DA8172A.jpg"
+    },
+    {
+      "id": "V448F903326",
+      "car": "PEUGEOT_206",
+      "label": "peugeotmarlboro206wrc",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Bloques y barras laterales dominan sobre texto ilegible.",
+      "recommendation": "remove",
+      "image": "V448F903326.jpg"
+    },
+    {
+      "id": "V66D5B21FD9",
+      "car": "PEUGEOT_206",
+      "label": "peugeottotal206wrc",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Número y logos contenidos; distribución algo vacía pero coherente.",
+      "recommendation": "keep",
+      "image": "V66D5B21FD9.jpg"
+    },
+    {
+      "id": "V258B14F477",
+      "car": "GOLF",
+      "label": "poland",
+      "pack": "nd4",
+      "tier": "D",
+      "reason": "Letras reducidas a fragmentos geométricos bajo ventanas.",
+      "recommendation": "remove",
+      "image": "V258B14F477.jpg"
+    },
+    {
+      "id": "V63C670D7DF",
+      "car": "GOLF",
+      "label": "polizei",
+      "pack": "nd4",
+      "tier": "D",
+      "reason": "Polizei invertido en capó y cortado en lateral.",
+      "recommendation": "remove",
+      "image": "V63C670D7DF.jpg"
+    },
+    {
+      "id": "V2B8B6D4449",
+      "car": "GOLF",
+      "label": "prodigy",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Nombre recortado bajo ventanas y gráfico frontal desproporcionado.",
+      "recommendation": "remove",
+      "image": "V2B8B6D4449.jpg"
+    },
+    {
+      "id": "V0DD1863DDC",
+      "car": "GOLF",
+      "label": "progidy_matrix",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Sólo fragmentos verdes aislados en puertas; composición incompleta.",
+      "recommendation": "remove",
+      "image": "V0DD1863DDC.jpg"
+    },
+    {
+      "id": "VE37C8A4AF7",
+      "car": "S2000",
+      "label": "racedevil",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Ilustración y ajedrezado fragmentados, gran desequilibrio entre caras.",
+      "recommendation": "remove",
+      "image": "VE37C8A4AF7.jpg"
+    },
+    {
+      "id": "V708E8A8C36",
+      "car": "ECLIPSE",
+      "label": "reaper",
+      "pack": "nd4",
+      "tier": "A",
+      "reason": "Líneas fluidas bien escaladas, limpias y coherentes entre lados.",
+      "recommendation": "keep",
+      "image": "V708E8A8C36.jpg"
+    },
+    {
+      "id": "V1F00B86525",
+      "car": "GOLF",
+      "label": "redarmy",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Estrella contenida y legible; pequeñas inscripciones débiles.",
+      "recommendation": "keep",
+      "image": "V1F00B86525.jpg"
+    },
+    {
+      "id": "V7B06A2408E",
+      "car": "PEUGEOT_206",
+      "label": "ring",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Texto casi ilegible y aro de capó demasiado tenue.",
+      "recommendation": "remove",
+      "image": "V7B06A2408E.jpg"
+    },
+    {
+      "id": "V6EE23E8E8E",
+      "car": "RSX",
+      "label": "rsx_custom26",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Grafiti saturado, deformado y cortado en frontal/lateral.",
+      "recommendation": "remove",
+      "image": "V6EE23E8E8E.jpg"
+    },
+    {
+      "id": "VF4C0F05DDD",
+      "car": "RSX",
+      "label": "rsxeurostylefull",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Cuña angular bien contenida y consistente entre lados.",
+      "recommendation": "keep",
+      "image": "VF4C0F05DDD.jpg"
+    },
+    {
+      "id": "VAC37A58C72",
+      "car": "RX7",
+      "label": "rx7-viperstripes",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Doble franja deja rectángulos blancos en aletas.",
+      "recommendation": "remove",
+      "image": "VAC37A58C72.jpg"
+    },
+    {
+      "id": "V0183A6AAC5",
+      "car": "RX7",
+      "label": "rx7_custom_vinyl",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Envolvente fotográfica estirada y capó sin continuidad.",
+      "recommendation": "remove",
+      "image": "V0183A6AAC5.jpg"
+    },
+    {
+      "id": "VAFCE0921A7",
+      "car": "RX7",
+      "label": "rx7ledneon",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Placa de puntos borrosa, claramente pegada como rectángulo.",
+      "recommendation": "remove",
+      "image": "VAFCE0921A7.jpg"
+    },
+    {
+      "id": "VD2E23BECF6",
+      "car": "RX7",
+      "label": "rx7sun1-2",
+      "pack": "nd4",
+      "tier": "D",
+      "reason": "Cobertura lisa oscura sin dibujo reconocible; parece base/máscara.",
+      "recommendation": "remove",
+      "image": "VD2E23BECF6.jpg"
+    },
+    {
+      "id": "VC1D329A189",
+      "car": "RX7",
+      "label": "rx7sun1-2",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Sol radial y bandas coherentes; ocupa demasiado el borde superior.",
+      "recommendation": "keep",
+      "image": "VC1D329A189.jpg"
+    },
+    {
+      "id": "VDCEAAD2118",
+      "car": "RX7",
+      "label": "rx7teamhybrid",
+      "pack": "nd4",
+      "tier": "A",
+      "reason": "Óvalo limpio, bien escalado y alineado en ambas puertas.",
+      "recommendation": "keep",
+      "image": "VDCEAAD2118.jpg"
+    },
+    {
+      "id": "V83B02D9CDB",
+      "car": "S2000",
+      "label": "s2000convertiblevinyl",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Bloque superior y dientes traseros con cortes bruscos.",
+      "recommendation": "remove",
+      "image": "V83B02D9CDB.jpg"
+    },
+    {
+      "id": "VB4B563C310",
+      "car": "S2000",
+      "label": "s2000drago",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Dragón deformado en envolvente; imágenes distintas sin continuidad.",
+      "recommendation": "remove",
+      "image": "VB4B563C310.jpg"
+    },
+    {
+      "id": "VA6D5AD5DCA",
+      "car": "GTR",
+      "label": "sky-atr-color",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Logos contenidos; lateral pequeño y capó más dominante.",
+      "recommendation": "keep",
+      "image": "VA6D5AD5DCA.jpg"
+    },
+    {
+      "id": "VD019E2B4C2",
+      "car": "GTR",
+      "label": "skyatr-dhr",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Variante clara limpia; detalle lateral tenue.",
+      "recommendation": "keep",
+      "image": "VD019E2B4C2.jpg"
+    },
+    {
+      "id": "VF85BC1785C",
+      "car": "GTR",
+      "label": "skyline-futurama",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Ilustración partida y encerrada en bloque negro.",
+      "recommendation": "remove",
+      "image": "VF85BC1785C.jpg"
+    },
+    {
+      "id": "V5E8BFD85BC",
+      "car": "GTR",
+      "label": "skyline-tmnt",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Personaje recortado sobre parche rectangular blanco.",
+      "recommendation": "remove",
+      "image": "V5E8BFD85BC.jpg"
+    },
+    {
+      "id": "V39CC3D0515",
+      "car": "GTR",
+      "label": "skyline_paul_frank",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Paisaje con remates abruptos y gráfico frontal cortado.",
+      "recommendation": "remove",
+      "image": "V39CC3D0515.jpg"
+    },
+    {
+      "id": "V290162F83D",
+      "car": "GTR",
+      "label": "skylinemetal",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Acabado casi liso con residuos negros en bordes; no parece vinilo terminado.",
+      "recommendation": "remove",
+      "image": "V290162F83D.jpg"
+    },
+    {
+      "id": "V67DFA47538",
+      "car": "GOLF",
+      "label": "smartsteph1",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Bandas y coloración desiguales entre caras; sin motivo legible.",
+      "recommendation": "remove",
+      "image": "V67DFA47538.jpg"
+    },
+    {
+      "id": "VCC86F8DE8E",
+      "car": "ECLIPSE",
+      "label": "smartsteph2",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Figuras dispares y fragmentadas, sin composición consistente.",
+      "recommendation": "remove",
+      "image": "VCC86F8DE8E.jpg"
+    },
+    {
+      "id": "VB1A298B3C1",
+      "car": "GOLF",
+      "label": "smartsteph3",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Fotografía estirada y nebulosa; sin lectura de diseño.",
+      "recommendation": "remove",
+      "image": "VB1A298B3C1.jpg"
+    },
+    {
+      "id": "VF773D8922B",
+      "car": "GOLF",
+      "label": "smartsteph4-terminator3-edition",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Letras cortadas y fragmentos de retrato sobre paneles.",
+      "recommendation": "remove",
+      "image": "VF773D8922B.jpg"
+    },
+    {
+      "id": "VE3D7ED297C",
+      "car": "PEUGEOT_206",
+      "label": "southpark_peugot206",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Título cortado bajo ventanas y arte frontal mal encajado.",
+      "recommendation": "remove",
+      "image": "VE3D7ED297C.jpg"
+    },
+    {
+      "id": "V4CC438AE5E",
+      "car": "GOLF",
+      "label": "spawn",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Ilustración cortada bajo ventanas; texto frontal fragmentado.",
+      "recommendation": "remove",
+      "image": "V4CC438AE5E.jpg"
+    },
+    {
+      "id": "V6D91F48D4B",
+      "car": "CELICA",
+      "label": "special_dune",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Emblemas contenidos; bajo contraste pero reconocibles.",
+      "recommendation": "keep",
+      "image": "V6D91F48D4B.jpg"
+    },
+    {
+      "id": "V3EFA9A5256",
+      "car": "GTR",
+      "label": "spiked-skyline",
+      "pack": "nd4",
+      "tier": "A",
+      "reason": "Puntas integradas alrededor de los pasos de rueda, sin cortes arbitrarios.",
+      "recommendation": "keep",
+      "image": "V3EFA9A5256.jpg"
+    },
+    {
+      "id": "V241DC510A9",
+      "car": "WRX2",
+      "label": "subaru_rally",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Logo rally coherente; detalles próximos a ventanas algo apretados.",
+      "recommendation": "keep",
+      "image": "V241DC510A9.jpg"
+    },
+    {
+      "id": "VF6066951A8",
+      "car": "WRX2",
+      "label": "subaruimprezawrc",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Variante turquesa limpia, aunque ajena a paleta original.",
+      "recommendation": "keep",
+      "image": "VF6066951A8.jpg"
+    },
+    {
+      "id": "V0F2CCBDF7D",
+      "car": "SUPRA",
+      "label": "supra2f2f",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Gráfico de capó contenido; detalle oscuro pero reconocible.",
+      "recommendation": "keep",
+      "image": "V0F2CCBDF7D.jpg"
+    },
+    {
+      "id": "VE21B3BFC6B",
+      "car": "SUPRA",
+      "label": "supra_vinyl",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Gráfico lateral fluido y contenido; pequeños detalles poco definidos.",
+      "recommendation": "keep",
+      "image": "VE21B3BFC6B.jpg"
+    },
+    {
+      "id": "VF10A2E7549",
+      "car": "GOLF",
+      "label": "texture_bridgestone",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Parte superior del logotipo cortada por ventanas.",
+      "recommendation": "remove",
+      "image": "VF10A2E7549.jpg"
+    },
+    {
+      "id": "V8D8B958CCA",
+      "car": "GOLF",
+      "label": "texture_bridgestone",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Logotipo claro demasiado alto, con letras recortadas.",
+      "recommendation": "remove",
+      "image": "V8D8B958CCA.jpg"
+    },
+    {
+      "id": "V95EA94593C",
+      "car": "GOLF",
+      "label": "texture_bridgestone",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Nombre invade borde de ventanas, afectando legibilidad.",
+      "recommendation": "remove",
+      "image": "V95EA94593C.jpg"
+    },
+    {
+      "id": "VF0F7B3D6FB",
+      "car": "GOLF",
+      "label": "texture_bridgestone",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Marca cortada bajo ventanas pese a buen contraste.",
+      "recommendation": "remove",
+      "image": "VF0F7B3D6FB.jpg"
+    },
+    {
+      "id": "V5E44CF2FAB",
+      "car": "RX7",
+      "label": "theblink182rx-7",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Texto excesivamente ancho, cortado en ruedas.",
+      "recommendation": "remove",
+      "image": "V5E44CF2FAB.jpg"
+    },
+    {
+      "id": "V313C338608",
+      "car": "RX7",
+      "label": "theblink182rx-7",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Variante blanca también recortada por pasos de rueda.",
+      "recommendation": "remove",
+      "image": "V313C338608.jpg"
+    },
+    {
+      "id": "VF08C904CD6",
+      "car": "RX7",
+      "label": "theblink182rx-7",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Texto pequeño pero completo y bien contenido.",
+      "recommendation": "keep",
+      "image": "VF08C904CD6.jpg"
+    },
+    {
+      "id": "V23FA763E73",
+      "car": "RX7",
+      "label": "theblink182rx-7",
+      "pack": "nd4",
+      "tier": "D",
+      "reason": "No hay arte claramente visible en ninguna vista.",
+      "recommendation": "remove",
+      "image": "V23FA763E73.jpg"
+    },
+    {
+      "id": "V481B23EB6C",
+      "car": "RX7",
+      "label": "theblink182rx-7",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Texto grande invade pasos de rueda y pierde extremos.",
+      "recommendation": "remove",
+      "image": "V481B23EB6C.jpg"
+    },
+    {
+      "id": "V42137BC807",
+      "car": "GOLF",
+      "label": "thunderdome",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Texto truncado por zócalo en un lateral.",
+      "recommendation": "remove",
+      "image": "V42137BC807.jpg"
+    },
+    {
+      "id": "VCF01918F31",
+      "car": "PEUGEOT_206",
+      "label": "trkpeugot-bitchezzz-vinyl",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Imagen lateral borrosa y recortada; capó parece fragmento aislado.",
+      "recommendation": "remove",
+      "image": "VCF01918F31.jpg"
+    },
+    {
+      "id": "V9528769F1E",
+      "car": "GOLF",
+      "label": "vwgolfgroupb",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Patrocinadores dispersos y bloques de color sin continuidad clara.",
+      "recommendation": "remove",
+      "image": "V9528769F1E.jpg"
+    },
+    {
+      "id": "V0ACB543DDB",
+      "car": "GOLF",
+      "label": "vwgolfredbull",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Logo reconocible y contenido; acabado de pegatina, no nativo.",
+      "recommendation": "keep",
+      "image": "V0ACB543DDB.jpg"
+    },
+    {
+      "id": "VB709FF6069",
+      "car": "SUPRA",
+      "label": "vynilspider-man",
+      "pack": "nd4",
+      "tier": "D",
+      "reason": "Grandes bloques blancos y collage fragmentado; aspecto de mapeado roto.",
+      "recommendation": "remove",
+      "image": "VB709FF6069.jpg"
+    },
+    {
+      "id": "V5E54072A49",
+      "car": "INTEGRA",
+      "label": "wild_integra",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Ilustración de capó reconocible y contenida; estilo de pegatina.",
+      "recommendation": "keep",
+      "image": "V5E54072A49.jpg"
+    },
+    {
+      "id": "VD7E2FD9C10",
+      "car": "INTEGRA",
+      "label": "wild_integra",
+      "pack": "nd4",
+      "tier": "D",
+      "reason": "Sin dibujo reconocible en estas tres vistas.",
+      "recommendation": "remove",
+      "image": "VD7E2FD9C10.jpg"
+    },
+    {
+      "id": "VE84D1D84E0",
+      "car": "INTEGRA",
+      "label": "wild_integra",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Arte distinto entre lados y pequeños fragmentos poco legibles.",
+      "recommendation": "remove",
+      "image": "VE84D1D84E0.jpg"
+    },
+    {
+      "id": "V0D73F7FFBC",
+      "car": "ECLIPSE",
+      "label": "world-eclipse",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Envolvente se ve dibujada en un lado y casi vacía en el otro.",
+      "recommendation": "remove",
+      "image": "V0D73F7FFBC.jpg"
+    },
+    {
+      "id": "V2A9C02FAB7",
+      "car": "RX7",
+      "label": "wp-design2",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Fotografía nebulosa y estirada, sin detalle identificable.",
+      "recommendation": "remove",
+      "image": "V2A9C02FAB7.jpg"
+    },
+    {
+      "id": "V5DC978EFC7",
+      "car": "RX7",
+      "label": "wpcycosven",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Letras grandes y tenues con remates fragmentados en techo.",
+      "recommendation": "remove",
+      "image": "V5DC978EFC7.jpg"
+    },
+    {
+      "id": "VF3ECA862D6",
+      "car": "ECLIPSE",
+      "label": "xboxeclipsevinyl",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Logos bien contenidos y legibles; aspecto promocional, no nativo.",
+      "recommendation": "keep",
+      "image": "VF3ECA862D6.jpg"
+    },
+    {
+      "id": "V2A6C7360ED",
+      "car": "GTR",
+      "label": "xplod_skyline",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Arte central borroso y fragmentos en pilares.",
+      "recommendation": "remove",
+      "image": "V2A6C7360ED.jpg"
+    },
+    {
+      "id": "V9D4FEA0D90",
+      "car": "CIVIC_97",
+      "label": "yourmom",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Texto contenido, legible y colocado de forma consistente.",
+      "recommendation": "keep",
+      "image": "V9D4FEA0D90.jpg"
+    },
+    {
+      "id": "V52BB92D374",
+      "car": "CIVIC_97",
+      "label": "yourmom",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Variante clara de texto, legible aunque de menor contraste.",
+      "recommendation": "keep",
+      "image": "V52BB92D374.jpg"
+    },
+    {
+      "id": "V233A4CD4E2",
+      "car": "350Z",
+      "label": "z350vinyl",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Ilustración lateral contenida; composición dispersa pero utilizable.",
+      "recommendation": "keep",
+      "image": "V233A4CD4E2.jpg"
+    },
+    {
+      "id": "V55ADE33FB8",
+      "car": "RX8",
+      "label": "2f2f_honda_vinyl",
+      "pack": "fnf",
+      "tier": "C",
+      "reason": "Texto y marcas estirados sobre envolvente púrpura plana.",
+      "recommendation": "remove",
+      "image": "V55ADE33FB8.jpg"
+    },
+    {
+      "id": "VC1A88C0C6D",
+      "car": "GTR",
+      "label": "2f2f skyline",
+      "pack": "fnf",
+      "tier": "B",
+      "reason": "Diseño reconocible y limpio; franjas laterales bajas y frontal imperfecto.",
+      "recommendation": "keep",
+      "image": "VC1A88C0C6D.jpg"
+    },
+    {
+      "id": "V9F8EF3AAB3",
+      "car": "350Z",
+      "label": "350z",
+      "pack": "fnf",
+      "tier": "A",
+      "reason": "Líneas oscuras bien integradas en ambos laterales, proporción natural.",
+      "recommendation": "keep",
+      "image": "V9F8EF3AAB3.jpg"
+    },
+    {
+      "id": "V6C3EACECD8",
+      "car": "CIVIC_97",
+      "label": "civic_body_15",
+      "pack": "fnf",
+      "tier": "B",
+      "reason": "Franjas coherentes y legibles; patrocinadores de capó algo torcidos.",
+      "recommendation": "keep",
+      "image": "V6C3EACECD8.jpg"
+    },
+    {
+      "id": "VBF91204413",
+      "car": "CIVIC_97",
+      "label": "civic_body_15",
+      "pack": "fnf",
+      "tier": "B",
+      "reason": "Variante transparente limpia; capó y remates todavía de aspecto mod.",
+      "recommendation": "keep",
+      "image": "VBF91204413.jpg"
+    },
+    {
+      "id": "VF7AEA10579",
+      "car": "CIVIC_97",
+      "label": "civicm3",
+      "pack": "fnf",
+      "tier": "B",
+      "reason": "Geometría angular consistente; algunos cortes duros en frontal.",
+      "recommendation": "keep",
+      "image": "VF7AEA10579.jpg"
+    },
+    {
+      "id": "V32CFCE1641",
+      "car": "350Z",
+      "label": "dks350zvinylbycarlinhos_sama",
+      "pack": "fnf",
+      "tier": "D",
+      "reason": "Un lateral casi vacío y el otro con dibujo enorme recortado.",
+      "recommendation": "remove",
+      "image": "V32CFCE1641.jpg"
+    },
+    {
+      "id": "V97FA3ACDCC",
+      "car": "EVO8",
+      "label": "evo8_nfscvinyl",
+      "pack": "fnf",
+      "tier": "C",
+      "reason": "Patrón fragmentado en pilares y capó sin integración con paneles.",
+      "recommendation": "remove",
+      "image": "V97FA3ACDCC.jpg"
+    },
+    {
+      "id": "V7431993100",
+      "car": "EVO8",
+      "label": "faf3_evo",
+      "pack": "fnf",
+      "tier": "C",
+      "reason": "Textos y trazos superpuestos, estirados y poco legibles.",
+      "recommendation": "remove",
+      "image": "V7431993100.jpg"
+    },
+    {
+      "id": "V726857F15D",
+      "car": "EVO8",
+      "label": "lancerblacklist",
+      "pack": "fnf",
+      "tier": "C",
+      "reason": "Picos cortados bajo ventanas, aspecto de fragmentos sueltos.",
+      "recommendation": "remove",
+      "image": "V726857F15D.jpg"
+    },
+    {
+      "id": "V5CACD58F01",
+      "car": "RX7",
+      "label": "rx7_body_02",
+      "pack": "fnf",
+      "tier": "C",
+      "reason": "Bloques oscuros con límites arbitrarios entre puerta y aletas.",
+      "recommendation": "remove",
+      "image": "V5CACD58F01.jpg"
+    },
+    {
+      "id": "VEA30E8FDCA",
+      "car": "MUSTANG2",
+      "label": "razorsmustanggtfornfsu2",
+      "pack": "fnf",
+      "tier": "B",
+      "reason": "Llamas laterales coherentes; ajuste frontal algo brusco.",
+      "recommendation": "keep",
+      "image": "VEA30E8FDCA.jpg"
+    },
+    {
+      "id": "VEFA498BEC7",
+      "car": "SUPRA",
+      "label": "suprablacklist",
+      "pack": "fnf",
+      "tier": "B",
+      "reason": "Líneas fluidas y proporción correcta; pequeñas manchas de color poco integradas.",
+      "recommendation": "keep",
+      "image": "VEFA498BEC7.jpg"
+    },
+    {
+      "id": "V20C1A78FC9",
+      "car": "ECLIPSE",
+      "label": "the fast and furious eclipse vinyl",
+      "pack": "fnf",
+      "tier": "B",
+      "reason": "Lateral reconocible; logo de capó excesivamente dominante.",
+      "recommendation": "keep",
+      "image": "V20C1A78FC9.jpg"
+    },
+    {
+      "id": "V714E0A75DA",
+      "car": "RX8",
+      "label": "fnftokyo_rx-8",
+      "pack": "fnf",
+      "tier": "B",
+      "reason": "Diseño geométrico coherente, con algunos cortes duros en frontal.",
+      "recommendation": "keep",
+      "image": "V714E0A75DA.jpg"
+    },
+    {
+      "id": "VA7A5C12CAE",
+      "car": "EVO8",
+      "label": "lancerevo8",
+      "pack": "aj",
+      "tier": "B",
+      "reason": "Ilustración lateral contenida, aunque de lectura tenue.",
+      "recommendation": "keep",
+      "image": "VA7A5C12CAE.jpg"
+    },
+    {
+      "id": "VB13F4F6CF8",
+      "car": "MUSTANG2",
+      "label": "mustanggt",
+      "pack": "aj",
+      "tier": "C",
+      "reason": "Franjas generan bloques blancos en zócalo y paragolpes.",
+      "recommendation": "remove",
+      "image": "VB13F4F6CF8.jpg"
+    },
+    {
+      "id": "VC8493783D7",
+      "car": "RX7",
+      "label": "rx7",
+      "pack": "aj",
+      "tier": "A",
+      "reason": "Lobo y trazos limpios, bien escalados y contenidos en ambas puertas.",
+      "recommendation": "keep",
+      "image": "VC8493783D7.jpg"
+    },
+    {
+      "id": "VCB668FC7A0",
+      "car": "GTR",
+      "label": "skyline",
+      "pack": "aj",
+      "tier": "C",
+      "reason": "Cobertura clara deja parches y cortes arbitrarios entre paneles.",
+      "recommendation": "remove",
+      "image": "VCB668FC7A0.jpg"
+    },
+    {
+      "id": "V68A38F20B2",
+      "car": "GTR",
+      "label": "skyline",
+      "pack": "aj",
+      "tier": "B",
+      "reason": "Patrocinador y franjas coherentes; capó muy cargado.",
+      "recommendation": "keep",
+      "image": "V68A38F20B2.jpg"
+    },
+    {
+      "id": "VEBF6716DDF",
+      "car": "SUPRA",
+      "label": "supra",
+      "pack": "aj",
+      "tier": "B",
+      "reason": "Motivo lateral proporcionado; detalle gris de poco contraste.",
+      "recommendation": "keep",
+      "image": "VEBF6716DDF.jpg"
+    },
+    {
+      "id": "VF6A16E3CE6",
+      "car": "COROLLA",
+      "label": "Fujiwara Panda Trueno",
+      "pack": "aj",
+      "tier": "B",
+      "reason": "Bicolor coherente y texto colocado; remates de franja inferior imperfectos.",
+      "recommendation": "keep",
+      "image": "VF6A16E3CE6.jpg"
+    },
+    {
+      "id": "V172D1488B2",
+      "car": "ECLIPSE",
+      "label": "F&F Eclipse - Simpson & MX3Boy",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Composición lateral/capó reconocible; algunos remates entre paneles imperfectos.",
+      "recommendation": "keep",
+      "image": "V172D1488B2.jpg"
+    },
+    {
+      "id": "V9F51DE371A",
+      "car": "ECLIPSE",
+      "label": "F&F Eclipse",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Lateral bien integrado; capó sólido púrpura se ve menos natural.",
+      "recommendation": "keep",
+      "image": "V9F51DE371A.jpg"
+    },
+    {
+      "id": "VC79EFCB9D1",
+      "car": "SUPRA",
+      "label": "F&F Supra - Exclusive & Rimy",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Composición completa y contenida; contraste bajo sobre pintura de muestra.",
+      "recommendation": "keep",
+      "image": "VC79EFCB9D1.jpg"
+    },
+    {
+      "id": "V35AFE7CEEC",
+      "car": "CELICA",
+      "label": "Hyundai WRC artwork - Celica adaptation",
+      "pack": "nd4",
+      "tier": "B",
+      "reason": "Librea coherente; marca Hyundai en Celica delata la adaptación.",
+      "recommendation": "keep",
+      "image": "V35AFE7CEEC.jpg"
+    },
+    {
+      "id": "V5887FE6AD4",
+      "car": "GTR",
+      "label": "Pennzoil 2001",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Letras de capó desproporcionadas y patrón cortado en aletas.",
+      "recommendation": "remove",
+      "image": "V5887FE6AD4.jpg"
+    },
+    {
+      "id": "VE8B31D9086",
+      "car": "S2000",
+      "label": "S2000 Mugen - hood & logos",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Logo desplazado hacia rueda en una cara y bloque de capó invade aleta.",
+      "recommendation": "remove",
+      "image": "VE8B31D9086.jpg"
+    },
+    {
+      "id": "V61450F770A",
+      "car": "NEON",
+      "label": "Neon Patriot v2",
+      "pack": "nd4",
+      "tier": "C",
+      "reason": "Bandera recortada y bloques negros rectangulares en aletas.",
+      "recommendation": "remove",
+      "image": "V61450F770A.jpg"
+    }
+  ]
+}
