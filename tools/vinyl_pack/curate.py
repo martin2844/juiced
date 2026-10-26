@@ -43,7 +43,7 @@ def main():
     script.parent.mkdir(parents=True)
     script.write_text('\n'.join(lines) + '\n')
     (a.output / 'catalogue.json').write_text(json.dumps(keep, indent=2) + '\n')
-    (a.output / 'mod.ini').write_text('name=Underground & F&F Vinyl Collection - Curated A+B\nversion=3\nkind=assets\n')
+    (a.output / 'mod.ini').write_text('name=Underground & F&F Vinyl Collection - Curated A+B\nversion=1\nrevision=3\nkind=assets\n')
     selection = dict(source=review['collection'], tiers=['A', 'B'],
                      counts=dict(collections.Counter(decisions[r['id']]['tier'] for r in keep)),
                      kept=[r['id'] for r in keep], removed=[r['id'] for r in rows if r['id'] not in ids])

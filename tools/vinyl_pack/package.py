@@ -1,6 +1,6 @@
 """Package a validated local conversion with attribution and a screenshot gallery."""
 from pathlib import Path
-import argparse,collections,hashlib,html,json,shutil,zipfile
+import argparse,collections,configparser,hashlib,html,json,shutil,zipfile
 from PIL import Image
 
 SOURCES={
@@ -15,6 +15,10 @@ def main():
  p.add_argument('--output',type=Path,required=True)
  p.add_argument('--version',default='preview1');p.add_argument('--inventory',type=Path)
  a=p.parse_args()
+ manifest=configparser.ConfigParser(interpolation=None)
+ manifest.read_string('[mod]\n'+(a.package/'mod.ini').read_text())
+ if manifest['mod'].get('version')!='1' or manifest['mod'].get('kind')!='assets':
+  raise ValueError('Unsupported launcher manifest: use version=1 and revision for the collection edition')
  if not all(c.isalnum() or c=='-' for c in a.version):raise ValueError('Invalid version')
  if a.output.exists():raise ValueError('Output must be new')
  a.output.mkdir(parents=True);dest=a.output/'underground-vinyls'

@@ -158,7 +158,7 @@ def main():
         registry.append('Vinyl '+car+' '+meshname+' "'+label+'"')
         records.append(dict(**row,car=car,mesh=meshname))
     write('scripts/mod_vinyls.txt',('\n'.join(registry)+'\n').encode())
-    (out/'mod.ini').write_text('name=Underground & F&F Vinyl Collection\nversion=2\nkind=assets\n')
+    (out/'mod.ini').write_text('name=Underground & F&F Vinyl Collection\nversion=1\nrevision=2\nkind=assets\n')
     (out/'catalogue.json').write_text(json.dumps(records,indent=2))
     print('Built',len(records),'vinyl layers',collections.Counter(x['car'] for x in records))
 if __name__=='__main__':main()
