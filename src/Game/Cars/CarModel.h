@@ -172,7 +172,7 @@ private:
     CarModel(Engine& engine) : m_engine(engine) {}
     // A mesh of the folders with its materials; the parts of the body's material take the car's body material (the
     // material manager's one of that name, 0x0048A404).
-    render::Mesh* mesh(const std::string& name, Folders folders, bool quiet = false);
+    render::Mesh* mesh(const std::string& name, Folders folders, bool quiet = false, bool fitWheel = false);
     // The slot found by a name as the stock finds one (0x00534EC0 through meshNode, a mesh node alone).
     render::ModelNode* slotNode(const char* name);
     // A slot's mesh (none empties it).
@@ -194,6 +194,7 @@ private:
     std::vector<std::unique_ptr<CarFlare>> m_flares;
     render::Material* m_body = nullptr;  // +0xEC of the car's model object
     render::Mesh* m_wheelMesh = nullptr;      // +0x20, +0x24: front and rear (the same here)
+    std::optional<MeshBounds> m_stockWheelBounds;
     render::Mesh* m_wheelBlurMesh = nullptr;  // +0x28, +0x2C
     std::map<render::Material*, const render::GameTexture*> m_originalDecalTextures;
     std::map<std::string, render::Material*> m_partMaterials;  // the materials by their parts' names (lower case)

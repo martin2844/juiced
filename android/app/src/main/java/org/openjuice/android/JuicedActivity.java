@@ -209,6 +209,9 @@ public final class JuicedActivity extends SDLActivity {
     if ("stock".equals(mode)) return new String[] {root, "--no-mods"};
     if ("mods".equals(mode)) return new String[] {root, "--mods-menu"};
     if ((getApplicationInfo().flags & android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE) != 0
+        && "garage-check".equals(mode))
+      return new String[] {root, "--screen", "instant_selcar", "--frames", "360", "--capture", root + "/android-garage.bmp"};
+    if ((getApplicationInfo().flags & android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE) != 0
         && "smoke".equals(mode))
       return new String[] {
         root,

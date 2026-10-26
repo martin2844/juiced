@@ -100,9 +100,12 @@ extern "C" JNIEXPORT jstring JNICALL Java_org_openjuice_android_NativeBridge_sav
     try {
         EditorGame game; game.load(string(env, files), modded);
         std::string out = "{\"root\":" + oj::saveedit::quote(game.saveRoot.string()) + ",\"cars\":[";
+        bool first = true;
         for (size_t i = 0; i < game.data->defs.cars.size(); ++i) {
             const auto& car = game.data->defs.cars[i];
-            if (i) out += ',';
+            if (car.id == 0) continue; // NONE is an engine placeholder, not a vehicle.
+            if (!first) out += ',';
+            first = false;
             out += "{\"model\":" + oj::saveedit::quote(car.model) + ",\"name\":" + oj::saveedit::quote(car.displayName) + "}";
         }
         return env->NewStringUTF((out + "]}").c_str());

@@ -151,6 +151,8 @@ void CarDefs::load(std::string_view text, const ExeTables& tables, CrtRandom& ra
             }
         } else if (same(k, "STANDARDWHEELS")) {
             car->wheels = line.word(0);
+        } else if (same(k, "MATCH_STOCK_WHEELS")) {
+            car->matchStockWheels = line.integer(0) != 0;
         } else if (same(k, "STANDARDEXHAUST")) {
             car->exhaust = line.word(0);
         } else if (same(k, "ENGINE_SOUND")) {

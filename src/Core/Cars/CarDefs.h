@@ -54,6 +54,7 @@ struct CarDef {
     std::string displayName;      // +0x05C
     std::string model;            // +0x09C, <name>_STOCK: the name the saves keep
     std::string wheels;           // +0x0DC, STANDARDWHEELS
+    bool matchStockWheels = false; // Optional imported-car tyre envelope fitting.
     std::string exhaust;          // +0x11C, STANDARDEXHAUST
     std::string engineSound;      // +0x1DC, ENGINE_SOUND
     std::array<CarPartList, kCarPartCategories> parts;  // +0x3E0 + category * 0x18

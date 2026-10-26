@@ -70,8 +70,9 @@ std::vector<uint8_t> edit(GameData& game, const std::vector<std::byte>& bytes, c
     }
     for (const auto& model : changes.addCars) {
         auto def = std::find_if(game.defs.cars.begin(), game.defs.cars.end(), [&](const auto& d) { return d.model == model; });
-        if (def == game.defs.cars.end()) throw std::runtime_error("Car is not in the selected game roster");
+        if (def == game.defs.cars.end() || def->id == 0) throw std::runtime_error("Car is not in the selected game roster");
         auto car = makeCar(&*def);
+        rateCar(car, game.dynamics->of(*def), game.catalogue);
         car.grid = GridDamage{};
         career.garage.push_back(std::move(car));
     }

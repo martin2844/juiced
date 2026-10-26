@@ -56,6 +56,15 @@ Space handbrake use the port's current editable bindings.
 - Two native tintable decal designs (twin longitudinal stripes and side graphics),
   plus a custom-image option with fitted bonnet and door surfaces. Sponsor decals
   show all nine installed performance brands. Both decal shells use native damage.
+- Revision 2 appends the 31 retail vinyl designs, using the owner's shared textures
+  on fitted Ferrari surfaces. The first three indices remain unchanged. Prototype,
+  pricing and tint rules follow the retail style rather than its appended index.
+- The carbon panel is clipped at its outline with interpolated vertex attributes;
+  it no longer inherits jagged whole-triangle boundaries. A dedicated specular
+  material and millimetre-scale twill replace the coarse unlit appearance.
+- `MATCH_STOCK_WHEELS 1` opts into fitting shared wheels to the stock tyre envelope.
+  Position and normal transforms are baked into each regular/blur mesh, preserving
+  steering/spin transforms and preventing accumulated scaling on repeated swaps.
 - Native neon purchase, colour, lowering, glass tint and wheel upgrades.
 - Independent standard/sport engine banks built from a licensed real Ferrari 458
   recording, with native RPM crossfades and processed overrun/exhaust variants.

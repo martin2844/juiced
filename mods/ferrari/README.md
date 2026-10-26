@@ -16,3 +16,10 @@ with a named incompatibility instead of silently patching another version.
 See [details and attribution](tools/README.md). Licences and credits also accompany
 the generated assets. Disabling this package selects a separate career directory;
 re-enabling restores the previous combination's careers.
+
+Revision 2 (2026-10-26) adds 31 retail vinyl designs after the existing three saved
+indices. Artwork loads from the owner's game archives. The carbon bonnet retains
+the original surface with a clipped, clean carbon-panel edge, finer weave and a
+specular material. Replacement wheels retain the stock tyre diameter and width,
+including their blur meshes. Wheel fitting requires the matching updated engine
+(Android .6 or this source revision); update both APK and mod package.

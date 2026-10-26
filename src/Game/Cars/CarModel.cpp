@@ -2,6 +2,7 @@
 #include "Mods/Creative.h"
 #endif
 #include "Game/Cars/CarModel.h"
+#include "Game/Cars/WheelFit.h"
 
 #include "Core/Base/GameFiles.h"
 #include "Core/Base/Log.h"
@@ -45,6 +46,11 @@ std::unique_ptr<CarModel> CarModel::load(Engine& engine, const Car& car, const P
     std::unique_ptr<CarModel> m(new CarModel(engine));
     m->m_name = def.name;
     m->m_folder = std::filesystem::path("cars") / (interface ? def.name + "_ui" : def.name);
+    if (def.matchStockWheels) {
+        const auto wheelBytes = readBytes(m->m_folder / "mesh" / (def.wheels + ".d8m"));
+        const auto wheel = wheelBytes ? parseMesh(*wheelBytes) : std::nullopt;
+        if (wheel) m->m_stockWheelBounds = wheel->bounds;
+    }
     const auto bytes = readBytes(m->m_folder / "models" / (def.name + "_stock.boh"));
     const auto tree = bytes ? parseBoh(*bytes) : std::nullopt;
     if (!tree || tree->empty()) {
@@ -208,7 +214,7 @@ void CarModel::fitWheelsAndExhaust(const Car& car, const PartCatalogue& catalogu
     }
 }
 
-render::Mesh* CarModel::mesh(const std::string& name, Folders folders, bool quiet) {
+render::Mesh* CarModel::mesh(const std::string& name, Folders folders, bool quiet, bool fitWheel) {
     if (name.empty()) return nullptr;
     const bool shared = folders == Folders::Shared;
     const std::filesystem::path carMesh = std::filesystem::path("carmesh");
@@ -223,12 +229,13 @@ render::Mesh* CarModel::mesh(const std::string& name, Folders folders, bool quie
         bytes = readBytes(folder / (name + ".d8m"));
         if (bytes) break;
     }
-    const auto parsed = bytes ? parseMesh(*bytes) : std::nullopt;
+    auto parsed = bytes ? parseMesh(*bytes) : std::nullopt;
     if (!parsed) {
         if (!quiet) log::warning("3d: car {}: mesh {} not read", m_name, name);
         return nullptr;
     }
     std::vector<render::Material*> materials;
+    if (fitWheel && m_stockWheelBounds) fitWheelMesh(*parsed, *m_stockWheelBounds);
     for (const MeshPart& p : parsed->parts) {
         if (m_body != nullptr && _stricmp(p.name.c_str(), (m_name + "_body").c_str()) == 0) {
             materials.push_back(m_body);
@@ -353,12 +360,12 @@ void CarModel::fill(Slot slot, const std::string& meshName, Folders folders) {
 }
 
 void CarModel::fillWheels(const std::string& meshName, Folders folders) {
-    m_wheelMesh = mesh(meshName, folders);
+    m_wheelMesh = mesh(meshName, folders, false, folders == Folders::Shared);
     for (render::ModelNode* node : m_wheels) {
         if (node != nullptr) node->mesh = m_wheelMesh;
     }
-    m_wheelBlurMesh = meshName.empty() ? nullptr : mesh(meshName + "_BLUR", folders, true);
-    if (m_wheelBlurMesh == nullptr) m_wheelBlurMesh = mesh("RX7_WHEEL_BLUR", folders, true);
+    m_wheelBlurMesh = meshName.empty() ? nullptr : mesh(meshName + "_BLUR", folders, true, folders == Folders::Shared);
+    if (m_wheelBlurMesh == nullptr) m_wheelBlurMesh = mesh("RX7_WHEEL_BLUR", folders, true, true);
     m_wheelMaterials = {};
     if (folders != Folders::Shared) return;
     std::array<std::string, 5> names{meshName, meshName + "_BS", meshName + "_B", meshName + "_LOD", ""};

@@ -43,6 +43,26 @@ int32_t decalPrice(float value) {
     return 23.0f > value ? 5000 : 9000;
 }
 
+// Added cars can append retail styles after their existing saved indices. The
+// prototype lock, price and tint rules follow the style, not its new list position.
+float decalStyle(const GameData& data, const Car& car, float selected) {
+    const auto index = static_cast<int>(selected);
+    if (!car.def || car.def->id < 53 || index < 0 || index == 127 ||
+        size_t(index) >= car.def->parts[8].parts.size()) return selected;
+    const auto& name = car.def->parts[8].parts[index].model;
+    const auto start = name.find("DECAL_");
+    const auto* retail = data.defs.byId(1);
+    if (start != std::string::npos && retail) {
+        const auto key = name.substr(start);
+        const auto& styles = retail->parts[8].parts;
+        for (size_t i = 0; i < styles.size(); ++i) {
+            const auto pos = styles[i].model.find("DECAL_");
+            if (pos != std::string::npos && styles[i].model.substr(pos) == key) return float(i);
+        }
+    }
+    return 1.f; // Car-specific graphics are ordinary tintable decals.
+}
+
 }  // namespace
 
 // 0x0043B060: the base enter; the camera to the garage's place; with the money under 10000 the window's help page
@@ -420,8 +440,8 @@ void DecalMenu::enter(GarageHost& host, ui::Screen& s) {
         for (size_t i = 0; i < list.parts.size(); ++i) {
             const char* decal = std::strstr(list.parts[i].model.c_str(), "DECAL");
             const std::string picture = std::string("UI_") + (decal != nullptr ? decal : "");
-            if (i == 0) {
-                s.addMenuItem("Menu", garage.texts.prototype ? L"" : texts.at(kTextLocked), 0.0f, picture, picture);
+            if (decalStyle(*data, *car, float(i)) == 0.f) {
+                s.addMenuItem("Menu", garage.texts.prototype ? L"" : texts.at(kTextLocked), float(i), picture, picture);
             } else {
                 s.addMenuItem("Menu", L"", static_cast<float>(i), picture, picture);
             }
@@ -480,19 +500,20 @@ void DecalMenu::update(GarageHost& host, ui::Screen& s, uint32_t event) {
                 s.setText("DECAL_COLOUR_GRIDY", toWide(std::format("Y{}", s.chartRow("DECAL_COLOUR_CHART"))));
             }
         }
-        garage.price(host, decalPrice(value));
+        const float style = decalStyle(*data, *car, value);
+        garage.price(host, decalPrice(style));
         if (x87::chop(value) != m_shown) {
             garage.fitDecal(*car, x87::chop(value));
             m_shown = static_cast<int32_t>(item);
         }
         if (event == input::kSelect) {
-            const bool colourable = value <= 14.0f && value != 0.0f;
+            const bool colourable = style <= 14.0f && style != 0.0f;
             const auto showChart = [&] {
                 s.showContaining("DECAL_COLOUR", true);
                 m_menuShown = 0;
                 s.setHidden("Menu", true);
             };
-            if (value == 0.0f && !garage.texts.prototype) {
+            if (style == 0.0f && !garage.texts.prototype) {
                 host.message(MessageType::Continue, texts.at(kTextPrototypeLogo), false, nullptr);
             } else if ((value == static_cast<float>(m_own) || (m_own == -1 && value == 127.0f)) &&
                        m_colours[1] == m_colours[0]) {

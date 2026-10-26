@@ -148,7 +148,13 @@ bool Frontend::applyProfile(const save::SaveSlot& slot, const save::SaveSource& 
         m_data->newCareer(gameRandom(), crewName8(m_data->profileName));
         std::string why;
         if (m_data->career->read(found->second, &why)) {
-            for (Car& car : m_data->career->garage) car.def = findCarDef(m_data->defs, car.modelName());
+            for (Car& car : m_data->career->garage) {
+                car.def = findCarDef(m_data->defs, car.modelName());
+                // Android editor .5 omitted the dealer's rating calculation. Recover
+                // those cars on load without altering their parts, damage or progress.
+                if (car.rating == 0 && car.def && m_data->dynamics)
+                    rateCar(car, m_data->dynamics->of(*car.def), m_data->catalogue);
+            }
         } else {
             log::error("frontend: the career of {} is not read: {}", toUtf8(slot.name), why);
         }

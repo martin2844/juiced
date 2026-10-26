@@ -27,7 +27,7 @@ int main(int argc, char** argv) {
         const auto input = bytes(original.write());
         auto originalGarage = game.career->garage.size();
         saveedit::Changes changes; changes.money = 123456; changes.respect.fill(1200);
-        changes.addCars.push_back(game.defs.cars.front().model);
+        changes.addCars.push_back(game.defs.cars.at(1).model);
         auto result = saveedit::edit(game, input, changes);
         auto archive = saveedit::load(game, bytes(result));
         check(game.career->profile.money == 123456, "Money roundtrip");
@@ -35,6 +35,13 @@ int main(int argc, char** argv) {
         check(game.career->garage.size() == originalGarage + 1, "Car addition");
         check(game.career->garage.back().modelName() == changes.addCars.front(), "Car model");
         check(game.career->garage.back().grid.has_value(), "New car damage grid initialized");
+        check(Car::asFloat(game.career->garage.back().rating) > 0, "New car power initialized");
+        for (const auto& def : game.defs.cars) {
+            if (def.id == 0) continue;
+            auto one = changes; one.addCars = {def.model};
+            saveedit::edit(game, input, one);
+            check(Car::asFloat(game.career->garage.back().rating) > 0, "Every catalogue car has positive power");
+        }
         check(archive.entries["unknown-mod-data"] == original.entries["unknown-mod-data"], "Unknown entries preserved");
         check(game.career->garage.size() + game.career->padding.size() == 55, "Garage padding");
         auto rejected = [&](const auto& action) { try { action(); } catch (const std::exception&) { return; } throw std::runtime_error("Invalid edit was accepted"); };

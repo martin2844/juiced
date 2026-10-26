@@ -65,6 +65,48 @@ def subset(p, mask):
                 uv=p['uv'][used].copy(), tri=inverse.reshape(-1,3))
 
 
+def carbon_panel(part):
+    """Split triangles at a clean inset bonnet outline, keeping the original skin.
+
+    Selecting whole triangles by centroid produces a saw-tooth carbon boundary.
+    Clip and interpolate all vertex attributes instead; outside fragments retain
+    the car paint. No new raised hood/scoop geometry is introduced.
+    """
+    if part['mat']!='ferrari_458_body':return [part]
+    # Plane dot(position, normal) + offset >= 0. Taper towards the front badge.
+    planes=[(0,0,1,-98),(0,0,-1,176),(1,0,0,46),(-1,0,0,46),
+            (1,0,-.22,69),(-1,0,-.22,69)]
+    inside=[];outside=[]
+    attributes=np.c_[part['pos'],part['norm'],part['uv']]
+    def cut(poly,plane):
+        a=np.array(plane[:3]);dist=[v[:3]@a+plane[3] for v in poly]
+        positive=[];negative=[]
+        for i,v in enumerate(poly):
+            w=poly[(i+1)%len(poly)];d=dist[i];e=dist[(i+1)%len(poly)]
+            (positive if d>=0 else negative).append(v)
+            if (d>=0)!=(e>=0):
+                crossing=v+(w-v)*(d/(d-e));positive.append(crossing);negative.append(crossing)
+        return positive,negative
+    def triangles(poly,out):
+        for i in range(1,len(poly)-1):out.extend((poly[0],poly[i],poly[i+1]))
+    for tri in part['tri']:
+        poly=list(attributes[tri])
+        for plane in planes:
+            if len(poly)<3:break
+            poly,remainder=cut(poly,plane);triangles(remainder,outside)
+        triangles(poly,inside)
+    result=[]
+    for vertices,material in [(inside,'f458_carbon'),(outside,'ferrari_458_body')]:
+        if not vertices:continue
+        a=np.array(vertices);normal=a[:,3:6];normal/=np.maximum(np.linalg.norm(normal,axis=1)[:,None],1e-12)
+        uv=a[:,6:8]
+        if material=='f458_carbon':
+            x,z=a[:,0],a[:,2];uv=np.c_[(x+z)/16.97,(z-x)/16.97]
+        result.append(dict(mat=material,pos=a[:,:3],norm=normal,uv=uv,
+                           tri=np.arange(len(a)).reshape(-1,3)))
+    return result
+
+
 def box(lo, hi, material):
     """Closed chamfered accessory; bevels catch light instead of razor-box edges."""
     pos=[]; normals=[]; uv=[]; tris=[]
@@ -214,9 +256,7 @@ def build(args):
         if k=='BONNET':
             carbon=[]
             for part in zones[k]:
-                part=part.copy()
-                if part['mat']=='ferrari_458_body':part['mat']='f458_mat12'
-                carbon.append(part)
+                carbon.extend(carbon_panel(part))
             save_mesh('f458_sport_'+k,carbon)
         else:save_mesh('f458_sport_'+k,(stockspoiler if k=='SPOILER' else zones[k])+extra)
     # Decals are a fitted duplicate of the actual paint surface, not floating quads.
@@ -245,6 +285,17 @@ def build(args):
     custom+=skin('decal_f458_customlogo',lambda p,n:(abs(n[:,0])>.7)&(p[:,2]>-55)&(p[:,2]<60)&(p[:,1]>38)&(p[:,1]<78),
                  lambda p:np.c_[np.clip((60-p[:,2])/115,0,1),np.clip((78-p[:,1])/40,0,1)])
     save_mesh('DECAL_F458_CUSTOMLOGO',custom)
+    # Keep the first three indices stable for existing saves. Retail artwork is
+    # referenced from the owner's cartextures archive, never copied into the mod.
+    retail_defs=r.read('scripts/cardefs.txt').decode('latin1')
+    first_car=re.search(r'\[BeginCar\]\s+focus_2\b(.*?)\[EndCar\]',retail_defs,re.S|re.I).group(1)
+    retail_decals=re.findall(r'^\s*CUSTOM\s+DECAL\s+FOCUS_2_(DECAL_\w+)',first_car,re.M|re.I)
+    for decal in retail_decals:
+        fitted=skin(decal.lower(),lambda p,n:(abs(n[:,0])>.55)&(p[:,2]>-165)&(p[:,2]<170)&(p[:,1]>30)&(p[:,1]<95),
+                    lambda p:np.c_[(170-p[:,2])/335,(95-p[:,1])/65])
+        fitted+=skin(decal.lower(),lambda p,n:(n[:,1]>.65)&(abs(p[:,0])<65)&(p[:,2]>83)&(p[:,2]<188),
+                     lambda p:np.c_[(p[:,0]+65)/130,(188-p[:,2])/105])
+        save_mesh('F458_'+decal,fitted)
     sponsors=[]
     # Three-by-three group on each door: every performance sponsor has its own slot.
     for i in range(9):
@@ -276,6 +327,14 @@ def build(args):
         carfile('textures/'+n+'.ddt',pack('9IfI',21,size,size,1,2,2,0,1,1,0.,1)+pixels[:,:,[2,1,0,3]].tobytes())
     tex('f458_paint',(255,255,255,0));tex('f458_scratch',(150,150,150,0),128)
     tex('f458_rim',(235,235,235,255))
+    carfile('mesh/mats/f458_carbon.pmd','''Material Program = Coloured Spec Opaque
+Colour = 255 255 255
+Specular Colour = 100 105 110
+Specular Highlight = 90
+Shininess = 48
+Z-Bias = 0
+Texture = f458_mat12.ptd
+''')
     carfile('mesh/mats/f458_wheel.pmd','''Material Program = Coloured Spec Opaque
 Colour = 190 190 190
 Specular Colour = 180 180 180
@@ -347,7 +406,8 @@ Scratch = f458_scratch.ptd
         block += [f'STANDARD {category} "f458_{part}"',f'CUSTOM {category} "f458_sport_{part}" AERO']
     block += ['CUSTOM DECAL "DECAL_F458_STRIPES" AERO','CUSTOM DECAL "DECAL_F458_SIDES" AERO',
               'CUSTOM DECAL "DECAL_F458_CUSTOMLOGO" AERO',
-              'ALLOW_NONE DECAL','ALLOW_NONE SPOILER','STANDARDWHEELS "f458_wheel"',
+              *[f'CUSTOM DECAL "F458_{decal}" AERO' for decal in retail_decals],
+              'ALLOW_NONE DECAL','ALLOW_NONE SPOILER','STANDARDWHEELS "f458_wheel"','MATCH_STOCK_WHEELS 1',
               'STANDARDEXHAUST "f458_exhaust"','ENGINE_SOUND f458','MAXDROPHEIGHT 4','[EndCar]']
     # Skirts use the native _L / _R suffix. The other names are case-insensitive.
     defs += '\n' + '\n'.join(block) + '\n'

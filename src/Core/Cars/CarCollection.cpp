@@ -89,6 +89,9 @@ void autoModify(Car& car, bool prototype, int level, CarMaking& making) {
             // fewer the decal 0, as the 9 (no rand() drawn).
             const uint32_t span = choices > 8 ? choices - 8 : 0;
             car.body[c] = prototype || span == 0 ? 0 : static_cast<uint8_t>(next(making.random) % span + 1);
+#if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
+            if (mods::enabled() && int(car.body[c]) == mods::logoIndex(car.modelName())) car.body[c] = 0;
+#endif
         } else if (count > 1) {
             car.body[c] = static_cast<uint8_t>(next(making.random) % choices + 1);
         } else {

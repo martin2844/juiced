@@ -47,8 +47,8 @@ int main(int argc, char** argv) {
                   "engine sample contains playable 48 kHz PCM audio");
         }
     }
-    check(found->parts[8].parts.size() == 3 && found->parts[8].allowNone,
-          "decal catalogue offers stripes, side graphics, custom logo and removal");
+    check(found->parts[8].parts.size() == 34 && found->parts[8].allowNone,
+          "decal catalogue retains three original slots and adds 31 retail styles");
     check(!found->parts[9].parts.empty(), "native neon purchase is available");
     oj::CarMaking making{data.defs, data.catalogue, random, data.autoModifyCounter};
     bool validAutoDecals=true;
@@ -129,7 +129,7 @@ int main(int argc, char** argv) {
             auto* fitted=model->slotMesh(static_cast<oj::scene::CarModel::Slot>(k));
             check(fitted && stock[k] && fitted != stock[k], "sport body part replaces stock mesh");
         }
-        for (uint8_t decal=0;decal<3;++decal) {
+        for (uint8_t decal=0;decal<found->parts[8].parts.size();++decal) {
             car.body[8]=decal;
             model->refitParts(car,data.catalogue);
             check(model->slotMesh(oj::scene::CarModel::kDecal) != nullptr, "selected decal has a real fitted mesh");
