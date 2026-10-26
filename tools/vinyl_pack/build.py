@@ -12,9 +12,26 @@ from mesh import read,boh,triangles,encode
 ZONES=[(.097,.886,.810,.965),(.097,.886,.247,.403),(.086,.920,.464,.749),
        (.307,.618,.037,.120),(.677,.967,.062,.205)]
 MODEL_MAP={'SKYLINE':'GTR','FOCUS':'focus','MX5':'MX5'}
-def ddt(im):
-    a=np.array(im.convert('RGBA'))
-    return struct.pack('<9IfI',21,im.width,im.height,1,2,2,0,1,1,0.,1)+a[:,:,[2,1,0,3]].tobytes()
+def ddt(im,mips=False):
+    levels=[];level=im.convert('RGBA')
+    while True:
+        levels.append(np.array(level)[:,:,[2,1,0,3]].tobytes())
+        if not mips or level.size==(1,1):break
+        level=level.resize((max(1,level.width//2),max(1,level.height//2)),Image.Resampling.BOX)
+    return struct.pack('<9IfI',21,im.width,im.height,len(levels),2,2,2 if mips else 0,3,3,0.,1)+b''.join(levels)
+
+def visible_surface(pos,norm,uv,im):
+    """Conservatively discard triangles whose complete UV rectangle is transparent."""
+    alpha=np.array(im.getchannel('A'))>2
+    sums=np.pad(alpha.astype('int64'),((1,0),(1,0))).cumsum(0).cumsum(1)
+    triangles=uv.reshape(-1,3,2)*np.array(im.size)
+    lo=np.maximum(np.floor(triangles.min(1)).astype(int)-2,0)
+    hi=np.minimum(np.ceil(triangles.max(1)).astype(int)+3,np.array(im.size))
+    lo=np.minimum(lo,np.array(im.size));hi=np.maximum(hi,0)
+    count=sums[hi[:,1],hi[:,0]]-sums[lo[:,1],hi[:,0]]-sums[hi[:,1],lo[:,0]]+sums[lo[:,1],lo[:,0]]
+    keep=np.repeat(count>0,3)
+    if not keep.any():raise ValueError('Artwork has no visible surface on this car')
+    return pos[keep],norm[keep],uv[keep]
 
 def artwork(im,row):
     """Bake a documented neutral palette for NFS tint-channel maps.
@@ -22,6 +39,7 @@ def artwork(im,row):
     Full-colour art is left intact. These are adaptation colours, not a claim
     to have recovered a user's NFS in-game colour selections.
     """
+    if row.get('prepared'):return im,row
     arr=np.array(im);rgb=arr[:,:,:3].astype(float)
     tint=row['tint_channels']
     if tint:
@@ -93,7 +111,14 @@ def shell(retail,car,block,ui,ug1=False):
         elif z==2:a=p[:,2];b=p[:,0]
         else:a=p[:,0] if z==3 else -p[:,0];b=p[:,1]
         if z==0:b=-b
-        a=(a-a.min())/max(float(np.ptp(a)),1);b=(b-b.min())/max(float(np.ptp(b)),1)
+        if z in (0,1):
+            # One physical frame for both sides, even on asymmetric meshes.
+            side=pos[np.isin(zones,[0,1])]
+            amin=-side[:,2].max();amax=-side[:,2].min()
+            bmin=side[:,1].min();bmax=side[:,1].max()
+            if z==0:bmin,bmax=-bmax,-bmin
+        else:amin,amax=a.min(),a.max();bmin,bmax=b.min(),b.max()
+        a=(a-amin)/max(float(amax-amin),1);b=(b-bmin)/max(float(bmax-bmin),1)
         uv[sel,0]=u0+a*(u1-u0);uv[sel,1]=1-(v0+b*(v1-v0))
     return pos+norm*.08,norm,uv
 
@@ -118,11 +143,12 @@ def main():
         material='DECAL_NFS_'+row['id']
         meshname=material
         for ui in [False,True]:
-            key=(car,ui,row['pack']=='nd4' and row['layout']=='atlas')
+            key=(car,ui,row['pack']=='nd4' and row['layout']=='atlas' and not row.get('balanced_sides'))
             if key not in cache:cache[key]=shell(r,car,block,ui,key[2])
             pos,norm,uv=cache[key]
+            pos,norm,uv=visible_surface(pos,norm,uv,im)
             write('cars/'+car+('_ui' if ui else '')+'/mesh/'+meshname+'.d8m',encode(pos,norm,uv,material))
-        write('cartextures/'+material+'.ddt',ddt(im))
+        write('cartextures/'+material+'.ddt',ddt(im,mips=True))
         write('carmesh/mats/'+material+'.pmd',('Material Program = Standard Alpha Blend\nZ-Write = FALSE\nAlpha Texture = '+material+'.ptd\n').encode())
         preview=Image.new('RGBA',(128,128),(90,90,90,255))
         small=im.copy();small.thumbnail((128,128));preview.alpha_composite(small)
@@ -132,7 +158,7 @@ def main():
         registry.append('Vinyl '+car+' '+meshname+' "'+label+'"')
         records.append(dict(**row,car=car,mesh=meshname))
     write('scripts/mod_vinyls.txt',('\n'.join(registry)+'\n').encode())
-    (out/'mod.ini').write_text('name=Underground & F&F Vinyl Collection (preview)\nversion=1\nkind=assets\n')
+    (out/'mod.ini').write_text('name=Underground & F&F Vinyl Collection\nversion=2\nkind=assets\n')
     (out/'catalogue.json').write_text(json.dumps(records,indent=2))
     print('Built',len(records),'vinyl layers',collections.Counter(x['car'] for x in records))
 if __name__=='__main__':main()

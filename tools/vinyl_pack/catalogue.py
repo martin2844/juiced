@@ -9,7 +9,7 @@ ALIASES={
  'RX7':['rx7','rx-7','rx_7'],
  'RX8':['rx8','rx-8'],
  'ECLIPSE':['eclipse'],
- 'S2000':['s2000','s2k','s209','honda s2000','drago'],
+ 'S2000':['s2000','s2k','honda s2000','drago'],
  'EVO8':['lancerevo','evo','lancer'],
  '350Z':['350z','350 z','z350','z-350','350_z'],
  'CIVIC_97':['civic','civik'],
@@ -44,6 +44,8 @@ def build(root,out):
    if any(k in str(p).lower() for k in ['texture_oz','brakelight','headlight','newneonlight','_wheel','missingparts.zip','/texture/']):
     excluded.append(dict(path=str(p.relative_to(root)),reason='Non-vinyl texture (wheel/light/body)'));continue
    rel=p.relative_to(root).as_posix()
+   if '2f2fskylinev2.zip.contents/' in rel and p.name=='2.dds':
+    excluded.append(dict(path=rel,reason='Numeric companion opacity mask for 1.dds'));continue
    if stem.endswith('_') and any(q.stem.lower()==stem[:-1] for q in files if q.parent==p.parent):
     excluded.append(dict(path=rel,reason='Companion mask (trailing underscore naming)'));continue
    candidates=[q for q in files if q.parent==p.parent and q!=p and (
@@ -52,6 +54,7 @@ def build(root,out):
    if not candidates:
     candidates=[q for q in files if q.parent==p.parent and 'mask' in q.stem.lower() and
         canonical(q.stem).startswith(canonical(p.stem.split('(')[0]))]
+   if '2f2fskylinev2.zip.contents/' in rel and p.name=='1.dds':candidates=[p.with_name('2.dds')]
    try:
     im=load_dds(p);a=np.array(im)
     tint_channels=False

@@ -1,4 +1,4 @@
-# Underground vinyl import (development preview)
+# Underground vinyl import — refined collection v2
 
 This tool imports the recoverable artwork from three downloaded packs into an
 optional native OpenJuice asset package. It does not edit original DAT files,
@@ -27,30 +27,51 @@ python3 tools/vinyl_pack/inventory.py WORK/nd4 --unrar /path/to/unrar
 python3 tools/vinyl_pack/inventory.py WORK/fnf --unrar /path/to/unrar
 python3 tools/vinyl_pack/inventory.py WORK/aj --unrar /path/to/unrar
 python3 tools/vinyl_pack/catalogue.py WORK WORK/decoded
+python3 tools/vinyl_pack/refine.py WORK/decoded WORK/refined
 python3 tools/vinyl_pack/build.py --game /path/to/Juiced \
-  --decoded WORK/decoded --output WORK/fresh-package
-out/android-host/android_vinyl_check /path/to/Juiced WORK/fresh-package/assets
+  --decoded WORK/refined --output WORK/fresh-package
+python3 tools/vinyl_pack/check_refinement.py WORK/decoded WORK/refined WORK/fresh-package
+DISPLAY=:0 out/android-host/android_vinyl_check /path/to/Juiced \
+  WORK/fresh-package/assets WORK/captures
+python3 tools/vinyl_pack/thumbnails.py WORK/fresh-package WORK/captures
 ```
 
 The builder requires a fresh output directory. `catalogue.json` records every
 included source file, deduplicated copies, source hash, target car, mask and baked
 palette. The decoded catalogue also lists exclusions. A count of texture layers
-is **not** a count of complete original liveries: some designs require several
-layers in NFS, and this preview exposes those layers separately.
+is **not** a count of complete original liveries. Version 2 composes 19 source
+layers into eight complete designs using `curation.json`, leaving independent
+hood, stripe, badge and alternative designs selectable. There are 252 recovered
+art layers in 241 options; the numeric `2.dds` from Skyline v2 is an opacity mask,
+not an extra design. The conservation check rejects missing or duplicated art.
 
 The separate NFS mask supplies opacity for tint-channel maps: valid artwork in
 these packs can have zero colour-DDS alpha. Full-colour graphics can instead use
 overlapping source alpha to cut out their artwork; the importer distinguishes
 these cases heuristically. Rectangular sponsor
 logos receive a separate two-sided placement. Predominantly RGB-channel artwork
-gets a documented baked palette; these choices are adaptations, not recovered
-NFS player colour selections. Full-colour artwork is retained.
+gets a documented baked palette; hand-reviewed overrides cover the F&F and rally
+designs in `curation.json`. These choices are adaptations, not recovered NFS player
+colour selections. The source readme specifies primary HUES including lighter and
+darker shades, rather than only saturated RGB bytes. Full-colour artwork is retained.
+
+Partial side graphics are trimmed and fitted with a shared aspect-preserving
+scale and anchor. Both physical sides use the same coordinate bounds. Broad body
+wraps retain their source layout; their contours cannot be inferred from opacity
+alone. Panda Trueno has an explicit layout for its lower trim, black bonnet and
+original one-sided Fujiwara lettering, avoiding black text on black trim.
+
+Textures retain their original useful resolution (normally 512px), with a full
+filtered mip chain and clamped sampling. Transparent UV regions are conservatively
+culled from the decal meshes. Workshop thumbnails use real native car captures,
+choosing a bonnet view when the artwork would be invisible from the side.
 
 The meshes follow each original car's stock paint surfaces in both garage and
 race variants, including the BOH transforms of bonnet, bumpers and skirts. They
 do not include windows, lights or wheels. Normal-based projection is approximate:
-custom body kits, damage deformation, fine seam alignment and recolouring are not
-validated. Do not describe this preview as a finished faithful conversion.
+custom body kits, damage deformation and recolouring are not validated. Some
+full-body wraps retain source-car contour differences. This is an adaptation to
+stock Juiced bodies, not a claim of pixel-identical NFS reproduction.
 
 Unknown source cars are explicitly assigned to the Golf. 240SX artwork is
 adapted to the 300ZX, and Tiburon artwork to the Celica. These are art transfers;
@@ -72,7 +93,7 @@ extension do not load these extra options.
 An asset package changes the catalogue save variant. Enabling it may therefore
 show a separate career list; disabling it restores the old combination. It does
 not delete saves. Never copy an existing Custom Logo career into the new variant
-without remapping that dynamically appended slot. The preview is packaged disabled
+without remapping that dynamically appended slot. The collection is packaged disabled
 and is not installed onto the Retroid automatically.
 
 ## Validation

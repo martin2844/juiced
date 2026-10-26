@@ -52,6 +52,7 @@ int main(int argc, char** argv) {
                 if (!part.model.starts_with("DECAL_NFS_")) continue;
                 auto car=makeCar(&def);
                 car.body[kDecal]=uint8_t(i);car.base=0xffcccccc;car.decalColour=0xffffffff;
+                if (argc>5) car.base=0xff000000u|static_cast<uint32_t>(std::stoul(argv[5],nullptr,16));
                 if (argc>4 && part.model!=argv[4]) continue;
                 for (bool garage:{false,true}) {
                     auto model=scene::CarModel::load(engine,car,data.catalogue,random,garage);
