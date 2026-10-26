@@ -485,9 +485,9 @@
       "car": "CIVIC_97",
       "label": "civic_3rd",
       "pack": "nd4",
-      "tier": "B",
-      "reason": "Logos centrados y consistentes; capó algo saturado.",
-      "recommendation": "keep",
+      "tier": "C",
+      "reason": "Logo del capó sobredimensionado, deformado y cortado en frontal.",
+      "recommendation": "remove",
       "image": "V93637A0A8D.jpg"
     },
     {
@@ -495,9 +495,9 @@
       "car": "CIVIC_97",
       "label": "civic_electrical",
       "pack": "nd4",
-      "tier": "B",
-      "reason": "Rayo fino bien contenido, aunque pierde presencia a distancia.",
-      "recommendation": "keep",
+      "tier": "C",
+      "reason": "Rayo lateral demasiado tenue y fino en estas capturas; no alcanza el umbral de legibilidad solicitado.",
+      "recommendation": "remove",
       "image": "V4FFD3B0CFD.jpg"
     },
     {
@@ -505,9 +505,9 @@
       "car": "CIVIC_97",
       "label": "civic_kutet",
       "pack": "nd4",
-      "tier": "B",
-      "reason": "Gráfico lateral coherente; algunas líneas se cortan en rueda delantera.",
-      "recommendation": "keep",
+      "tier": "C",
+      "reason": "Gráfico lateral fragmentado en pasos de rueda y cambios de panel; composición incompleta.",
+      "recommendation": "remove",
       "image": "VA2216F25A6.jpg"
     },
     {
@@ -515,9 +515,9 @@
       "car": "CIVIC_97",
       "label": "civic_tk",
       "pack": "nd4",
-      "tier": "B",
-      "reason": "Color y motivos consistentes, con composición algo genérica.",
-      "recommendation": "keep",
+      "tier": "C",
+      "reason": "Diseño del capó deformado y recortado en frontal; parches y remates poco integrados.",
+      "recommendation": "remove",
       "image": "V03E4444DEC.jpg"
     },
     {
@@ -535,9 +535,9 @@
       "car": "CIVIC_97",
       "label": "civictyper",
       "pack": "nd4",
-      "tier": "B",
-      "reason": "Capó oscuro bien delimitado; opción sencilla, sin defecto evidente.",
-      "recommendation": "keep",
+      "tier": "C",
+      "reason": "Bloque oscuro del capó con remates irregulares sobre las aletas; acabado insuficiente.",
+      "recommendation": "remove",
       "image": "VF4352A2541.jpg"
     },
     {
@@ -2105,9 +2105,9 @@
       "car": "CIVIC_97",
       "label": "yourmom",
       "pack": "nd4",
-      "tier": "B",
-      "reason": "Texto contenido, legible y colocado de forma consistente.",
-      "recommendation": "keep",
+      "tier": "C",
+      "reason": "Primera línea del texto cortada bajo la ventanilla en ambos lados. La valoración anterior de texto contenido era incorrecta.",
+      "recommendation": "remove",
       "image": "V9D4FEA0D90.jpg"
     },
     {
@@ -2115,9 +2115,9 @@
       "car": "CIVIC_97",
       "label": "yourmom",
       "pack": "nd4",
-      "tier": "B",
-      "reason": "Variante clara de texto, legible aunque de menor contraste.",
-      "recommendation": "keep",
+      "tier": "C",
+      "reason": "Primera línea del texto cortada bajo la ventanilla; además pierde contraste. La valoración anterior era incorrecta.",
+      "recommendation": "remove",
       "image": "V52BB92D374.jpg"
     },
     {
@@ -2165,9 +2165,9 @@
       "car": "CIVIC_97",
       "label": "civic_body_15",
       "pack": "fnf",
-      "tier": "B",
-      "reason": "Franjas coherentes y legibles; patrocinadores de capó algo torcidos.",
-      "recommendation": "keep",
+      "tier": "C",
+      "reason": "Patrocinadores del capó deformados y cortados en frontal; discontinuidades entre paneles.",
+      "recommendation": "remove",
       "image": "V6C3EACECD8.jpg"
     },
     {
@@ -2175,9 +2175,9 @@
       "car": "CIVIC_97",
       "label": "civic_body_15",
       "pack": "fnf",
-      "tier": "B",
-      "reason": "Variante transparente limpia; capó y remates todavía de aspecto mod.",
-      "recommendation": "keep",
+      "tier": "C",
+      "reason": "Patrocinadores del capó deformados y cortados; mal resultado frontal.",
+      "recommendation": "remove",
       "image": "VBF91204413.jpg"
     },
     {
@@ -2185,9 +2185,9 @@
       "car": "CIVIC_97",
       "label": "civicm3",
       "pack": "fnf",
-      "tier": "B",
-      "reason": "Geometría angular consistente; algunos cortes duros en frontal.",
-      "recommendation": "keep",
+      "tier": "C",
+      "reason": "Franjas fragmentadas en frontal y pasos de rueda; remates duros no aceptables.",
+      "recommendation": "remove",
       "image": "VF7AEA10579.jpg"
     },
     {
@@ -2419,6 +2419,115 @@
       "reason": "Bandera recortada y bloques negros rectangulares en aletas.",
       "recommendation": "remove",
       "image": "V61450F770A.jpg"
+    }
+  ],
+  "amendments": [
+    {
+      "date": "2026-10-26",
+      "scope": "Ten previously accepted CIVIC_97 options",
+      "reason": "User rejection confirmed by reinspection of all 30 native capture views. Previous B classification withdrawn. No assets or saves changed.",
+      "previous_entries": [
+        {
+          "id": "V93637A0A8D",
+          "car": "CIVIC_97",
+          "label": "civic_3rd",
+          "pack": "nd4",
+          "tier": "B",
+          "reason": "Logos centrados y consistentes; capó algo saturado.",
+          "recommendation": "keep",
+          "image": "V93637A0A8D.jpg"
+        },
+        {
+          "id": "V4FFD3B0CFD",
+          "car": "CIVIC_97",
+          "label": "civic_electrical",
+          "pack": "nd4",
+          "tier": "B",
+          "reason": "Rayo fino bien contenido, aunque pierde presencia a distancia.",
+          "recommendation": "keep",
+          "image": "V4FFD3B0CFD.jpg"
+        },
+        {
+          "id": "VA2216F25A6",
+          "car": "CIVIC_97",
+          "label": "civic_kutet",
+          "pack": "nd4",
+          "tier": "B",
+          "reason": "Gráfico lateral coherente; algunas líneas se cortan en rueda delantera.",
+          "recommendation": "keep",
+          "image": "VA2216F25A6.jpg"
+        },
+        {
+          "id": "V03E4444DEC",
+          "car": "CIVIC_97",
+          "label": "civic_tk",
+          "pack": "nd4",
+          "tier": "B",
+          "reason": "Color y motivos consistentes, con composición algo genérica.",
+          "recommendation": "keep",
+          "image": "V03E4444DEC.jpg"
+        },
+        {
+          "id": "VF4352A2541",
+          "car": "CIVIC_97",
+          "label": "civictyper",
+          "pack": "nd4",
+          "tier": "B",
+          "reason": "Capó oscuro bien delimitado; opción sencilla, sin defecto evidente.",
+          "recommendation": "keep",
+          "image": "VF4352A2541.jpg"
+        },
+        {
+          "id": "V9D4FEA0D90",
+          "car": "CIVIC_97",
+          "label": "yourmom",
+          "pack": "nd4",
+          "tier": "B",
+          "reason": "Texto contenido, legible y colocado de forma consistente.",
+          "recommendation": "keep",
+          "image": "V9D4FEA0D90.jpg"
+        },
+        {
+          "id": "V52BB92D374",
+          "car": "CIVIC_97",
+          "label": "yourmom",
+          "pack": "nd4",
+          "tier": "B",
+          "reason": "Variante clara de texto, legible aunque de menor contraste.",
+          "recommendation": "keep",
+          "image": "V52BB92D374.jpg"
+        },
+        {
+          "id": "V6C3EACECD8",
+          "car": "CIVIC_97",
+          "label": "civic_body_15",
+          "pack": "fnf",
+          "tier": "B",
+          "reason": "Franjas coherentes y legibles; patrocinadores de capó algo torcidos.",
+          "recommendation": "keep",
+          "image": "V6C3EACECD8.jpg"
+        },
+        {
+          "id": "VBF91204413",
+          "car": "CIVIC_97",
+          "label": "civic_body_15",
+          "pack": "fnf",
+          "tier": "B",
+          "reason": "Variante transparente limpia; capó y remates todavía de aspecto mod.",
+          "recommendation": "keep",
+          "image": "VBF91204413.jpg"
+        },
+        {
+          "id": "VF7AEA10579",
+          "car": "CIVIC_97",
+          "label": "civicm3",
+          "pack": "fnf",
+          "tier": "B",
+          "reason": "Geometría angular consistente; algunos cortes duros en frontal.",
+          "recommendation": "keep",
+          "image": "VF7AEA10579.jpg"
+        }
+      ]
     }
   ]
 }

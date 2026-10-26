@@ -111,3 +111,12 @@ python3 tools/vinyl_pack/contact_sheet.py WORK/captures \
 
 Keep imported art and original car geometry in local output artifacts. Attribution
 is not a replacement for the individual authors' redistribution terms.
+
+## Restart after visual rejection (2026-10-26)
+
+The v2/v3 bulk projection workflow above is historical, not the acceptance path
+for the next release. Follow [the native-first investigation and process](../../docs/vinyls-native-first-2026-10-26.md).
+Retail uses shared transparent motifs/icons and car/style-specific decal meshes;
+the old NFS atlas projection and screenshot thumbnails do not reproduce that.
+Run `audit_retail.py --game GAME --package EXISTING_PACKAGE --output AUDIT` for a
+read-only resource inventory and comparison. No installed assets or saves change.

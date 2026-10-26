@@ -1,0 +1,66 @@
+{
+  "date": "2026-10-26",
+  "method": "Static local DAT resource inventory and source inspection; not a runtime visual certification",
+  "inventory_sha256": "55a332ebe965b661a070ea6517480cd37a6ccd7f6dbfd0ecdda13eb2c83aead7",
+  "cardefs_sha256": "b736dda4bfd6fd269c4765be6361bc6b18d6dee13b2ede08f5fe5feda2fd902a",
+  "retail": {
+    "car_definition_blocks": 54,
+    "cars_with_decals": 52,
+    "blocks_without_decals": [
+      "-",
+      "none"
+    ],
+    "styles": 31,
+    "mesh_instances": 3224,
+    "lookup_errors": 0,
+    "resources": 6511,
+    "styles_per_car_variant": {
+      "31": 104
+    },
+    "unique_geometry_per_car_variant": {
+      "31": 96,
+      "30": 4,
+      "14": 2,
+      "1": 2
+    },
+    "thumbnail_dimensions": {
+      "256x64": 31
+    }
+  },
+  "same_style_order_for_all_car_variants": true,
+  "published_package_comparison": {
+    "options": 107,
+    "options_per_car": {
+      "PEUGEOT_206": 3,
+      "S2000": 2,
+      "GTR": 24,
+      "SUPRA": 9,
+      "EVO8": 2,
+      "350Z": 4,
+      "RX7": 7,
+      "MX5": 8,
+      "CELICA": 9,
+      "ECLIPSE": 12,
+      "GOLF": 4,
+      "CIVIC_97": 10,
+      "focus": 2,
+      "WRX2": 4,
+      "INTEGRA": 3,
+      "RSX": 1,
+      "MUSTANG2": 1,
+      "RX8": 1,
+      "COROLLA": 1
+    },
+    "thumbnail_dimensions": {
+      "128x64": 107
+    },
+    "current_import_capacity_after_31_retail": 94,
+    "total_if_all_options_added_per_car_with_logo": 139
+  },
+  "shared_native_texture_count": 31,
+  "known_limits": [
+    "No new imported designs validated",
+    "Body kits, damage and added cars require runtime checks",
+    "Installed Android assets and real saves unchanged"
+  ]
+}
