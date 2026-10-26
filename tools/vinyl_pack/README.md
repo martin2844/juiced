@@ -1,4 +1,14 @@
-# Underground vinyl import — refined collection v2
+# Underground vinyl adaptation
+
+The v2 whole-car projection below is historical research, not the recommended
+shipping pipeline. Use `native_adapt.py`, `package_native.py` and
+`seal_native.py` for the reviewed standalone side-motif edition.
+See [the adaptation checkpoint](../../docs/vinyls-side-motifs-2026-10-26.md)
+for reproduction, selection, actual evidence and unverified configurations.
+That edition retains 40 motifs across all 52 stock cars; it does not reproduce
+the complete NFS liveries. It additionally requires SciPy.
+
+## Historical v2 pipeline
 
 This tool imports the recoverable artwork from three downloaded packs into an
 optional native OpenJuice asset package. It does not edit original DAT files,

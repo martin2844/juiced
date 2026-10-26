@@ -1,0 +1,2245 @@
+{
+  "schema": 1,
+  "stage": "40 retained after Civic both-side render review; stock-body placement sampled on all 52 cars",
+  "scope": "Standalone lateral motifs; not complete original NFS liveries",
+  "selected_ids": [
+    "V106688EA9C",
+    "V13ADC895AA",
+    "V1532F0E2EF",
+    "V189EA55179",
+    "V1CBEA5BD55",
+    "V1F00B86525",
+    "V258B14F477",
+    "V2A5A63915E",
+    "V2B8B6D4449",
+    "V2F24D3466B",
+    "V313C338608",
+    "V3758C89EB5",
+    "V3CB2165193",
+    "V4FB2FB9C30",
+    "V52BB92D374",
+    "V5E44CF2FAB",
+    "V608ECA1403",
+    "V708E8A8C36",
+    "V739D44E0E8",
+    "V77FBCB34CE",
+    "V78C361F5AC",
+    "V8D8B958CCA",
+    "V9D4FEA0D90",
+    "VA4BA08DEF5",
+    "VA67804607C",
+    "VA82E838486",
+    "VAAF1EC85DB",
+    "VBA046FF86F",
+    "VBEA33AD6D0",
+    "VC2A03120C9",
+    "VC43DEA072B",
+    "VC8493783D7",
+    "VD4F0348B24",
+    "VDCEAAD2118",
+    "VDD1012AD13",
+    "VE365D425D0",
+    "VEBA370828B",
+    "VF10A2E7549",
+    "VF8B7B47548",
+    "VFC8F044175"
+  ],
+  "entries": [
+    {
+      "id": "V2A5A63915E",
+      "label": "206_fbi",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "efe8edf851ed1ccee4f99476562cf6bd38dab37417a9f81222e7b30b80ec0f66",
+      "decision": "retain_side_motif",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required."
+    },
+    {
+      "id": "V08322E5525",
+      "label": "206_glass",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "5e605e81c10c482e06641aabd182e200815a532b00bda3626d9928bc7cabd6c6",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VA82E838486",
+      "label": "206frenchpolice",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "5eb4e41206d8effc54550f715a323c164e46bbcdeb48e66d71e3717a0215ff5e",
+      "decision": "retain_side_motif",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required."
+    },
+    {
+      "id": "VDBE376411C",
+      "label": "206melissa",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "c30288e59cc6d242b5b57ca1ca4f01f04b488274c47330f63b835863f3dbea54",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V90203A6E16",
+      "label": "240sx-fullstripes",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "0eb0786cf522f2eee7c9a0745ef509d5aeeed1b46c1821c02e9276655e9e0007",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VA584CFC451",
+      "label": "240sxfullstripes2",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "ac7f1d8afa3fd1ad1113683823187239d1ff59ddb9a12eaedfd5923ea7e52443",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V4E1033B11F",
+      "label": "2f2f_s2000_vinyl",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "944b0d9055a85adf8f5cd82bd633650b036b383053d5a32684f0a33c68e19c79",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V158F3652C9",
+      "label": "2f2f_skyline_vinyl",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "1ce6b9521501707d9c8d012ee81b21c429e49a434b51f6e1dcac1db11cdc07a6",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V3B541F9E6A",
+      "label": "2f2f_sukis_s2000",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "97fc084084196731c8b183e0f6927e4dfb4f71c36e59c95468e125d1e76b59c5",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VCC68ACC696",
+      "label": "2f2f_supra",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "e3ad9ed6e3ae61f9fb8771906e11d452de69be7c4a9348ea8b9062e815780448",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VF171CD74C2",
+      "label": "2f2fevo_hood",
+      "status": "excluded",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement.",
+      "decision": "defer"
+    },
+    {
+      "id": "V4BFD8E2CB4",
+      "label": "2f2fevo_vinyl",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "ff59ae6252bc8301eb6a3f118e0efff11502405ed3a4aae0e158db47dc7b5153",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V7BE5C7CD34",
+      "label": "2f2fevo_vinyl2",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "93ac298228c11593030fcb41d792b6a6a55ff5a832479314775d594d2d291f12",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VBA046FF86F",
+      "label": "2f2fr34_vinyl",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "a08c272ed5f0ceef5e92879444c367084b6c2fcac144d4f479272188aa9cd0f1",
+      "decision": "retain_side_motif",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required."
+    },
+    {
+      "id": "V3832E5C727",
+      "label": "2f2fr34_vinyl_fade",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "c1502cbd9d64a7175d4839ab189fc8a28855ab11347b5d2571f796d8272980bd",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V3758C89EB5",
+      "label": "2f2fr34_vinyl_fixed",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "4eeebee42478d993d14ea4ecfe5f287ed76303af05e433e60200d51b4d1af07d",
+      "decision": "retain_side_motif",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required."
+    },
+    {
+      "id": "V4311DE92BD",
+      "label": "2f2fskyliner34",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "4062c3f4415f0f7f01a4664803869318ad2887e2a932ad374ddd317db5a91590",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VC479E841FD",
+      "label": "2f2fskylinev2",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "8c605a5459d96728e041ec968654192badcef846ceb43bd709c4ca7413e620ab",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V27B6852012",
+      "label": "2f2fsupra",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "2d39d0a7e01a41ac1ae787561e94db698565490599cde1d2b3375d448099a8c1",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V13ADC895AA",
+      "label": "350z custom6.dds",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "4017b746a31dcd4b639207c01ebd6e405803ca581006bfcb2fad69eca2e7bd77",
+      "decision": "retain_side_motif",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required."
+    },
+    {
+      "id": "VE90F0C37C6",
+      "label": "350z-robzombie",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "85a8c94fc3b65b2be2c7fd19675ba6aa73e065864eed3b40aaaf0b8854924ece",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V418F8CFD72",
+      "label": "350z-stripes",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "ba8c197ce6cda20125bf10330ab0a77dd0354ae5b767ceedae15f625a15b1352",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V64707D940A",
+      "label": "666",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "21498079c2a87b36694c6a15660c308b5caa7b4b6f8b266e751687234c634d4c",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VDE9B8AF0B8",
+      "label": "aliasmiatabeta1.0",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "af0b4e071f077b9eb99d838daab89e6800da6d3bf1ac16f58ccf486a24350304",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VF2F860A81B",
+      "label": "aliasmiatafinal",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "58638cef856b0846d7256eae5a589b376e5fa5c1a92ac355a733045d535a836f",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VC358D06796",
+      "label": "alien",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "9f58f2d6908f423ed2637f6755555963c59c663189d7a9027ca9975d8a588577",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V8D737B08CE",
+      "label": "alizee_rx7",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "8c3ef317b2d650e53be65d6ca5966f8d71f61e934a1619f8fbc7b000b683d41a",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VBAFAE3450D",
+      "label": "angryspongebob",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "58ec60a8be9d539b121e509773ae3e160bb57d100651757039e689e3ef8f9761",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V4DA4137C59",
+      "label": "army-miata",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "de4a300fd532cdccc7b23de43a86921eaaa16d07db7e566572ed0e303c4b9d2e",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V9383C02F1B",
+      "label": "artnfs_lancer",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "9ee264d46b42f4570de8f30113c40a78c05d3a6f5f08cd5351d17971ff7c1921",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V84A31773DD",
+      "label": "artnfs_skyline",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "964432c143dc9b41c9b81a70655aed55c562f026640a0468b1f1536fd9b21869",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V3DE4F880E8",
+      "label": "atomicskylinevinyl",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "430ab45d18da651a2859360670cce9873a536d3abf064131dc73060f0e5a9ced",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V909C50CDA4",
+      "label": "audiquattro",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "6fe8b0a454f1c9ca3ed02b130b8034c3cf27bbd4a780fc728eb40f72af4285ba",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VEABFC46BA3",
+      "label": "badreligion_celica",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "8a6cf8b26ca4bc04d1e042939f78bcdac36c251bdd9229a9d762e88c1e24730f",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VF7287F82C4",
+      "label": "blackwidow_eclipse",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "ccc309febc7250da9ba5733e629ead1dc5cd41b8de0bab69fd993604fb4ac059",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VA24B480552",
+      "label": "britney_version1.1",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "4cdfba7f535d8e86c557424bd6c656472f9060ea7b0a893772d24e566873e4f5",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VB629A64686",
+      "label": "britneyskin",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "dc854d45cae4ac598d889971e2158d4d39fc7acdadc32420a257186fcf800e9b",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V058010B1A4",
+      "label": "calsonic",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "1bcbf4c44e56c1f17c61f2e7a3f504584d4bbd535e5713695e9cfe10c33445ab",
+      "decision": "defer",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required.",
+      "runtime_reason": "Civic both-side captures: fine detail/text too small or fragmented at safe body placement. Excluded from first side-motif edition."
+    },
+    {
+      "id": "VBDC77E07BC",
+      "label": "calvinvinyl",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "df97a485fd7f9f7fd7e5d2134f0a3878587528109e3c60bf25549949cfeda3e4",
+      "decision": "defer",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required.",
+      "runtime_reason": "Civic both-side captures: fine detail/text too small or fragmented at safe body placement. Excluded from first side-motif edition."
+    },
+    {
+      "id": "VD4F0348B24",
+      "label": "carlsberg",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "cede0be1415607daedc9ab9b62d5d149c8b50718b439760637be551e22b33c90",
+      "decision": "retain_side_motif",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required."
+    },
+    {
+      "id": "V014F5AA537",
+      "label": "celca_rally",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "ccfebedb29d9e778b0ebf391f9328854762fa7b7cbfe3c9f4c2e510d08ba0364",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VF8B7B47548",
+      "label": "celica_trd",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "383092a788dfa003fe0d1f9c7d7fb4b0cec9410019d1e79b2b5c74c54176c927",
+      "decision": "retain_side_motif",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required."
+    },
+    {
+      "id": "VE1370827E1",
+      "label": "celica_trd2",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "c5f78da41b99f4dae9044ba13f572ba70fda48aa1fb31e5fa716e39fbc1886df",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VFB5E181486",
+      "label": "celicatrd",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "a66ad9565a56cd9a741abf3773e4a0ca281f601f4d2b4bd4b4a3ff662e10f143",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V9683ADF176",
+      "label": "che",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "74cd27f9d43293582d5fc61d5db218bdcf2dedf5c292ff44163a69e2073b8a6f",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VCB6C8A8716",
+      "label": "chompyouvinyl",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "7286b406e9dff8316bb2c13b53dd474b0e4eeaa327120c88716c6b37b6c65d0d",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V8B4AE54D31",
+      "label": "civic-junkmans",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "b459a2baad68485605d45d55900887a2d5b2a95d11d1c87c4c8958b769c2e9fa",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V93637A0A8D",
+      "label": "civic_3rd",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "c6845e27668720b4abce0b44997d5963ef8db172d2d994f70796c9c9a1e5da32",
+      "decision": "defer",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required.",
+      "runtime_reason": "Civic both-side captures: fine detail/text too small or fragmented at safe body placement. Excluded from first side-motif edition."
+    },
+    {
+      "id": "V4FFD3B0CFD",
+      "label": "civic_electrical",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "7348175dd91c74c8028e4b38a1263166d2511ec57c601b2d08ebd194408c4a51",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VA2216F25A6",
+      "label": "civic_kutet",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "68147d2a67711e197a1e799f1de2fffcecbf30ac4bd01833fa4a1e29e59a6779",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V03E4444DEC",
+      "label": "civic_tk",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "4856b8bf75dd4f0f1d965fda45be2f07e230d3a660d6d0f047bb5bcb102c595a",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VBEDD294572",
+      "label": "civic_yha",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "3f7e840237261bba0d498c1435a42a029c6d930caef38ee472848469b64e5af2",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VF4352A2541",
+      "label": "civictyper",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "593040ab524f7375780fe690a6860ee554e1688ff85ba78a1b2ff3b74da77a4f",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VDA0009CFAD",
+      "label": "civictyper",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "4f335ef41221b4bd0651db345585112aec83a5eeda1f4094e359f07a579d6654",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V9B0B1EAF95",
+      "label": "civicvinyl",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "044802580b82f125d5f80b3c36401f0e9c6890b621928248a89b209d17c6b4d1",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VD286A50430",
+      "label": "clarion",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "f3b8cda9731f9cf0fa6ff70eaa641f81cf0ef07b6fc7005eb350734a531ed5e9",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V79CB404C88",
+      "label": "cold",
+      "status": "excluded",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement.",
+      "decision": "defer"
+    },
+    {
+      "id": "VC0161DCAA9",
+      "label": "colorspini",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "77df7215c2412de7a08760cd4469944571c81e993ce06ee23a41860dd8958652",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V9701F30AB5",
+      "label": "cowboy",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "c4bb83bca6a1960665f09081c7762acdd476864828fcb23f577feb7befdb1d96",
+      "decision": "defer",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required.",
+      "runtime_reason": "Civic both-side captures: fine detail/text too small or fragmented at safe body placement. Excluded from first side-motif edition."
+    },
+    {
+      "id": "VC4B1BA530B",
+      "label": "craigsskylinevinyl",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "4039683b13cf7ec0bdeacdb7ac70446e46d912da9eadf971f3fbdfe27fea2614",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VA6BB9A6712",
+      "label": "darksiders",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "0bd69085354db3a9058268e1ba5d0ccdad02fb58dbd3e18e07c61f60cf366200",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V83B2BB6BD8",
+      "label": "darksiders",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "a6a3d74b0bf48920799df298ffd4db288a51d2541752896b829fc95208c97900",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V3E1F09813D",
+      "label": "darksiders",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "053b67842d0163d7d3b74b2f2fb43283c7b3c700e36923fafebffde93eafd3f9",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V993308E41A",
+      "label": "decal_wide_trd",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "09cfe3d85f0798382d478bdcc240192d7fd058502154772a3c2d6e880a99cef7",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V01FB62D21A",
+      "label": "drugged_skyline",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "b3b5470d4998ae1be116f0f231928e41583708bb4c993611e030fe23b6a35d44",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VDCAB15BA5E",
+      "label": "duff_beer_miata_vinyl",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "2799fc2e6663a9a0ef3d2bd8100348f1e96706303aadb7387351d9800638e4b1",
+      "decision": "defer",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required.",
+      "runtime_reason": "Civic both-side captures: fine detail/text too small or fragmented at safe body placement. Excluded from first side-motif edition."
+    },
+    {
+      "id": "V189EA55179",
+      "label": "dunlop_texture",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "dde052fc532339ebb5e55fa36033acfc2b9c05b34b61de7895dadcbdd52292a9",
+      "decision": "retain_side_motif",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required."
+    },
+    {
+      "id": "VDD1012AD13",
+      "label": "dunlop_texture",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "77f07f49f194a88afee89988a8ac5b1a3dfe52c77c604b101f9a973da1c206d3",
+      "decision": "retain_side_motif",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required."
+    },
+    {
+      "id": "VA67804607C",
+      "label": "dunlop_texture",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "c549a7a6c674a79717b849bac07c7a7d7acae9ae5b51225fe102f0c1e79c25c4",
+      "decision": "retain_side_motif",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required."
+    },
+    {
+      "id": "V608ECA1403",
+      "label": "dunlop_texture",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "c48942a78a553f420c96e085e4cfdd290fc0cf551f8128ae933471a2fd652ccf",
+      "decision": "retain_side_motif",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required."
+    },
+    {
+      "id": "VAF63A86A4F",
+      "label": "eclipse-peteypablo",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "d1f160d0fe39aca50248f5efa3eb41a519627d4a38f0560840581b4ec194ef88",
+      "decision": "defer",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required.",
+      "runtime_reason": "Civic both-side captures: fine detail/text too small or fragmented at safe body placement. Excluded from first side-motif edition."
+    },
+    {
+      "id": "VA413FB2C09",
+      "label": "eclipse_intro",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "e3eb240ae2a093ae7ded6632413c3b0a9ac9d5519f271462c8a2fe286eb89c30",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VC2A03120C9",
+      "label": "eclipsefnf",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "aaaefbece997789f0708b61300f11074c8744821419fe7e68b17402adffd6887",
+      "decision": "retain_side_motif",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required."
+    },
+    {
+      "id": "V8E9D0F0726",
+      "label": "eclipseintrostripe51",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "0de130c41c97a668226c41c091cf8217463d98c472f2a96b6f7dd6193e3f620a",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V0AEBCE20DB",
+      "label": "eyes",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "eed8b2bf72ab379c2d360ba10dd97e149c66ec90d33cc0187975b0b7c2061758",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V2F24D3466B",
+      "label": "f&feclipse_vinyl2",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "cfe7f87bf22612be175433ddcdcf08bb50ccbd618b2aae32eb7b5ff95eb152f3",
+      "decision": "retain_side_motif",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required."
+    },
+    {
+      "id": "VA9C50634C3",
+      "label": "f&frx7",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "6901c5a2c2414065f9a40fedaf5e4c68690bb4dfdc26c9fb8e3b1b0eaa707bb3",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VEBA370828B",
+      "label": "f&frx7_vinyl",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "cfc1ee2506675472833ae0daf88dbcf368cd4678ef93b3ca0518bd2af99b22ab",
+      "decision": "retain_side_motif",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required."
+    },
+    {
+      "id": "V4FB2FB9C30",
+      "label": "factorx",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "74b69390d2ffc6ee53fe2c050b1ad32825b7c060917b1c3a2151376b19407ac8",
+      "decision": "retain_side_motif",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required."
+    },
+    {
+      "id": "V16BAE23675",
+      "label": "fafsup",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "09a1cbd024ad0adb309d45b0bda5459b0b336995c2bf142a114b663fadc06425",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V98F877AAC2",
+      "label": "fire_eclipse",
+      "status": "excluded",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement.",
+      "decision": "defer"
+    },
+    {
+      "id": "V7043EB5275",
+      "label": "fixedrx7viperstripes",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "76d1afcec115bb33338db703891e223ccb7bd3fdb98f98b661f54ae852df8969",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VD3A4FF6530",
+      "label": "flashmediadesignskyline",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "cda0562e36cae7997810b2ffeb76ea6e07d0344dd376f814b765381daa8e1979",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V7DA47F25CF",
+      "label": "fnfsupra",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "8febabda311a7edebac4f4d90b47966a5a7cab5b52391d650826c7ca39982e06",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VEA9F86FCB7",
+      "label": "focus_mcrae",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "47de00f00286ea8c120992ec8616640bcfceeb409862ae0c6d2a5e846ee69506",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VE0340245BE",
+      "label": "focuslogo",
+      "status": "excluded",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement.",
+      "decision": "defer"
+    },
+    {
+      "id": "VFC8F044175",
+      "label": "focusrs2002",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "bf1299f70d91252ac278a700022fc29da2728fce3e2541d642d4d3cb31cb7178",
+      "decision": "retain_side_motif",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required."
+    },
+    {
+      "id": "V80F87F3AB9",
+      "label": "furiousdesign",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "5b88e842d95ab3488b0659294874f597c9de6f388e2a8202498fe399cc49b83c",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V100866691A",
+      "label": "furiousdesign",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "bd4b8be30faf04c3d417f0ad524f29537c8fc908380ab5048e763f26d3fd0eab",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VE365D425D0",
+      "label": "furiousdesign2",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "327ae7bfd3d9ba0443553ea1f2d0bf1450850d30a0345f6b48ed20c287cdb5d0",
+      "decision": "retain_side_motif",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required."
+    },
+    {
+      "id": "VBEA33AD6D0",
+      "label": "furiousdesign2",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "8466d62a7078d2462f36cf76db55b675a750f71a5bb8738348e45518cb90c3e9",
+      "decision": "retain_side_motif",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required."
+    },
+    {
+      "id": "V3CB2165193",
+      "label": "furiousdesign2",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "56f01ccf2230cceea088fd722327c76d14affac3788211d8cb7b27638677d463",
+      "decision": "retain_side_motif",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required."
+    },
+    {
+      "id": "V390E3C6A0C",
+      "label": "furiousdesign2",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "26e44ca1c6c3c9b5eb1bdee7593b83812417157cc75192fed08788e9e4d726ba",
+      "decision": "defer",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required.",
+      "runtime_reason": "Civic both-side captures: fine detail/text too small or fragmented at safe body placement. Excluded from first side-motif edition."
+    },
+    {
+      "id": "V410F9B89BC",
+      "label": "garfield",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "098b5b93a3372020d96b5bbbd9950834cb53cb8d1c2de82aa69fb34f0f850b69",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V739D44E0E8",
+      "label": "gcmodv1.0",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "72a0e2eed43b02d5a57565b643a9cefd8625d50c683a7186b59e119a7287ee77",
+      "decision": "retain_side_motif",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required."
+    },
+    {
+      "id": "V1CBEA5BD55",
+      "label": "gcmodv1.0",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "0231ddad3f01a8c2398ffb604b7c26122a63799c832712c019a4328c1a95ee16",
+      "decision": "retain_side_motif",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required."
+    },
+    {
+      "id": "V1532F0E2EF",
+      "label": "gcmodv1.0",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "dc3caf923743e2602505ea73320fd4f0fcb8169f351b017d624d8b14bf06ed29",
+      "decision": "retain_side_motif",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required."
+    },
+    {
+      "id": "VC1407007FC",
+      "label": "golf_panther",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "fc7c53bb8525d2e1de16c08bd6f06c0dba90e5d1e03dabbe825c8a05b58cb4c1",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V7BC23D9C01",
+      "label": "gothik1",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "bb978a1e2aec880e4a9409d00cda9c06922ecea6c1f3fc3dcf481b8a017ef52d",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V27CB7C225C",
+      "label": "gothik1",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "4f49fbe7e4ab8cc3146b3b035ba88ca45ffb685fd2db87614a3fdd99790cc638",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V1EA451B6B3",
+      "label": "gothik1",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "13c893838e2d47a2e790b425a37c28bc5532ecd8a83af95ad5585e87c17251da",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V4F2FCB58A5",
+      "label": "halomotorsportscelica",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "6135178d8d1bf682b8e20276b0bb977dcd0bb4c61ab3345dd8b10e0702baf372",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V550649A2B9",
+      "label": "hks",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "2037bba65ac4adae4682bb87535ef87c3ea078a8ae35fd285f4a27eb027fac16",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V5F3769BC81",
+      "label": "hks",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "5262d11e3e171d91fcd2f4f81b4f3a522176a240ce7952661631f684f4433984",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V37E7328FB6",
+      "label": "impreza_rallisport",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "668ffeeef58fef1c375b8253c7e25c34e5051415616ba23ceace136887557f69",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V640FAAD492",
+      "label": "imprezawrx",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "c3a94e53d9ba8cbe13c06b44553eeecf04afa3ab92775ab0c6ce40643553b8c2",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V8A5079F7E3",
+      "label": "integra",
+      "status": "excluded",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement.",
+      "decision": "defer"
+    },
+    {
+      "id": "VC43DEA072B",
+      "label": "integra",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "3ad2745ce36f0e1cd3818a61d4dc92313f68cfd69f6f9d700777138cff222715",
+      "decision": "retain_side_motif",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required."
+    },
+    {
+      "id": "V0D1D16EBDB",
+      "label": "integra",
+      "status": "excluded",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement.",
+      "decision": "defer"
+    },
+    {
+      "id": "VE8F7FB044F",
+      "label": "integra_tuned",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "0900b8717850a7b5751c527880e54a90b0b15219fcc283c62ab0be79d6b540be",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VF92E975EBA",
+      "label": "intro_celica",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "69f06018e099dfd0a61f9633c895398587b36cef63b4104dc63db01938bc3a90",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V9EE143CAF7",
+      "label": "jagermeister-vinyl",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "ee2c5ab6f18cb26acc9c955dde76c461e81b3e97ed6e9660a14b9f2314d5c69b",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V77FBCB34CE",
+      "label": "japan_vinyl",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "d5f2b4a1240b8090f56bbad99dbf02feb50003001d53180d470eab0ef9fc7e55",
+      "decision": "retain_side_motif",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required."
+    },
+    {
+      "id": "VA4BA08DEF5",
+      "label": "japansun-supra",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "1a831a5f63428f37db81acd20de7f8bbd452038f14db210892c2ce3f3249f0fb",
+      "decision": "retain_side_motif",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required."
+    },
+    {
+      "id": "V3BE416CD96",
+      "label": "jolie-rsx",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "6c98fdb1046e69f3cf55b30cb683f92fbe775b09a232c4eb3fbcb8ba91ecf395",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V1C2446C751",
+      "label": "kornkar",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "42a1ded9b83cd24646c34b22be23467bf775e26e722455ebb503ec53ff52b0ea",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VD81947EE5C",
+      "label": "kr",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "d4f6efbae1fe1d430a6a92e1f30f1fa2b8bf620760676fe8dfc18899619f08ff",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V0F674B8B1E",
+      "label": "lancerwrc2004",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "76c18f22c74ddd7edf3ae5764b3283e32f9bebcf2253ee7ddefb44502b28ebbd",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V1899556FC3",
+      "label": "lemans",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "7f231633ee08da985151083575357255879916fb8d9d70d0a23fd81bfe547986",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VD25BBA0320",
+      "label": "lightning_350z",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "becce5345bf5a9c795d4aa1fd508d0c1d8a2486bea81e1d2bde0abc39e8f3561",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VA747ED9146",
+      "label": "load-206",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "3fdcc685e7b524b775ae66bca922e5b8124edac572bc0956999b63edf572b509",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V58FC353ECB",
+      "label": "lostprophetes-skyline",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "0300c39a76bbb8c250cfcdc214e68ef592be1d2d6db32d04831dab5d54e59fcb",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V6465D5551E",
+      "label": "lpu",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "cf357c7e6687190bc889a143b96332510ff949e9a2906e797e0c2d24eab94db8",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V014BE7E724",
+      "label": "matrix",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "3332147775409e8c267225cd7d30a8356b7943239c3fbf78338353c33fa437e8",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VAA95AA6F11",
+      "label": "mazdamx5lol",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "d0b89b30d7e7980b5f5d9999380e1b4fc98e88debc4a86c674455bc0f9b778d1",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VEEBBE9DD02",
+      "label": "mclarenf1_1_1",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "8a6519f3ebfa0d896636c6da1c5ec5b7a792ffcaa1099d7efda6af4684a9a773",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VF3F2CDFEA3",
+      "label": "mcrae",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "bb95f0881e0ac653d25670f8229904255fcda5c87c580259e762d8b61956de8b",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VD42694A8C4",
+      "label": "miata_stripe",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "ffe3655e0e5b8b4adaac2ab30453c7fa29dd86ef2b653f71e9a76b29f5f4f75b",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V44AAD35315",
+      "label": "miataeurostylefull",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "629fd3bcfc948ada5f074c70fc0685d0700c3fa9d08590f999d2bfec09bb47e6",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VD52546595B",
+      "label": "miataeurostylefull",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "e3d375f00ee7b3e6a71c6fa3654fb2c422d06a434a8a3a4cbcc6ce7ae3cf001d",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V4DD23C4634",
+      "label": "miatamx5stipes",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "1695799c91daffc53a3e31465fdf99f407b366af15d05c7bf883bccd1e527386",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VA14B6A122B",
+      "label": "militaryambulance",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "3f255de5761043ef1da7ff10270514027e1310656a124ecf336ea21e74acd1df",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VF51CB34B5E",
+      "label": "mx-5stripes",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "c0c890cf3d591054fe2d3d4e9114e4e090afa1988a3de51b6c280fb0d1e65a9f",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V8AAA7E7361",
+      "label": "mx-5stripesfixed",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "f1f1827d720943a486ddd84bff5e1a2cc17bfe442a3d03bc1faea2f963ded60e",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V106688EA9C",
+      "label": "nd4spdworld_vinyl",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "fe03a978fc68dd72c7c76678223ce43ced2e7117b40bbc9a81b89b9e9a269a32",
+      "decision": "retain_side_motif",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required."
+    },
+    {
+      "id": "V8897750C41",
+      "label": "neonpat",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "153040f7658addeece60d618063b2986a1c7a49e045dfa846560b55deee07725",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VAAF1EC85DB",
+      "label": "nfs7unwocar",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "450ba80b482523d5ede0b91a42ac8a577452a77598a18277c6ac1692eb79e5e0",
+      "decision": "retain_side_motif",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required."
+    },
+    {
+      "id": "VD3E223DA1D",
+      "label": "nfsundergroundcivic",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "f9564e24e3434b8529a0476ae67a85f3ee779a2db3bdf662b67f4f66616662ee",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VFF42C33287",
+      "label": "nfsundergroundintegra",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "9309aa913036c3a90deb1f0deb6648c91b3a4b3e25cd34c204757d252a852fa8",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V58439DF0A2",
+      "label": "nfsundergroundskyline",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "2b2a1e5abd728c306048c71d7127d6d8f360794247ce432c855be9ec132aea99",
+      "decision": "defer",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required.",
+      "runtime_reason": "Civic both-side captures: fine detail/text too small or fragmented at safe body placement. Excluded from first side-motif edition."
+    },
+    {
+      "id": "V85A6732101",
+      "label": "nfsuvinylfnfsupra",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "d4c0123a89669c2c490229828761198d9ac993eff151283cd1d907b3e9a97220",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V0B8FEEDFA7",
+      "label": "nismoskyline-2",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "366a77509322d043e23f1dd6f2f349c9494a3db3628a1b0c44b9232e3f8c5090",
+      "decision": "defer",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required.",
+      "runtime_reason": "Civic both-side captures: fine detail/text too small or fragmented at safe body placement. Excluded from first side-motif edition."
+    },
+    {
+      "id": "VB59A04A2BC",
+      "label": "nissan350zgrandprixskin",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "f4a5dfa9565d0522775e88d5ef0cbc5b3310aa9fb7d6c4e6c6662105db6da882",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V78C361F5AC",
+      "label": "nofear-206",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "c2a1202f2380ca26a4afe61cebb65986a3e73656ad715b5d2371d4c9c4fdf2d1",
+      "decision": "retain_side_motif",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required."
+    },
+    {
+      "id": "V2C3DB41C16",
+      "label": "nxmx-5",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "f64e664153927db043c2a01cea70a00ac59d7f1a180ede175dc50ed4e4232e5d",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VA72E1611F8",
+      "label": "nxmx-5fixed",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "c849aebb3968c43f389ca76991fd11b5d38549f0666b170defe1375ed5df669f",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V85B0055599",
+      "label": "oettinger",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "f48f1ef0da625ba47c7e4cbad972af2426ff11ddfb7126a8fef7be1e5e01ed30",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VAC106960DF",
+      "label": "onkelz",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "7a54e5abd494965341299ba72b4a8fd34827212e48ffdc37c91594f35e031226",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VD66DA8172A",
+      "label": "pennzoil_1998",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "549485b00ef0fc560f64941922ed0bcfa7232e20a76d6cd8b5b718a74e895d1e",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V448F903326",
+      "label": "peugeotmarlboro206wrc",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "e805440a5758abffc37f00ebb1dc2c5cbfe316acb9ea65df1a2890f210b69fdd",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V66D5B21FD9",
+      "label": "peugeottotal206wrc",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "2e13dd588cc231008f46247ed5eef244addd4fe904285f736cf53f3b7e8403c4",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V258B14F477",
+      "label": "poland",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "0265573adf8ab93ddbaef4c738f2da4883b280a787bb8ffd6b52a0ad52b4702f",
+      "decision": "retain_side_motif",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required."
+    },
+    {
+      "id": "V63C670D7DF",
+      "label": "polizei",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "ab01bee52a8b049e39ac06ff139fb465984352c824b3fe256a70ae4f0c368eb3",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V2B8B6D4449",
+      "label": "prodigy",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "cb45c5ad8edc432ae69465a1555cac1ec516a2e52585b9f6800bd79eea18e699",
+      "decision": "retain_side_motif",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required."
+    },
+    {
+      "id": "V0DD1863DDC",
+      "label": "progidy_matrix",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "a3736160ffa63b7e740e7f33a0044ac6040b7324a1154e2781a27f6bcc1bfedd",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VE37C8A4AF7",
+      "label": "racedevil",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "a09b1a9c572032b65092bc09c73906f5c21049bbd266c6dd9fa2b22c4e5eca55",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V708E8A8C36",
+      "label": "reaper",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "7b3175356f0570406cd12644f67b1e5d96758be3c4f37ad9e7cc210cf00383e3",
+      "decision": "retain_side_motif",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required."
+    },
+    {
+      "id": "V1F00B86525",
+      "label": "redarmy",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "d063efbd66cffa7c8a019ed11a27d20a8920fb96e3ebad3df49eefd7cf065e45",
+      "decision": "retain_side_motif",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required."
+    },
+    {
+      "id": "V7B06A2408E",
+      "label": "ring",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "73ed0ece3f6badf777910a1b7313fa4b485a0f13b2a990f390ff6e5196bd2648",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V6EE23E8E8E",
+      "label": "rsx_custom26",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "c9a536d3d27d980bfefd9c6ed11b284d7c723ebde30b09c63f522e8e89b0f5a7",
+      "decision": "defer",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required.",
+      "runtime_reason": "Civic both-side captures: fine detail/text too small or fragmented at safe body placement. Excluded from first side-motif edition."
+    },
+    {
+      "id": "VF4C0F05DDD",
+      "label": "rsxeurostylefull",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "d11d4fc0f1a7ffd7cf1428d53aa3816806509a040c2ec36b4efc0eeb2a66c894",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VAC37A58C72",
+      "label": "rx7-viperstripes",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "643e34e6a1c0fe88dd7de71bddaf2b25d4c51db02299510f37d02186b00a8ff2",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V0183A6AAC5",
+      "label": "rx7_custom_vinyl",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "69ad18a35f0eefdf7d7f9f11260a085aeba28d6bd91fd3d7979961000e84c588",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VAFCE0921A7",
+      "label": "rx7ledneon",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "30ceb4aaaeaff33719dfbce7faff5efbe634e11c1102694fd5cae4aa7d4df5dc",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VD2E23BECF6",
+      "label": "rx7sun1-2",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "1723e90d3405144f72fec1a11080dca0305fdea8c61b9aa802e1d4415a026cb8",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VC1D329A189",
+      "label": "rx7sun1-2",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "15a53b9e08ba6d9e299c1d836c17837767c87188dbc11a425f8afa8963b4015d",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VDCEAAD2118",
+      "label": "rx7teamhybrid",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "8e20173447b61ebe485dd1f681fa75eac9d80270e80c9957c7e4b9dbfd1e0d7e",
+      "decision": "retain_side_motif",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required."
+    },
+    {
+      "id": "V83B02D9CDB",
+      "label": "s2000convertiblevinyl",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "7b3fa0d62327651958b73a47961dbc5b45e0fd5f14539e8a0ab95aaa1498b948",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VB4B563C310",
+      "label": "s2000drago",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "a1fb89d0e49b500d7f941063f52ffa4483e1f238724a341f1630bc649e60877c",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VA6D5AD5DCA",
+      "label": "sky-atr-color",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "9a25f5a56b235089f0fcb6a1dd33babf8ff13f95d181b277f7cf04cf52109ece",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VD019E2B4C2",
+      "label": "skyatr-dhr",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "2e80475fa5b57b1ec1190f1aab62d03c96a9498110e371132c32d6086669b9c2",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VF85BC1785C",
+      "label": "skyline-futurama",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "3929fe9dc8cd7c5d320a2c83a187bddfe3f76a68142a7f37787cfecfeb37cc86",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V5E8BFD85BC",
+      "label": "skyline-tmnt",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "7fd3f76db272b1e89e7505a39495c483e996c4f4083095a6beebf1bc1195b70f",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V39CC3D0515",
+      "label": "skyline_paul_frank",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "a09596378939b2a9c61826ad5632ef4fc2cd6ceb76eed81126ce30485c46812c",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V290162F83D",
+      "label": "skylinemetal",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "5ecd8d261cb076d0e8565625df32b0634127c986ea1ac747bd20812f778c22b8",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V67DFA47538",
+      "label": "smartsteph1",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "e0b448c83b43367ba08a75dbdebb28226c02fadfb822ccdebe2b43f9fa9d4d5f",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VCC86F8DE8E",
+      "label": "smartsteph2",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "fe7c07bc96b973fcbb6911e3eae150baa9c4ec6e342f158af869afcded35133e",
+      "decision": "defer",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required.",
+      "runtime_reason": "Civic both-side captures: fine detail/text too small or fragmented at safe body placement. Excluded from first side-motif edition."
+    },
+    {
+      "id": "VB1A298B3C1",
+      "label": "smartsteph3",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "3d899d5e82cbac64c2e156b68ab7a85f7b4f37ae127d948fcbaa16dc97e847ff",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VF773D8922B",
+      "label": "smartsteph4-terminator3-edition",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "b7596be9faa6d6cfd138cd6988e4251e2241cdfa33f7ab9a76f40ba1a2268b74",
+      "decision": "defer",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required.",
+      "runtime_reason": "Civic both-side captures: fine detail/text too small or fragmented at safe body placement. Excluded from first side-motif edition."
+    },
+    {
+      "id": "VE3D7ED297C",
+      "label": "southpark_peugot206",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "d53e0706bed7eccc7c17128da8d68757d9bb58b139f9eb149333875b67b2a904",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V4CC438AE5E",
+      "label": "spawn",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "443e1394be2cdef42443360ca20e2d4ac5bd6f8831d6e5565bdb98fb27ccb5e4",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V6D91F48D4B",
+      "label": "special_dune",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "d3d6bf8f10f084afa8a51f461ec629ef74ee34dc9d415d72e473feec39dbf32e",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V3EFA9A5256",
+      "label": "spiked-skyline",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "9abfc268c90cfb8fa18e5bea025f4f6bab7843f948a29ef73b232f3d54e7b843",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V241DC510A9",
+      "label": "subaru_rally",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "856b61b29acb41ebbe819886f2124ddf1cfc35aa46e729d8214c45309393b151",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VF6066951A8",
+      "label": "subaruimprezawrc",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "63d9fcac72327b3851f924e561f2d0a53b10e0800dc58202ecf9b15098c6c5c1",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V0F2CCBDF7D",
+      "label": "supra2f2f",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "37b4bff6f208b0054e37598ea34148990ca777d62c336b8709b9862ef30a0fd6",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VE21B3BFC6B",
+      "label": "supra_vinyl",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "27d1c115b470d8ad5bb642245469ee5f843303852f0f4cda33b9fdd0ed19280b",
+      "decision": "defer",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required.",
+      "runtime_reason": "Civic both-side captures: fine detail/text too small or fragmented at safe body placement. Excluded from first side-motif edition."
+    },
+    {
+      "id": "VF10A2E7549",
+      "label": "texture_bridgestone",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "0aa15d66cf54d06a372d164089109fa18d3d00ef643fa063d3b85cc07a6aa61d",
+      "decision": "retain_side_motif",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required."
+    },
+    {
+      "id": "V8D8B958CCA",
+      "label": "texture_bridgestone",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "05e24fed9eeeb9fac2ec5b548d59bec5c0f75c98ca108a6230bb54815610fb5f",
+      "decision": "retain_side_motif",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required."
+    },
+    {
+      "id": "V95EA94593C",
+      "label": "texture_bridgestone",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "aca357cd530d638d6fdbf80d68b09f7eb85d7b8cc50e995b180499418c39aed4",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VF0F7B3D6FB",
+      "label": "texture_bridgestone",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "d88ae7e170c4678cf2bb44f289138c3e0e94a860c8d9c1a8c123bbdc7bb3eb44",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V5E44CF2FAB",
+      "label": "theblink182rx-7",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "34fe7aaa69b57a9289a097b37037172d2c7045e76f9649b48858ba6715b7c3a6",
+      "decision": "retain_side_motif",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required."
+    },
+    {
+      "id": "V313C338608",
+      "label": "theblink182rx-7",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "b85653e08af6bc088f9aaa60cf1f8eef00360f1d4d212a58b181d2363285e979",
+      "decision": "retain_side_motif",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required."
+    },
+    {
+      "id": "VF08C904CD6",
+      "label": "theblink182rx-7",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "59a78b570a292d00c721b16fc0f8294b6f5427a4ab11b615166e55cf484a534b",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V23FA763E73",
+      "label": "theblink182rx-7",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "3accc428f89f2d7618f6c400c331f10c7e64a0501af6ba9a1e490342b183c6d3",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V481B23EB6C",
+      "label": "theblink182rx-7",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "89a67f41be1299769656e7924cdb0287087d6822c8c70302c1f5161392381619",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V42137BC807",
+      "label": "thunderdome",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "2e86ed67210361aacf664c037be790e8a8cfd86fd57acfdc8c85bedfd7b528f3",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VCF01918F31",
+      "label": "trkpeugot-bitchezzz-vinyl",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "8c80f8ab6babe1dd648487dc2e15d50b38e6ac1533199a004517c61cb10b1704",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V9528769F1E",
+      "label": "vwgolfgroupb",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "4317f56bf38c4b7cc269065a26998ff7153f5831c2f7d0cbab90cf2900652679",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V0ACB543DDB",
+      "label": "vwgolfredbull",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "e9f0d4ad3901c9092ed9860aaecc1a8b8d6289371c074eba0ca0c70eff037f8e",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VB709FF6069",
+      "label": "vynilspider-man",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "f166805773932d81a4f5ada9d7d4a7e85718d1dfe1322168599096765c2a93dc",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V5E54072A49",
+      "label": "wild_integra",
+      "status": "excluded",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement.",
+      "decision": "defer"
+    },
+    {
+      "id": "VD7E2FD9C10",
+      "label": "wild_integra",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "25f9c12e37ff6d0efe46496c80ddcf57d1548e81298e105417e385d7ac8dad44",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VE84D1D84E0",
+      "label": "wild_integra",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "a4754723ac42b7ba7610f2a13457d128b09b9ccd15b30bdfde1efbd22a3c48c5",
+      "decision": "defer",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required.",
+      "runtime_reason": "Civic both-side captures: fine detail/text too small or fragmented at safe body placement. Excluded from first side-motif edition."
+    },
+    {
+      "id": "V0D73F7FFBC",
+      "label": "world-eclipse",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "9fb2190dd72f3cda3a14952fefb5dcaa53a78a4d33d7a4d8fdf10f5b50838967",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V2A9C02FAB7",
+      "label": "wp-design2",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "212569bb4015bfdb397716cefec7eb9a992edd448bf08858303d656b7f9f0724",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V5DC978EFC7",
+      "label": "wpcycosven",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "20f293a4616d4d796bcd7e4105c7e5cb6334c65a33d5bffdb956f21ed250209e",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VF3ECA862D6",
+      "label": "xboxeclipsevinyl",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "68a942e1ab07b79760f9e519dd79fdafdb1f31a7b868abc762f298d5e097fa7f",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V2A6C7360ED",
+      "label": "xplod_skyline",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "68f73090b24cfe3d40ca0d14218cae9bfe9307a8f0645aec756e10b2b97b332a",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V9D4FEA0D90",
+      "label": "yourmom",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "1034fe6d7aa3a206cca1069735874cad92ccf7c948b164a9c1d493380792db5f",
+      "decision": "retain_side_motif",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required."
+    },
+    {
+      "id": "V52BB92D374",
+      "label": "yourmom",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "e5d140887d068104bb10015e6932a22724091f4610ba0ca8fb54496f336c406d",
+      "decision": "retain_side_motif",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required."
+    },
+    {
+      "id": "V233A4CD4E2",
+      "label": "z350vinyl",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "2c006cfe4a54b1f375233d89cb2f3fd8011929b0e93ae2bc26e647dc68262d57",
+      "decision": "defer",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required.",
+      "runtime_reason": "Civic both-side captures: fine detail/text too small or fragmented at safe body placement. Excluded from first side-motif edition."
+    },
+    {
+      "id": "V55ADE33FB8",
+      "label": "2f2f_honda_vinyl",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "50a0004be00d5e9aa4452828ade194872dcff73b35cf98245e6aee730647e112",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VC1A88C0C6D",
+      "label": "2f2f skyline",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "ca786908ef57462bc01b0ad84e98a25bcc8b9c06a9d74bd203002b53ace804e0",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V9F8EF3AAB3",
+      "label": "350z",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "d21d8db1df52315934af5b94b9944b67616a47679147e7abd1ecbcc5f3481501",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V6C3EACECD8",
+      "label": "civic_body_15",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "7faefcb05e06ffd668ed4eea1b852ff1a99a26b35c29718e9d79c4d9126f732f",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VBF91204413",
+      "label": "civic_body_15",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "dfd94247e46f83769b8bc7a75d6400d5209f1670802fb908f7a91e31a495bc89",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VF7AEA10579",
+      "label": "civicm3",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "a7b7e7542ac68e0e08a61b0cdaaed6593858879f32a154cc4109e3179d1366a2",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V32CFCE1641",
+      "label": "dks350zvinylbycarlinhos_sama",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "ea40f8bf89466c1ddebada60e67026e54f01dc570bcaf5d74005d2568923440c",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V97FA3ACDCC",
+      "label": "evo8_nfscvinyl",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "3c5cbfc209f95b8423c4810e6193b4850f1bcb291e312173ba5672a8b1bebba2",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V7431993100",
+      "label": "faf3_evo",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "f95e2c7ca328da56d8cf52c30479e2e4b8e5418e3ea962f48ceccc7a73721582",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V726857F15D",
+      "label": "lancerblacklist",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "c39cc66b3524eea53dfa6d40318f3dd382e9cbe6641580bafe463b94325129f0",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V5CACD58F01",
+      "label": "rx7_body_02",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "e7441c803c1ad7f2dc7ae862f414ea224368d69c40ecdf60a7578751cc36392a",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VEA30E8FDCA",
+      "label": "razorsmustanggtfornfsu2",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "be73b8b5bbac27b2a588111f99edeabba108b14022ed145b4993f27a0ac1a078",
+      "decision": "defer",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required.",
+      "runtime_reason": "Civic both-side captures: fine detail/text too small or fragmented at safe body placement. Excluded from first side-motif edition."
+    },
+    {
+      "id": "VEFA498BEC7",
+      "label": "suprablacklist",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "8563ce2484994580a4fe299650438fa9fddf9574a48d29cba78d9460cbf2e40c",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V20C1A78FC9",
+      "label": "the fast and furious eclipse vinyl",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "8be400af1b545b3f1c25b4ce4bdbd66466d4fdb3ff89910e7472f4ce38d689c7",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V714E0A75DA",
+      "label": "fnftokyo_rx-8",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "e8948a90b29ecca8b6819e52f4fc4b2a7424da11bb692a5eec73f8edae5b59fc",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VA7A5C12CAE",
+      "label": "lancerevo8",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "b9c0cb3f63dbaef1ca54e712d015093b1f7af0c4e686b911beafa657e656ed56",
+      "decision": "defer",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required.",
+      "runtime_reason": "Civic both-side captures: fine detail/text too small or fragmented at safe body placement. Excluded from first side-motif edition."
+    },
+    {
+      "id": "VB13F4F6CF8",
+      "label": "mustanggt",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "48488ab301566ad0a3f0816edf4b71115fd9db0a1ec9712178140aa9537db58a",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VC8493783D7",
+      "label": "rx7",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "4a9f7d0d0cf624fa34d69f5a98e00182b2b84926f862d3c817b19302e21c0d65",
+      "decision": "retain_side_motif",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required."
+    },
+    {
+      "id": "VCB668FC7A0",
+      "label": "skyline",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "1fcf5cff2e7aadb6b601112641ed9decbff354ce41c190f0854ad82a0d73215d",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V68A38F20B2",
+      "label": "skyline",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "8b35578cabdae5584747f4ed6427121ddcc47a0fc36f46fb8d3ea0593efe0b93",
+      "decision": "defer",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required.",
+      "runtime_reason": "Civic both-side captures: fine detail/text too small or fragmented at safe body placement. Excluded from first side-motif edition."
+    },
+    {
+      "id": "VEBF6716DDF",
+      "label": "supra",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "aa1e669bd045e2e1849d405f1cf20d374253cc763d34a19d9f3af46d5de261ee",
+      "decision": "defer",
+      "reason": "Recognizable standalone motif selected after reviewing extraction at native-like proportions; vehicle validation still required.",
+      "runtime_reason": "Civic both-side captures: fine detail/text too small or fragmented at safe body placement. Excluded from first side-motif edition."
+    },
+    {
+      "id": "VF6A16E3CE6",
+      "label": "Fujiwara Panda Trueno",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "dd6128c5161a403e22695d028f9c48f6653dfa7fac7a34c602590a4d7ae14872",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V172D1488B2",
+      "label": "F&F Eclipse - Simpson & MX3Boy",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "2d1a00369cca4b203a8cde9ac204bf622699b79a29398c8da1f4624b064a581f",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V9F51DE371A",
+      "label": "F&F Eclipse",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "d24a4fb692395928ff744e3e44ee550a457c902202f254782101d98eba026dc3",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VC79EFCB9D1",
+      "label": "F&F Supra - Exclusive & Rimy",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "fd96711266d0811ae27e34d61eff86bc314a1cac8071e2320567859becc46167",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V35AFE7CEEC",
+      "label": "Hyundai WRC artwork - Celica adaptation",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "01a5eb1871e1763d4ae58fa88cfed946e756962e68de9c8b7a6d659d11613459",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V5887FE6AD4",
+      "label": "Pennzoil 2001",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "003815d4a09a3e14c657b542d798e912468af37a2224bc1b4341b8434bf1a937",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "VE8B31D9086",
+      "label": "S2000 Mugen - hood & logos",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "74823b65a0a3ddfd45c3103b124765f823235c01f5bc51b42ca944f3ad74dac9",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    },
+    {
+      "id": "V61450F770A",
+      "label": "Neon Patriot v2",
+      "status": "candidate",
+      "same_as": null,
+      "sha256": "c0f53798237f33f680a1c56d99e0a33217809ac72a7a1fe32c3d3040a19089da",
+      "decision": "defer",
+      "reason": "Not admitted to this lateral-motif selection; requires separate extraction, mapping or visual refinement."
+    }
+  ],
+  "runtime_rejected_ids": [
+    "V0B8FEEDFA7",
+    "V058010B1A4",
+    "V233A4CD4E2",
+    "V390E3C6A0C",
+    "V58439DF0A2",
+    "V68A38F20B2",
+    "V6EE23E8E8E",
+    "V93637A0A8D",
+    "V9701F30AB5",
+    "VA7A5C12CAE",
+    "VAF63A86A4F",
+    "VBDC77E07BC",
+    "VCC86F8DE8E",
+    "VDCAB15BA5E",
+    "VE21B3BFC6B",
+    "VE84D1D84E0",
+    "VEA30E8FDCA",
+    "VEBF6716DDF",
+    "VF773D8922B"
+  ],
+  "runtime_rejection_reason": "Civic both-side captures: fine detail/text too small or fragmented at safe body placement. Excluded from first side-motif edition."
+}

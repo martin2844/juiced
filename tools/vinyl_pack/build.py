@@ -68,7 +68,8 @@ def shell(retail,car,block,ui,ug1=False):
     folder='cars/'+car.lower()+('_ui' if ui else '')
     nodes=list(boh(retail.read(folder+'/models/'+car+'_stock.boh')))
     slots={n.upper():mat for n,m,mat in nodes}
-    decal=next(mat for n,m,mat in nodes if n.upper()=='DECAL')
+    # The retail MR-S uses MRS_DECAL; CarModel resolves the same suffix alias.
+    decal=next(mat for n,m,mat in nodes if n.upper()=='DECAL' or n.upper().endswith('_DECAL'))
     inv=np.linalg.inv(decal)
     names={m:inv@mat for _,m,mat in nodes if m and m.upper()!='NONE'}
     for cat,part in re.findall(r'^\s*STANDARD\s+(\w+)\s+"?([^"\s]+)',block,re.M|re.I):

@@ -1,0 +1,109 @@
+{
+  "350Z": {
+    "height_band": [
+      0.2,
+      0.5
+    ],
+    "reason": "Avoid the vertical door handle intersecting text."
+  },
+  "NSX": {
+    "height_band": [
+      0.58,
+      0.88
+    ],
+    "reason": "Place text below the upper side moulding.",
+    "body_frame": {
+      "center": [
+        15,
+        48
+      ],
+      "width": 80
+    }
+  },
+  "AC_NSX": {
+    "height_band": [
+      0.58,
+      0.88
+    ],
+    "reason": "Place text below the upper side moulding.",
+    "body_frame": {
+      "center": [
+        15,
+        48
+      ],
+      "width": 80
+    }
+  },
+  "MUSTANG68": {
+    "height_band": [
+      0.16,
+      0.46
+    ],
+    "reason": "Avoid the horizontal body crease cutting the second line."
+  },
+  "PUNTO": {
+    "height_band": [
+      0.58,
+      0.88
+    ],
+    "reason": "Recalibrate the failed rear-quarter placement."
+  },
+  "VW_CORRADO": {
+    "height_band": [
+      0.58,
+      0.88
+    ],
+    "reason": "Keep text below the door handle."
+  },
+  "CAMARO70": {
+    "height_band": [
+      0.22,
+      0.52
+    ],
+    "reason": "Keep text below the door handle."
+  },
+  "CIVIC_97": {
+    "height_band": [
+      0.5,
+      0.9
+    ],
+    "body_frame": {
+      "center": [
+        35,
+        62
+      ],
+      "width": 76
+    },
+    "reason": "Centre the motif on the door, below handle and above moulding."
+  },
+  "FOCUS_2": {
+    "body_frame": {
+      "center": [
+        60.251963976548424,
+        74.09572521178879
+      ],
+      "width": 73.20696564306866
+    },
+    "reason": "Keep the motif clear of the door handle."
+  },
+  "MX5": {
+    "body_frame": {
+      "center": [
+        -13.830211198739324,
+        57.83776547851417
+      ],
+      "width": 62.24167334397477
+    },
+    "reason": "Move below handle/fuel cap after all-car text render review."
+  },
+  "PEUGEOT_206": {
+    "body_frame": {
+      "center": [
+        -97.21330329231164,
+        76.402983976626
+      ],
+      "width": 73.41491540068728
+    },
+    "reason": "Move below handle/fuel cap after all-car text render review."
+  }
+}
