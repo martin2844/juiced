@@ -30,6 +30,24 @@ an installation lock while it runs.
 
 ## Controls and saves
 
+Android `.5` adds **Saves → Open save editor**. Close the game, choose Original
+game or Enabled mods, and select your profile. Money accepts an absolute balance
+or a $10,000 increment; Cars adds an unmodified car from that mode's catalogue
+(55-car garage limit); Respect edits each of the eight rival crews (0–1,500).
+Review changes before applying them. Race results and host challenges are not
+marked complete; the engine still applies its normal respect minimums and thresholds.
+
+Every edit and restore first backs up the current archive, then atomically replaces
+it. Reopen the profile and choose **Restore previous editor backup** to undo the
+last operation. These recovery copies are local app data (`files/save-edits`);
+the Settings export contains the active saves, not the editor's backup history.
+Uninstalling the app removes local saves and recovery copies, so export active
+saves to external storage when needed. The editor cannot recover an already
+corrupted archive or automatically determine rewards lost in a crash.
+
+The launcher and Android app icon use the original Juiced icon from the game's
+ICO resource. See `android/app/src/main/assets/licenses/Juiced-icon.txt`.
+
 The left stick steers, RT accelerates, LT brakes, D-pad navigates, the south face
 button selects, the east button backs out, and Start pauses. **Controls** offers
 **Set up gamepad**, with remapping, stick dead-zone adjustment and a live input monitor.

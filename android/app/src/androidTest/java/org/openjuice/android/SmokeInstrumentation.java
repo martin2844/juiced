@@ -29,6 +29,15 @@ public final class SmokeInstrumentation extends Instrumentation {
   public void onStart() {
     Bundle result = new Bundle();
     try {
+      if ("save-editor".equals(mode)) {
+        SaveEditorInstrumentedTest.run(getTargetContext().getFilesDir());
+        result.putString(
+            "stream",
+            "PASS: real-save clone edit, money/car/respect roundtrip, backup, stale edit rejection,"
+                + " restore, original untouched\n");
+        finish(Activity.RESULT_OK, result);
+        return;
+      }
       if ("touch".equals(mode) || "touch-race".equals(mode)) {
         TouchInstrumentedTest.views(this);
         if ("touch-race".equals(mode)) TouchInstrumentedTest.race(this);

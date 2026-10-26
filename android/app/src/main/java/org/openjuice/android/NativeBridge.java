@@ -6,5 +6,15 @@ final class NativeBridge {
     System.loadLibrary("main");
   }
 
-  static native String validate(String game, String mods);
+  static synchronized native String validate(String game, String mods);
+
+  static synchronized native String saveCatalog(String files, boolean modded)
+      throws java.io.IOException;
+
+  static synchronized native String inspectSave(String files, boolean modded, byte[] bytes)
+      throws java.io.IOException;
+
+  static synchronized native byte[] editSave(
+      String files, boolean modded, byte[] bytes, int money, int[] respect, String[] cars)
+      throws java.io.IOException;
 }

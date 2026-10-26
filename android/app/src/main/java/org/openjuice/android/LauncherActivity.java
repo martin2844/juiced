@@ -116,11 +116,18 @@ public final class LauncherActivity extends Activity {
     nav.setPadding(dp(16), dp(18), dp(16), dp(12));
     TextView brand = Ui.label(this, "OpenJuice", 24, Ui.WHITE);
     brand.setTypeface(Typeface.create("sans-serif-condensed", Typeface.BOLD_ITALIC));
+    ImageView originalIcon = new ImageView(this);
+    originalIcon.setImageResource(org.openjuice.android.R.drawable.juiced_original);
+    originalIcon.setContentDescription("Juiced original game icon");
+    originalIcon.setScaleType(ImageView.ScaleType.FIT_CENTER);
+    nav.addView(originalIcon, new LinearLayout.LayoutParams(dp(48), dp(48)));
+    brand.setTextSize(18);
+    brand.setTypeface(Typeface.DEFAULT_BOLD);
     nav.addView(brand);
     LinearLayout tabs = new LinearLayout(this);
     tabs.setOrientation(wide ? 1 : 0);
     nav.addView(tabs);
-    for (String name : new String[] {"Play", "Mods", "Controls", "Settings"}) {
+    for (String name : new String[] {"Play", "Mods", "Controls", "Saves", "Settings"}) {
       Button tab =
           Ui.button(
               this,
@@ -338,6 +345,25 @@ public final class LauncherActivity extends Activity {
           idle);
       note("Live button and stick testing is included in gamepad setup.");
       content = controlBody;
+    } else if (page.equals("Saves")) {
+      heading(
+          "Your career, recovered", "Restore progress lost after a crash without starting over.");
+      section(
+          "Save editor",
+          "Adjust money and crew respect, or add cars from the selected game's roster."
+              + " Original-game and modded profiles stay separate.");
+      action(
+          "Open save editor",
+          true,
+          () -> startActivity(new Intent(this, SaveEditorActivity.class)),
+          ready && idle);
+      note(
+          "Close the game before editing. Review your changes before applying; a recovery backup is"
+              + " created automatically.");
+      section(
+          "Backups",
+          "The editor keeps a recovery copy for each change. Reopen a profile to restore its"
+              + " previous editor backup. Export all saves from Settings for an external copy.");
     } else {
       heading("Keep your garage safe", "Manage game files, save backups and app information.");
       LinearLayout settingsBody = content;

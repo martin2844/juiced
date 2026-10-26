@@ -56,7 +56,12 @@ public:
         }
     }
     void cars(std::vector<Car>& cars, uint32_t& tail, const char* what) {
-        cars.resize(u32(what));
+        const auto count = u32(what);
+        // Every serialized car starts with a 64-byte model name. Reject bogus
+        // counts before allocation, including corrupted saves opened by the editor.
+        if (count > (m_data.size() - m_offset) / 64)
+            throw std::runtime_error("Car count exceeds remaining save data");
+        cars.resize(count);
         for (Car& car : cars) {
             if (!car.read(m_data, m_offset)) {
                 throw std::runtime_error(std::format("{}: a car at {} runs past the end", what, m_offset));
