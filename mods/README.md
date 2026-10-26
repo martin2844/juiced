@@ -23,9 +23,9 @@ Errors and loaded script names appear in `~/Library/Application Support/Juiced/J
 ## Packages and in-game toggles
 
 Every shipped mod has its own folder and `mod.ini`: `controls`, `neon`,
-`driver-photo`, `custom-logo`, `ferrari`, and `wheels`. Script packages contain
+`driver-photo`, `custom-logo`, `ferrari`, `wheels`, and `host-pink-slips`. Script packages contain
 `main.lua`; asset packages contain `assets/`, `patches/`, and their authoring tools.
-All six packages, including ready-to-load car/wheel assets, are committed here.
+All seven packages, including ready-to-load car/wheel assets, are committed here.
 
 Open **Options → Mods**, select a mod and press Enter to turn it on/off. An asterisk
 marks a change pending restart. Toggles are saved immediately; Back closes the menu.
@@ -41,7 +41,7 @@ Car, wheel and custom-logo packages change saved catalogue indices. Different
 combinations use different career directories under `variants/`. The complete
 original set retains the existing ModGarage careers, as declared by
 `collection.ini`. Re-enabling that set resumes those careers. Photo, neon and
-controls toggles do not split saves. No existing career is converted or deleted.
+controls and host-pink-slips toggles do not split saves. No existing career is converted or deleted.
 
 The launcher copies missing package files into `~/JuicedMods/mods`, preserving
 existing scripts and enable/disable choices. This is the editable installed copy;
@@ -108,3 +108,8 @@ can change behaviour exposed through these hooks without recompilation. Adding a
 entirely new engine capability still requires extending the native API once.
 There is no automatic mid-session reload: restart after changing scripts so car
 catalogues and active menus remain consistent.
+
+Host Pink Slip Races adds an optional type to career event setup. Select a rival
+with at least 600 respect and compatible cars; the original 1v1 car-wager flow
+settles the result. Requires a native build containing this hook (Android .7+).
+See [package instructions](host-pink-slips/README.md).

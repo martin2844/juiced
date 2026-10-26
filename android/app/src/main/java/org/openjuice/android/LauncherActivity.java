@@ -456,6 +456,8 @@ public final class LauncherActivity extends Activity {
 
   private String modDescription(String id) {
     switch (id) {
+      case "host-pink-slips":
+        return "Host a 1v1 car wager against a rival with at least 600 respect.";
       case "ferrari":
         return "Add the Ferrari 458 to your car collection.";
       case "wheels":

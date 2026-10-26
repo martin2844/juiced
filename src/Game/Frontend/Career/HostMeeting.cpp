@@ -6,10 +6,23 @@
 #include "Game/Frontend/WindowTools.h"
 
 #include <algorithm>
+#if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
+#include "Mods/Runtime.h"
+#endif
 
 namespace oj::frontend {
 
 namespace {
+bool pinkMod() {
+#if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
+    return mods::runtime::feature("host_pink_slips");
+#else
+    return false;
+#endif
+}
+constexpr const wchar_t* kPinkRequirement =
+    L"Pink slips require a rival with at least 600 respect and a car in this class. "
+    L"You also need an eligible car and space in your garage.";
 
 // A hosted race's kind stepped left or right: PointToPoint, Circuit, Sprint, kept at the ends.
 EventKind stepKind(EventKind kind, int32_t step) {
@@ -30,12 +43,48 @@ constexpr uint32_t kHostGrey = 0xFF646432;
 
 }  // namespace
 
+std::vector<int> HostMeeting::pinkRivals(const Career& career) const {
+    std::vector<int> rivals;
+    const int region = m_setup.criteriaType == CarCriteria::Region ? m_setup.region : 0;
+    const int make = m_setup.criteriaType == CarCriteria::Make ? m_setup.make : 0;
+    for (int i = 1; i <= 8; ++i)
+        if (career.crews[i].respect >= 600 &&
+            hostCars(career, career.crews[i], region, make, m_setup.carClass, m_setup.type) > 0)
+            rivals.push_back(i);
+    return rivals;
+}
+
+void HostMeeting::stepPinkRival(const Career& career, int step) {
+    const auto rivals = pinkRivals(career);
+    if (rivals.empty()) { m_setup.location = 0; return; }
+    auto it = std::find(rivals.begin(), rivals.end(), m_setup.location);
+    const int index = it == rivals.end() ? 0 : int(it - rivals.begin());
+    m_setup.location = rivals[(index + step + int(rivals.size())) % rivals.size()];
+    m_race.route = 0;
+}
+
+bool HostMeeting::pinkReady(const Career& career) const {
+    if (!pinkMod() || career.garage.empty() || career.garage.size() >= 55) return false;
+    const auto rivals = pinkRivals(career);
+    if (std::find(rivals.begin(), rivals.end(), m_setup.location) == rivals.end()) return false;
+    return hostCars(career, career.crews[0],
+        m_setup.criteriaType == CarCriteria::Region ? m_setup.region : 0,
+        m_setup.criteriaType == CarCriteria::Make ? m_setup.make : 0,
+        m_setup.carClass, m_setup.type) > 0;
+}
+
 // 0x004CD580: an event of the setup (+0x0D the location, +0x10 the type, +0x14 5000, +0x6C the class; a region
 // (+0x60) or a make (+0x64) by the criteria; its prize the rounds' and CMSHostMeetingSetupRace's from 0x00718FD8, not
 // read further) and for crews 1 .. 8 whether each comes (0x004A9480) into +0x40 ..; the crews coming.
 int32_t HostMeeting::attendance(CareerHost& host) {
     GameData* data = host.gameData();
     const Career& career = *data->career;
+    if (m_pink) {
+        m_setup.attend.fill(0);
+        if (!pinkReady(career)) return 0;
+        m_setup.attend[m_setup.location - 1] = 1;
+        return 2; // Player and selected opponent, not two rival crews.
+    }
     CalendarEvent e{};
     e.challengeIndex = -1;  // A hosted meeting is not a crew challenge.
     e.location = static_cast<int8_t>(m_setup.location);
@@ -69,6 +118,9 @@ void HostMeeting::setupTexts(CareerHost& host, ui::Screen& s) {
     const Career& career = *data->career;
     const int language = host.language().index;
     m_reason = 0;
+    if (m_pink) stepPinkRival(career, 0);
+    if (!m_locationCaption) m_locationCaption = s.textOf("Location");
+    s.setText("Location", m_pink ? L"OPPONENT" : *m_locationCaption);
     const auto colour = [&](const char* name, uint32_t argb) {
         if (const int e = s.find(name); e >= 0) s.setFontColour(e, argb);
     };
@@ -119,6 +171,17 @@ void HostMeeting::setupTexts(CareerHost& host, ui::Screen& s) {
     const int32_t coming = attendance(host);
     s.setText("Attendance", toWide(std::format("{}", coming)));
     colour("Attendance", coming < 2 ? kHostRed : kHostWhite);
+    if (m_pink) {
+        m_setup.cost = m_cost = 0;
+        s.setText("CostValue", L"$0");
+        s.setText("TypeText", L"PINK SLIPS");
+        s.setText("LocationText", m_setup.location == 0 ? L"NONE (600 RESPECT REQUIRED)" :
+            texts.at(kTextCrewNames + size_t(m_setup.location)) +
+            toWide(std::format(" ({} respect)", career.crews[m_setup.location].respect)));
+        colour("LocationText", coming == 2 ? kHostWhite : kHostRed);
+        colour("CashValue", kHostWhite);
+        m_reason = pinkReady(career) ? 0 : 6;
+    }
 }
 
 // 0x004CA9A0: with +0x38 (the calendar's) the defaults: type 3, location 0, region 1, make 1, class 7, +0x30 1, cost 0,
@@ -130,6 +193,7 @@ void HostMeeting::enterSetup(CareerHost& host, ui::Screen& s) {
     if (data == nullptr || !data->career) return;
     Career& career = *data->career;
     if (m_setup.defaults != 0) {
+        m_pink = false;
         m_setup.type = EventKind::PointToPoint;
         m_setup.location = 0;
         m_setup.region = 1;
@@ -181,7 +245,7 @@ void HostMeeting::updateSetup(CareerHost& host, ui::Screen& s, uint32_t event) {
             host.request("CMSHostMeetingSetupRace", SwitchMode::Replace);
         } else {
             host.message(MessageType::Continue,
-                         texts.at(m_reason == 5 ? kTextNoCarsToHost : kTextNoHost + static_cast<size_t>(m_reason)),
+                         m_reason == 6 ? kPinkRequirement : texts.at(m_reason == 5 ? kTextNoCarsToHost : kTextNoHost + static_cast<size_t>(m_reason)),
                          false, nullptr);
         }
         return;
@@ -192,11 +256,18 @@ void HostMeeting::updateSetup(CareerHost& host, ui::Screen& s, uint32_t event) {
     const std::string current = s.currentButton();
     const auto is1 = [&](const char* name) { return _stricmp(current.c_str(), name) == 0; };
     if (is1("Type")) {
-        m_setup.type = stepKind(m_setup.type, step);
+        if (m_pink) {
+            if (step < 0) { m_pink = false; m_setup.type = EventKind::Sprint; }
+        } else if (pinkMod() && m_setup.type == EventKind::Sprint && step > 0) {
+            m_pink = true;
+            m_setup.type = EventKind::Circuit;
+            stepPinkRival(*data->career, 0);
+        } else m_setup.type = stepKind(m_setup.type, step);
         setupTexts(host, s);
     }
     if (is1("Location")) {
-        m_setup.location += step;
+        if (m_pink) stepPinkRival(*data->career, step);
+        else m_setup.location += step;
         if (m_setup.location < 0) m_setup.location = 0;
         if (m_setup.location == 9) m_setup.location = 8;
         setupTexts(host, s);
@@ -246,6 +317,10 @@ void HostMeeting::raceTexts(CareerHost& host, ui::Screen& s) {
     const auto colour = [&](const char* name, uint32_t argb) {
         if (const int e = s.find(name); e >= 0) s.setFontColour(e, argb);
     };
+    if (!m_crewCaption) m_crewCaption = s.textOf("Crewnum");
+    if (!m_prizeCaption) m_prizeCaption = s.textOf("prize");
+    s.setText("Crewnum", m_pink ? L"OPPONENT" : *m_crewCaption);
+    s.setText("prize", m_pink ? L"STAKES" : *m_prizeCaption);
     s.setText("TypeText", texts.at(kTextRoundTypes + static_cast<size_t>(m_race.type)));
     std::wstring route;
     if (m_race.type == EventKind::PointToPoint) {
@@ -319,6 +394,16 @@ void HostMeeting::raceTexts(CareerHost& host, ui::Screen& s) {
     const int32_t coming = attendance(host);
     s.setText("Attendance", toWide(std::format("{}", coming)));
     colour("Attendance", coming < 2 ? kHostRed : kHostWhite);
+    if (m_pink) {
+        m_race.crew = 1;
+        s.setText("Crewnum", L"OPPONENT");
+        s.setText("NumCrewText", texts.at(kTextCrewNames + size_t(m_setup.location)));
+        s.setText("prize", L"STAKES");
+        s.setText("prizeMoneyText1", L"YOUR CAR");
+        s.setText("prizeMoneyText2", L"RIVAL'S CAR");
+        s.setText("prizeMoneyText3", L"WINNER TAKES BOTH");
+        m_reason = pinkReady(career) ? 0 : 6;
+    }
 }
 
 // 0x004CB550: the type the setup's (+0x14), route 0, laps 0, team 1, prize the setup's location (+0x18); the map
@@ -369,12 +454,16 @@ void HostMeeting::updateRace(CareerHost& host, ui::Screen& s, uint32_t event) {
     }
     if (event == input::kSelect) {
         host.sound("CLICK");
+        if (m_pink && !pinkReady(career)) {
+            host.message(MessageType::Continue, kPinkRequirement, false, nullptr);
+            return;
+        }
         if (m_reason == 0) {
             m_roundList.push_back(HostRound{m_race.type, m_race.route, m_race.laps, m_race.crew, m_race.prize, 0});
             m_rounds = static_cast<int32_t>(m_roundList.size());
             host.request("CMSHostMeetingSummary", SwitchMode::Replace);
         } else {
-            host.message(MessageType::Continue, texts.at(kTextNoHost + static_cast<size_t>(m_reason)), false, nullptr);
+            host.message(MessageType::Continue, m_reason == 6 ? kPinkRequirement : texts.at(kTextNoHost + static_cast<size_t>(m_reason)), false, nullptr);
         }
         return;
     }
@@ -384,8 +473,9 @@ void HostMeeting::updateRace(CareerHost& host, ui::Screen& s, uint32_t event) {
     const std::string current = s.currentButton();
     const auto is1 = [&](const char* name) { return _stricmp(current.c_str(), name) == 0; };
     if (is1("Type")) {
-        if (m_setup.type == EventKind::Sprint) {
+        if (m_setup.type == EventKind::Sprint || m_pink) {
             m_race.type = stepKind(m_race.type, step);
+            if (m_pink) m_setup.type = m_race.type;
             m_race.route = 0;
         }
         raceTexts(host, s);
@@ -408,10 +498,12 @@ void HostMeeting::updateRace(CareerHost& host, ui::Screen& s, uint32_t event) {
         raceTexts(host, s);
     }
     if (is1("Crewnum")) {
-        m_race.crew = std::clamp(m_race.crew + step, 1, 3);
+        if (m_pink) stepPinkRival(career, step);
+        else m_race.crew = std::clamp(m_race.crew + step, 1, 3);
         raceTexts(host, s);
     }
     if (is1("prize")) {
+        if (m_pink) return;
         m_race.prize += step;
         if (m_race.prize < 0) m_race.prize = 0;
         if (m_race.prize == 7) m_race.prize = 6;
@@ -487,6 +579,14 @@ void HostMeeting::summaryTexts(CareerHost& host, ui::Screen& s) {
     } else {
         colour("Attendance", kHostWhite);
     }
+    if (m_pink) {
+        s.setText("event", L"PINK SLIPS");
+        s.setText("Race1NumCrew", L"1v1");
+        s.setText("Race11st", L"CAR");
+        s.setText("Race12nd", L"-");
+        s.setText("Race13rd", L"-");
+        m_reason = pinkReady(career) ? 0 : 6;
+    }
 }
 
 // 0x004CD6F0: the hosted event. Its day of the month and month the calendar's +0xF8C and +0xF90, the cost paid (as
@@ -506,6 +606,21 @@ void HostMeeting::makeEvent(CareerHost& host) {
     GameData* data = host.gameData();
     Career& career = *data->career;
     Calendar& calendar = career.calendar;
+    if (m_pink && !pinkReady(career)) {
+        host.message(MessageType::Continue, kPinkRequirement, false, nullptr);
+        return;
+    }
+    if (m_pink) {
+        const bool full = std::none_of(calendar.events.begin(), calendar.events.end(),
+                                      [](const auto& e) { return !e.used; });
+        const bool occupied = std::any_of(calendar.events.begin(), calendar.events.end(),
+            [&](const auto& e) { return e.used && e.month == calendar.chosenMonth &&
+                                       e.dayOfMonth == calendar.chosenDayOfMonth; });
+        if (full || occupied) {
+            host.message(MessageType::Continue, L"Choose an empty date with space in the calendar.", false, nullptr);
+            return;
+        }
+    }
     CareerProfile& p = career.profile;
     CalendarEvent e{};
     e.challengeIndex = -1;  // A hosted meeting is not a crew challenge.
@@ -583,6 +698,19 @@ void HostMeeting::makeEvent(CareerHost& host) {
         }
     }
     // 0x004CDAE1: no crew's challenge (+0x06 -1), so the race is the round's (0x004A3CC0).
+    if (m_pink) {
+        e.pinkSlip = 1;
+        e.crew = static_cast<int8_t>(m_setup.location);
+        // hostedByPlayer means a host-rights challenge in the release engine.
+        // A player-arranged pink slip must use the ordinary pink-slip settlement.
+        e.hostedByPlayer = 0;
+        e.entranceFee = e.prizeTotal = 0;
+        e.attend.fill(0); e.attend[0] = e.attend[m_setup.location] = 1;
+        e.round.crews = e.attend;
+        e.round.teamSize = 1; e.round.teams = 0;
+        e.round.drivers = e.round.opponents = e.round.mostCrews = 2;
+        e.round.prize = {0, 0, 0};
+    }
     e.challengeIndex = -1;
     eventConditions(e, gameRandom());
     p.lastHostedType = static_cast<int32_t>(e.type);
@@ -667,19 +795,24 @@ void HostMeeting::updateSummary(CareerHost& host, ui::Screen& s, uint32_t event)
         host.sound("CLICK");
         host.request("CMSHostMeetingSetupRace", SwitchMode::Replace);
     }
-    if (m_summary.confirm == 1) makeEvent(host);
+    if (m_summary.confirm == 1) {
+        m_summary.confirm = -1;
+        makeEvent(host);
+        return;
+    }
     if (event != input::kSelect || item != 2.0f) return;
     host.sound("CLICK");
     if (m_reason != 0) {
-        host.message(MessageType::Continue, texts.at(kTextNoHost + static_cast<size_t>(m_reason)), false, nullptr);
+        host.message(MessageType::Continue, m_reason == 6 ? kPinkRequirement : texts.at(kTextNoHost + static_cast<size_t>(m_reason)), false, nullptr);
     } else if (m_rounds < 1) {
         m_reason = 3;
         host.message(MessageType::Continue, texts.at(kTextNeedRace), false, nullptr);
     } else {
         m_setup.defaults = 1;
         host.message(MessageType::YesNo,
-                     texts.at(kTextCreateEvent) + toWide(moneyText(m_cost, host.language().index)) + L"\n" +
-                         texts.at(kTextAreYouSure),
+                     m_pink ? L"PINK SLIPS vs " + texts.at(kTextCrewNames + size_t(m_setup.location)) +
+                         L"\nWinner takes the rival's car. Losing costs your selected car.\nCreate this event?" :
+                         texts.at(kTextCreateEvent) + toWide(moneyText(m_cost, host.language().index)) + L"\n" + texts.at(kTextAreYouSure),
                      false, &m_summary.confirm, true);
     }
 }

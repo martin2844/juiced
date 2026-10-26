@@ -8,6 +8,7 @@
 #include <array>
 #include <cstdint>
 #include <vector>
+#include <optional>
 
 namespace oj::frontend {
 
@@ -67,6 +68,9 @@ private:
     void summaryTexts(CareerHost& host, ui::Screen& s);
     // 0x004CD6F0: the hosted event.
     void makeEvent(CareerHost& host);
+    std::vector<int> pinkRivals(const Career& career) const;
+    void stepPinkRival(const Career& career, int step);
+    bool pinkReady(const Career& career) const;
 
     // The record of CMSHostMeetingSetup (0x007221E0, vtable 0x006F56C0; [0x00719070]).
     struct Setup {
@@ -107,6 +111,8 @@ private:
     int32_t m_cost = 0;    // [0x00728C6C]
     int32_t m_rounds = 0;  // [0x00728C70]: the rounds set up (m_roundList's size)
     std::vector<HostRound> m_roundList;
+    bool m_pink = false;
+    std::optional<std::wstring> m_locationCaption, m_crewCaption, m_prizeCaption;
 };
 
 }  // namespace oj::frontend
