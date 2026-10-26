@@ -102,6 +102,24 @@ int main(int argc, char** argv) {
         host.meeting.updateSetup(host, *setup, input::kRight); // wrap back to 600
         host.meeting.enterRace(host, *race);
         check(race->textOf("prizeMoneyText1") == L"YOUR CAR", "Setup explains car stakes");
+        auto raceInput = [&](uint32_t key) {
+            race->moveHighlight(key); // Same order as Frontend::update.
+            host.meeting.updateRace(host, *race, key);
+        };
+        check(_stricmp(race->currentButton().c_str(), "Type") == 0, "Pink race starts on selectable type");
+        raceInput(input::kDown);
+        check(_stricmp(race->currentButton().c_str(), "Route") == 0, "Type navigates down to route");
+        raceInput(input::kUp);
+        check(_stricmp(race->currentButton().c_str(), "Type") == 0, "Route navigates back up to type");
+        const auto circuitText = race->textOf("TypeText");
+        raceInput(input::kRight);
+        const auto sprintText = race->textOf("TypeText");
+        check(sprintText != circuitText, "Directional input selects Sprint");
+        raceInput(input::kLeft);
+        check(race->textOf("TypeText") == circuitText, "Directional input selects Circuit");
+        raceInput(input::kLeft);
+        check(race->textOf("TypeText") != circuitText && race->textOf("TypeText") != sprintText,
+              "Directional input selects Point to Point");
         capture(*race, "pink-race.bmp");
         const auto raceRequests = host.requests.size();
         career.garage.resize(55, car);
@@ -130,6 +148,8 @@ int main(int argc, char** argv) {
         host.meeting.updateSummary(host, *summary, 0);
         auto* event = career.meetingEvent;
         check(event && host.meetings == 1, "Hosted event created");
+        check(event->type == EventKind::PointToPoint && event->round.type == EventKind::PointToPoint,
+              "Chosen physical race type survives pink-slip event creation");
         check(event->pinkSlip == 1 && event->crew == 2 && event->hostedByPlayer == 0 && event->challengeIndex == -1,
               "Ordinary pink-slip semantics, not a host-rights challenge");
         check(event->round.drivers == 2 && event->round.teamSize == 1 && event->round.crews[0] && event->round.crews[2],

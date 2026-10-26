@@ -413,6 +413,11 @@ void HostMeeting::enterRace(CareerHost& host, ui::Screen& s) {
     GameData* data = host.gameData();
     const TextTable& texts = host.gameTexts();
     if (data == nullptr || !data->career) return;
+    // Retail navigation leaves TYPE outside the selectable route/laps loop.
+    // Pink slips is a wager, so its physical race type must remain reachable.
+    s.setNeighbour("Route", input::kUp, m_pink ? "Type" : "");
+    s.setNeighbour("Type", input::kDown, "Route");
+    s.setCurrentButton(m_pink ? "Type" : "Route");
     m_race.type = m_setup.type;
     m_race.route = 0;
     m_race.laps = 0;
