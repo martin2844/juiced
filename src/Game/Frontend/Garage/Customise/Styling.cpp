@@ -450,6 +450,13 @@ void DecalMenu::enter(GarageHost& host, ui::Screen& s) {
                 s.setMenuItemText("Menu",s.menuSize("Menu")-1,L"CUSTOM LOGO");
             }
 #endif
+            if (list.parts[i].model.starts_with("DECAL_NFS_")) {
+                const auto& part = list.parts[i];
+                const auto caption = part.label.substr(0, part.label.find(':')) + " " +
+                                     part.model.substr(part.model.size() - 4);
+                s.setMenuItemText("Menu", s.menuSize("Menu") - 1, toWide(caption));
+                s.setMenuItemHelp("Menu", s.menuSize("Menu") - 1, toWide(part.label));
+            }
             s.setHidden("Menu", false);
         }
         if (list.allowNone) {
