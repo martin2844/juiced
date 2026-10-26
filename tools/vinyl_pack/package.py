@@ -34,6 +34,13 @@ def main():
         'Known multi-layer designs are composed. Independent hood, stripe and badge variants remain selectable.',
         'Some layers contain only hood or roof art. The preview gallery includes three views per option.',
         '', 'Sources and original credits:']
+ if (dest/'selection.json').exists():
+  notes[notes.index('Sources and original credits:'):notes.index('Sources and original credits:')]=[
+   'Curated edition: only visually reviewed A/B options are included; C/D assets are omitted.',
+   'Replaces the full collection; do not enable both editions together.',
+   'Filtering changes decal indices. Do not copy careers from the full collection into this variant.',
+   'See selection.json and visual-review.json for exact retained/removed IDs and reasons.', '',
+  ]
  provenance=[]
  for key,(author,url,archive) in SOURCES.items():
   notes.append(f'- {author}: {url}')
