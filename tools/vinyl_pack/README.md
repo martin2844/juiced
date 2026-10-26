@@ -120,3 +120,11 @@ Retail uses shared transparent motifs/icons and car/style-specific decal meshes;
 the old NFS atlas projection and screenshot thumbnails do not reproduce that.
 Run `audit_retail.py --game GAME --package EXISTING_PACKAGE --output AUDIT` for a
 read-only resource inventory and comparison. No installed assets or saves change.
+
+The complete legacy conversion has now been checked against the new prerequisites:
+241 reviewed, zero admitted (including all 107 previously published options).
+See [the full-pack review](../../docs/vinyls-full-pack-native-review-2026-10-26.md)
+and `native_review.json` for per-option exclusions. `curate.py` requires both the
+native review and visual review; its old reproduction command deliberately stops
+with no output until a matching native-first acceptance exists. Legacy A/B alone
+must not produce another release. No replacement pack has been installed.

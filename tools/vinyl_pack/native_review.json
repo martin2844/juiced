@@ -1,0 +1,6049 @@
+{
+  "schema": 1,
+  "policy": "native-first-2026-10-26",
+  "scope": "Every option in the complete legacy conversion, including previously excluded C/D.",
+  "method": "Structural eligibility checks; no new manual visual verdict is inferred.",
+  "source_catalogue_sha256": "6b72ba86d257b764b554f2b9ea5321fa4d36562ccd969a29b71127ad084fa30f",
+  "source_registry_sha256": "0911273dccc0b0eb9a771a7e43ba805d3688916cb6727fe767b6db95b5af35cb",
+  "retail_inventory_sha256": "55a332ebe965b661a070ea6517480cd37a6ccd7f6dbfd0ecdda13eb2c83aead7",
+  "summary": {
+    "reviewed": 241,
+    "accepted": 0,
+    "excluded": 241,
+    "published_reviewed": 107,
+    "required_cars": 52,
+    "reasons": {
+      "missing_registered_garage_and_race_variants_for_all_retail_cars": 241,
+      "thumbnail_does_not_match_native_256x64_contract": 241,
+      "native_first_visual_and_runtime_acceptance_missing": 241
+    }
+  },
+  "accepted_ids": [],
+  "entries": [
+    {
+      "id": "V2A5A63915E",
+      "label": "206_fbi",
+      "source_car": "PEUGEOT_206",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "PEUGEOT_206"
+      ],
+      "complete_car_variants": [
+        "PEUGEOT_206"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V08322E5525",
+      "label": "206_glass",
+      "source_car": "PEUGEOT_206",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "PEUGEOT_206"
+      ],
+      "complete_car_variants": [
+        "PEUGEOT_206"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VA82E838486",
+      "label": "206frenchpolice",
+      "source_car": "PEUGEOT_206",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "PEUGEOT_206"
+      ],
+      "complete_car_variants": [
+        "PEUGEOT_206"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VDBE376411C",
+      "label": "206melissa",
+      "source_car": "PEUGEOT_206",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "PEUGEOT_206"
+      ],
+      "complete_car_variants": [
+        "PEUGEOT_206"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V90203A6E16",
+      "label": "240sx-fullstripes",
+      "source_car": "300ZX",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "300ZX"
+      ],
+      "complete_car_variants": [
+        "300ZX"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VA584CFC451",
+      "label": "240sxfullstripes2",
+      "source_car": "300ZX",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "300ZX"
+      ],
+      "complete_car_variants": [
+        "300ZX"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V4E1033B11F",
+      "label": "2f2f_s2000_vinyl",
+      "source_car": "S2000",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "S2000"
+      ],
+      "complete_car_variants": [
+        "S2000"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V158F3652C9",
+      "label": "2f2f_skyline_vinyl",
+      "source_car": "GTR",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "GTR"
+      ],
+      "complete_car_variants": [
+        "GTR"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V3B541F9E6A",
+      "label": "2f2f_sukis_s2000",
+      "source_car": "S2000",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "S2000"
+      ],
+      "complete_car_variants": [
+        "S2000"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VCC68ACC696",
+      "label": "2f2f_supra",
+      "source_car": "SUPRA",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "SUPRA"
+      ],
+      "complete_car_variants": [
+        "SUPRA"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VF171CD74C2",
+      "label": "2f2fevo_hood",
+      "source_car": "EVO8",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "EVO8"
+      ],
+      "complete_car_variants": [
+        "EVO8"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V4BFD8E2CB4",
+      "label": "2f2fevo_vinyl",
+      "source_car": "EVO8",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "EVO8"
+      ],
+      "complete_car_variants": [
+        "EVO8"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V7BE5C7CD34",
+      "label": "2f2fevo_vinyl2",
+      "source_car": "EVO8",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "EVO8"
+      ],
+      "complete_car_variants": [
+        "EVO8"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VBA046FF86F",
+      "label": "2f2fr34_vinyl",
+      "source_car": "GTR",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "GTR"
+      ],
+      "complete_car_variants": [
+        "GTR"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V3832E5C727",
+      "label": "2f2fr34_vinyl_fade",
+      "source_car": "GTR",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "GTR"
+      ],
+      "complete_car_variants": [
+        "GTR"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V3758C89EB5",
+      "label": "2f2fr34_vinyl_fixed",
+      "source_car": "GTR",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "GTR"
+      ],
+      "complete_car_variants": [
+        "GTR"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V4311DE92BD",
+      "label": "2f2fskyliner34",
+      "source_car": "GTR",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "GTR"
+      ],
+      "complete_car_variants": [
+        "GTR"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VC479E841FD",
+      "label": "2f2fskylinev2",
+      "source_car": "GTR",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "GTR"
+      ],
+      "complete_car_variants": [
+        "GTR"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V27B6852012",
+      "label": "2f2fsupra",
+      "source_car": "SUPRA",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "SUPRA"
+      ],
+      "complete_car_variants": [
+        "SUPRA"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V13ADC895AA",
+      "label": "350z custom6.dds",
+      "source_car": "350Z",
+      "pack": "nd4",
+      "previous_tier": "A",
+      "in_published_107": true,
+      "registered_cars": [
+        "350Z"
+      ],
+      "complete_car_variants": [
+        "350Z"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VE90F0C37C6",
+      "label": "350z-robzombie",
+      "source_car": "350Z",
+      "pack": "nd4",
+      "previous_tier": "D",
+      "in_published_107": false,
+      "registered_cars": [
+        "350Z"
+      ],
+      "complete_car_variants": [
+        "350Z"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V418F8CFD72",
+      "label": "350z-stripes",
+      "source_car": "350Z",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "350Z"
+      ],
+      "complete_car_variants": [
+        "350Z"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V64707D940A",
+      "label": "666",
+      "source_car": "GOLF",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "GOLF"
+      ],
+      "complete_car_variants": [
+        "GOLF"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VDE9B8AF0B8",
+      "label": "aliasmiatabeta1.0",
+      "source_car": "MX5",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "MX5"
+      ],
+      "complete_car_variants": [
+        "MX5"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VF2F860A81B",
+      "label": "aliasmiatafinal",
+      "source_car": "MX5",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "MX5"
+      ],
+      "complete_car_variants": [
+        "MX5"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VC358D06796",
+      "label": "alien",
+      "source_car": "GOLF",
+      "pack": "nd4",
+      "previous_tier": "D",
+      "in_published_107": false,
+      "registered_cars": [
+        "GOLF"
+      ],
+      "complete_car_variants": [
+        "GOLF"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V8D737B08CE",
+      "label": "alizee_rx7",
+      "source_car": "RX7",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "RX7"
+      ],
+      "complete_car_variants": [
+        "RX7"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VBAFAE3450D",
+      "label": "angryspongebob",
+      "source_car": "MX5",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "MX5"
+      ],
+      "complete_car_variants": [
+        "MX5"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V4DA4137C59",
+      "label": "army-miata",
+      "source_car": "MX5",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "MX5"
+      ],
+      "complete_car_variants": [
+        "MX5"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V9383C02F1B",
+      "label": "artnfs_lancer",
+      "source_car": "EVO8",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "EVO8"
+      ],
+      "complete_car_variants": [
+        "EVO8"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V84A31773DD",
+      "label": "artnfs_skyline",
+      "source_car": "GTR",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "GTR"
+      ],
+      "complete_car_variants": [
+        "GTR"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V3DE4F880E8",
+      "label": "atomicskylinevinyl",
+      "source_car": "GTR",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "GTR"
+      ],
+      "complete_car_variants": [
+        "GTR"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V909C50CDA4",
+      "label": "audiquattro",
+      "source_car": "GOLF",
+      "pack": "nd4",
+      "previous_tier": "D",
+      "in_published_107": false,
+      "registered_cars": [
+        "GOLF"
+      ],
+      "complete_car_variants": [
+        "GOLF"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VEABFC46BA3",
+      "label": "badreligion_celica",
+      "source_car": "CELICA",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "CELICA"
+      ],
+      "complete_car_variants": [
+        "CELICA"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VF7287F82C4",
+      "label": "blackwidow_eclipse",
+      "source_car": "ECLIPSE",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "ECLIPSE"
+      ],
+      "complete_car_variants": [
+        "ECLIPSE"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VA24B480552",
+      "label": "britney_version1.1",
+      "source_car": "CIVIC_97",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "CIVIC_97"
+      ],
+      "complete_car_variants": [
+        "CIVIC_97"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VB629A64686",
+      "label": "britneyskin",
+      "source_car": "CIVIC_97",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "CIVIC_97"
+      ],
+      "complete_car_variants": [
+        "CIVIC_97"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V058010B1A4",
+      "label": "calsonic",
+      "source_car": "GTR",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "GTR"
+      ],
+      "complete_car_variants": [
+        "GTR"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VBDC77E07BC",
+      "label": "calvinvinyl",
+      "source_car": "PEUGEOT_206",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "PEUGEOT_206"
+      ],
+      "complete_car_variants": [
+        "PEUGEOT_206"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VD4F0348B24",
+      "label": "carlsberg",
+      "source_car": "GOLF",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "GOLF"
+      ],
+      "complete_car_variants": [
+        "GOLF"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V014F5AA537",
+      "label": "celca_rally",
+      "source_car": "CELICA",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "CELICA"
+      ],
+      "complete_car_variants": [
+        "CELICA"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VF8B7B47548",
+      "label": "celica_trd",
+      "source_car": "CELICA",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "CELICA"
+      ],
+      "complete_car_variants": [
+        "CELICA"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VE1370827E1",
+      "label": "celica_trd2",
+      "source_car": "CELICA",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "CELICA"
+      ],
+      "complete_car_variants": [
+        "CELICA"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VFB5E181486",
+      "label": "celicatrd",
+      "source_car": "CELICA",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "CELICA"
+      ],
+      "complete_car_variants": [
+        "CELICA"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V9683ADF176",
+      "label": "che",
+      "source_car": "GOLF",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "GOLF"
+      ],
+      "complete_car_variants": [
+        "GOLF"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VCB6C8A8716",
+      "label": "chompyouvinyl",
+      "source_car": "RX7",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "RX7"
+      ],
+      "complete_car_variants": [
+        "RX7"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V8B4AE54D31",
+      "label": "civic-junkmans",
+      "source_car": "CIVIC_97",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "CIVIC_97"
+      ],
+      "complete_car_variants": [
+        "CIVIC_97"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V93637A0A8D",
+      "label": "civic_3rd",
+      "source_car": "CIVIC_97",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": true,
+      "registered_cars": [
+        "CIVIC_97"
+      ],
+      "complete_car_variants": [
+        "CIVIC_97"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V4FFD3B0CFD",
+      "label": "civic_electrical",
+      "source_car": "CIVIC_97",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": true,
+      "registered_cars": [
+        "CIVIC_97"
+      ],
+      "complete_car_variants": [
+        "CIVIC_97"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VA2216F25A6",
+      "label": "civic_kutet",
+      "source_car": "CIVIC_97",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": true,
+      "registered_cars": [
+        "CIVIC_97"
+      ],
+      "complete_car_variants": [
+        "CIVIC_97"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V03E4444DEC",
+      "label": "civic_tk",
+      "source_car": "CIVIC_97",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": true,
+      "registered_cars": [
+        "CIVIC_97"
+      ],
+      "complete_car_variants": [
+        "CIVIC_97"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VBEDD294572",
+      "label": "civic_yha",
+      "source_car": "CIVIC_97",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "CIVIC_97"
+      ],
+      "complete_car_variants": [
+        "CIVIC_97"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VF4352A2541",
+      "label": "civictyper",
+      "source_car": "CIVIC_97",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": true,
+      "registered_cars": [
+        "CIVIC_97"
+      ],
+      "complete_car_variants": [
+        "CIVIC_97"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VDA0009CFAD",
+      "label": "civictyper",
+      "source_car": "CIVIC_97",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "CIVIC_97"
+      ],
+      "complete_car_variants": [
+        "CIVIC_97"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V9B0B1EAF95",
+      "label": "civicvinyl",
+      "source_car": "CIVIC_97",
+      "pack": "nd4",
+      "previous_tier": "D",
+      "in_published_107": false,
+      "registered_cars": [
+        "CIVIC_97"
+      ],
+      "complete_car_variants": [
+        "CIVIC_97"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VD286A50430",
+      "label": "clarion",
+      "source_car": "GTR",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "GTR"
+      ],
+      "complete_car_variants": [
+        "GTR"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V79CB404C88",
+      "label": "cold",
+      "source_car": "350Z",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "350Z"
+      ],
+      "complete_car_variants": [
+        "350Z"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VC0161DCAA9",
+      "label": "colorspini",
+      "source_car": "GOLF",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "GOLF"
+      ],
+      "complete_car_variants": [
+        "GOLF"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V9701F30AB5",
+      "label": "cowboy",
+      "source_car": "PEUGEOT_206",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "PEUGEOT_206"
+      ],
+      "complete_car_variants": [
+        "PEUGEOT_206"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VC4B1BA530B",
+      "label": "craigsskylinevinyl",
+      "source_car": "GTR",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "GTR"
+      ],
+      "complete_car_variants": [
+        "GTR"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VA6BB9A6712",
+      "label": "darksiders",
+      "source_car": "EVO8",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "EVO8"
+      ],
+      "complete_car_variants": [
+        "EVO8"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V83B2BB6BD8",
+      "label": "darksiders",
+      "source_car": "EVO8",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "EVO8"
+      ],
+      "complete_car_variants": [
+        "EVO8"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V3E1F09813D",
+      "label": "darksiders",
+      "source_car": "EVO8",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "EVO8"
+      ],
+      "complete_car_variants": [
+        "EVO8"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V993308E41A",
+      "label": "decal_wide_trd",
+      "source_car": "GOLF",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "GOLF"
+      ],
+      "complete_car_variants": [
+        "GOLF"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V01FB62D21A",
+      "label": "drugged_skyline",
+      "source_car": "GTR",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "GTR"
+      ],
+      "complete_car_variants": [
+        "GTR"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VDCAB15BA5E",
+      "label": "duff_beer_miata_vinyl",
+      "source_car": "MX5",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "MX5"
+      ],
+      "complete_car_variants": [
+        "MX5"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V189EA55179",
+      "label": "dunlop_texture",
+      "source_car": "GOLF",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "GOLF"
+      ],
+      "complete_car_variants": [
+        "GOLF"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VDD1012AD13",
+      "label": "dunlop_texture",
+      "source_car": "GOLF",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "GOLF"
+      ],
+      "complete_car_variants": [
+        "GOLF"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VA67804607C",
+      "label": "dunlop_texture",
+      "source_car": "GOLF",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "GOLF"
+      ],
+      "complete_car_variants": [
+        "GOLF"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V608ECA1403",
+      "label": "dunlop_texture",
+      "source_car": "GOLF",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "GOLF"
+      ],
+      "complete_car_variants": [
+        "GOLF"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VAF63A86A4F",
+      "label": "eclipse-peteypablo",
+      "source_car": "ECLIPSE",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "ECLIPSE"
+      ],
+      "complete_car_variants": [
+        "ECLIPSE"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VA413FB2C09",
+      "label": "eclipse_intro",
+      "source_car": "ECLIPSE",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "ECLIPSE"
+      ],
+      "complete_car_variants": [
+        "ECLIPSE"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VC2A03120C9",
+      "label": "eclipsefnf",
+      "source_car": "ECLIPSE",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "ECLIPSE"
+      ],
+      "complete_car_variants": [
+        "ECLIPSE"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V8E9D0F0726",
+      "label": "eclipseintrostripe51",
+      "source_car": "ECLIPSE",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "ECLIPSE"
+      ],
+      "complete_car_variants": [
+        "ECLIPSE"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V0AEBCE20DB",
+      "label": "eyes",
+      "source_car": "GOLF",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "GOLF"
+      ],
+      "complete_car_variants": [
+        "GOLF"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V2F24D3466B",
+      "label": "f&feclipse_vinyl2",
+      "source_car": "ECLIPSE",
+      "pack": "nd4",
+      "previous_tier": "A",
+      "in_published_107": true,
+      "registered_cars": [
+        "ECLIPSE"
+      ],
+      "complete_car_variants": [
+        "ECLIPSE"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VA9C50634C3",
+      "label": "f&frx7",
+      "source_car": "RX7",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "RX7"
+      ],
+      "complete_car_variants": [
+        "RX7"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VEBA370828B",
+      "label": "f&frx7_vinyl",
+      "source_car": "RX7",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "RX7"
+      ],
+      "complete_car_variants": [
+        "RX7"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V4FB2FB9C30",
+      "label": "factorx",
+      "source_car": "PEUGEOT_206",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "PEUGEOT_206"
+      ],
+      "complete_car_variants": [
+        "PEUGEOT_206"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V16BAE23675",
+      "label": "fafsup",
+      "source_car": "SUPRA",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "SUPRA"
+      ],
+      "complete_car_variants": [
+        "SUPRA"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V98F877AAC2",
+      "label": "fire_eclipse",
+      "source_car": "ECLIPSE",
+      "pack": "nd4",
+      "previous_tier": "A",
+      "in_published_107": true,
+      "registered_cars": [
+        "ECLIPSE"
+      ],
+      "complete_car_variants": [
+        "ECLIPSE"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V7043EB5275",
+      "label": "fixedrx7viperstripes",
+      "source_car": "RX7",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "RX7"
+      ],
+      "complete_car_variants": [
+        "RX7"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VD3A4FF6530",
+      "label": "flashmediadesignskyline",
+      "source_car": "GTR",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "GTR"
+      ],
+      "complete_car_variants": [
+        "GTR"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V7DA47F25CF",
+      "label": "fnfsupra",
+      "source_car": "SUPRA",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "SUPRA"
+      ],
+      "complete_car_variants": [
+        "SUPRA"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VEA9F86FCB7",
+      "label": "focus_mcrae",
+      "source_car": "focus",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "FOCUS"
+      ],
+      "complete_car_variants": [
+        "FOCUS"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VE0340245BE",
+      "label": "focuslogo",
+      "source_car": "focus",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "FOCUS"
+      ],
+      "complete_car_variants": [
+        "FOCUS"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VFC8F044175",
+      "label": "focusrs2002",
+      "source_car": "focus",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "FOCUS"
+      ],
+      "complete_car_variants": [
+        "FOCUS"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V80F87F3AB9",
+      "label": "furiousdesign",
+      "source_car": "GTR",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "GTR"
+      ],
+      "complete_car_variants": [
+        "GTR"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V100866691A",
+      "label": "furiousdesign",
+      "source_car": "GTR",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "GTR"
+      ],
+      "complete_car_variants": [
+        "GTR"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VE365D425D0",
+      "label": "furiousdesign2",
+      "source_car": "GTR",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "GTR"
+      ],
+      "complete_car_variants": [
+        "GTR"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VBEA33AD6D0",
+      "label": "furiousdesign2",
+      "source_car": "GTR",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "GTR"
+      ],
+      "complete_car_variants": [
+        "GTR"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V3CB2165193",
+      "label": "furiousdesign2",
+      "source_car": "GTR",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "GTR"
+      ],
+      "complete_car_variants": [
+        "GTR"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V390E3C6A0C",
+      "label": "furiousdesign2",
+      "source_car": "GTR",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "GTR"
+      ],
+      "complete_car_variants": [
+        "GTR"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V410F9B89BC",
+      "label": "garfield",
+      "source_car": "GOLF",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "GOLF"
+      ],
+      "complete_car_variants": [
+        "GOLF"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V739D44E0E8",
+      "label": "gcmodv1.0",
+      "source_car": "CELICA",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "CELICA"
+      ],
+      "complete_car_variants": [
+        "CELICA"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V1CBEA5BD55",
+      "label": "gcmodv1.0",
+      "source_car": "CELICA",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "CELICA"
+      ],
+      "complete_car_variants": [
+        "CELICA"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V1532F0E2EF",
+      "label": "gcmodv1.0",
+      "source_car": "CELICA",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "CELICA"
+      ],
+      "complete_car_variants": [
+        "CELICA"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VC1407007FC",
+      "label": "golf_panther",
+      "source_car": "GOLF",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "GOLF"
+      ],
+      "complete_car_variants": [
+        "GOLF"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V7BC23D9C01",
+      "label": "gothik1",
+      "source_car": "RX7",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "RX7"
+      ],
+      "complete_car_variants": [
+        "RX7"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V27CB7C225C",
+      "label": "gothik1",
+      "source_car": "RX7",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "RX7"
+      ],
+      "complete_car_variants": [
+        "RX7"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V1EA451B6B3",
+      "label": "gothik1",
+      "source_car": "RX7",
+      "pack": "nd4",
+      "previous_tier": "D",
+      "in_published_107": false,
+      "registered_cars": [
+        "RX7"
+      ],
+      "complete_car_variants": [
+        "RX7"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V4F2FCB58A5",
+      "label": "halomotorsportscelica",
+      "source_car": "CELICA",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "CELICA"
+      ],
+      "complete_car_variants": [
+        "CELICA"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V550649A2B9",
+      "label": "hks",
+      "source_car": "GTR",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "GTR"
+      ],
+      "complete_car_variants": [
+        "GTR"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V5F3769BC81",
+      "label": "hks",
+      "source_car": "GTR",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "GTR"
+      ],
+      "complete_car_variants": [
+        "GTR"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V37E7328FB6",
+      "label": "impreza_rallisport",
+      "source_car": "WRX2",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "WRX2"
+      ],
+      "complete_car_variants": [
+        "WRX2"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V640FAAD492",
+      "label": "imprezawrx",
+      "source_car": "WRX2",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "WRX2"
+      ],
+      "complete_car_variants": [
+        "WRX2"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V8A5079F7E3",
+      "label": "integra",
+      "source_car": "INTEGRA",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "INTEGRA"
+      ],
+      "complete_car_variants": [
+        "INTEGRA"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VC43DEA072B",
+      "label": "integra",
+      "source_car": "INTEGRA",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "INTEGRA"
+      ],
+      "complete_car_variants": [
+        "INTEGRA"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V0D1D16EBDB",
+      "label": "integra",
+      "source_car": "INTEGRA",
+      "pack": "nd4",
+      "previous_tier": "D",
+      "in_published_107": false,
+      "registered_cars": [
+        "INTEGRA"
+      ],
+      "complete_car_variants": [
+        "INTEGRA"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VE8F7FB044F",
+      "label": "integra_tuned",
+      "source_car": "INTEGRA",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "INTEGRA"
+      ],
+      "complete_car_variants": [
+        "INTEGRA"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VF92E975EBA",
+      "label": "intro_celica",
+      "source_car": "CELICA",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "CELICA"
+      ],
+      "complete_car_variants": [
+        "CELICA"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V9EE143CAF7",
+      "label": "jagermeister-vinyl",
+      "source_car": "GOLF",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "GOLF"
+      ],
+      "complete_car_variants": [
+        "GOLF"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V77FBCB34CE",
+      "label": "japan_vinyl",
+      "source_car": "RX7",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "RX7"
+      ],
+      "complete_car_variants": [
+        "RX7"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VA4BA08DEF5",
+      "label": "japansun-supra",
+      "source_car": "SUPRA",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "SUPRA"
+      ],
+      "complete_car_variants": [
+        "SUPRA"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V3BE416CD96",
+      "label": "jolie-rsx",
+      "source_car": "RSX",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "RSX"
+      ],
+      "complete_car_variants": [
+        "RSX"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V1C2446C751",
+      "label": "kornkar",
+      "source_car": "RX7",
+      "pack": "nd4",
+      "previous_tier": "D",
+      "in_published_107": false,
+      "registered_cars": [
+        "RX7"
+      ],
+      "complete_car_variants": [
+        "RX7"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VD81947EE5C",
+      "label": "kr",
+      "source_car": "300ZX",
+      "pack": "nd4",
+      "previous_tier": "D",
+      "in_published_107": false,
+      "registered_cars": [
+        "300ZX"
+      ],
+      "complete_car_variants": [
+        "300ZX"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V0F674B8B1E",
+      "label": "lancerwrc2004",
+      "source_car": "EVO8",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "EVO8"
+      ],
+      "complete_car_variants": [
+        "EVO8"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V1899556FC3",
+      "label": "lemans",
+      "source_car": "GOLF",
+      "pack": "nd4",
+      "previous_tier": "D",
+      "in_published_107": false,
+      "registered_cars": [
+        "GOLF"
+      ],
+      "complete_car_variants": [
+        "GOLF"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VD25BBA0320",
+      "label": "lightning_350z",
+      "source_car": "350Z",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "350Z"
+      ],
+      "complete_car_variants": [
+        "350Z"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VA747ED9146",
+      "label": "load-206",
+      "source_car": "PEUGEOT_206",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "PEUGEOT_206"
+      ],
+      "complete_car_variants": [
+        "PEUGEOT_206"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V58FC353ECB",
+      "label": "lostprophetes-skyline",
+      "source_car": "GTR",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "GTR"
+      ],
+      "complete_car_variants": [
+        "GTR"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V6465D5551E",
+      "label": "lpu",
+      "source_car": "MX5",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "MX5"
+      ],
+      "complete_car_variants": [
+        "MX5"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V014BE7E724",
+      "label": "matrix",
+      "source_car": "GOLF",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "GOLF"
+      ],
+      "complete_car_variants": [
+        "GOLF"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VAA95AA6F11",
+      "label": "mazdamx5lol",
+      "source_car": "MX5",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "MX5"
+      ],
+      "complete_car_variants": [
+        "MX5"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VEEBBE9DD02",
+      "label": "mclarenf1_1_1",
+      "source_car": "GOLF",
+      "pack": "nd4",
+      "previous_tier": "D",
+      "in_published_107": false,
+      "registered_cars": [
+        "GOLF"
+      ],
+      "complete_car_variants": [
+        "GOLF"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VF3F2CDFEA3",
+      "label": "mcrae",
+      "source_car": "focus",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "FOCUS"
+      ],
+      "complete_car_variants": [
+        "FOCUS"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VD42694A8C4",
+      "label": "miata_stripe",
+      "source_car": "MX5",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "MX5"
+      ],
+      "complete_car_variants": [
+        "MX5"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V44AAD35315",
+      "label": "miataeurostylefull",
+      "source_car": "MX5",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "MX5"
+      ],
+      "complete_car_variants": [
+        "MX5"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VD52546595B",
+      "label": "miataeurostylefull",
+      "source_car": "MX5",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "MX5"
+      ],
+      "complete_car_variants": [
+        "MX5"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V4DD23C4634",
+      "label": "miatamx5stipes",
+      "source_car": "MX5",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "MX5"
+      ],
+      "complete_car_variants": [
+        "MX5"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VA14B6A122B",
+      "label": "militaryambulance",
+      "source_car": "GOLF",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "GOLF"
+      ],
+      "complete_car_variants": [
+        "GOLF"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VF51CB34B5E",
+      "label": "mx-5stripes",
+      "source_car": "MX5",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "MX5"
+      ],
+      "complete_car_variants": [
+        "MX5"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V8AAA7E7361",
+      "label": "mx-5stripesfixed",
+      "source_car": "MX5",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "MX5"
+      ],
+      "complete_car_variants": [
+        "MX5"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V106688EA9C",
+      "label": "nd4spdworld_vinyl",
+      "source_car": "CELICA",
+      "pack": "nd4",
+      "previous_tier": "D",
+      "in_published_107": false,
+      "registered_cars": [
+        "CELICA"
+      ],
+      "complete_car_variants": [
+        "CELICA"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V8897750C41",
+      "label": "neonpat",
+      "source_car": "NEON",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "NEON"
+      ],
+      "complete_car_variants": [
+        "NEON"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VAAF1EC85DB",
+      "label": "nfs7unwocar",
+      "source_car": "S2000",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "S2000"
+      ],
+      "complete_car_variants": [
+        "S2000"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VD3E223DA1D",
+      "label": "nfsundergroundcivic",
+      "source_car": "CIVIC_97",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "CIVIC_97"
+      ],
+      "complete_car_variants": [
+        "CIVIC_97"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VFF42C33287",
+      "label": "nfsundergroundintegra",
+      "source_car": "INTEGRA",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "INTEGRA"
+      ],
+      "complete_car_variants": [
+        "INTEGRA"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V58439DF0A2",
+      "label": "nfsundergroundskyline",
+      "source_car": "GTR",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "GTR"
+      ],
+      "complete_car_variants": [
+        "GTR"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V85A6732101",
+      "label": "nfsuvinylfnfsupra",
+      "source_car": "SUPRA",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "SUPRA"
+      ],
+      "complete_car_variants": [
+        "SUPRA"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V0B8FEEDFA7",
+      "label": "nismoskyline-2",
+      "source_car": "GTR",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "GTR"
+      ],
+      "complete_car_variants": [
+        "GTR"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VB59A04A2BC",
+      "label": "nissan350zgrandprixskin",
+      "source_car": "350Z",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "350Z"
+      ],
+      "complete_car_variants": [
+        "350Z"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V78C361F5AC",
+      "label": "nofear-206",
+      "source_car": "PEUGEOT_206",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "PEUGEOT_206"
+      ],
+      "complete_car_variants": [
+        "PEUGEOT_206"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V2C3DB41C16",
+      "label": "nxmx-5",
+      "source_car": "MX5",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "MX5"
+      ],
+      "complete_car_variants": [
+        "MX5"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VA72E1611F8",
+      "label": "nxmx-5fixed",
+      "source_car": "MX5",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "MX5"
+      ],
+      "complete_car_variants": [
+        "MX5"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V85B0055599",
+      "label": "oettinger",
+      "source_car": "GOLF",
+      "pack": "nd4",
+      "previous_tier": "D",
+      "in_published_107": false,
+      "registered_cars": [
+        "GOLF"
+      ],
+      "complete_car_variants": [
+        "GOLF"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VAC106960DF",
+      "label": "onkelz",
+      "source_car": "GOLF",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "GOLF"
+      ],
+      "complete_car_variants": [
+        "GOLF"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VD66DA8172A",
+      "label": "pennzoil_1998",
+      "source_car": "GTR",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "GTR"
+      ],
+      "complete_car_variants": [
+        "GTR"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V448F903326",
+      "label": "peugeotmarlboro206wrc",
+      "source_car": "PEUGEOT_206",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "PEUGEOT_206"
+      ],
+      "complete_car_variants": [
+        "PEUGEOT_206"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V66D5B21FD9",
+      "label": "peugeottotal206wrc",
+      "source_car": "PEUGEOT_206",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "PEUGEOT_206"
+      ],
+      "complete_car_variants": [
+        "PEUGEOT_206"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V258B14F477",
+      "label": "poland",
+      "source_car": "GOLF",
+      "pack": "nd4",
+      "previous_tier": "D",
+      "in_published_107": false,
+      "registered_cars": [
+        "GOLF"
+      ],
+      "complete_car_variants": [
+        "GOLF"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V63C670D7DF",
+      "label": "polizei",
+      "source_car": "GOLF",
+      "pack": "nd4",
+      "previous_tier": "D",
+      "in_published_107": false,
+      "registered_cars": [
+        "GOLF"
+      ],
+      "complete_car_variants": [
+        "GOLF"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V2B8B6D4449",
+      "label": "prodigy",
+      "source_car": "GOLF",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "GOLF"
+      ],
+      "complete_car_variants": [
+        "GOLF"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V0DD1863DDC",
+      "label": "progidy_matrix",
+      "source_car": "GOLF",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "GOLF"
+      ],
+      "complete_car_variants": [
+        "GOLF"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VE37C8A4AF7",
+      "label": "racedevil",
+      "source_car": "S2000",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "S2000"
+      ],
+      "complete_car_variants": [
+        "S2000"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V708E8A8C36",
+      "label": "reaper",
+      "source_car": "ECLIPSE",
+      "pack": "nd4",
+      "previous_tier": "A",
+      "in_published_107": true,
+      "registered_cars": [
+        "ECLIPSE"
+      ],
+      "complete_car_variants": [
+        "ECLIPSE"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V1F00B86525",
+      "label": "redarmy",
+      "source_car": "GOLF",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "GOLF"
+      ],
+      "complete_car_variants": [
+        "GOLF"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V7B06A2408E",
+      "label": "ring",
+      "source_car": "PEUGEOT_206",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "PEUGEOT_206"
+      ],
+      "complete_car_variants": [
+        "PEUGEOT_206"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V6EE23E8E8E",
+      "label": "rsx_custom26",
+      "source_car": "RSX",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "RSX"
+      ],
+      "complete_car_variants": [
+        "RSX"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VF4C0F05DDD",
+      "label": "rsxeurostylefull",
+      "source_car": "RSX",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "RSX"
+      ],
+      "complete_car_variants": [
+        "RSX"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VAC37A58C72",
+      "label": "rx7-viperstripes",
+      "source_car": "RX7",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "RX7"
+      ],
+      "complete_car_variants": [
+        "RX7"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V0183A6AAC5",
+      "label": "rx7_custom_vinyl",
+      "source_car": "RX7",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "RX7"
+      ],
+      "complete_car_variants": [
+        "RX7"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VAFCE0921A7",
+      "label": "rx7ledneon",
+      "source_car": "RX7",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "RX7"
+      ],
+      "complete_car_variants": [
+        "RX7"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VD2E23BECF6",
+      "label": "rx7sun1-2",
+      "source_car": "RX7",
+      "pack": "nd4",
+      "previous_tier": "D",
+      "in_published_107": false,
+      "registered_cars": [
+        "RX7"
+      ],
+      "complete_car_variants": [
+        "RX7"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VC1D329A189",
+      "label": "rx7sun1-2",
+      "source_car": "RX7",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "RX7"
+      ],
+      "complete_car_variants": [
+        "RX7"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VDCEAAD2118",
+      "label": "rx7teamhybrid",
+      "source_car": "RX7",
+      "pack": "nd4",
+      "previous_tier": "A",
+      "in_published_107": true,
+      "registered_cars": [
+        "RX7"
+      ],
+      "complete_car_variants": [
+        "RX7"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V83B02D9CDB",
+      "label": "s2000convertiblevinyl",
+      "source_car": "S2000",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "S2000"
+      ],
+      "complete_car_variants": [
+        "S2000"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VB4B563C310",
+      "label": "s2000drago",
+      "source_car": "S2000",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "S2000"
+      ],
+      "complete_car_variants": [
+        "S2000"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VA6D5AD5DCA",
+      "label": "sky-atr-color",
+      "source_car": "GTR",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "GTR"
+      ],
+      "complete_car_variants": [
+        "GTR"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VD019E2B4C2",
+      "label": "skyatr-dhr",
+      "source_car": "GTR",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "GTR"
+      ],
+      "complete_car_variants": [
+        "GTR"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VF85BC1785C",
+      "label": "skyline-futurama",
+      "source_car": "GTR",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "GTR"
+      ],
+      "complete_car_variants": [
+        "GTR"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V5E8BFD85BC",
+      "label": "skyline-tmnt",
+      "source_car": "GTR",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "GTR"
+      ],
+      "complete_car_variants": [
+        "GTR"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V39CC3D0515",
+      "label": "skyline_paul_frank",
+      "source_car": "GTR",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "GTR"
+      ],
+      "complete_car_variants": [
+        "GTR"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V290162F83D",
+      "label": "skylinemetal",
+      "source_car": "GTR",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "GTR"
+      ],
+      "complete_car_variants": [
+        "GTR"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V67DFA47538",
+      "label": "smartsteph1",
+      "source_car": "GOLF",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "GOLF"
+      ],
+      "complete_car_variants": [
+        "GOLF"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VCC86F8DE8E",
+      "label": "smartsteph2",
+      "source_car": "ECLIPSE",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "ECLIPSE"
+      ],
+      "complete_car_variants": [
+        "ECLIPSE"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VB1A298B3C1",
+      "label": "smartsteph3",
+      "source_car": "GOLF",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "GOLF"
+      ],
+      "complete_car_variants": [
+        "GOLF"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VF773D8922B",
+      "label": "smartsteph4-terminator3-edition",
+      "source_car": "GOLF",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "GOLF"
+      ],
+      "complete_car_variants": [
+        "GOLF"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VE3D7ED297C",
+      "label": "southpark_peugot206",
+      "source_car": "PEUGEOT_206",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "PEUGEOT_206"
+      ],
+      "complete_car_variants": [
+        "PEUGEOT_206"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V4CC438AE5E",
+      "label": "spawn",
+      "source_car": "GOLF",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "GOLF"
+      ],
+      "complete_car_variants": [
+        "GOLF"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V6D91F48D4B",
+      "label": "special_dune",
+      "source_car": "CELICA",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "CELICA"
+      ],
+      "complete_car_variants": [
+        "CELICA"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V3EFA9A5256",
+      "label": "spiked-skyline",
+      "source_car": "GTR",
+      "pack": "nd4",
+      "previous_tier": "A",
+      "in_published_107": true,
+      "registered_cars": [
+        "GTR"
+      ],
+      "complete_car_variants": [
+        "GTR"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V241DC510A9",
+      "label": "subaru_rally",
+      "source_car": "WRX2",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "WRX2"
+      ],
+      "complete_car_variants": [
+        "WRX2"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VF6066951A8",
+      "label": "subaruimprezawrc",
+      "source_car": "WRX2",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "WRX2"
+      ],
+      "complete_car_variants": [
+        "WRX2"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V0F2CCBDF7D",
+      "label": "supra2f2f",
+      "source_car": "SUPRA",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "SUPRA"
+      ],
+      "complete_car_variants": [
+        "SUPRA"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VE21B3BFC6B",
+      "label": "supra_vinyl",
+      "source_car": "SUPRA",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "SUPRA"
+      ],
+      "complete_car_variants": [
+        "SUPRA"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VF10A2E7549",
+      "label": "texture_bridgestone",
+      "source_car": "GOLF",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "GOLF"
+      ],
+      "complete_car_variants": [
+        "GOLF"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V8D8B958CCA",
+      "label": "texture_bridgestone",
+      "source_car": "GOLF",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "GOLF"
+      ],
+      "complete_car_variants": [
+        "GOLF"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V95EA94593C",
+      "label": "texture_bridgestone",
+      "source_car": "GOLF",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "GOLF"
+      ],
+      "complete_car_variants": [
+        "GOLF"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VF0F7B3D6FB",
+      "label": "texture_bridgestone",
+      "source_car": "GOLF",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "GOLF"
+      ],
+      "complete_car_variants": [
+        "GOLF"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V5E44CF2FAB",
+      "label": "theblink182rx-7",
+      "source_car": "RX7",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "RX7"
+      ],
+      "complete_car_variants": [
+        "RX7"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V313C338608",
+      "label": "theblink182rx-7",
+      "source_car": "RX7",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "RX7"
+      ],
+      "complete_car_variants": [
+        "RX7"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VF08C904CD6",
+      "label": "theblink182rx-7",
+      "source_car": "RX7",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "RX7"
+      ],
+      "complete_car_variants": [
+        "RX7"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V23FA763E73",
+      "label": "theblink182rx-7",
+      "source_car": "RX7",
+      "pack": "nd4",
+      "previous_tier": "D",
+      "in_published_107": false,
+      "registered_cars": [
+        "RX7"
+      ],
+      "complete_car_variants": [
+        "RX7"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V481B23EB6C",
+      "label": "theblink182rx-7",
+      "source_car": "RX7",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "RX7"
+      ],
+      "complete_car_variants": [
+        "RX7"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V42137BC807",
+      "label": "thunderdome",
+      "source_car": "GOLF",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "GOLF"
+      ],
+      "complete_car_variants": [
+        "GOLF"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VCF01918F31",
+      "label": "trkpeugot-bitchezzz-vinyl",
+      "source_car": "PEUGEOT_206",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "PEUGEOT_206"
+      ],
+      "complete_car_variants": [
+        "PEUGEOT_206"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V9528769F1E",
+      "label": "vwgolfgroupb",
+      "source_car": "GOLF",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "GOLF"
+      ],
+      "complete_car_variants": [
+        "GOLF"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V0ACB543DDB",
+      "label": "vwgolfredbull",
+      "source_car": "GOLF",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "GOLF"
+      ],
+      "complete_car_variants": [
+        "GOLF"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VB709FF6069",
+      "label": "vynilspider-man",
+      "source_car": "SUPRA",
+      "pack": "nd4",
+      "previous_tier": "D",
+      "in_published_107": false,
+      "registered_cars": [
+        "SUPRA"
+      ],
+      "complete_car_variants": [
+        "SUPRA"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V5E54072A49",
+      "label": "wild_integra",
+      "source_car": "INTEGRA",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "INTEGRA"
+      ],
+      "complete_car_variants": [
+        "INTEGRA"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VD7E2FD9C10",
+      "label": "wild_integra",
+      "source_car": "INTEGRA",
+      "pack": "nd4",
+      "previous_tier": "D",
+      "in_published_107": false,
+      "registered_cars": [
+        "INTEGRA"
+      ],
+      "complete_car_variants": [
+        "INTEGRA"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VE84D1D84E0",
+      "label": "wild_integra",
+      "source_car": "INTEGRA",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "INTEGRA"
+      ],
+      "complete_car_variants": [
+        "INTEGRA"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V0D73F7FFBC",
+      "label": "world-eclipse",
+      "source_car": "ECLIPSE",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "ECLIPSE"
+      ],
+      "complete_car_variants": [
+        "ECLIPSE"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V2A9C02FAB7",
+      "label": "wp-design2",
+      "source_car": "RX7",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "RX7"
+      ],
+      "complete_car_variants": [
+        "RX7"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V5DC978EFC7",
+      "label": "wpcycosven",
+      "source_car": "RX7",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "RX7"
+      ],
+      "complete_car_variants": [
+        "RX7"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VF3ECA862D6",
+      "label": "xboxeclipsevinyl",
+      "source_car": "ECLIPSE",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "ECLIPSE"
+      ],
+      "complete_car_variants": [
+        "ECLIPSE"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V2A6C7360ED",
+      "label": "xplod_skyline",
+      "source_car": "GTR",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "GTR"
+      ],
+      "complete_car_variants": [
+        "GTR"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V9D4FEA0D90",
+      "label": "yourmom",
+      "source_car": "CIVIC_97",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": true,
+      "registered_cars": [
+        "CIVIC_97"
+      ],
+      "complete_car_variants": [
+        "CIVIC_97"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V52BB92D374",
+      "label": "yourmom",
+      "source_car": "CIVIC_97",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": true,
+      "registered_cars": [
+        "CIVIC_97"
+      ],
+      "complete_car_variants": [
+        "CIVIC_97"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V233A4CD4E2",
+      "label": "z350vinyl",
+      "source_car": "350Z",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "350Z"
+      ],
+      "complete_car_variants": [
+        "350Z"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V55ADE33FB8",
+      "label": "2f2f_honda_vinyl",
+      "source_car": "RX8",
+      "pack": "fnf",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "RX8"
+      ],
+      "complete_car_variants": [
+        "RX8"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VC1A88C0C6D",
+      "label": "2f2f skyline",
+      "source_car": "GTR",
+      "pack": "fnf",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "GTR"
+      ],
+      "complete_car_variants": [
+        "GTR"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V9F8EF3AAB3",
+      "label": "350z",
+      "source_car": "350Z",
+      "pack": "fnf",
+      "previous_tier": "A",
+      "in_published_107": true,
+      "registered_cars": [
+        "350Z"
+      ],
+      "complete_car_variants": [
+        "350Z"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V6C3EACECD8",
+      "label": "civic_body_15",
+      "source_car": "CIVIC_97",
+      "pack": "fnf",
+      "previous_tier": "C",
+      "in_published_107": true,
+      "registered_cars": [
+        "CIVIC_97"
+      ],
+      "complete_car_variants": [
+        "CIVIC_97"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VBF91204413",
+      "label": "civic_body_15",
+      "source_car": "CIVIC_97",
+      "pack": "fnf",
+      "previous_tier": "C",
+      "in_published_107": true,
+      "registered_cars": [
+        "CIVIC_97"
+      ],
+      "complete_car_variants": [
+        "CIVIC_97"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VF7AEA10579",
+      "label": "civicm3",
+      "source_car": "CIVIC_97",
+      "pack": "fnf",
+      "previous_tier": "C",
+      "in_published_107": true,
+      "registered_cars": [
+        "CIVIC_97"
+      ],
+      "complete_car_variants": [
+        "CIVIC_97"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V32CFCE1641",
+      "label": "dks350zvinylbycarlinhos_sama",
+      "source_car": "350Z",
+      "pack": "fnf",
+      "previous_tier": "D",
+      "in_published_107": false,
+      "registered_cars": [
+        "350Z"
+      ],
+      "complete_car_variants": [
+        "350Z"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V97FA3ACDCC",
+      "label": "evo8_nfscvinyl",
+      "source_car": "EVO8",
+      "pack": "fnf",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "EVO8"
+      ],
+      "complete_car_variants": [
+        "EVO8"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V7431993100",
+      "label": "faf3_evo",
+      "source_car": "EVO8",
+      "pack": "fnf",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "EVO8"
+      ],
+      "complete_car_variants": [
+        "EVO8"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V726857F15D",
+      "label": "lancerblacklist",
+      "source_car": "EVO8",
+      "pack": "fnf",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "EVO8"
+      ],
+      "complete_car_variants": [
+        "EVO8"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V5CACD58F01",
+      "label": "rx7_body_02",
+      "source_car": "RX7",
+      "pack": "fnf",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "RX7"
+      ],
+      "complete_car_variants": [
+        "RX7"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VEA30E8FDCA",
+      "label": "razorsmustanggtfornfsu2",
+      "source_car": "MUSTANG2",
+      "pack": "fnf",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "MUSTANG2"
+      ],
+      "complete_car_variants": [
+        "MUSTANG2"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VEFA498BEC7",
+      "label": "suprablacklist",
+      "source_car": "SUPRA",
+      "pack": "fnf",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "SUPRA"
+      ],
+      "complete_car_variants": [
+        "SUPRA"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V20C1A78FC9",
+      "label": "the fast and furious eclipse vinyl",
+      "source_car": "ECLIPSE",
+      "pack": "fnf",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "ECLIPSE"
+      ],
+      "complete_car_variants": [
+        "ECLIPSE"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V714E0A75DA",
+      "label": "fnftokyo_rx-8",
+      "source_car": "RX8",
+      "pack": "fnf",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "RX8"
+      ],
+      "complete_car_variants": [
+        "RX8"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VA7A5C12CAE",
+      "label": "lancerevo8",
+      "source_car": "EVO8",
+      "pack": "aj",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "EVO8"
+      ],
+      "complete_car_variants": [
+        "EVO8"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VB13F4F6CF8",
+      "label": "mustanggt",
+      "source_car": "MUSTANG2",
+      "pack": "aj",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "MUSTANG2"
+      ],
+      "complete_car_variants": [
+        "MUSTANG2"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VC8493783D7",
+      "label": "rx7",
+      "source_car": "RX7",
+      "pack": "aj",
+      "previous_tier": "A",
+      "in_published_107": true,
+      "registered_cars": [
+        "RX7"
+      ],
+      "complete_car_variants": [
+        "RX7"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VCB668FC7A0",
+      "label": "skyline",
+      "source_car": "GTR",
+      "pack": "aj",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "GTR"
+      ],
+      "complete_car_variants": [
+        "GTR"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V68A38F20B2",
+      "label": "skyline",
+      "source_car": "GTR",
+      "pack": "aj",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "GTR"
+      ],
+      "complete_car_variants": [
+        "GTR"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VEBF6716DDF",
+      "label": "supra",
+      "source_car": "SUPRA",
+      "pack": "aj",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "SUPRA"
+      ],
+      "complete_car_variants": [
+        "SUPRA"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VF6A16E3CE6",
+      "label": "Fujiwara Panda Trueno",
+      "source_car": "COROLLA",
+      "pack": "aj",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "COROLLA"
+      ],
+      "complete_car_variants": [
+        "COROLLA"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V172D1488B2",
+      "label": "F&F Eclipse - Simpson & MX3Boy",
+      "source_car": "ECLIPSE",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "ECLIPSE"
+      ],
+      "complete_car_variants": [
+        "ECLIPSE"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V9F51DE371A",
+      "label": "F&F Eclipse",
+      "source_car": "ECLIPSE",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "ECLIPSE"
+      ],
+      "complete_car_variants": [
+        "ECLIPSE"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VC79EFCB9D1",
+      "label": "F&F Supra - Exclusive & Rimy",
+      "source_car": "SUPRA",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "SUPRA"
+      ],
+      "complete_car_variants": [
+        "SUPRA"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V35AFE7CEEC",
+      "label": "Hyundai WRC artwork - Celica adaptation",
+      "source_car": "CELICA",
+      "pack": "nd4",
+      "previous_tier": "B",
+      "in_published_107": true,
+      "registered_cars": [
+        "CELICA"
+      ],
+      "complete_car_variants": [
+        "CELICA"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V5887FE6AD4",
+      "label": "Pennzoil 2001",
+      "source_car": "GTR",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "GTR"
+      ],
+      "complete_car_variants": [
+        "GTR"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "VE8B31D9086",
+      "label": "S2000 Mugen - hood & logos",
+      "source_car": "S2000",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "S2000"
+      ],
+      "complete_car_variants": [
+        "S2000"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    },
+    {
+      "id": "V61450F770A",
+      "label": "Neon Patriot v2",
+      "source_car": "NEON",
+      "pack": "nd4",
+      "previous_tier": "C",
+      "in_published_107": false,
+      "registered_cars": [
+        "NEON"
+      ],
+      "complete_car_variants": [
+        "NEON"
+      ],
+      "required_car_count": 52,
+      "thumbnail_dimensions": [
+        128,
+        64
+      ],
+      "decision": "exclude",
+      "reasons": [
+        "missing_registered_garage_and_race_variants_for_all_retail_cars",
+        "thumbnail_does_not_match_native_256x64_contract",
+        "native_first_visual_and_runtime_acceptance_missing"
+      ]
+    }
+  ]
+}
