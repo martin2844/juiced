@@ -1,0 +1,30 @@
+{
+  "date": "2026-10-27",
+  "status": "visual preview, no global A-tier certification",
+  "designs": 5,
+  "stock_cars": 52,
+  "load_save_combinations_passed": 260,
+  "runtime_captures": 780,
+  "manual_both_side_review_cars": [
+    "CIVIC_97",
+    "350Z",
+    "SUPRA",
+    "RX7",
+    "ECLIPSE",
+    "GOLF",
+    "MX5",
+    "NSX",
+    "BEETLE"
+  ],
+  "manual_both_side_combinations": 45,
+  "unverified": [
+    "remaining visual combinations",
+    "Android hardware",
+    "crash deformation",
+    "body kits",
+    "mod-added cars"
+  ],
+  "source_reference": "out/vinyl-native-audit/native-texture-vs-icon.png",
+  "replaces": "previous imported-vinyl catalogue; disable it first",
+  "saves_modified": false
+}

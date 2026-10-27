@@ -1,0 +1,40 @@
+{
+  "status": "development; not release-approved",
+  "designs": [
+    {
+      "name": "Rachel Night Dragon",
+      "mesh": "DECAL_NFS_AI_RACHEL",
+      "art": "art/rachel-v2.png",
+      "donor": "decal_fandf_vs1",
+      "inspiration": "Rachel's Nissan 350Z, NFS Underground 2"
+    },
+    {
+      "name": "Brian Silver Current",
+      "mesh": "DECAL_NFS_AI_ECLIPSE",
+      "art": "art/eclipse-v1.png",
+      "donor": "decal_fandf_vs1",
+      "inspiration": "Brian Eclipse, The Fast and the Furious (2001)"
+    },
+    {
+      "name": "Brian Steel Warrior",
+      "mesh": "DECAL_NFS_AI_SUPRA",
+      "art": "art/supra-v1.png",
+      "donor": "decal_fandf_vs1",
+      "inspiration": "Brian Supra, The Fast and the Furious (2001)"
+    },
+    {
+      "name": "Dom Black Sweep",
+      "mesh": "DECAL_NFS_AI_RX7",
+      "art": "art/rx7-v1.png",
+      "donor": "decal_fandf_vs1",
+      "inspiration": "Dom RX-7, The Fast and the Furious (2001)"
+    },
+    {
+      "name": "Jesse Blue Circuit",
+      "mesh": "DECAL_NFS_AI_JETTA",
+      "art": "art/jetta-v1.png",
+      "donor": "decal_tribal_vs4",
+      "inspiration": "Jesse Jetta, The Fast and the Furious (2001)"
+    }
+  ]
+}
