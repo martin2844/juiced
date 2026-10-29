@@ -1,0 +1,88 @@
+{
+  "db8_CHASS": 5719,
+  "db8_FBUMP": 1719,
+  "db8_RBUMP": 986,
+  "db8_BONNET": 152,
+  "db8_SPOILER": 393,
+  "db8_SSKIRT_L": 198,
+  "db8_SSKIRT_R": 201,
+  "db8_BRKLIGHT": 234,
+  "db8_LIGHTSON": 130,
+  "db8_wheel": 2114,
+  "db8_wheel_blur": 2114,
+  "db8_sport_FBUMP": 1719,
+  "db8_sport_RBUMP": 986,
+  "db8_sport_BONNET": 232,
+  "db8_sport_SSKIRT_L": 198,
+  "db8_sport_SSKIRT_R": 201,
+  "db8_sport_SPOILER": 393,
+  "db8_DECAL_PROTO_VS1": 963,
+  "db8_DECAL_TRIBAL_VS1": 963,
+  "db8_DECAL_TRIBAL_VS3": 963,
+  "db8_DECAL_TRIBAL_VS4": 963,
+  "db8_DECAL_TRIBAL_VS5": 963,
+  "db8_DECAL_CHECKS_VS1": 963,
+  "db8_DECAL_CHECKS_VS2": 963,
+  "db8_DECAL_CHECKS_VS3": 963,
+  "db8_DECAL_FLAMES_VS1": 963,
+  "db8_DECAL_TRIBAL_VS2": 963,
+  "db8_DECAL_TRIBAL_VS6": 963,
+  "db8_DECAL_TRIBAL_VS7": 963,
+  "db8_DECAL_TRIBAL_VS8": 963,
+  "db8_DECAL_FANDF_VS8": 963,
+  "db8_DECAL_FANDF_VS9": 963,
+  "db8_DECAL_FANDF_VS1": 963,
+  "db8_DECAL_FANDF_VS2": 963,
+  "db8_DECAL_FANDF_VS3": 963,
+  "db8_DECAL_FANDF_VS4": 963,
+  "db8_DECAL_FANDF_VS5": 963,
+  "db8_DECAL_FANDF_VS6": 963,
+  "db8_DECAL_FANDF_VS7": 963,
+  "db8_DECAL_CREW_VS7": 963,
+  "db8_DECAL_CREW_VS1": 963,
+  "db8_DECAL_CREW_VS2": 963,
+  "db8_DECAL_CREW_VS3": 963,
+  "db8_DECAL_CREW_VS4": 963,
+  "db8_DECAL_CREW_VS5": 963,
+  "db8_DECAL_CREW_VS6": 963,
+  "db8_DECAL_FANDF_VS10": 963,
+  "db8_DECAL_CREW_VS8": 963,
+  "db8_sponsors": 114,
+  "wheels": {
+    "FL": [
+      -74.7553955073368,
+      29.363937128923293,
+      131.0
+    ],
+    "FR": [
+      74.7553955073368,
+      29.363937128923293,
+      131.0
+    ],
+    "RL": [
+      -74.75537805286775,
+      29.363937128923293,
+      -131.0
+    ],
+    "RR": [
+      74.7553955073368,
+      29.363937128923293,
+      -131.0
+    ]
+  },
+  "bounds": [
+    [
+      -99.30088539704465,
+      14.358388823733078,
+      -224.32245543934113
+    ],
+    [
+      99.30088539704465,
+      133.50274283548077,
+      223.58370158635796
+    ]
+  ],
+  "radius": 0.29363937128923295,
+  "id": 54,
+  "audioDonor": "civicr"
+}

@@ -125,10 +125,13 @@ bool Career::read(const std::vector<uint8_t>& data, std::string* error) {
         if (r.offset() != r.size()) {
             if (r.u32("mod progress tag") != 0x314D4A4F) throw std::runtime_error("unknown career extension");
             const auto count = r.u32("mod progress count");
-            if (count != profile.modCount || count > profile.modProgress.size())
-                throw std::runtime_error("career requires the same added-car roster");
+            if (count > profile.modProgress.size())
+                throw std::runtime_error("career added-car progress exceeds supported capacity");
             std::memcpy(profile.modProgress.data(), r.take(count * sizeof(CareerProfile::ModProgress), "mod progress"),
                         count * sizeof(CareerProfile::ModProgress));
+            // Added-car IDs are stable. Appending models must preserve older progress;
+            // retain stored entries too when fewer mods are temporarily enabled.
+            if (profile.modCount < count) profile.modCount = count;
         }
         if (r.offset() != r.size()) {
             throw std::runtime_error(std::format("{} bytes left after the career", r.size() - r.offset()));

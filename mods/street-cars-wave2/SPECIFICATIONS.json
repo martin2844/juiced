@@ -1,0 +1,123 @@
+{
+  "status": "working specification; not yet installed or handling-calibrated",
+  "units": {
+    "power": "kW, convert to mechanical bhp using 0.745699872",
+    "length": "metres",
+    "torque": "Nm"
+  },
+  "cars": [
+    {
+      "key": "peugeot-405-glx",
+      "model": "PEUGEOT_405_GLX",
+      "id": 57,
+      "variant": "1994 GLX 1.8 manual",
+      "power_kw": 76,
+      "torque_nm": 153,
+      "mass_kg": 1100,
+      "wheelbase_m": 2.669,
+      "drive": "FWD",
+      "gears": 5,
+      "source": "https://www.automobile-catalog.com/car/1994/2586680/peugeot_405_glx_1_8.html",
+      "verification": "secondary source; factory brochure still needed"
+    },
+    {
+      "key": "peugeot-406-coupe",
+      "model": "PEUGEOT_406_COUPE",
+      "id": 58,
+      "variant": "1997 3.0 V6 manual",
+      "power_kw": 142.6867575,
+      "torque_nm": 267,
+      "wheelbase_m": 2.7,
+      "drive": "FWD",
+      "gears": 5,
+      "source": "https://406coupeclub.org/media/documents/PD1203%201997%20May.pdf",
+      "verification": "Factory May 1997 document labels power HP(PS-DIN); use 194 PS converted to mechanical bhp. The printed kW and UK bhp labels are internally inconsistent. Torque 267 Nm, manual kerb mass 1458 kg.",
+      "power_ps": 194,
+      "mass_kg": 1458
+    },
+    {
+      "key": "golf-mk5-r32",
+      "model": "GOLF_MK5_R32",
+      "id": 59,
+      "variant": "2007 R32 3.2 VR6 manual",
+      "power_kw": 184,
+      "torque_nm": 320,
+      "wheelbase_m": 2.578,
+      "drive": "AWD",
+      "gears": 6,
+      "zero_100_seconds": 6.5,
+      "source": "https://www.volkswagen-newsroom.com/en/golf-5-20032008-19480",
+      "verification": "Manufacturer 2007 AU brochure: 3-door manual tare weight 1510 kg, 184 kW, 320 Nm, six-speed. Gear-ratio candidate still requires selected-market confirmation.",
+      "mass_kg": 1510,
+      "mass_source": "https://autocatalogarchive.com/wp-content/uploads/2023/08/VW-Golf-R32-2007-AU.pdf"
+    },
+    {
+      "key": "jetta-vento-mk5",
+      "model": "JETTA_MK5_FSI",
+      "id": 60,
+      "variant": "2006 2.0 FSI manual",
+      "power_kw": 110,
+      "torque_nm": 200,
+      "mass_kg": 1398,
+      "wheelbase_m": 2.578,
+      "drive": "FWD",
+      "gears": 6,
+      "source": "https://autocatalogarchive.com/wp-content/uploads/2019/06/VW-Jetta-2005-UK.pdf",
+      "verification": "UK manufacturer brochure 1473 kg includes 75 kg driver/luggage convention; empty vehicle candidate 1398 kg."
+    },
+    {
+      "key": "subaru-outback-2002",
+      "model": "OUTBACK_2002",
+      "id": 61,
+      "variant": "2002 Outback 2.5 manual US",
+      "power_bhp": 165,
+      "torque_lbft": 166,
+      "wheelbase_m": 2.65,
+      "drive": "AWD",
+      "gears": 5,
+      "source": "https://xr793.com/wp-content/uploads/2020/02/2002-Subaru-Outback.pdf",
+      "verification": "Factory brochure: base manual Outback wagon 3425 lb. Factory 2002 Legacy service manual Outback table: 3.454/2.062/1.448/1.088/.871, final 4.111.",
+      "mass_kg": 1553.5538672500002,
+      "transmission_source": "https://documents.cdn.ifixit.com/df2ZEnLlAHIuCsKU.pdf"
+    },
+    {
+      "key": "volvo-240",
+      "model": "VOLVO_240_TURBO",
+      "id": 62,
+      "variant": "240 Turbo B21ET European",
+      "wheelbase_m": 2.64,
+      "drive": "RWD",
+      "source": "https://www.240.se/litteratur/MSPV535.pdf",
+      "verification": "Volvo 1984 technical brochure: 114 kW/155 DIN hp at 5500 rpm, 240 Nm at 3750 rpm, four-speed plus overdrive. Mass/gearing calibration still provisional.",
+      "power_kw": 114,
+      "torque_nm": 240
+    },
+    {
+      "key": "volvo-v70",
+      "model": "VOLVO_V70_24",
+      "id": 63,
+      "variant": "2004 V70 2.4 manual US",
+      "power_bhp": 168,
+      "torque_lbft": 166,
+      "mass_lb": 3488,
+      "wheelbase_m": 2.755,
+      "drive": "FWD",
+      "gears": 5,
+      "source": "https://www.auto-brochures.com/makes/Volvo/V70/Volvo_US%20V70_2004.pdf",
+      "verification": "manufacturer brochure mirror; listed curb weight needs transmission applicability check"
+    }
+  ],
+  "kit_contract": {
+    "additional_front_bumpers": 3,
+    "additional_rear_bumpers": 3,
+    "additional_skirt_pairs": 3,
+    "stock_retained": true,
+    "styles": [
+      "OEM sport: restrained fitted lip and valance",
+      "Street: deeper shaped valance, side extensions",
+      "Tuner: splitter, shaped rear diffuser and skirt end plates"
+    ],
+    "acceptance": "distinct geometry; mounts remain continuous; no floating elements; no lamp/wheel/door obstruction; eight views and native in-game verification"
+  },
+  "handling_contract": "Stock torque/power, mass, driven axles, gear and final drive ratios first. Then measure native acceleration, terminal speed, braking and cornering against reference ranges; do not copy Assetto Corsa physics directly or compensate handling by falsifying BHP. Classes derive through Juiced native class calculation. Audio may reuse retail samples with declared donors."
+}

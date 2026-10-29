@@ -520,8 +520,9 @@ void LinkSelCar::enter(CustomRaceHost& host, ui::Screen& s) {
             ArcadeCarGroups& groups = j == 0 ? d.arcadeGroups : d.arcadeGroups2;
             std::vector<Car>& cars = j == 0 ? d.arcadeCars : d.arcadeCars2;
             const auto group = static_cast<size_t>(std::clamp(d.arcadeGroups.group, 0, 7));
-            if (groups.ids[group][static_cast<size_t>(std::clamp(groups.index, 0, 59))] == 0) groups.index = 0;
-            const int32_t id = groups.ids[group][static_cast<size_t>(std::clamp(groups.index, 0, 59))];
+            const auto last = static_cast<int32_t>(groups.ids[group].size()) - 1;
+            if (groups.ids[group][static_cast<size_t>(std::clamp(groups.index, 0, last))] == 0) groups.index = 0;
+            const int32_t id = groups.ids[group][static_cast<size_t>(std::clamp(groups.index, 0, last))];
             size_t k = 0;
             for (size_t c = 0; c < cars.size(); ++c) {
                 if (cars[c].def != nullptr && cars[c].def->id == id) {

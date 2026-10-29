@@ -58,7 +58,8 @@ inline void hideNamed(ui::Screen& s, const char* name) {
 
 // The car id at a place of a group of the custom race's list (within the list).
 inline int32_t carAt(const ArcadeCarGroups& groups, int32_t group, int32_t place) {
-    return groups.ids[static_cast<size_t>(std::clamp(group, 0, 7))][static_cast<size_t>(std::clamp(place, 0, 59))];
+    const auto& cars = groups.ids[static_cast<size_t>(std::clamp(group, 0, 7))];
+    return cars[static_cast<size_t>(std::clamp(place, 0, static_cast<int32_t>(cars.size()) - 1))];
 }
 
 // The arcade car of a car id: the place of the first one of that model in the list, 0 when none (0x00489D70).

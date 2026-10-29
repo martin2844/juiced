@@ -1,0 +1,88 @@
+{
+  "e36_CHASS": 3057,
+  "e36_FBUMP": 6821,
+  "e36_RBUMP": 581,
+  "e36_BONNET": 88,
+  "e36_SPOILER": 273,
+  "e36_SSKIRT_L": 91,
+  "e36_SSKIRT_R": 90,
+  "e36_BRKLIGHT": 151,
+  "e36_LIGHTSON": 192,
+  "e36_wheel": 6294,
+  "e36_wheel_blur": 6294,
+  "e36_sport_FBUMP": 6821,
+  "e36_sport_RBUMP": 581,
+  "e36_sport_BONNET": 176,
+  "e36_sport_SSKIRT_L": 91,
+  "e36_sport_SSKIRT_R": 90,
+  "e36_sport_SPOILER": 273,
+  "e36_DECAL_PROTO_VS1": 859,
+  "e36_DECAL_TRIBAL_VS1": 859,
+  "e36_DECAL_TRIBAL_VS3": 859,
+  "e36_DECAL_TRIBAL_VS4": 859,
+  "e36_DECAL_TRIBAL_VS5": 859,
+  "e36_DECAL_CHECKS_VS1": 859,
+  "e36_DECAL_CHECKS_VS2": 859,
+  "e36_DECAL_CHECKS_VS3": 859,
+  "e36_DECAL_FLAMES_VS1": 859,
+  "e36_DECAL_TRIBAL_VS2": 859,
+  "e36_DECAL_TRIBAL_VS6": 859,
+  "e36_DECAL_TRIBAL_VS7": 859,
+  "e36_DECAL_TRIBAL_VS8": 859,
+  "e36_DECAL_FANDF_VS8": 859,
+  "e36_DECAL_FANDF_VS9": 859,
+  "e36_DECAL_FANDF_VS1": 859,
+  "e36_DECAL_FANDF_VS2": 859,
+  "e36_DECAL_FANDF_VS3": 859,
+  "e36_DECAL_FANDF_VS4": 859,
+  "e36_DECAL_FANDF_VS5": 859,
+  "e36_DECAL_FANDF_VS6": 859,
+  "e36_DECAL_FANDF_VS7": 859,
+  "e36_DECAL_CREW_VS7": 859,
+  "e36_DECAL_CREW_VS1": 859,
+  "e36_DECAL_CREW_VS2": 859,
+  "e36_DECAL_CREW_VS3": 859,
+  "e36_DECAL_CREW_VS4": 859,
+  "e36_DECAL_CREW_VS5": 859,
+  "e36_DECAL_CREW_VS6": 859,
+  "e36_DECAL_FANDF_VS10": 859,
+  "e36_DECAL_CREW_VS8": 859,
+  "e36_sponsors": 133,
+  "wheels": {
+    "FL": [
+      -70.98969216617638,
+      32.40559253872219,
+      135.0
+    ],
+    "FR": [
+      70.9998918893318,
+      32.40559253872219,
+      135.0
+    ],
+    "RL": [
+      -72.62169518421187,
+      32.35450963748059,
+      -135.0
+    ],
+    "RR": [
+      72.62169518421187,
+      32.35450963748059,
+      -135.0
+    ]
+  },
+  "bounds": [
+    [
+      -91.02651990251623,
+      12.3765711159929,
+      -232.64585690054838
+    ],
+    [
+      91.03520182278601,
+      130.90648797751442,
+      213.3708095870272
+    ]
+  ],
+  "radius": 0.3235455053600231,
+  "id": 55,
+  "audioDonor": "350z"
+}

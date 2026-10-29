@@ -1,0 +1,6 @@
+Material Program = Coloured Spec Opaque
+Colour = 255 255 255
+Specular Colour = 110 110 110
+Specular Highlight = 80
+Shininess = 48
+Texture = w259_carbon.ptd

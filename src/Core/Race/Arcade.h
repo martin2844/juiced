@@ -11,6 +11,7 @@
 #include <cstdint>
 #include <string>
 #include <string_view>
+#include <vector>
 
 namespace oj {
 
@@ -128,8 +129,10 @@ save::ArcadeUnlock newArcadeProgress(std::string_view arcadeRaces, const ExeTabl
 
 // The cars of the custom race by performance group (the game's +0x84 object, 0x788 bytes, [0x00728AF0] while it
 // reads): 8 groups of 60 car ids (0 ends a group), the place in the group (+0x780) and the group (+0x784).
+// Native added-car rosters expand the groups; this object is not serialized in the stock layout.
 struct ArcadeCarGroups {
-    std::array<std::array<int32_t, 60>, 8> ids{};
+    std::array<std::vector<int32_t>, 8> ids;
+    ArcadeCarGroups();
     int32_t index = 0;  // +0x780
     int32_t group = 0;  // +0x784
 

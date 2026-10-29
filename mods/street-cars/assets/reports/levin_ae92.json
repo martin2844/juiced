@@ -1,0 +1,88 @@
+{
+  "ae92_CHASS": 24886,
+  "ae92_FBUMP": 17167,
+  "ae92_RBUMP": 2082,
+  "ae92_BONNET": 197,
+  "ae92_SPOILER": 777,
+  "ae92_SSKIRT_L": 214,
+  "ae92_SSKIRT_R": 215,
+  "ae92_BRKLIGHT": 395,
+  "ae92_LIGHTSON": 315,
+  "ae92_wheel": 5290,
+  "ae92_wheel_blur": 5290,
+  "ae92_sport_FBUMP": 17167,
+  "ae92_sport_RBUMP": 2082,
+  "ae92_sport_BONNET": 265,
+  "ae92_sport_SSKIRT_L": 214,
+  "ae92_sport_SSKIRT_R": 215,
+  "ae92_sport_SPOILER": 777,
+  "ae92_DECAL_PROTO_VS1": 2870,
+  "ae92_DECAL_TRIBAL_VS1": 2870,
+  "ae92_DECAL_TRIBAL_VS3": 2870,
+  "ae92_DECAL_TRIBAL_VS4": 2870,
+  "ae92_DECAL_TRIBAL_VS5": 2870,
+  "ae92_DECAL_CHECKS_VS1": 2870,
+  "ae92_DECAL_CHECKS_VS2": 2870,
+  "ae92_DECAL_CHECKS_VS3": 2870,
+  "ae92_DECAL_FLAMES_VS1": 2870,
+  "ae92_DECAL_TRIBAL_VS2": 2870,
+  "ae92_DECAL_TRIBAL_VS6": 2870,
+  "ae92_DECAL_TRIBAL_VS7": 2870,
+  "ae92_DECAL_TRIBAL_VS8": 2870,
+  "ae92_DECAL_FANDF_VS8": 2870,
+  "ae92_DECAL_FANDF_VS9": 2870,
+  "ae92_DECAL_FANDF_VS1": 2870,
+  "ae92_DECAL_FANDF_VS2": 2870,
+  "ae92_DECAL_FANDF_VS3": 2870,
+  "ae92_DECAL_FANDF_VS4": 2870,
+  "ae92_DECAL_FANDF_VS5": 2870,
+  "ae92_DECAL_FANDF_VS6": 2870,
+  "ae92_DECAL_FANDF_VS7": 2870,
+  "ae92_DECAL_CREW_VS7": 2870,
+  "ae92_DECAL_CREW_VS1": 2870,
+  "ae92_DECAL_CREW_VS2": 2870,
+  "ae92_DECAL_CREW_VS3": 2870,
+  "ae92_DECAL_CREW_VS4": 2870,
+  "ae92_DECAL_CREW_VS5": 2870,
+  "ae92_DECAL_CREW_VS6": 2870,
+  "ae92_DECAL_FANDF_VS10": 2870,
+  "ae92_DECAL_CREW_VS8": 2870,
+  "ae92_sponsors": 302,
+  "wheels": {
+    "FL": [
+      -70.35589929313905,
+      28.870852398265146,
+      121.5
+    ],
+    "FR": [
+      70.34545670522928,
+      28.870852398265146,
+      121.5
+    ],
+    "RL": [
+      -70.35589929313905,
+      28.870852398265146,
+      -121.5
+    ],
+    "RR": [
+      70.35551222997339,
+      28.870852398265146,
+      -121.5
+    ]
+  },
+  "bounds": [
+    [
+      -95.14422349063611,
+      14.363903500163374,
+      -217.09577503026918
+    ],
+    [
+      95.14467725155717,
+      124.6226104560575,
+      207.32147826587388
+    ]
+  ],
+  "radius": 0.28870852398265145,
+  "id": 56,
+  "audioDonor": "celica1"
+}

@@ -1,0 +1,7 @@
+Material Program = Coloured Spec Opaque
+Colour = 255 255 255
+Specular Colour = 100 100 100
+Specular Highlight = 50
+Shininess = 32
+Double-sided = TRUE
+Texture = e36_m12.ptd

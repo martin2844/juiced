@@ -113,7 +113,7 @@ void customGrid(TrackView& view, oj::GameData& data, oj::scene::Engine& engine) 
         auto car = std::make_unique<oj::Car>(oj::makeCar(nullptr));
         int32_t id = 0;
         do {
-            const auto r = static_cast<uint32_t>(random.next()) % 60;
+            const auto r = static_cast<uint32_t>(random.next()) % groups.ids[static_cast<size_t>(group)].size();
             id = groups.ids[static_cast<size_t>(group)][r];
         } while (id == 0);
         size_t index = 0;

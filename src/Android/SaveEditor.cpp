@@ -26,7 +26,22 @@ save::Archive load(GameData& game, const std::vector<std::byte>& bytes) {
     if (found == archive.entries.end()) throw std::runtime_error("This profile has no career yet");
     if (!game.career || !game.career->read(found->second, &error))
         throw std::runtime_error("Cannot read career with this car roster: " + error);
-    if (game.career->write() != found->second)
+    // Reading an older roster intentionally initializes progress for newly installed
+    // cars. Validate the original serialized extent, not those appended defaults.
+    auto originalShape = *game.career;
+    originalShape.profile.modCount = 0;
+    const auto prefixSize = originalShape.write().size();
+    if (found->second.size() < prefixSize)
+        throw std::runtime_error("Unsupported career format; original save was not changed");
+    const auto extensionSize = found->second.size() - prefixSize;
+    if (extensionSize != 0) {
+        constexpr auto entrySize = sizeof(CareerProfile::ModProgress);
+        if (extensionSize < 8 || (extensionSize - 8) % entrySize != 0 ||
+            (extensionSize - 8) / entrySize > originalShape.profile.modProgress.size())
+            throw std::runtime_error("Unsupported career format; original save was not changed");
+        originalShape.profile.modCount = static_cast<uint32_t>((extensionSize - 8) / entrySize);
+    }
+    if (originalShape.write() != found->second)
         throw std::runtime_error("Unsupported career format; original save was not changed");
     if (game.career->garage.size() > 55) throw std::runtime_error("Unsupported garage size");
     for (const auto& car : game.career->garage)

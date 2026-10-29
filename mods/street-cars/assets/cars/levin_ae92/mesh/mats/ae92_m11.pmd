@@ -1,0 +1,9 @@
+Material Program = Car Glass
+Side Fresnel = 0.12
+Front Fresnel = 0.02
+Base Opacity = 0.28
+Start Fade = 0
+End Fade = 10000
+Colour = 110 120 130
+Texture = ae92_m11.ptd
+Scratch = ae92_scratch.ptd

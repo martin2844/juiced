@@ -71,7 +71,7 @@ struct CareerProfile {
     float betShare = 0.0f;                  // +0x62C: the money bet on a race as a percentage of the money (0x004BC2E0)
     int32_t outOfRace = 0;                  // +0x630: the race quit, or the player's crew not among the first five
     int32_t showoffTutorialShown = 0;       // +0x634
-    static constexpr size_t kModelCapacity = 60;
+    static constexpr size_t kModelCapacity = 64;
     struct ModProgress {
         std::array<int8_t, 10> performance{};
         std::array<int8_t, 10> body{};

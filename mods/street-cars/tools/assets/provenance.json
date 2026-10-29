@@ -1,0 +1,137 @@
+[
+  {
+    "id": "bmw-e36-m3",
+    "brand": "BMW",
+    "model": "E36 M3",
+    "years": [
+      0,
+      0
+    ],
+    "category": "coupe",
+    "file": "bmw-e36-m3.glb",
+    "bytes": 2543508,
+    "paint": {
+      "materials": [
+        "CarPaint"
+      ],
+      "textured": false,
+      "confidence": "m\u00e9dia"
+    },
+    "credit": {
+      "author": "Martin Trafas",
+      "authorUrl": "https://sketchfab.com/TinoD2",
+      "license": "CC Attribution",
+      "sourceName": "BMW E36 M3",
+      "sourceUrl": "https://sketchfab.com/3d-models/none-762b90efd3dc413cb61c3e3c8097b8ac"
+    },
+    "sha256": "120b7514ea3f2a920a3b2849de866599e4557acbb0f218731c1e0fd4d623fd8d",
+    "actualBytes": 2543508,
+    "meshes": 17,
+    "materials": 15,
+    "nodes": 19,
+    "extensions": [
+      "EXT_meshopt_compression",
+      "KHR_mesh_quantization"
+    ],
+    "sourceLicense": {
+      "uri": "https://api.sketchfab.com/v3/licenses/322a749bcfa841b29dff1e8a1bb74b0b",
+      "label": "CC Attribution",
+      "fullName": "Creative Commons Attribution",
+      "requirements": "Author must be credited. Commercial use is allowed.",
+      "url": "http://creativecommons.org/licenses/by/4.0/",
+      "slug": "by"
+    },
+    "sourceDescription": "",
+    "triangles": 38979
+  },
+  {
+    "id": "honda-integra-db8",
+    "brand": "Honda",
+    "model": "Integra DB8",
+    "years": [
+      0,
+      0
+    ],
+    "category": "coupe",
+    "file": "honda-integra-db8.glb",
+    "bytes": 2122448,
+    "paint": {
+      "materials": [
+        "paint"
+      ],
+      "textured": false,
+      "confidence": "m\u00e9dia"
+    },
+    "credit": {
+      "author": "Myedsu",
+      "authorUrl": "https://sketchfab.com/myedsu",
+      "license": "CC Attribution",
+      "sourceName": "Honda Integra (DB8) Type-R",
+      "sourceUrl": "https://sketchfab.com/3d-models/none-06f0eba84e9745e9aec41a985ccac915"
+    },
+    "sha256": "a29ebec67a202b4e2d25155b8dc596fe18a716970342368d083fbd0ab82a5d8c",
+    "actualBytes": 2122448,
+    "meshes": 38,
+    "materials": 26,
+    "nodes": 69,
+    "extensions": [
+      "EXT_meshopt_compression",
+      "KHR_mesh_quantization"
+    ],
+    "sourceLicense": {
+      "uri": "https://api.sketchfab.com/v3/licenses/322a749bcfa841b29dff1e8a1bb74b0b",
+      "label": "CC Attribution",
+      "fullName": "Creative Commons Attribution",
+      "requirements": "Author must be credited. Commercial use is allowed.",
+      "url": "http://creativecommons.org/licenses/by/4.0/",
+      "slug": "by"
+    },
+    "sourceDescription": "* **Honda Integra (DB8)** - a 5-door version of the 3rd generation Honda Integra.\n* **Wikipedia** - https://en.wikipedia.org/wiki/Honda_Integra.\n* **Collection reworked models Lexyc16 with help of Myedsu** - https://sketchfab.com/myedsu/collections/reworked-models-lexyc16-eb1b4da0d7764ba19070e2d1e045396b\n* **DC2** - https://sketchfab.com/3d-models/honda-integra-dc2-type-r-1995-554e0b342697492391c71d4b882b61fc\n\nI made in Blender (2.92), Lexyc16 made in Blender (3.1.2).",
+    "triangles": 15452
+  },
+  {
+    "id": "toyota-corolla-levin",
+    "brand": "Toyota",
+    "model": "Corolla Levin",
+    "years": [
+      0,
+      0
+    ],
+    "category": "coupe",
+    "file": "toyota-corolla-levin.glb",
+    "bytes": 11932312,
+    "paint": {
+      "materials": [
+        "body"
+      ],
+      "textured": false,
+      "confidence": "m\u00e9dia"
+    },
+    "credit": {
+      "author": "Nix_Dektara",
+      "authorUrl": "https://sketchfab.com/Nix_Dektara",
+      "license": "CC Attribution",
+      "sourceName": "Toyota Corolla Levin AE92 GT APEX Kouki",
+      "sourceUrl": "https://sketchfab.com/3d-models/none-66dcbaf822ae47468655a604a83af703"
+    },
+    "sha256": "ca07508a07d80e33b854c7d20be44b305a73c2be50c96915635551bfe0f6e53a",
+    "actualBytes": 11932312,
+    "meshes": 247,
+    "materials": 30,
+    "nodes": 537,
+    "extensions": [
+      "EXT_meshopt_compression",
+      "KHR_mesh_quantization"
+    ],
+    "sourceLicense": {
+      "uri": "https://api.sketchfab.com/v3/licenses/322a749bcfa841b29dff1e8a1bb74b0b",
+      "label": "CC Attribution",
+      "fullName": "Creative Commons Attribution",
+      "requirements": "Author must be credited. Commercial use is allowed.",
+      "url": "http://creativecommons.org/licenses/by/4.0/",
+      "slug": "by"
+    },
+    "sourceDescription": "Toyota Corolla Levin AE92 GT APEX Kouki\nModdeled by Nix_Dektara",
+    "triangles": 109603
+  }
+]

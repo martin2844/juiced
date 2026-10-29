@@ -2,6 +2,7 @@
 
 #include "Core/Base/Script.h"
 
+#include <algorithm>
 #include <cstdlib>
 #include <cstring>
 #include <memory>
@@ -388,8 +389,16 @@ save::ArcadeUnlock newArcadeProgress(std::string_view arcadeRaces, const ExeTabl
     return arcade->progress();
 }
 
+ArcadeCarGroups::ArcadeCarGroups() {
+    for (auto& group : ids) group.resize(60);
+}
+
 void ArcadeCarGroups::load(std::string_view text, const ExeTables& tables) {
     *this = ArcadeCarGroups{};
+    // Retain stock's 60-slot groups and random-draw behavior; added rosters
+    // need room for every car plus the zero terminator (model zero is NONE).
+    const auto width = std::max(size_t{60}, tables.carModels.size());
+    for (auto& group : ids) group.resize(width);
     int32_t reading = -1;
     int32_t place = 0;
     for (const ScriptLine& line : parseScript(text)) {
@@ -397,10 +406,9 @@ void ArcadeCarGroups::load(std::string_view text, const ExeTables& tables) {
             ++reading;
             place = 0;
         } else if (same(line.keyword, "Car")) {
-            // The stock list is one block of 0x1E0 values: a place past 60 runs into the next group.
-            const int32_t at = reading * 60 + place;
-            if (at >= 0 && at < 8 * 60) {
-                ids[static_cast<size_t>(at / 60)][static_cast<size_t>(at % 60)] = tables.carModelId(line.word(0));
+            const int32_t at = reading * static_cast<int32_t>(width) + place;
+            if (at >= 0 && static_cast<size_t>(at) < ids.size() * width) {
+                ids[static_cast<size_t>(at) / width][static_cast<size_t>(at) % width] = tables.carModelId(line.word(0));
             }
             ++place;
         }
@@ -408,9 +416,10 @@ void ArcadeCarGroups::load(std::string_view text, const ExeTables& tables) {
 }
 
 int32_t ArcadeCarGroups::current() const {
-    const int32_t at = group * 60 + index;
-    if (at < 0 || at >= 8 * 60) return 0;
-    return ids[static_cast<size_t>(at / 60)][static_cast<size_t>(at % 60)];
+    const auto width = ids.front().size();
+    const int32_t at = group * static_cast<int32_t>(width) + index;
+    if (at < 0 || static_cast<size_t>(at) >= ids.size() * width) return 0;
+    return ids[static_cast<size_t>(at) / width][static_cast<size_t>(at) % width];
 }
 
 void ArcadeCarGroups::next() {
@@ -420,7 +429,7 @@ void ArcadeCarGroups::next() {
 
 void ArcadeCarGroups::previous() {
     if (--index >= 0) return;
-    for (int32_t k = 59; k >= 0; --k) {
+    for (int32_t k = static_cast<int32_t>(ids.front().size()) - 1; k >= 0; --k) {
         if (group >= 0 && group < 8 && ids[static_cast<size_t>(group)][static_cast<size_t>(k)] != 0) {
             index = k;
             return;

@@ -1,0 +1,73 @@
+{
+  "peugeot-405-glx": {
+    "title": "1994 Peugeot 405 GLX (facelift version)",
+    "author": "Mehrdad995",
+    "source": "https://sketchfab.com/3d-models/1994-peugeot-405-glx-facelift-version-b9b69099434c45bdb3265417dd720752",
+    "license": {
+      "label": "CC Attribution",
+      "slug": "by",
+      "url": "http://creativecommons.org/licenses/by/4.0/"
+    },
+    "modifications": "Blender cleanup, fitting, material conversion and native customization"
+  },
+  "peugeot-406-coupe": {
+    "title": "Peugeot 406 Coupe 1995-2004",
+    "author": "Merc_TV",
+    "source": "https://sketchfab.com/3d-models/peugeot-406-coupe-1995-2004-29dbad44a23f40e2bafa78335bb96c42",
+    "license": {
+      "label": "CC Attribution",
+      "slug": "by",
+      "url": "http://creativecommons.org/licenses/by/4.0/"
+    },
+    "modifications": "Blender cleanup, fitting, material conversion and native customization"
+  },
+  "golf-mk5-r32": {
+    "author": "PedroBLR",
+    "source": "https://drive.google.com/drive/folders/1qzJ1sOgGRwIWwoyiEDSyaQQw70MXODhi",
+    "license": "Not established for redistribution; user-supplied source"
+  },
+  "jetta-vento-mk5": {
+    "title": "Volkswagen Jetta MK5 2005-2011",
+    "author": "Merc_TV",
+    "source": "https://sketchfab.com/3d-models/volkswagen-jetta-mk5-2005-2011-35addf24077e46b9a254c2b5b72add87",
+    "license": {
+      "label": "CC Attribution",
+      "slug": "by",
+      "url": "http://creativecommons.org/licenses/by/4.0/"
+    },
+    "modifications": "Blender cleanup, fitting, material conversion and native customization"
+  },
+  "subaru-outback-2002": {
+    "title": "Subaru Outback",
+    "author": "Scigh-on",
+    "source": "https://sketchfab.com/3d-models/subaru-outback-549ebf331af146dc94821d85aa24d1ea",
+    "license": {
+      "label": "Free Standard",
+      "slug": "free-st",
+      "url": "https://sketchfab.com/licenses"
+    },
+    "modifications": "Blender cleanup, fitting, material conversion and native customization"
+  },
+  "volvo-240": {
+    "title": "Volvo 240 styled sedan car downloadable",
+    "author": "Libau Media",
+    "source": "https://sketchfab.com/3d-models/volvo-240-styled-sedan-car-downloadable-66697669831b47cea7874fc8c4544e74",
+    "license": {
+      "label": "CC Attribution",
+      "slug": "by",
+      "url": "http://creativecommons.org/licenses/by/4.0/"
+    },
+    "modifications": "Blender cleanup, fitting, material conversion and native customization"
+  },
+  "volvo-v70": {
+    "title": "volvo v70",
+    "author": "Dennis Andersson",
+    "source": "https://sketchfab.com/3d-models/volvo-v70-6a1aed1ffa8741e292d5b9043fdaaf9c",
+    "license": {
+      "label": "CC Attribution",
+      "slug": "by",
+      "url": "http://creativecommons.org/licenses/by/4.0/"
+    },
+    "modifications": "Blender cleanup, fitting, material conversion and native customization"
+  }
+}

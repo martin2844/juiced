@@ -1,0 +1,6 @@
+Material Program = Specular Opaque
+Specular Colour = 20 20 20
+Specular Highlight = 8
+Shininess = 32
+Double-sided = TRUE
+Opaque Texture = w259_m5.ptd

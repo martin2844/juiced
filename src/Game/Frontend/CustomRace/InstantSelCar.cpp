@@ -41,7 +41,8 @@ void InstantSelCar::enter(CustomRaceHost& host, ui::Screen& s) {
         if (carLocked(d.arcade, groups.current()) && network() == nullptr) {
             const int32_t group = groups.group;
             groups.index = 0;
-            for (int32_t k = 0; k < 60 && group >= 0 && group < 8; ++k) {
+            for (int32_t k = 0; group >= 0 && group < 8 &&
+                                static_cast<size_t>(k) < groups.ids[static_cast<size_t>(group)].size(); ++k) {
                 const int32_t id = groups.ids[static_cast<size_t>(group)][static_cast<size_t>(k)];
                 if (id == 0) break;
                 if (!carLocked(d.arcade, id)) {

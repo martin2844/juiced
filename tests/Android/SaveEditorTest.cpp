@@ -45,6 +45,42 @@ int main(int argc, char** argv) {
         check(archive.entries["unknown-mod-data"] == original.entries["unknown-mod-data"], "Unknown entries preserved");
         check(game.career->garage.size() + game.career->padding.size() == 55, "Garage padding");
         auto rejected = [&](const auto& action) { try { action(); } catch (const std::exception&) { return; } throw std::runtime_error("Invalid edit was accepted"); };
+        if (game.tables.carModels.size() == 64) {
+            for (uint32_t storedCount : {0u, 4u}) {
+                game.newCareer(random, "Migration");
+                auto oldCareer = *game.career;
+                const auto newCarDefaults = oldCareer.profile.modProgress.back();
+                oldCareer.profile.modCount = storedCount;
+                if (storedCount) oldCareer.profile.performance(56)[3] = 2;
+                save::Archive oldArchive;
+                oldArchive.entries["CMSGlobal.sav"] = oldCareer.write();
+                oldArchive.entries["unknown-mod-data"] = {44, 55};
+                const auto oldBytes = bytes(oldArchive.write());
+                saveedit::load(game, oldBytes);
+                check(game.career->profile.modCount == 11, "Older roster expands to eleven added cars");
+                const auto& newCarProgress = game.career->profile.modProgress.back();
+                check(newCarProgress.performance == newCarDefaults.performance &&
+                          newCarProgress.body == newCarDefaults.body && newCarProgress.paint == newCarDefaults.paint &&
+                          newCarProgress.step == newCarDefaults.step,
+                      "Newly installed cars retain initialized unlock defaults");
+                if (storedCount) check(game.career->profile.performance(56)[3] == 2, "Existing added-car upgrades preserved");
+                auto migratedChanges = changes;
+                migratedChanges.addCars.clear();
+                const auto migratedBytes = saveedit::edit(game, oldBytes, migratedChanges);
+                const auto migrated = saveedit::load(game, bytes(migratedBytes));
+                check(game.career->profile.money == changes.money, "Older-roster save remains editable");
+                check(migrated.entries.at("unknown-mod-data") == oldArchive.entries.at("unknown-mod-data"),
+                      "Migration preserves unrelated archive entries");
+                check(oldBytes == bytes(oldArchive.write()), "Migration leaves source archive untouched");
+                auto corruptCareer = oldArchive;
+                corruptCareer.entries["CMSGlobal.sav"].pop_back();
+                rejected([&] { saveedit::load(game, bytes(corruptCareer.write())); });
+                corruptCareer = oldArchive;
+                corruptCareer.entries["CMSGlobal.sav"].push_back(0xFF);
+                rejected([&] { saveedit::load(game, bytes(corruptCareer.write())); });
+            }
+            std::cout << "PASS: stock and four-car saves migrate to eleven added cars; malformed careers rejected\n";
+        }
         auto invalid = changes; invalid.money = -1; rejected([&] { saveedit::edit(game, input, invalid); });
         invalid = changes; invalid.respect[0] = 1501; rejected([&] { saveedit::edit(game, input, invalid); });
         invalid = changes; invalid.addCars = {"DOES_NOT_EXIST"}; rejected([&] { saveedit::edit(game, input, invalid); });
