@@ -182,7 +182,9 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
     struct JobEnd {
         explicit JobEnd(oj::render::IRenderDevice& d) {
             oj::loadingThread().setJobEnd([&d] { d.waitForService(); });
+#if defined(OJ_LINUX) || defined(OJ_ANDROID)
             oj::frameTurns().setFrameWaitService([&d] { d.letLoadingRun(); });
+#endif
         }
         ~JobEnd() {
             oj::frameTurns().setFrameWaitService(nullptr);

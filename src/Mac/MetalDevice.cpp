@@ -690,6 +690,7 @@ void MetalDevice::letLoadingRun() {
     if (!p->onDeviceThread() || !p->inFrame) return;
     p->endPass();
     p->deviceLock.unlock();
+    IRenderDevice::letLoadingRun();
     std::this_thread::sleep_for(std::chrono::milliseconds(1));
     p->deviceLock.lock();
 }

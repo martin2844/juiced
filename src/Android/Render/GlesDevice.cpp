@@ -1071,8 +1071,11 @@ void GlesDevice::letLoadingRun() {
     // Let the producer enqueue its next request within a bounded loading slice.
     // Empty queues return immediately; all GL calls still run on the context owner.
     std::unique_lock lock(workMutex);
-    if (work.empty())
+    if (work.empty()) {
+        lock.unlock();
+        IRenderDevice::letLoadingRun();
         return;
+    }
     const auto deadline = std::chrono::steady_clock::now() + std::chrono::milliseconds(4);
     do {
         auto task = std::move(work.front());
