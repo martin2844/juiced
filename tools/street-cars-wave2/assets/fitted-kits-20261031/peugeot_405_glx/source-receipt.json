@@ -1,0 +1,14 @@
+{
+  "source_study": "/run/media/martin/Ediloco/OpenJuice-builds/20261031-fitted-kits/peugeot_405_glx-study06",
+  "files": {
+    "native-candidate-receipt.json": "0e58c8ec765201edf5f255536a9180a803ff70a6ca344948957334a90077013e",
+    "peugeot_405_glx-kit2.glb": "027bce277cdf96a861b261db7f35f8a30e12e9c70daaeda63e1c47aec40b891b",
+    "native-vertex-study.json": "18ef309c0f86e3e844ea207282c678f6fa6d7fe0fefbaa041d34bb3af55d5fd7",
+    "peugeot_405_glx-fitted-kits.blend": "b50eaa9ac4bb9f0bae1e59a906de2b90f88eb103787bf998a06a6f62cd27b2f4",
+    "peugeot_405_glx-kit3.glb": "4609f4515ef28a92b0853b06f85305c0a0bdb5bab92d7a80595a9a9c316d9b10"
+  },
+  "authoring_tool_sha256": "da43ee82b1372be6fbdfab1ccbf4abb041265408ab0421cd606b9b9b63877b3b",
+  "adapter_sha256": "1bc3f4d2d335cbfcb018bd6a06492a88fa0b821c1e2d594be4a9781c226ac74a",
+  "approval_scope": "kit2/3 fit correction, not full ten-car acceptance",
+  "installed_source_verified_in_bundle": "r14 / Wave2 12"
+}

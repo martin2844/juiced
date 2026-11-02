@@ -405,12 +405,22 @@ class SdlController final : public input::ControllerPort {
             if ((a.semantic >> 24) == 0x81)
                 continue; // keyboard values are supplied independently
             int value = 0;
+            if (!ui && a.semantic >= 0x7F000100u && a.semantic <= 0x7F000105u) {
+                const bool third = button(SDL_GAMEPAD_BUTTON_BACK) != 0;
+                const SDL_GamepadButton directions[] = {SDL_GAMEPAD_BUTTON_DPAD_UP,
+                    SDL_GAMEPAD_BUTTON_DPAD_RIGHT, SDL_GAMEPAD_BUTTON_DPAD_DOWN,
+                    SDL_GAMEPAD_BUTTON_DPAD_LEFT, SDL_GAMEPAD_BUTTON_DPAD_UP, SDL_GAMEPAD_BUTTON_DPAD_DOWN};
+                const auto slot = a.semantic - 0x7F000100u;
+                value = (third == (slot >= 4)) ? button(directions[slot]) : 0;
+                result.events.emplace_back(a.appData, static_cast<uint32_t>(value));
+                continue;
+            }
             switch (a.semantic) {
             case 0xFF00C201u:
                 value = axis(SDL_GAMEPAD_AXIS_LEFTX);
-                if (button(SDL_GAMEPAD_BUTTON_DPAD_LEFT))
+                if (ui && button(SDL_GAMEPAD_BUTTON_DPAD_LEFT))
                     value = -100;
-                if (button(SDL_GAMEPAD_BUTTON_DPAD_RIGHT))
+                if (ui && button(SDL_GAMEPAD_BUTTON_DPAD_RIGHT))
                     value = 100;
                 break;
             case 0xFF014201u:

@@ -1,0 +1,7 @@
+Material Program = Coloured Spec ABlend
+Colour = 255 255 255
+Specular Colour = 110 110 110
+Specular Highlight = 55
+Shininess = 40
+Double-sided = TRUE
+Texture = w260_rear_clear_lens.ptd

@@ -1,0 +1,160 @@
+{
+  "status": "PRIVATE; not installed or visually approved",
+  "study": "/run/media/martin/Ediloco/OpenJuice-builds/20261031-fitted-kits/peugeot_405_glx-study06",
+  "baseline": "/home/martin/.local/share/openjuice/mods/street-cars-wave2",
+  "meshes": [
+    {
+      "path": "assets/cars/peugeot_405_glx/mesh/w257_kit2_fbump.d8m",
+      "sha256": "aa76d1cf342c2bb9e42ef66d9128d777eefdba9a03342005308ac42ad9f4df6e",
+      "stock_sha256": "084007b474e192d1e2b485a7f9dd3cdec5d8225bf960793731b2b11d9612d422",
+      "added_triangles": 0,
+      "changed_vertices": 0,
+      "protected_vertices": 2232
+    },
+    {
+      "path": "assets/cars/peugeot_405_glx_ui/mesh/w257_kit2_fbump.d8m",
+      "sha256": "aa76d1cf342c2bb9e42ef66d9128d777eefdba9a03342005308ac42ad9f4df6e",
+      "stock_sha256": "084007b474e192d1e2b485a7f9dd3cdec5d8225bf960793731b2b11d9612d422",
+      "added_triangles": 0,
+      "changed_vertices": 0,
+      "protected_vertices": 2232
+    },
+    {
+      "path": "assets/cars/peugeot_405_glx/mesh/w257_kit2_rbump.d8m",
+      "sha256": "fc11b5f80e024e4aa800f0cc8f8f330969e8207ca6f7b1cada42bdb60c6e7b58",
+      "stock_sha256": "cd0cb99ab20937656f0183c89cad83517452f2ef811c21e92c6af66e9d810816",
+      "added_triangles": 1688,
+      "changed_vertices": 0,
+      "protected_vertices": 1429
+    },
+    {
+      "path": "assets/cars/peugeot_405_glx_ui/mesh/w257_kit2_rbump.d8m",
+      "sha256": "fc11b5f80e024e4aa800f0cc8f8f330969e8207ca6f7b1cada42bdb60c6e7b58",
+      "stock_sha256": "cd0cb99ab20937656f0183c89cad83517452f2ef811c21e92c6af66e9d810816",
+      "added_triangles": 1688,
+      "changed_vertices": 0,
+      "protected_vertices": 1429
+    },
+    {
+      "path": "assets/cars/peugeot_405_glx/mesh/w257_kit2_sskirt_l.d8m",
+      "sha256": "6b04eaa7860da4c5dd344d343574ee8625bbde38db2bc00ecc3fa068caffb88d",
+      "stock_sha256": "2f7903ecfa379c6f782bb2a296cbd0a8575f0819973d9f3fe1757321cc1b58a7",
+      "added_triangles": 692,
+      "changed_vertices": 0,
+      "protected_vertices": 168
+    },
+    {
+      "path": "assets/cars/peugeot_405_glx_ui/mesh/w257_kit2_sskirt_l.d8m",
+      "sha256": "6b04eaa7860da4c5dd344d343574ee8625bbde38db2bc00ecc3fa068caffb88d",
+      "stock_sha256": "2f7903ecfa379c6f782bb2a296cbd0a8575f0819973d9f3fe1757321cc1b58a7",
+      "added_triangles": 692,
+      "changed_vertices": 0,
+      "protected_vertices": 168
+    },
+    {
+      "path": "assets/cars/peugeot_405_glx/mesh/w257_kit2_sskirt_r.d8m",
+      "sha256": "61a036e658813dd144e1417e61dcd6e1f73920ec7c063f59834e24d1fd41479f",
+      "stock_sha256": "145cdc8322af068b8b19d4007b3c60fbac9120cb9189954088a843fe5edfebd6",
+      "added_triangles": 692,
+      "changed_vertices": 0,
+      "protected_vertices": 172
+    },
+    {
+      "path": "assets/cars/peugeot_405_glx_ui/mesh/w257_kit2_sskirt_r.d8m",
+      "sha256": "61a036e658813dd144e1417e61dcd6e1f73920ec7c063f59834e24d1fd41479f",
+      "stock_sha256": "145cdc8322af068b8b19d4007b3c60fbac9120cb9189954088a843fe5edfebd6",
+      "added_triangles": 692,
+      "changed_vertices": 0,
+      "protected_vertices": 172
+    },
+    {
+      "path": "assets/cars/peugeot_405_glx/mesh/w257_kit3_fbump.d8m",
+      "sha256": "440986ef92018a52b7e9e37e8c6cd3dd94a89dc6c002dd726d35e4a6b5e18a19",
+      "stock_sha256": "084007b474e192d1e2b485a7f9dd3cdec5d8225bf960793731b2b11d9612d422",
+      "added_triangles": 1180,
+      "changed_vertices": 0,
+      "protected_vertices": 2232
+    },
+    {
+      "path": "assets/cars/peugeot_405_glx_ui/mesh/w257_kit3_fbump.d8m",
+      "sha256": "440986ef92018a52b7e9e37e8c6cd3dd94a89dc6c002dd726d35e4a6b5e18a19",
+      "stock_sha256": "084007b474e192d1e2b485a7f9dd3cdec5d8225bf960793731b2b11d9612d422",
+      "added_triangles": 1180,
+      "changed_vertices": 0,
+      "protected_vertices": 2232
+    },
+    {
+      "path": "assets/cars/peugeot_405_glx/mesh/w257_kit3_rbump.d8m",
+      "sha256": "0237ccdb0984dd20e4a56289f4d63f4a2233600eacd51b8bdf3204b7ffa4497f",
+      "stock_sha256": "cd0cb99ab20937656f0183c89cad83517452f2ef811c21e92c6af66e9d810816",
+      "added_triangles": 1664,
+      "changed_vertices": 0,
+      "protected_vertices": 1429
+    },
+    {
+      "path": "assets/cars/peugeot_405_glx_ui/mesh/w257_kit3_rbump.d8m",
+      "sha256": "0237ccdb0984dd20e4a56289f4d63f4a2233600eacd51b8bdf3204b7ffa4497f",
+      "stock_sha256": "cd0cb99ab20937656f0183c89cad83517452f2ef811c21e92c6af66e9d810816",
+      "added_triangles": 1664,
+      "changed_vertices": 0,
+      "protected_vertices": 1429
+    },
+    {
+      "path": "assets/cars/peugeot_405_glx/mesh/w257_kit3_sskirt_l.d8m",
+      "sha256": "8ee5459cb88d9574bfadf9e0ebbf1e2805966c85f336a1c6d895bca5e1c42d25",
+      "stock_sha256": "2f7903ecfa379c6f782bb2a296cbd0a8575f0819973d9f3fe1757321cc1b58a7",
+      "added_triangles": 692,
+      "changed_vertices": 0,
+      "protected_vertices": 168
+    },
+    {
+      "path": "assets/cars/peugeot_405_glx_ui/mesh/w257_kit3_sskirt_l.d8m",
+      "sha256": "8ee5459cb88d9574bfadf9e0ebbf1e2805966c85f336a1c6d895bca5e1c42d25",
+      "stock_sha256": "2f7903ecfa379c6f782bb2a296cbd0a8575f0819973d9f3fe1757321cc1b58a7",
+      "added_triangles": 692,
+      "changed_vertices": 0,
+      "protected_vertices": 168
+    },
+    {
+      "path": "assets/cars/peugeot_405_glx/mesh/w257_kit3_sskirt_r.d8m",
+      "sha256": "32d96b2936a7e1294acccafc7a9e8e6ca7cc067d46795f68a8b73011cc537ea0",
+      "stock_sha256": "145cdc8322af068b8b19d4007b3c60fbac9120cb9189954088a843fe5edfebd6",
+      "added_triangles": 692,
+      "changed_vertices": 0,
+      "protected_vertices": 172
+    },
+    {
+      "path": "assets/cars/peugeot_405_glx_ui/mesh/w257_kit3_sskirt_r.d8m",
+      "sha256": "32d96b2936a7e1294acccafc7a9e8e6ca7cc067d46795f68a8b73011cc537ea0",
+      "stock_sha256": "145cdc8322af068b8b19d4007b3c60fbac9120cb9189954088a843fe5edfebd6",
+      "added_triangles": 692,
+      "changed_vertices": 0,
+      "protected_vertices": 172
+    }
+  ],
+  "exports": {
+    "peugeot_405_glx-kit2.glb": "027bce277cdf96a861b261db7f35f8a30e12e9c70daaeda63e1c47aec40b891b",
+    "peugeot_405_glx-kit3.glb": "4609f4515ef28a92b0853b06f85305c0a0bdb5bab92d7a80595a9a9c316d9b10"
+  },
+  "changed_files": [
+    "assets/cars/peugeot_405_glx/mesh/w257_kit2_fbump.d8m",
+    "assets/cars/peugeot_405_glx/mesh/w257_kit2_rbump.d8m",
+    "assets/cars/peugeot_405_glx/mesh/w257_kit2_sskirt_l.d8m",
+    "assets/cars/peugeot_405_glx/mesh/w257_kit2_sskirt_r.d8m",
+    "assets/cars/peugeot_405_glx/mesh/w257_kit3_fbump.d8m",
+    "assets/cars/peugeot_405_glx/mesh/w257_kit3_rbump.d8m",
+    "assets/cars/peugeot_405_glx/mesh/w257_kit3_sskirt_l.d8m",
+    "assets/cars/peugeot_405_glx/mesh/w257_kit3_sskirt_r.d8m",
+    "assets/cars/peugeot_405_glx_ui/mesh/w257_kit2_fbump.d8m",
+    "assets/cars/peugeot_405_glx_ui/mesh/w257_kit2_rbump.d8m",
+    "assets/cars/peugeot_405_glx_ui/mesh/w257_kit2_sskirt_l.d8m",
+    "assets/cars/peugeot_405_glx_ui/mesh/w257_kit2_sskirt_r.d8m",
+    "assets/cars/peugeot_405_glx_ui/mesh/w257_kit3_fbump.d8m",
+    "assets/cars/peugeot_405_glx_ui/mesh/w257_kit3_rbump.d8m",
+    "assets/cars/peugeot_405_glx_ui/mesh/w257_kit3_sskirt_l.d8m",
+    "assets/cars/peugeot_405_glx_ui/mesh/w257_kit3_sskirt_r.d8m"
+  ],
+  "all_other_runtime_files_unchanged": true,
+  "original_uvs_colours_unknown_vertex_data_preserved": true,
+  "protected_receiver_vertices_unchanged": true
+}

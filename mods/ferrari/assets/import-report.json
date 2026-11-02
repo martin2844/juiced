@@ -25,10 +25,10 @@
     ]
   },
   "meshes": {
-    "f458_CHASS": 130404,
-    "f458_FBUMP": 13711,
+    "f458_CHASS": 129120,
+    "f458_FBUMP": 13191,
     "f458_RBUMP": 12140,
-    "f458_BONNET": 804,
+    "f458_BONNET": 2608,
     "f458_SSKIRT_L": 888,
     "f458_SSKIRT_R": 870,
     "f458_BRKLIGHT": 7130,
@@ -36,9 +36,9 @@
     "f458_wheel": 12666,
     "f458_wheel_blur": 12666,
     "f458_spoiler": 44,
-    "f458_sport_FBUMP": 13755,
+    "f458_sport_FBUMP": 13235,
     "f458_sport_RBUMP": 12184,
-    "f458_sport_BONNET": 1396,
+    "f458_sport_BONNET": 2608,
     "f458_sport_SSKIRT_L": 932,
     "f458_sport_SSKIRT_R": 914,
     "f458_sport_SPOILER": 176,
@@ -154,5 +154,6 @@
       }
     },
     "license": "CC-BY-SA-3.0"
-  }
+  },
+  "bonnet_source": "Detached source front-lid component, 2608 triangles; full-panel carbon; no inset."
 }

@@ -1,0 +1,12 @@
+Material Program = Car Body
+Car Colour = 17 22 29
+Side Fresnel = 0.35
+Front Fresnel = 0.10
+Metallic Colour = 0 0 0
+Pearlescent Colour = 0 0 0
+Metallic Shininess = 20
+Pearlescent Shininess = 0
+Metallic = FALSE
+Double-sided = FALSE
+Paint Work = w257_paint.ptd
+Scratch & Reflect = w257_scratch.ptd

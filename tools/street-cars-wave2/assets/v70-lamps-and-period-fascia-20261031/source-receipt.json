@@ -1,0 +1,18 @@
+{
+  "native_baseline_bundle": "OpenJuice-Car-Visual-Fixes-r14.zip",
+  "native_baseline_bundle_sha256": "d123a1adfe51c48b17171c9290f47b45304dd5fc6b7f02eb878e6b744be82393",
+  "lamp_study": "/run/media/martin/Ediloco/OpenJuice-builds/20261031-v70-lamps/study05",
+  "files": {
+    "period-coating08.json": "ded976b56149c5bbeb7ef6db533ab0d9225553f7a4bea99dc433b83efca7511d",
+    "visual-review.json": "7d703dc9b4805714f42cb634fe097178cd9eefbd0535efd2b15c7660c25305b4",
+    "independent-native-verification.json": "0749f5df508934c30f56b9a49190b5301751fcfa0c75a2ea6b86aad60d6900d5",
+    "v70-fitted-lamps.blend": "caabf41df8662caf27c710ea7f6c148e463d87f40ad8dfe2c33af9e3f3c43a23",
+    "lamp-repair.json": "522999416f31fe54806b92f5d1c8f7be1e734900b8c9a691893411a60560daee"
+  },
+  "tools": {
+    "repair_v70_lamp_layout.py": "29dc8b89bf63320ae3a0b338424405902248b704171aba5d7e7a5b8a0c976fd1",
+    "coat_period_bumper_kits.py": "1fa345bacdf9d30bcb382486d6785da96c290c747621505e265b21ba4ec1ea2c"
+  },
+  "status": "Accepted sources verified in installed local r15 / Wave2 13; physical RP5 pending",
+  "installed_bundle_sha256": "a510b0eb2aa89aca461f95b47080b4a0ddcc5e68453a6c4d66bce9c8973ebb78"
+}

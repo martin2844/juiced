@@ -4,6 +4,7 @@
 #include "Game/Race/Hud/HudInternal.h"
 
 #include "Core/Data/GameTexts.h"
+#include "Core/Cars/CarDisplayName.h"
 #include "Core/Input/Input.h"
 #include "Core/Network/Matchmaking.h"
 #include "Core/Network/NetSession.h"
@@ -139,7 +140,7 @@ void RaceResults::fill(const HudRace& race) {
                 if (race.networked) {
                     if (m_car[i] >= 0) s.clearText(m_car[i]);
                 } else if (car != nullptr && car->carRecord != nullptr && car->carRecord->def != nullptr) {
-                    set(m_car[i], m_texts.at(kTextModels + static_cast<size_t>(car->carRecord->def->id)));
+                    set(m_car[i], carDisplayName(m_texts, *car->carRecord->def));
                 }
                 if (c == own) {
                     for (const int e : {m_name[i], m_team[i], m_car[i], m_raceTime[i]}) {
@@ -185,7 +186,7 @@ void RaceResults::fillNet(const HudRace& race) {
                 set(m_raceTime[i], widen(hudTime(std::bit_cast<float>(p->race.finishTime))));
                 const auto* car = static_cast<const RaceCar*>(p->raceCar);
                 if (car != nullptr && car->carRecord != nullptr && car->carRecord->def != nullptr) {
-                    set(m_car[i], m_texts.at(kTextModels + static_cast<size_t>(car->carRecord->def->id)));
+                    set(m_car[i], carDisplayName(m_texts, *car->carRecord->def));
                 }
                 if (p->peer == -1) {
                     for (const int e : {m_name[i], m_raceTime[i], m_car[i]}) {
@@ -304,7 +305,7 @@ void RaceResults::fillOnlineTeams(const HudRace& race) {
         const Competitor* competitor = car->competitor;
         if (m_name[row] >= 0) s.setText(m_name[row], std::wstring(players[u].name.begin(), players[u].name.end()));
         if (m_car[row] >= 0 && car->carRecord != nullptr && car->carRecord->def != nullptr) {
-            s.setText(m_car[row], m_texts.at(kTextModels + static_cast<size_t>(car->carRecord->def->id)));
+            s.setText(m_car[row], carDisplayName(m_texts, *car->carRecord->def));
         }
         if (m_team[row] >= 0) s.clearText(m_team[row]);
         for (const int e : {m_pos[row], m_name[row], m_team[row], m_bar[row], m_car[row]}) {

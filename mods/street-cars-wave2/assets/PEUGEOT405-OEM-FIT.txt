@@ -1,0 +1,17 @@
+
+## r23 — Peugeot405 kits fitted around the actual OEM perimeter
+
+Six bumper replacements now follow the real U-shaped OEM contour, including
+its overhang and the return toward the wheel. A narrow original mounting band
+is the single outer skin at the joint; the new fascia is the single skin below
+it. Lower sections have controlled convex curvature and taper, with the stock
+wheel centres unchanged. Lamp/intake proportions are preserved by taking extra
+height in the plain mounting section. Opaque, double-sided textured interior
+walls replace Constant Colour reveals whose material class ignores a supplied
+Double-sided setting. The original fluted glass texture is reused for fog lamps.
+Only six bumper mesh pairs and their local interior material/texture are new.
+Fixed body, stock bumpers, other405 assets, other cars, catalogue and physics are
+byte-identical to r22. The approved102-to-400BHP preparation remains unchanged.
+Reviewed using the real workshop and selector. Linux only installation here.
+Sources and editable Blender files: tools/peugeot405-oem-fit.
+The earlier source model and photograph attribution remains applicable.

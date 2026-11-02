@@ -1,0 +1,1 @@
+r19:405 kit and bonnet revisions authored in Blender by the local OpenJuice port project,2026-11-01. Photo-derived interpretations, not exact commercial-kit replicas. Source405 model/textures retain original attribution in SOURCE-CREDITS.json. New reference provenance and limitations: PEUGEOT405-PHOTO-REFERENCES.json. Existing r18 wings unchanged.

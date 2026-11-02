@@ -1,6 +1,7 @@
 // The crew race's setup (CMSCrewRaceSetup).
 
 #include "Game/Frontend/Career/CrewRaceSetup.h"
+#include "Game/Frontend/Career/TeamRaceText.h"
 
 #include "Core/Data/GameTexts.h"
 #include "Game/Frontend/WindowTools.h"
@@ -56,7 +57,7 @@ void CrewRaceSetup::enter(CareerHost& host, ui::Screen& s) {
         s.setHidden(std::format("crewpic{}", k + 1), false);
     }
     m_members.fill(-1);
-    s.setText("Type", texts.at(kTextTeamSizes + static_cast<size_t>(std::max<int>(round.teamSize, 0))));
+    s.setText("Type", teamRaceCaption(texts, round));
     s.setText("Choose", texts.at(kTextSelectDrivers) + toWide(std::format("{}", round.teamSize - m_chosen)));
     hideAll(s, "0");
     s.show("1", false);

@@ -68,6 +68,8 @@ struct LaunchOptions {
                                   // machine gives as its own: two games on one machine (127.0.0.1)
     bool autopilot = false;       // --autopilot: the player's car in a race is driven by its competitor's AI (+8 = 1)
                                   // from the start (not of the game: to watch a race through)
+    uint32_t replayCaptureFrame = 0; // --replay-capture-frame N: with --test only,
+                                    // fixed 1/60 updates, capture/exit at replay time N/60.
     int players = 0;              // --players N: the race's players ([G+0x6C]+0x58) and, with more than one, a split
                                   // screen race (mode 3), as multi's "split" leaves them (not of the game: to see a
                                   // split screen race with one device)

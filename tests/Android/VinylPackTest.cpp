@@ -3,11 +3,16 @@
 #include "Core/Data/GameData.h"
 #include "Core/Cars/CarPhysics.h"
 #include "Game/Cars/CarView.h"
+#if defined(__linux__) && !defined(__ANDROID__)
+#include "Linux/Render/GlesDevice.h"
+#else
 #include "Android/Render/GlesDevice.h"
+#endif
 #include "Framework/Fakes/NullRenderDevice.h"
 #include "Framework/Fakes/FakeGarageHost.h"
 #include "Game/Frontend/Garage/Customise/Styling.h"
 #include <SDL3/SDL.h>
+#include <cstdlib>
 #include <iostream>
 #include <stdexcept>
 
@@ -18,9 +23,35 @@ int main(int argc, char** argv) {
         const auto game=std::filesystem::absolute(argv[1]), overlay=std::filesystem::absolute(argv[2]);
         const auto captures=argc>3?std::filesystem::absolute(argv[3]):std::filesystem::path{};
         std::filesystem::current_path(game);
+        std::vector<CarDef> baseline;
+        if (const char* path=std::getenv("OJ_VINYL_BASELINE")) {
+            GameFiles::setOverrideRoot(std::filesystem::absolute(path));
+            CrtRandom random; GameData original(game); std::string error;
+            if (!original.load(random,&error)) throw std::runtime_error(error);
+            baseline=original.defs.cars;
+        }
         GameFiles::setOverrideRoot(overlay);
         CrtRandom random; GameData data(game); std::string error;
         if (!data.load(random,&error)) throw std::runtime_error(error);
+        if (!baseline.empty()) {
+            if (baseline.size()!=data.defs.cars.size()) throw std::runtime_error("Vinyl pack changed car roster");
+            for (size_t c=0;c<baseline.size();++c) {
+                const auto& before=baseline[c]; const auto& after=data.defs.cars[c];
+                if (before.name!=after.name || before.id!=after.id || before.model!=after.model)
+                    throw std::runtime_error("Vinyl pack changed saved car identifiers");
+                for (int k=0;k<kCarPartCategories;++k) {
+                    const auto& a=before.parts[k]; const auto& b=after.parts[k];
+                    if (b.parts.size()<a.parts.size() || a.allowNone!=b.allowNone || a.standard!=b.standard ||
+                        (k!=kDecal && a.parts.size()!=b.parts.size()))
+                        throw std::runtime_error("Vinyl pack changed existing part catalogue");
+                    for (size_t i=0;i<a.parts.size();++i)
+                        if (a.parts[i].model!=b.parts[i].model || a.parts[i].index!=b.parts[i].index ||
+                            a.parts[i].label!=b.parts[i].label || a.parts[i].brand!=b.parts[i].brand)
+                            throw std::runtime_error("Vinyl pack changed an existing saved part index");
+                }
+            }
+            std::cout<<"PASS existing car/part identifiers and indices preserved\n";
+        }
         test::NullRenderDevice nullDevice;
         std::unique_ptr<render::GlesDevice> gpu;
         if (!captures.empty()) {
@@ -72,7 +103,7 @@ int main(int argc, char** argv) {
                     throw std::runtime_error("Vinyl index save round trip");
                 ++count;
                 ui::Screen menu(device,*Language::byName("english"));
-                if (!checkedMenu) {
+                {
                     if (!menu.load("decalmenu")) throw std::runtime_error("decalmenu screen");
                     test::FakeGarageHost host;host.data=&data;host.base=&screen;
                     host.texts.load("scripts/english.txt");

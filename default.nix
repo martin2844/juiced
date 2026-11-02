@@ -3,6 +3,7 @@
     sha256 = "1br666y8sjng35y1di6nbclnigjadnls6311w908p5km2kxmlnb9";
   }) {} }:
 let
+  media = import ./nix/ffmpeg.nix { inherit pkgs; };
   mojo = pkgs.fetchzip {
     url = "https://github.com/icculus/mojoshader/archive/ad5dff84830c2863c841f4b1f4e3df78c705b383.tar.gz";
     sha256 = "1whcz9f4mx8psss9k0nnab5jwl4b7pyvwdbzd7fqmi376brp6vfs";
@@ -13,11 +14,16 @@ in pkgs.stdenv.mkDerivation {
   src = pkgs.lib.cleanSourceWith {
     src = ./.;
     filter = path: type:
-      !(builtins.elem (baseNameOf path) [ ".git" "out" ".cache" "assets" "result" ])
-      && pkgs.lib.cleanSourceFilter path type;
+      let
+        relative = pkgs.lib.removePrefix (toString ./. + "/") (toString path);
+        androidOutput = builtins.any
+          (prefix: relative == prefix || pkgs.lib.hasPrefix (prefix + "/") relative)
+          [ "android/.gradle" "android/.cxx" "android/build" "android/app/.cxx" "android/app/build" ];
+      in !(builtins.elem (baseNameOf path) [ ".git" "out" ".cache" "assets" "result" ])
+      && !androidOutput && pkgs.lib.cleanSourceFilter path type;
   };
   nativeBuildInputs = with pkgs; [ cmake ninja pkg-config makeWrapper ];
-  buildInputs = with pkgs; [ sdl3 ffmpeg libglvnd lua5_4 gdk-pixbuf ];
+  buildInputs = with pkgs; [ sdl3 media libglvnd lua5_4 gdk-pixbuf ];
   preConfigure = ''
     cp -r ${mojo} mojoshader-source
     chmod -R u+w mojoshader-source

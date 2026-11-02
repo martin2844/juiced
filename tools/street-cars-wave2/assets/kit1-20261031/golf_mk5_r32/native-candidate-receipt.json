@@ -1,0 +1,87 @@
+{
+  "status": "PRIVATE; not installed or visually approved",
+  "study": "/run/media/martin/Ediloco/OpenJuice-builds/20261031-wave2-kit1/golf_mk5_r32-study01",
+  "baseline": "/run/media/martin/Ediloco/OpenJuice-builds/20261031-wave2-kit1/combined-step3",
+  "meshes": [
+    {
+      "path": "assets/cars/golf_mk5_r32/mesh/w259_kit1_fbump.d8m",
+      "sha256": "40f72bbfe267122a88c141c270616c41495bce5bf7f6151be56a6cb596f89ce6",
+      "stock_sha256": "220e523ce7197aebb88f836522781410acd945e3eb4438325c6dd39c90094332",
+      "added_triangles": 824,
+      "changed_vertices": 263,
+      "protected_vertices": 7219
+    },
+    {
+      "path": "assets/cars/golf_mk5_r32_ui/mesh/w259_kit1_fbump.d8m",
+      "sha256": "40f72bbfe267122a88c141c270616c41495bce5bf7f6151be56a6cb596f89ce6",
+      "stock_sha256": "220e523ce7197aebb88f836522781410acd945e3eb4438325c6dd39c90094332",
+      "added_triangles": 824,
+      "changed_vertices": 263,
+      "protected_vertices": 7219
+    },
+    {
+      "path": "assets/cars/golf_mk5_r32/mesh/w259_kit1_rbump.d8m",
+      "sha256": "85b1d0d938928bc5b356d1dac20523ef026739d756faed7ec753366f786fa3c5",
+      "stock_sha256": "9c742d0237f0db209c34f626d3699bfdf8973685a04dab0915ef20cb9de0eda7",
+      "added_triangles": 1244,
+      "changed_vertices": 74,
+      "protected_vertices": 2888
+    },
+    {
+      "path": "assets/cars/golf_mk5_r32_ui/mesh/w259_kit1_rbump.d8m",
+      "sha256": "85b1d0d938928bc5b356d1dac20523ef026739d756faed7ec753366f786fa3c5",
+      "stock_sha256": "9c742d0237f0db209c34f626d3699bfdf8973685a04dab0915ef20cb9de0eda7",
+      "added_triangles": 1244,
+      "changed_vertices": 74,
+      "protected_vertices": 2888
+    },
+    {
+      "path": "assets/cars/golf_mk5_r32/mesh/w259_kit1_sskirt_l.d8m",
+      "sha256": "8d9a168774b371e55d69c75ab8478b3fe8a96ead9c828be197486ea620b8d896",
+      "stock_sha256": "66ceb6de7be9934542d4208a3e80206cb6d2975efecd4ee7f5b69c4cab3f6ad3",
+      "added_triangles": 612,
+      "changed_vertices": 0,
+      "protected_vertices": 522
+    },
+    {
+      "path": "assets/cars/golf_mk5_r32_ui/mesh/w259_kit1_sskirt_l.d8m",
+      "sha256": "8d9a168774b371e55d69c75ab8478b3fe8a96ead9c828be197486ea620b8d896",
+      "stock_sha256": "66ceb6de7be9934542d4208a3e80206cb6d2975efecd4ee7f5b69c4cab3f6ad3",
+      "added_triangles": 612,
+      "changed_vertices": 0,
+      "protected_vertices": 522
+    },
+    {
+      "path": "assets/cars/golf_mk5_r32/mesh/w259_kit1_sskirt_r.d8m",
+      "sha256": "e8eb84a358d8751563b317cc587b09fba80ba2a4e123021b7cf8cbdf521fdd55",
+      "stock_sha256": "108f2f4be6e5d94b82bc72d6dc769f463430a4e015064227d999f935a9f3b502",
+      "added_triangles": 612,
+      "changed_vertices": 0,
+      "protected_vertices": 526
+    },
+    {
+      "path": "assets/cars/golf_mk5_r32_ui/mesh/w259_kit1_sskirt_r.d8m",
+      "sha256": "e8eb84a358d8751563b317cc587b09fba80ba2a4e123021b7cf8cbdf521fdd55",
+      "stock_sha256": "108f2f4be6e5d94b82bc72d6dc769f463430a4e015064227d999f935a9f3b502",
+      "added_triangles": 612,
+      "changed_vertices": 0,
+      "protected_vertices": 526
+    }
+  ],
+  "exports": {
+    "golf_mk5_r32-kit1.glb": "438a3d2ba4c09d8e76311f85b781dcfa063111639a52d958a56f387336f9b8bb"
+  },
+  "changed_files": [
+    "assets/cars/golf_mk5_r32/mesh/w259_kit1_fbump.d8m",
+    "assets/cars/golf_mk5_r32/mesh/w259_kit1_rbump.d8m",
+    "assets/cars/golf_mk5_r32/mesh/w259_kit1_sskirt_l.d8m",
+    "assets/cars/golf_mk5_r32/mesh/w259_kit1_sskirt_r.d8m",
+    "assets/cars/golf_mk5_r32_ui/mesh/w259_kit1_fbump.d8m",
+    "assets/cars/golf_mk5_r32_ui/mesh/w259_kit1_rbump.d8m",
+    "assets/cars/golf_mk5_r32_ui/mesh/w259_kit1_sskirt_l.d8m",
+    "assets/cars/golf_mk5_r32_ui/mesh/w259_kit1_sskirt_r.d8m"
+  ],
+  "all_other_runtime_files_unchanged": true,
+  "original_uvs_colours_unknown_vertex_data_preserved": true,
+  "protected_receiver_vertices_unchanged": true
+}

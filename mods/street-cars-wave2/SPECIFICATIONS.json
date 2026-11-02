@@ -1,5 +1,5 @@
 {
-  "status": "working specification; not yet installed or handling-calibrated",
+  "status": "Installed Linux ports; factory specification audit and native handling observations in progress. Individual gearing/chassis uncertainties remain explicitly noted.",
   "units": {
     "power": "kW, convert to mechanical bhp using 0.745699872",
     "length": "metres",
@@ -47,9 +47,12 @@
       "gears": 6,
       "zero_100_seconds": 6.5,
       "source": "https://www.volkswagen-newsroom.com/en/golf-5-20032008-19480",
-      "verification": "Manufacturer 2007 AU brochure: 3-door manual tare weight 1510 kg, 184 kW, 320 Nm, six-speed. Gear-ratio candidate still requires selected-market confirmation.",
+      "verification": "Manufacturer 2007 AU brochure: 3-door manual tare weight 1510 kg, 184 kW, 320 Nm, six-speed. Gear-ratio candidate still requires selected-market confirmation. VW 02Q AWD factory workshop table supports final drives 72/17 (1-4) and 72/22 (5/6/reverse); individual gear pairs remain provisional. Native single-final-drive representation folds the secondary ratio into fifth and sixth; old overall reverse retained pending exact reverse pair.",
       "mass_kg": 1510,
-      "mass_source": "https://autocatalogarchive.com/wp-content/uploads/2023/08/VW-Golf-R32-2007-AU.pdf"
+      "mass_source": "https://autocatalogarchive.com/wp-content/uploads/2023/08/VW-Golf-R32-2007-AU.pdf",
+      "transmission_source": "https://workshop-manuals.com/volkswagen/golf-mk5/power_transmission/6-speed_manual_gearbox_02q/technical_data/four-wheel_drive_gearbox_identification/four-wheel_drive_identification_codes_assembly_allocation_and_capacities_golf_4_motion_2005_%3F/",
+      "final_drive_primary": 4.235294117647059,
+      "final_drive_secondary": 3.272727272727273
     },
     {
       "key": "jetta-vento-mk5",
@@ -88,9 +91,19 @@
       "wheelbase_m": 2.64,
       "drive": "RWD",
       "source": "https://www.240.se/litteratur/MSPV535.pdf",
-      "verification": "Volvo 1984 technical brochure: 114 kW/155 DIN hp at 5500 rpm, 240 Nm at 3750 rpm, four-speed plus overdrive. Mass/gearing calibration still provisional.",
+      "verification": "Volvo 1984 Swedish owners manual printed p100: M46 first/second/third/fourth 4.03/2.16/1.37/1, reverse 3.68; .79 rounded overdrive. Factory service TP30425/4 printed p80 specifies .797 overdrive. Original 1984 brochure supplies B21ET 114kW/155DIN hp at 5500rpm, 240Nm at 3750rpm. Exact selected-variant mass and axle allocation remain estimates, not certified by the broad four-door 1330-1405kg Swedish service-weight range.",
       "power_kw": 114,
-      "torque_nm": 240
+      "torque_nm": 240,
+      "transmission_source": "https://www.240.se/litteratur/tp2401.pdf",
+      "transmission_detail_source": "https://www.240.se/litteratur/tp30425_4.pdf",
+      "forward_gear_ratios": [
+        4.03,
+        2.16,
+        1.37,
+        1,
+        0.797
+      ],
+      "reverse_gear_ratio": 3.68
     },
     {
       "key": "volvo-v70",
@@ -104,7 +117,7 @@
       "drive": "FWD",
       "gears": 5,
       "source": "https://www.auto-brochures.com/makes/Volvo/V70/Volvo_US%20V70_2004.pdf",
-      "verification": "manufacturer brochure mirror; listed curb weight needs transmission applicability check"
+      "verification": "Original Volvo North America 2004 brochure, printed p39, visually inspected: 2.4 base column lists 168 SAE-net hp, 166 lb-ft and 3488 lb curb, with five-speed manual standard and automatic optional. Treat curb as base/manual inference; no separately stated manual/automatic curb masses. Individual gear ratios remain provisional; do not substitute European 1528 kg for this US-market convention."
     }
   ],
   "kit_contract": {

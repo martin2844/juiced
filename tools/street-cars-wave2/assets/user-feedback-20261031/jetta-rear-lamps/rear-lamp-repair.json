@@ -1,0 +1,29 @@
+{
+  "original_source": "out/street-cars-wave2-20261029/jetta-vento-mk5-source.blend",
+  "original_sha256": "4f107f572c856c2aea9d8f7298dba6c420a0fe10ae533fd647c2eba4ed1d10ea",
+  "prepared_sha256": "a19e533ea565a55c71cea790d8efdcc85ccbe6c7788a9166baf29cd74daf1192",
+  "removed_old_triangles": 2009,
+  "restored_source_objects": [
+    "jettaa5_alu-material.007",
+    "jettaa5_alu-material.008",
+    "jettaa5_alu_R2_bake-material",
+    "jettaa5_alu_R2_bake-material.001",
+    "jettaa5_black-material.079",
+    "jettaa5_black-material.080",
+    "jettaa5_brakelight-material",
+    "jettaa5_brakelight-material.001",
+    "jettaa5_glass_lights-material",
+    "jettaa5_glass_lights-material.001",
+    "jettaa5_glass_lights-material.002",
+    "jettaa5_glass_lights-material.003",
+    "jettaa5_red-material",
+    "jettaa5_red-material.001",
+    "vivace-material.001",
+    "vivace-material.002"
+  ],
+  "restored_triangles": 8348,
+  "brake_cell_triangles": 324,
+  "new_brake_overlay": "actual source brake cells; no emissive whole outer lens",
+  "candidate": "/run/media/martin/Ediloco/OpenJuice-builds/20261031-car-feedback-r17/wave2-rearlamps11",
+  "installed": false
+}

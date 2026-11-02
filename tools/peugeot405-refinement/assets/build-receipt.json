@@ -1,0 +1,173 @@
+{
+  "author_sha256": "85a5ad1760e8f96b25b85e5660521d3c77d9f9d03edfde4d759941d2d9a87f12",
+  "helper_sha256": "1aad150b338a0fe91f0bbd5046cc2c138f8e58f337839b6808df1e37eab8d98c",
+  "source": "/home/martin/.local/share/openjuice/mods/street-cars-wave2",
+  "changed": [
+    "assets/cars/peugeot_405_glx/mesh/w257_chass.d8m",
+    "assets/cars/peugeot_405_glx/mesh/w257_kit1_rbump.d8m",
+    "assets/cars/peugeot_405_glx/mesh/w257_kit2_rbump.d8m",
+    "assets/cars/peugeot_405_glx/mesh/w257_kit3_rbump.d8m",
+    "assets/cars/peugeot_405_glx/mesh/w257_wing1.d8m",
+    "assets/cars/peugeot_405_glx/mesh/w257_wing2.d8m",
+    "assets/cars/peugeot_405_glx/mesh/w257_wing3.d8m",
+    "assets/cars/peugeot_405_glx_ui/mesh/w257_chass.d8m",
+    "assets/cars/peugeot_405_glx_ui/mesh/w257_kit1_rbump.d8m",
+    "assets/cars/peugeot_405_glx_ui/mesh/w257_kit2_rbump.d8m",
+    "assets/cars/peugeot_405_glx_ui/mesh/w257_kit3_rbump.d8m",
+    "assets/cars/peugeot_405_glx_ui/mesh/w257_wing1.d8m",
+    "assets/cars/peugeot_405_glx_ui/mesh/w257_wing2.d8m",
+    "assets/cars/peugeot_405_glx_ui/mesh/w257_wing3.d8m"
+  ],
+  "meshes": [
+    {
+      "name": "w257_kit1_rbump",
+      "objects": [
+        "Continuous_moulded_rear_shell",
+        "Recessed_number_plate_pocket_painted_rolled_rim",
+        "Recessed_number_plate_pocket_reveal",
+        "Recessed_number_plate_pocket_recessed_back",
+        "Fitted_lower_rolled_edge",
+        "Fitted_lower_rolled_edge.001",
+        "Period_upper_rub_strip",
+        "Plate_light_housing",
+        "Plate_light_housing.001"
+      ],
+      "authored_triangles": 3904,
+      "total_triangles": 4466,
+      "sha256": "4212e665e3a62b96c286bde998d6e024ff1333b09e267a1394d39f5ffdd9d16c"
+    },
+    {
+      "name": "w257_kit2_rbump",
+      "objects": [
+        "Continuous_moulded_rear_shell.001",
+        "Recessed_number_plate_pocket_painted_rolled_rim.001",
+        "Recessed_number_plate_pocket_reveal.001",
+        "Recessed_number_plate_pocket_recessed_back.001",
+        "Lower_valance_insert_0_painted_rolled_rim",
+        "Lower_valance_insert_0_reveal",
+        "Lower_valance_insert_0_recessed_back",
+        "Fitted_lower_rolled_edge.002",
+        "Fitted_lower_rolled_edge.003",
+        "Plate_light_housing.002",
+        "Plate_light_housing.003"
+      ],
+      "authored_triangles": 2772,
+      "total_triangles": 3334,
+      "sha256": "4e0af761806724a16fb7994d15c8cbc502d7b0258ba7bee06fa99beaeee413a2"
+    },
+    {
+      "name": "w257_kit3_rbump",
+      "objects": [
+        "Continuous_moulded_rear_shell.002",
+        "Recessed_number_plate_pocket_painted_rolled_rim.002",
+        "Recessed_number_plate_pocket_reveal.002",
+        "Recessed_number_plate_pocket_recessed_back.002",
+        "Lower_valance_insert_0_painted_rolled_rim.001",
+        "Lower_valance_insert_0_reveal.001",
+        "Lower_valance_insert_0_recessed_back.001",
+        "Fitted_lower_rolled_edge.004",
+        "Fitted_lower_rolled_edge.005",
+        "Plate_light_housing.004",
+        "Plate_light_housing.005"
+      ],
+      "authored_triangles": 2721,
+      "total_triangles": 3283,
+      "sha256": "336def85d71c0629ce2340e6d09554bcd163e739f423e43b7383d3cae4b9e639"
+    },
+    {
+      "name": "w257_wing1",
+      "objects": [
+        "Bonded_boot_lip_with_contoured_underside"
+      ],
+      "authored_triangles": 1486,
+      "total_triangles": 1486,
+      "sha256": "7a88c11f5674c1114aeba46398492ff6655e3a34d69adda7dfbb6220a3ee0a8c"
+    },
+    {
+      "name": "w257_wing2",
+      "objects": [
+        "Deck_fitted_rubber_shoe",
+        "Moulded_swept_bodycolour_pedestal",
+        "Deck_fitted_rubber_shoe.001",
+        "Moulded_swept_bodycolour_pedestal.001",
+        "Thin_cambered_painted_airfoil"
+      ],
+      "authored_triangles": 4364,
+      "total_triangles": 4364,
+      "sha256": "7165b055fba41afec2c43dba6cd01b7af9d1f8e51d73bd6a751469ca483ae480"
+    },
+    {
+      "name": "w257_wing3",
+      "objects": [
+        "Deck_fitted_rubber_shoe.002",
+        "Moulded_swept_bodycolour_pedestal.002",
+        "Deck_fitted_rubber_shoe.003",
+        "Moulded_swept_bodycolour_pedestal.003",
+        "Thin_cambered_painted_airfoil.001",
+        "Shaped_endcap",
+        "Shaped_endcap.001"
+      ],
+      "authored_triangles": 4628,
+      "total_triangles": 4628,
+      "sha256": "78ab3cf41f51903d016e39f48b5e06f7c147425099d44ef64a680d2686e782be"
+    },
+    {
+      "name": "w257_chass",
+      "objects": [
+        "Opaque_shaped_radiator_backing_and_returns",
+        "Sealed_grille_side_roof_and_floor_returns",
+        "Dark_radiator_fins",
+        "Dark_radiator_fins.001",
+        "Dark_radiator_fins.002",
+        "Dark_radiator_fins.003",
+        "Dark_radiator_fins.004",
+        "Dark_radiator_fins.005",
+        "Dark_radiator_fins.006"
+      ],
+      "authored_triangles": 632,
+      "total_triangles": 4140,
+      "sha256": "65dfdd5fb9c336655718805acac51306000ff217bedff0f2db5232f1e63498b5"
+    }
+  ],
+  "wing_mounts": [
+    {
+      "option": 1,
+      "seats": [],
+      "construction": "Bonded surface-following lip"
+    },
+    {
+      "option": 2,
+      "seats": [
+        {
+          "x": -61,
+          "z": -213.2,
+          "y": 100.36089477539062
+        },
+        {
+          "x": 61,
+          "z": -213.2,
+          "y": 100.46680603027343
+        }
+      ],
+      "construction": "Painted thin foil with individually seated moulded pedestals"
+    },
+    {
+      "option": 3,
+      "seats": [
+        {
+          "x": -49,
+          "z": -213.2,
+          "y": 100.56295928955078
+        },
+        {
+          "x": 49,
+          "z": -213.2,
+          "y": 100.63504180908203
+        }
+      ],
+      "construction": "Painted thin foil with individually seated moulded pedestals"
+    }
+  ],
+  "scope": "405 rear bumpers, wings and closed upper grille cavity only. No catalogue, front/hood/skirts, handling or save changes.",
+  "status": "Private native review pending"
+}

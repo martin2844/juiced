@@ -1,4 +1,9 @@
+// Exercise the same sequential-upload contract against each platform renderer.
+#ifdef OJ_ANDROID
 #include "Android/Render/GlesDevice.h"
+#else
+#include "Linux/Render/GlesDevice.h"
+#endif
 #include <SDL3/SDL.h>
 #include <array>
 #include <chrono>

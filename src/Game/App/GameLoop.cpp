@@ -10,6 +10,9 @@
 // (docs/spec/01-startup.md).
 
 #include "Game/App/GameLoop.h"
+#ifdef OJ_LINUX
+#include "Linux/Gamepad.h"
+#endif
 #include "Game/Race/RaceGrids.h"
 #include "Game/Race/ReplaySaves.h"
 
@@ -221,6 +224,12 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
             if (!oj::mods::packages::available() || oj::mods::runtime::feature("controls"))
                 oj::mac::applyBindings(controlMaps, oj::mac::loadBindings(oj::mac::bindingsPath()));
 #endif
+#ifdef OJ_ANDROID
+            oj::android::addCrewBindings(controlMaps);
+#endif
+#ifdef OJ_LINUX
+            oj::linux_port::addCrewBindings(controlMaps);
+#endif
             input.load(controlMaps);
 #ifdef OJ_ANDROID
             oj::android::touchBindings(controlMaps);
@@ -300,6 +309,19 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
     std::string firstWindow = options.screen;
     if (options.instantRace) {
         input.setPlayerDevice(0, 0);
+#ifdef OJ_LINUX
+        if (!options.test) {
+            // The keyboard occupies port zero on Linux. Prefer a present pad
+            // for the direct-race launcher, which bypasses player acquisition.
+            input.poll({}, true, 0.0f);
+            for (size_t i = 1; i < input.deviceCount(); ++i) {
+                if (input.device(i).connected) {
+                    input.setPlayerDevice(0, static_cast<int32_t>(i));
+                    break;
+                }
+            }
+        }
+#endif
         frontend->instantRace(options.m, options.wet);
         if (firstWindow == "disclaimer") firstWindow = "loading";
     }
@@ -325,8 +347,8 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
         oj::makeSpeech(1, language.index, oj::GameFiles(std::filesystem::current_path()));
     }
     if (options.players > 0) {
-        data.race.players = options.players;
-        if (options.players > 1) data.race.mode = oj::RaceMode::SplitScreen;
+        data.race.players = std::clamp(options.players, 1, 4);
+        if (data.race.players > 1) data.race.mode = oj::RaceMode::SplitScreen;
     }
     frontend->start(firstWindow);
     TrackView trackView;
@@ -396,7 +418,9 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
     trackView.input = &input;
     trackView.wheels = &inputDevices.wheels();
     const bool showTrack = !options.track.empty() && scene && trackView.start(*scene, options.track);
-    if (showTrack) input.useDriver();
+    if (showTrack) {
+        for (const auto& player : trackView.players) input.useDriver(player->controller);
+    }
     if (showTrack && !options.car.empty()) {
         for (const oj::CarDef& def : data.defs.cars) {
             if (_stricmp(def.name.c_str(), options.car.c_str()) != 0) continue;
@@ -407,16 +431,18 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
             int32_t number = 0;
             // --car is not a race of the game: no drivers' records, two laps.
             oj::RaceRules rules;
-            rules.mode = oj::RaceMode::Custom;
+            rules.players = std::clamp(data.race.players, 1, 4);
+            rules.mode = rules.players > 1 ? oj::RaceMode::SplitScreen : oj::RaceMode::Custom;
             rules.type = oj::RaceType::Circuit;
             trackView.prepareRace(2, rules);
             for (const oj::Spl::GridPoint& place : trackView.scene->lines().grid) {
                 oj::scene::CarModel* model = trackView.scene->addCar(
                     oj::scene::CarModel::load(*scene, car, data.catalogue, trackView.loading, false), place);
-                // The car of the first place is the player's, the others the AI's.
+                // Each requested local player needs its own slot for the camera,
+                // controls and HUD, just as in a race selected through the menu.
                 if (dynamics != nullptr) {
                     trackView.addCar(*dynamics, car, nullptr, data, model, place,
-                                     number == 0 ? oj::CarKind::Player : oj::CarKind::Ai, number, -1, true);
+                                     number < rules.players ? oj::CarKind::Player : oj::CarKind::Ai, number, -1, true);
                 }
                 ++number;
             }
@@ -452,6 +478,11 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
     std::unique_ptr<oj::mac::ControlsOverlay> controlsEditor;
     std::unique_ptr<oj::mods::CreativeMenu> creativeMenu;
     oj::input::Input::Map controlsPreviousMap = oj::input::Input::Map::None;
+#ifdef OJ_LINUX
+    oj::input::Input::Map creativePreviousMap = oj::input::Input::Map::None;
+    bool creativeAwaitRelease = true;
+    bool creativeClosing = false;
+#endif
 #endif
     while (platform.pumpMessages()) {
         RECT client{};
@@ -463,7 +494,15 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
         }
 #if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
         if (!creativeMenu) {
-            if (auto request=oj::mods::takeRequest()) creativeMenu=std::make_unique<oj::mods::CreativeMenu>(*device,language,std::move(*request));
+            if (auto request = oj::mods::takeRequest()) {
+                creativeMenu = std::make_unique<oj::mods::CreativeMenu>(*device, language, std::move(*request));
+#ifdef OJ_LINUX
+                creativePreviousMap = input.map();
+                if (creativePreviousMap != oj::input::Input::Map::Ui) input.useUi();
+                creativeAwaitRelease = true;
+                creativeClosing = false;
+#endif
+            }
         }
 #ifdef OJ_ANDROID
         oj::android::overlayInput(bool(creativeMenu));
@@ -473,10 +512,57 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
             oj::audio::setActive(false);
             auto keys=platform.takeKeyEvents();
             for(const auto& p:options.presses){if(p.down==rendered)keys.push_back({p.code,true});if(p.up==rendered)keys.push_back({p.code,false});}
-            const bool open=creativeMenu->update(keys);creativeMenu->draw();
+#ifdef OJ_LINUX
+            LARGE_INTEGER inputNow{};
+            QueryPerformanceCounter(&inputNow);
+            const float overlayDt = std::clamp(static_cast<float>(seconds(previousUpdate, inputNow)), 0.0f, 0.1f);
+            input.poll(keys, platform.active() || options.test, overlayDt);
+            // --mods-menu may open before a player has acquired any device.
+            // Map a newly acquired controller before asking it for UI actions.
+            if (input.playerTaken() && input.map() != oj::input::Input::Map::Ui) {
+                input.useUi();
+                input.poll({}, platform.active() || options.test, overlayDt);
+                creativeAwaitRelease = true;
+            }
+            const auto overlayUi = input.uiFrame(overlayDt);
+            const bool* physicalKeys = SDL_GetKeyboardState(nullptr);
+            const bool keyboardHeld = physicalKeys[SDL_SCANCODE_RETURN] || physicalKeys[SDL_SCANCODE_KP_ENTER] ||
+                                      physicalKeys[SDL_SCANCODE_ESCAPE] || physicalKeys[SDL_SCANCODE_UP] ||
+                                      physicalKeys[SDL_SCANCODE_DOWN];
+            const bool released = !input.hasInput() && overlayUi.scroll == oj::input::kNone && !keyboardHeld;
+            if (creativeAwaitRelease) {
+                creativeAwaitRelease = !released;
+            } else if (!creativeClosing) {
+                // The retail input manager routes keyboard actions to its own
+                // device. Keep keyboard access when a gamepad owns the player,
+                // while avoiding duplicate events from a keyboard-owned player.
+                const bool mapped = overlayUi.connected &&
+                    (overlayUi.event != oj::input::kNone || input.playerDevice(0) == 0);
+                creativeClosing = !(mapped ? creativeMenu->updateUi(overlayUi.event) : creativeMenu->update(keys));
+            }
+            // Keep consuming input until SELECT/BACK is released, so closing the
+            // overlay cannot also activate an item in the screen underneath it.
+            const bool open = !creativeClosing || !released;
+#else
+            const bool open = creativeMenu->update(keys);
+#endif
+            creativeMenu->draw();
             if(options.frames && rendered+1>=options.frames && !options.capture.empty()) device->capture(oj::toWide(options.capture));
             device->endFrame();++rendered;
-            if(!open){creativeMenu.reset();std::vector<oj::input::KeyEvent> released;for(int k=1;k<256;++k)released.push_back({static_cast<uint8_t>(k),false});input.poll(released,false,0.f);oj::audio::setActive(true);}
+            if (!open) {
+                creativeMenu.reset();
+                std::vector<oj::input::KeyEvent> released;
+                for (int k = 1; k < 256; ++k) released.push_back({static_cast<uint8_t>(k), false});
+                input.poll(released, false, 0.0f);
+#ifdef OJ_LINUX
+                if (creativePreviousMap == oj::input::Input::Map::Driver) input.useDriver();
+#endif
+#ifdef OJ_LINUX
+                oj::audio::setActive(platform.active());
+#else
+                oj::audio::setActive(true);
+#endif
+            }
             LARGE_INTEGER now{};QueryPerformanceCounter(&now);start.QuadPart+=now.QuadPart-previousUpdate.QuadPart;previousUpdate=last=now;
             if(options.frames&&rendered>=options.frames)break;Sleep(16);continue;
         }
@@ -503,6 +589,12 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
             if (result != oj::mac::ControlsOverlay::Result::Open) {
                 if (result == oj::mac::ControlsOverlay::Result::Saved) {
                     oj::mac::applyBindings(controlMaps, controlsEditor->bindings());
+#ifdef OJ_ANDROID
+                    oj::android::addCrewBindings(controlMaps);
+#endif
+#ifdef OJ_LINUX
+                    oj::linux_port::addCrewBindings(controlMaps);
+#endif
                     input.load(controlMaps);
 #ifdef OJ_ANDROID
                     oj::android::touchBindings(controlMaps);
@@ -543,7 +635,8 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
                 keys.push_back({p.code, false});
             }
         }
-        const float dt = static_cast<float>(seconds(previousUpdate, now));
+        const float dt = options.test && options.replayCaptureFrame != 0
+            ? 1.0f / 60.0f : static_cast<float>(seconds(previousUpdate, now));
         // 0x0040CCD9: the movies' hold and drawn flags cleared; [0x0075F780] the window's activation.
         movies.newFrame();
         movies.setActive(platform.active());
@@ -558,6 +651,12 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
         in.shiftHeld = input.held(0x0F);
         in.playerTaken = input.playerTaken();
         in.devices = input.deviceCount();
+#ifdef OJ_LINUX
+        // SDL keeps stable hot-plug slots. Empty slots must not enable split screen.
+        in.devices = 0;
+        for (size_t i = 0; i < input.deviceCount(); ++i)
+            if (input.device(i).connected) ++in.devices;
+#endif
         in.ui.anyInput = input.anyInput();
         if (showTrack || phase == Phase::Race) {
             // 0x00457180: the race front end makes the first player's event each frame.
@@ -775,7 +874,11 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
         // at the game's frame time.
         if (phase == Phase::Frontend) oj::net::loadVoiceIcons();
         if (oj::net::VoiceChat* voice = oj::net::gameVoice()) voice->update(dt);
-        const bool lastFrame = options.frames != 0 && rendered + 1 >= options.frames;
+        const bool replayCapture = options.test && options.replayCaptureFrame != 0
+            && phase == Phase::Race && trackView.replay.playing
+            && trackView.replay.time >= static_cast<float>(options.replayCaptureFrame) / 60.0f;
+        const bool lastFrame = replayCapture || (options.frames != 0 && rendered + 1 >= options.frames);
+        if (replayCapture) oj::log::info("test: replay capture at {:.6f} s, frame {}", trackView.replay.time, rendered);
         if (lastFrame && !options.capture.empty()) {
             // A relative file name is taken from the executable's folder (the current directory is the game's).
             const std::filesystem::path file(oj::toWide(options.capture));
@@ -908,7 +1011,7 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
                 loadFailed = true;  // the loading window stays
             }
         }
-        if (options.frames != 0 && rendered >= options.frames) {
+        if (lastFrame) {
             break;
         }
     }

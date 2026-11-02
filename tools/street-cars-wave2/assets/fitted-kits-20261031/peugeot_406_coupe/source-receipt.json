@@ -1,0 +1,14 @@
+{
+  "source_study": "/run/media/martin/Ediloco/OpenJuice-builds/20261031-fitted-kits/peugeot_406_coupe-study06",
+  "files": {
+    "native-candidate-receipt.json": "9cb04456150b338ad03aa9eeb2fe5b5e9bf5b0b17186e812f88c8a2c827fb082",
+    "native-vertex-study.json": "9eb964e71c2285e8155fd8b390f8e537f163e75e9c7314d7a2e1a1603011cc96",
+    "peugeot_406_coupe-kit3.glb": "13b287e23e4b2a25f2b764c1aabbf3c00cec4cee274ced16eadc312fb679ee31",
+    "peugeot_406_coupe-kit2.glb": "d5659a4f76c22c6577c145dd93503a2693f6700155fe089c4e5f3c4b0d459f96",
+    "peugeot_406_coupe-fitted-kits.blend": "6bf251ae10fdd0daee8300f5585010af5cd96e16b06f8ef891f23377403c4e39"
+  },
+  "authoring_tool_sha256": "da43ee82b1372be6fbdfab1ccbf4abb041265408ab0421cd606b9b9b63877b3b",
+  "adapter_sha256": "1bc3f4d2d335cbfcb018bd6a06492a88fa0b821c1e2d594be4a9781c226ac74a",
+  "approval_scope": "kit2/3 fit correction, not full ten-car acceptance",
+  "installed_source_verified_in_bundle": "r14 / Wave2 12"
+}

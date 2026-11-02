@@ -1,0 +1,14 @@
+{
+  "source_study": "/run/media/martin/Ediloco/OpenJuice-builds/20261031-fitted-kits/jetta_mk5_fsi-study06",
+  "files": {
+    "native-candidate-receipt.json": "569505a6e9efc8f43cf0b262b006ef35403c932ab011c915d84fe1b64341e611",
+    "jetta_mk5_fsi-fitted-kits.blend": "453dc6ee7804dec6f79d4b0b63c095ae6df1dd43523fb4f510523a5e782a3bd6",
+    "native-vertex-study.json": "2f81b37db250f80457593ffd5963dc2f90a0ddc9423032da3d0fc169065c98cb",
+    "jetta_mk5_fsi-kit2.glb": "c1e6c9ed638036435f9b11fa078be49bb4ea025189f274f7ea5142c0330e021d",
+    "jetta_mk5_fsi-kit3.glb": "aa55f4aef73c3b18328509474183146ee4c90a4170e0bf31f5532e0c5610fd58"
+  },
+  "authoring_tool_sha256": "da43ee82b1372be6fbdfab1ccbf4abb041265408ab0421cd606b9b9b63877b3b",
+  "adapter_sha256": "1bc3f4d2d335cbfcb018bd6a06492a88fa0b821c1e2d594be4a9781c226ac74a",
+  "approval_scope": "kit2/3 fit correction, not full ten-car acceptance",
+  "installed_source_verified_in_bundle": "r14 / Wave2 12"
+}

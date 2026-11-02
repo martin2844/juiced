@@ -1,6 +1,7 @@
 #include "Game/UI/UiFile.h"
 
 #include "Core/Base/GameFiles.h"
+#include "Game/Frontend/Career/Gamble.h"
 
 #include <cstdlib>
 #include <cstring>
@@ -49,6 +50,10 @@ std::vector<std::string> words(const std::string& line) {
 
 bool Window::load(const std::filesystem::path& file) {
     elements.clear();
+    if (file.filename() == "CMSGamble.ui") {
+        *this = frontend::gambleWindow();
+        return true;
+    }
     // A path of the game's (ui.dat as the game mounts it).
     const auto data = GameFiles(std::filesystem::current_path()).read(file);
     if (!data) {

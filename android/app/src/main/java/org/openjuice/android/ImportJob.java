@@ -24,6 +24,7 @@ final class ImportJob {
               java.nio.channels.FileLock lock = file.getChannel().tryLock()) {
             if (lock == null)
               throw new IOException("Exit the game before changing the installation.");
+            ModStore.clearDerivedModCache(lockFile.getParentFile());
             status = work.run();
           } catch (Exception | LinkageError e) {
             status = "Could not finish: " + e.getMessage();

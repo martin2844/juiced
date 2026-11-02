@@ -157,6 +157,10 @@ struct CarDynamics {
     float timeFactor = 1.0f;           // +0x17C
     float topSpeed = 0.0f;             // +0x180: the last TorqueCurveX point (rad/s)
     float frontWeightDistribution = 0.5f;  // +0x184
+    // Optional port extension: multiply a fitted turbo's DATAVAL by its level
+    // (street/sports/competition/prototype). Unity preserves retail behaviour;
+    // no fitted turbo means no extra preparation. Never stored in a save.
+    std::array<float, 4> turboUpgradeScale{1.0f, 1.0f, 1.0f, 1.0f};
 };
 
 // The car of the file (the last one when it holds several); none without a [BeginCar].

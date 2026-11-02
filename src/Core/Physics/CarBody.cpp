@@ -345,6 +345,7 @@ float CarBody::tyreGrip() const {
 }
 
 void CarBody::shift(uint32_t to) {
+    to = std::min(to, static_cast<uint32_t>(carDef.forwardRatios.size() + 1));
     if (to == gear) return;
     if (engineOn) {
         clutch = 0.0f;
@@ -354,7 +355,7 @@ void CarBody::shift(uint32_t to) {
 }
 
 void CarBody::setGear(uint32_t to) {
-    if (to > 7) to = 7;
+    to = std::min(to, static_cast<uint32_t>(carDef.forwardRatios.size() + 1));
     previousGear = gear;
     gear = to;
     if (to == 0) {

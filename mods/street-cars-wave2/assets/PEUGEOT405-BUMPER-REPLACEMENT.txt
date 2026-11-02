@@ -1,0 +1,15 @@
+
+## r21 — Peugeot405 complete bumper replacements
+
+The three front/rear choices now replace the complete factory bumper shell.
+Factory lights, grille and fixed body panels belong to CHASS rather than being
+duplicated in each custom bumper. Factory bumper surfaces remain only in their
+stock slots. Exact triangle clipping preserves factory geometry/UVs/normals when
+stock is selected. Custom shells discard the inherited factory skins and have
+new body-matching mounting collars and continuous wheel-arch returns. The plate
+is retained as two original UV-mapped triangles in the new rear recess.
+No catalogue IDs, parts, saves, other cars, hoods, skirts, wings, tuning or engine
+were changed. The approved r20 102-to-400BHP preparation remains unchanged.
+Verified in the Linux native renderer; Android installation is not included.
+Sources and editable Blender assembly: tools/peugeot405-bumper-replacement.
+Earlier model and photograph attribution remains applicable.

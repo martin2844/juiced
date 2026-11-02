@@ -1,0 +1,65 @@
+{
+  "status": "PRIVATE; not visually approved or installed",
+  "baseline": "/home/martin/.local/share/openjuice/mods/street-cars-wave2",
+  "candidate": "/run/media/martin/Ediloco/OpenJuice-builds/20261031-fitted-kits/outback-safe-candidate01",
+  "all_original_skirt_vertex_bytes_retained": true,
+  "all_new_geometry_below_all31_decals": true,
+  "meshes": [
+    {
+      "path": "assets/cars/outback_2002/mesh/w261_kit2_sskirt_l.d8m",
+      "sha256": "d8438ce4b4eb07129d6b7f27a2ad36570d1a9802057b7ff2368eec5bf1d78867",
+      "stock_source_sha256": "a683270bbce57eccf884a7e83aa62d759157aeb6898824fe9debca43565ce14a",
+      "preserved_original_parts": 1,
+      "added_triangles": 756
+    },
+    {
+      "path": "assets/cars/outback_2002_ui/mesh/w261_kit2_sskirt_l.d8m",
+      "sha256": "d8438ce4b4eb07129d6b7f27a2ad36570d1a9802057b7ff2368eec5bf1d78867",
+      "stock_source_sha256": "a683270bbce57eccf884a7e83aa62d759157aeb6898824fe9debca43565ce14a",
+      "preserved_original_parts": 1,
+      "added_triangles": 756
+    },
+    {
+      "path": "assets/cars/outback_2002/mesh/w261_kit2_sskirt_r.d8m",
+      "sha256": "079b27d0b0d5e7d412d69d13438d6df2cfa79f32089da31713916d3b68c315ff",
+      "stock_source_sha256": "9069de549adb210f07b64b3bf4f65a6d03f560ef8e96ba3b21395c1bc7063282",
+      "preserved_original_parts": 1,
+      "added_triangles": 756
+    },
+    {
+      "path": "assets/cars/outback_2002_ui/mesh/w261_kit2_sskirt_r.d8m",
+      "sha256": "079b27d0b0d5e7d412d69d13438d6df2cfa79f32089da31713916d3b68c315ff",
+      "stock_source_sha256": "9069de549adb210f07b64b3bf4f65a6d03f560ef8e96ba3b21395c1bc7063282",
+      "preserved_original_parts": 1,
+      "added_triangles": 756
+    },
+    {
+      "path": "assets/cars/outback_2002/mesh/w261_kit3_sskirt_l.d8m",
+      "sha256": "b40b33b68d1b4305da839a5373cd0ed0a0c31675f0ab7541af1629fb935c0193",
+      "stock_source_sha256": "a683270bbce57eccf884a7e83aa62d759157aeb6898824fe9debca43565ce14a",
+      "preserved_original_parts": 1,
+      "added_triangles": 756
+    },
+    {
+      "path": "assets/cars/outback_2002_ui/mesh/w261_kit3_sskirt_l.d8m",
+      "sha256": "b40b33b68d1b4305da839a5373cd0ed0a0c31675f0ab7541af1629fb935c0193",
+      "stock_source_sha256": "a683270bbce57eccf884a7e83aa62d759157aeb6898824fe9debca43565ce14a",
+      "preserved_original_parts": 1,
+      "added_triangles": 756
+    },
+    {
+      "path": "assets/cars/outback_2002/mesh/w261_kit3_sskirt_r.d8m",
+      "sha256": "935287f5ff09c0004ec4f02be26af4c71a748cd35c800d74ac10891a3b1e9463",
+      "stock_source_sha256": "9069de549adb210f07b64b3bf4f65a6d03f560ef8e96ba3b21395c1bc7063282",
+      "preserved_original_parts": 1,
+      "added_triangles": 756
+    },
+    {
+      "path": "assets/cars/outback_2002_ui/mesh/w261_kit3_sskirt_r.d8m",
+      "sha256": "935287f5ff09c0004ec4f02be26af4c71a748cd35c800d74ac10891a3b1e9463",
+      "stock_source_sha256": "9069de549adb210f07b64b3bf4f65a6d03f560ef8e96ba3b21395c1bc7063282",
+      "preserved_original_parts": 1,
+      "added_triangles": 756
+    }
+  ]
+}

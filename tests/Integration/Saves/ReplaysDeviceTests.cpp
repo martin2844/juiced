@@ -1,6 +1,11 @@
 // Integration tests: ReplaysDevice.
 
 #include "Framework/Test.h"
+#include "Framework/Fixtures.h"
+#include "Framework/Fakes/FakeWindowHost.h"
+#include "Core/Data/JetTexts.h"
+#include "Game/Frontend/Profile/Keyboard.h"
+#include "Game/Frontend/Saves/LoadReplay.h"
 
 #include "Core/Cars/Car.h"
 #include "Core/Race/Arcade.h"
@@ -11,17 +16,40 @@
 
 #include <algorithm>
 #include <bit>
+#include <chrono>
 #include <cstdio>
 #include <cstring>
+#include <cwchar>
 #include <filesystem>
 #include <fstream>
 #include <map>
 #include <string>
+#include <stdexcept>
 #include <vector>
 
 namespace {
 
 using oj::test::check;
+
+struct ReplayTemp {
+    std::filesystem::path path;
+    ReplayTemp() {
+        const auto id = std::chrono::steady_clock::now().time_since_epoch().count();
+        for (int attempt = 0; attempt < 100; ++attempt) {
+            auto candidate = std::filesystem::temp_directory_path() /
+                ("oj-replays-" + std::to_string(id) + "-" + std::to_string(attempt));
+            if (std::filesystem::create_directory(candidate)) {
+                path = std::move(candidate);
+                return;
+            }
+        }
+        throw std::runtime_error("Cannot allocate isolated replay test directory");
+    }
+    ~ReplayTemp() {
+        std::error_code ec;
+        std::filesystem::remove_all(path, ec);
+    }
+};
 
 }  // namespace
 
@@ -36,9 +64,8 @@ OJ_INTEGRATION_TEST(ReplaysDevice, FolderListed) {
         void writeRegCf1() override {}
         void readRegCf1() override {}
     } side;
-    wchar_t exe[MAX_PATH] = {};
-    GetModuleFileNameW(nullptr, exe, MAX_PATH);
-    const std::filesystem::path save = std::filesystem::path(exe).parent_path() / L"ReplayDeviceTest" / L"SAVE";
+    ReplayTemp temp;
+    const std::filesystem::path save = temp.path / L"SAVE";
     std::error_code ec;
     std::filesystem::remove_all(save.parent_path(), ec);
     std::filesystem::create_directories(save / L"R20261013120000", ec);
@@ -121,9 +148,8 @@ OJ_INTEGRATION_TEST(ReplaysDevice, ReplayWrittenRead) {
     second.rating = std::bit_cast<uint32_t>(450.0f);
     first.write(written.carsStream);
     second.write(written.carsStream);
-    wchar_t exe[MAX_PATH] = {};
-    GetModuleFileNameW(nullptr, exe, MAX_PATH);
-    const std::filesystem::path save = std::filesystem::path(exe).parent_path() / L"ReplaySaveTest" / L"SAVE";
+    ReplayTemp temp;
+    const std::filesystem::path save = temp.path / L"SAVE";
     std::error_code ec;
     std::filesystem::remove_all(save.parent_path(), ec);
     std::filesystem::create_directories(save.parent_path(), ec);
@@ -222,9 +248,8 @@ OJ_INTEGRATION_TEST(ReplaysDevice, ReplayFolderDated) {
     written.written = 2;
     oj::Car car;
     car.write(written.carsStream);
-    wchar_t exe[MAX_PATH] = {};
-    GetModuleFileNameW(nullptr, exe, MAX_PATH);
-    const std::filesystem::path base = std::filesystem::path(exe).parent_path() / L"ReplayFolderTest";
+    ReplayTemp temp;
+    const std::filesystem::path base = temp.path;
     const std::filesystem::path replays = base / L"THQ" / L"Juiced" / L"Replays";
     std::error_code ec;
     std::filesystem::remove_all(base, ec);
@@ -257,7 +282,7 @@ OJ_INTEGRATION_TEST(ReplaysDevice, ReplayFolderDated) {
     const auto dated = [](const std::wstring& name) {
         int day = 0, month = 0, year = 0, hour = 0, minute = 0, second = 0;
         return name.size() >= 26 && name.compare(0, 7, L"Replay_") == 0 &&
-               swscanf_s(name.c_str() + 7, L"%2d-%2d-%4d_%2d-%2d-%2d", &day, &month, &year, &hour, &minute,
+               std::swscanf(name.c_str() + 7, L"%2d-%2d-%4d_%2d-%2d-%2d", &day, &month, &year, &hour, &minute,
                          &second) == 6 &&
                name[9] == L'-' && name[12] == L'-' && name[17] == L'_';
     };
@@ -290,4 +315,57 @@ OJ_INTEGRATION_TEST(ReplaysDevice, ReplayFolderDated) {
     check(saved && named && listed && loaded && deleted && left == 1,
           "replays' folder (fixed): two dated folders, listed, read back, one deleted");
     std::filesystem::remove_all(base, ec);
+}
+
+// Extras can open replay management before the profile manager initializes the
+// save-message table. Its checking/deletion prompts must still contain words.
+
+namespace {
+class ReplayWindowHost : public oj::test::FakeWindowHost, public oj::frontend::SaveHost {
+public:
+    struct Side : oj::save::SaveGameSide {
+        void buildProfile(oj::save::SaveSource&) override {}
+        bool applyProfile(const oj::save::SaveSlot&, const oj::save::SaveSource&) override { return false; }
+        void buildHighScores(oj::save::SaveSource&) override {}
+        bool applyHighScores(const oj::save::SaveSource&) override { return false; }
+        void writeRegCf1() override {}
+        void readRegCf1() override {}
+    } side;
+    oj::TextTable jet;
+    std::optional<oj::save::Profile> driver;
+    oj::frontend::KeyboardSetup keyboard;
+    bool nameRefused(const std::wstring&) const override { return false; }
+    std::optional<oj::save::Profile>& profile() override { return driver; }
+    void setUpDriverName(const std::wstring&) override {}
+    oj::frontend::KeyboardSetup& keyboardSetup() override { return keyboard; }
+    void setSaveBusy(int32_t) override {}
+    oj::TextTable& jetTexts() override { return jet; }
+    const std::wstring& jetText(size_t n) const override { return jet.at(n); }
+    oj::save::SaveGameSide& saveSide() override { return side; }
+    void settingsVolumes() override {}
+    void netCallFrame() override {}
+    void cancelNetCall() override {}
+};
+}
+
+OJ_INTEGRATION_TEST(LoadReplay, BeforeProfileHasLocalizedPrompts) {
+    oj::test::InGameFolder folder;
+    if (!folder.valid()) return;
+    for (const auto* language : {"english", "french", "german"}) {
+        ReplayWindowHost host;
+        host.lang = *oj::Language::byName(language);
+        const auto screen = host.open("loadreplay");
+        if (!screen) return;
+        oj::frontend::LoadReplay window;
+        window.enter(host, *screen);
+        const auto prefix = host.jetText(oj::kJetDeleteReplay);
+        check(!prefix.empty(), std::string(language) + " replay delete question exists before loading a profile");
+        oj::TextTable retail;
+        const bool loaded = retail.load(std::filesystem::path("scripts") /
+            ("jettext" + std::string(1, host.lang.controlsLetter) + ".txt"));
+        check(loaded && !prefix.empty() && prefix == retail.at(oj::kJetDeleteReplay),
+              std::string(language) + " replay question uses the selected retail translation");
+        check(!host.jetText(oj::save::flagText(oj::save::SaveFlag::Checking)).empty(),
+              std::string(language) + " replay checking message is available");
+    }
 }

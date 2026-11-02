@@ -219,6 +219,25 @@ void PartCatalogue::load(std::string_view text, const ExeTables& tables) {
     }
 }
 
+bool CarDefs::appendVinyl(std::string_view name, std::string_view mesh, std::string_view label,
+                          bool optional, std::string* error) {
+    const auto fail = [&](const char* message) { if (error) *error = message; return false; };
+    if (name.empty() || name.find_first_not_of("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_") != std::string_view::npos ||
+        !mesh.starts_with("DECAL_NFS_") || mesh.size() >= 32 ||
+        mesh.find_first_not_of("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_") != std::string_view::npos)
+        return fail("Invalid car or mesh in mod_vinyls.txt");
+    const std::string target(name);
+    auto car = std::find_if(cars.begin(), cars.end(), [&](const auto& d) { return _stricmp(d.name.c_str(), target.c_str()) == 0; });
+    if (car == cars.end()) return optional ? true : fail("Invalid car or mesh in mod_vinyls.txt");
+    auto& parts = car->parts[kDecal].parts;
+    if (parts.size() >= 125 || std::any_of(parts.begin(), parts.end(), [&](const auto& p) { return p.model == mesh; }))
+        return fail("Duplicate vinyl or decal capacity exceeded in mod_vinyls.txt");
+    CarPart part;
+    part.model = mesh; part.label = label; part.index = static_cast<uint16_t>(parts.size());
+    parts.push_back(std::move(part));
+    return true;
+}
+
 const CarDef* CarDefs::byId(int id) const {
     for (const CarDef& c : cars) {
         if (c.id == id) return &c;

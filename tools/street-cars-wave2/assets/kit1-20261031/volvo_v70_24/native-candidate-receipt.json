@@ -1,0 +1,87 @@
+{
+  "status": "PRIVATE; not installed or visually approved",
+  "study": "/run/media/martin/Ediloco/OpenJuice-builds/20261031-wave2-kit1/volvo_v70_24-study01",
+  "baseline": "/home/martin/.local/share/openjuice/mods/street-cars-wave2",
+  "meshes": [
+    {
+      "path": "assets/cars/volvo_v70_24/mesh/w263_kit1_fbump.d8m",
+      "sha256": "b69ffb96616c7fa05c17e82c6f9a9799a460c316e16c6b9d5b5763fae6c00498",
+      "stock_sha256": "6d0fc415b274fb4e149c9acf922ab00f87b9d850b064f70da29aa88fef8ae751",
+      "added_triangles": 792,
+      "changed_vertices": 225,
+      "protected_vertices": 4886
+    },
+    {
+      "path": "assets/cars/volvo_v70_24_ui/mesh/w263_kit1_fbump.d8m",
+      "sha256": "b69ffb96616c7fa05c17e82c6f9a9799a460c316e16c6b9d5b5763fae6c00498",
+      "stock_sha256": "6d0fc415b274fb4e149c9acf922ab00f87b9d850b064f70da29aa88fef8ae751",
+      "added_triangles": 792,
+      "changed_vertices": 225,
+      "protected_vertices": 4886
+    },
+    {
+      "path": "assets/cars/volvo_v70_24/mesh/w263_kit1_rbump.d8m",
+      "sha256": "f3c1fa51c5e78b3ec6c32f263d1385ee341b53c0c31c5f4965db61244acd2e18",
+      "stock_sha256": "fcdabffca683904fdc8b2391104976ef6ce0f21c52053e46d46dc8af24cf7bff",
+      "added_triangles": 1480,
+      "changed_vertices": 0,
+      "protected_vertices": 1513
+    },
+    {
+      "path": "assets/cars/volvo_v70_24_ui/mesh/w263_kit1_rbump.d8m",
+      "sha256": "f3c1fa51c5e78b3ec6c32f263d1385ee341b53c0c31c5f4965db61244acd2e18",
+      "stock_sha256": "fcdabffca683904fdc8b2391104976ef6ce0f21c52053e46d46dc8af24cf7bff",
+      "added_triangles": 1480,
+      "changed_vertices": 0,
+      "protected_vertices": 1513
+    },
+    {
+      "path": "assets/cars/volvo_v70_24/mesh/w263_kit1_sskirt_l.d8m",
+      "sha256": "5cd182bb829f196d32e14ef7d2fa1c7a1d467c9d06ee0990407d4884e5d2093d",
+      "stock_sha256": "9ed26c7dad9646332e48057c4c51876e0209897dd4ac3074a7768e46952c0fde",
+      "added_triangles": 660,
+      "changed_vertices": 0,
+      "protected_vertices": 273
+    },
+    {
+      "path": "assets/cars/volvo_v70_24_ui/mesh/w263_kit1_sskirt_l.d8m",
+      "sha256": "5cd182bb829f196d32e14ef7d2fa1c7a1d467c9d06ee0990407d4884e5d2093d",
+      "stock_sha256": "9ed26c7dad9646332e48057c4c51876e0209897dd4ac3074a7768e46952c0fde",
+      "added_triangles": 660,
+      "changed_vertices": 0,
+      "protected_vertices": 273
+    },
+    {
+      "path": "assets/cars/volvo_v70_24/mesh/w263_kit1_sskirt_r.d8m",
+      "sha256": "f86645cd3ee86e173011e51b35c670d69daccec491ff9cf1849577d2cf23d6fe",
+      "stock_sha256": "a5986c13c996954c3b9cb0bdbaae66be400f816c98568b7dde1e68c0497d5655",
+      "added_triangles": 660,
+      "changed_vertices": 0,
+      "protected_vertices": 281
+    },
+    {
+      "path": "assets/cars/volvo_v70_24_ui/mesh/w263_kit1_sskirt_r.d8m",
+      "sha256": "f86645cd3ee86e173011e51b35c670d69daccec491ff9cf1849577d2cf23d6fe",
+      "stock_sha256": "a5986c13c996954c3b9cb0bdbaae66be400f816c98568b7dde1e68c0497d5655",
+      "added_triangles": 660,
+      "changed_vertices": 0,
+      "protected_vertices": 281
+    }
+  ],
+  "exports": {
+    "volvo_v70_24-kit1.glb": "01916e646cc0f93bcc319f3f8779f51d44fc545c14fbaf57cc0704f193fb65ab"
+  },
+  "changed_files": [
+    "assets/cars/volvo_v70_24/mesh/w263_kit1_fbump.d8m",
+    "assets/cars/volvo_v70_24/mesh/w263_kit1_rbump.d8m",
+    "assets/cars/volvo_v70_24/mesh/w263_kit1_sskirt_l.d8m",
+    "assets/cars/volvo_v70_24/mesh/w263_kit1_sskirt_r.d8m",
+    "assets/cars/volvo_v70_24_ui/mesh/w263_kit1_fbump.d8m",
+    "assets/cars/volvo_v70_24_ui/mesh/w263_kit1_rbump.d8m",
+    "assets/cars/volvo_v70_24_ui/mesh/w263_kit1_sskirt_l.d8m",
+    "assets/cars/volvo_v70_24_ui/mesh/w263_kit1_sskirt_r.d8m"
+  ],
+  "all_other_runtime_files_unchanged": true,
+  "original_uvs_colours_unknown_vertex_data_preserved": true,
+  "protected_receiver_vertices_unchanged": true
+}

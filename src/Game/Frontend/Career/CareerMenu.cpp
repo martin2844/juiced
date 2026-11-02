@@ -22,6 +22,15 @@ void CareerMenu::enter(CareerHost& host, ui::Screen& s) {
     *this = CareerMenu{};
     career.dealer.afterRace = 0;
     s.setMenuItemEnabled("menu", "Workshop", !career.garage.empty());
+    // baseEnter restores Menu's retained list. Insert into the visible list only:
+    // addCommandItem also grows that retained list on every visit.
+    while (s.removeMenuItem("menu", "Gamble")) {}
+    while (s.removeMenuItem("BackMenu", "Gamble")) {}
+    s.insertCommandItem("menu", static_cast<int>(s.menuSize("menu")), L"Gamble", 0, "Gamble");
+    s.insertCommandItem("BackMenu", static_cast<int>(s.menuSize("BackMenu")), L"", 0, "Gamble");
+    const auto index = s.menuSize("BackMenu") - 1;
+    s.setMenuItemTextures("BackMenu", index, "", "ui_pan5_purple");
+    s.setMenuItemAdditive("BackMenu", index, true);
 }
 
 // 0x004CE1F0: BackMenu follows menu; Cash and Date; the phone's frame (0x004B60F0). The career's +0x78 object asks
@@ -113,6 +122,8 @@ void CareerMenu::update(CareerHost& host, ui::Screen& s, uint32_t event) {
         host.request("CMSMobilePhone", SwitchMode::Push);
     } else if (is("Stats")) {
         host.request("CMSStatsMenu", SwitchMode::Replace);
+    } else if (is("Gamble")) {
+        host.request("CMSGamble", SwitchMode::Replace);
     }
 }
 

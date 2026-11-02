@@ -464,6 +464,10 @@ void PostEffects::end(const render::Camera& camera, View& view, float cutAmount,
     // place is let go first (the fixed build's).
     m_split = nullptr;
     take(nullptr);
+    // take() can keep an already-bound back buffer without resetting its
+    // viewport. Interface windows cover the whole screen, including results
+    // with no 3D element to restore the viewport after the last split view.
+    d.setViewport({0, 0, d.width(), d.height(), 0.0f, 1.0f});
 }
 
 void PostEffects::motionBlur(float edge, float middle, float x0, float y0, float x1, float y1) {

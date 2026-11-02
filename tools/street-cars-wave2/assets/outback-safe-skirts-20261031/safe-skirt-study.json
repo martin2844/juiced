@@ -1,0 +1,395 @@
+{
+  "status": "PRIVATE STUDY; not installed or visually approved",
+  "source_sha256": {
+    "mods/street-cars-wave2/assets/cars/outback_2002/mesh/w261_decal_tribal_vs2.d8m": "80454deb1f21a60fb1453b4d80efe16c9cda1aeb4cf88ed6c3e9239569765f3f",
+    "mods/street-cars-wave2/assets/cars/outback_2002/mesh/w261_decal_fandf_vs3.d8m": "9c08f58e273cf8a1b7a6e4ad6d8e213de59e2871fd26319c02eb6a22011afdf8",
+    "mods/street-cars-wave2/assets/cars/outback_2002/mesh/w261_decal_checks_vs1.d8m": "a4e56b493928b216dd5138b7a045e7fabdc104da49a4341e966760321380e30e",
+    "mods/street-cars-wave2/assets/cars/outback_2002/mesh/w261_decal_checks_vs2.d8m": "c30d3b99e048abed7f63316fb8c7527984b5674fca6528824068d01a3e82d930",
+    "mods/street-cars-wave2/assets/cars/outback_2002/mesh/w261_decal_tribal_vs1.d8m": "19374a34b680b215a48a114b87f7fff29bed35a785377b6938f288c1f95e1a94",
+    "mods/street-cars-wave2/assets/cars/outback_2002/mesh/w261_decal_tribal_vs5.d8m": "2b441fe01693b7d4ff55e8d6402376a0bd7c52e000519aba4708e456d8c6041a",
+    "mods/street-cars-wave2/assets/cars/outback_2002/mesh/w261_decal_tribal_vs8.d8m": "594ac298a6e6c82cc3cbb1de24b15fa27361df6a25b9872ad599afdab6e62180",
+    "mods/street-cars-wave2/assets/cars/outback_2002/mesh/w261_decal_flames_vs1.d8m": "cb18fa9c0739b3b0dfe652a7bfbae1593f70aca9dfb491d554f809aaffaeccea",
+    "mods/street-cars-wave2/assets/cars/outback_2002/mesh/w261_decal_fandf_vs6.d8m": "ba4cbde7943a98ebb7cf9979456801785cc34a6622df7882b77251b652dadf8d",
+    "mods/street-cars-wave2/assets/cars/outback_2002/mesh/w261_decal_crew_vs3.d8m": "5bfc141b47ff7f1a8a3bdfd5116225c3863689946ed5697dd43a51343cea745f",
+    "mods/street-cars-wave2/assets/cars/outback_2002/mesh/w261_decal_fandf_vs8.d8m": "e21faa7a0646af95739e9a03635a41add24cfb6f4919fa6ec0c370a2182cb0a4",
+    "mods/street-cars-wave2/assets/cars/outback_2002/mesh/w261_decal_crew_vs6.d8m": "77240f4efd44b636edc03592e825c3889af397695bd4d67cbd1b775e88ee0f9a",
+    "mods/street-cars-wave2/assets/cars/outback_2002/mesh/w261_decal_proto_vs1.d8m": "fcc0888f4308218dd9902eb3da1c56718418bb28fe37f7b39528170191c80ad5",
+    "mods/street-cars-wave2/assets/cars/outback_2002/mesh/w261_decal_crew_vs4.d8m": "b1a5be3c6bc8e9e7ae49c2e8715e8b141629e354cbe78609dacd0110bc2c4697",
+    "mods/street-cars-wave2/assets/cars/outback_2002/mesh/w261_decal_fandf_vs5.d8m": "09561da2aaf90409c56ec3da6be9784a8c4af718282118e30ebd0ae7050e8cd9",
+    "mods/street-cars-wave2/assets/cars/outback_2002/mesh/w261_decal_tribal_vs6.d8m": "0831bdb0d10bcdaea82fb3cb02b7db67ddbe5f4566dc931e802f0e246c5f15b5",
+    "mods/street-cars-wave2/assets/cars/outback_2002/mesh/w261_decal_tribal_vs7.d8m": "705eb9b00db22cd87c3907e1b2f55bff6872d2c6da26636aee45a88c2b2be0a9",
+    "mods/street-cars-wave2/assets/cars/outback_2002/mesh/w261_decal_tribal_vs4.d8m": "c54c206c63fd4ecad992d325ac4f66c3a2bc70bc8c468c255431129f677f41b2",
+    "mods/street-cars-wave2/assets/cars/outback_2002/mesh/w261_decal_crew_vs5.d8m": "2b7de110876ad3305c404723822de66209ca34b8d414e7e103eeb903fc0db4b5",
+    "mods/street-cars-wave2/assets/cars/outback_2002/mesh/w261_decal_tribal_vs3.d8m": "442736aa35e8ce4e46575263ad2df5fc9a7ff0eef60148ecff4389e5e6bf5ff4",
+    "mods/street-cars-wave2/assets/cars/outback_2002/mesh/w261_decal_fandf_vs9.d8m": "70f6ee0c4025a84fb3cd087ad71a39465a8c95148ea31e5bd5c38cafe30c9c77",
+    "mods/street-cars-wave2/assets/cars/outback_2002/mesh/w261_decal_fandf_vs2.d8m": "8ed59ad51292b2f784fe04f51210d7138ae939626a14e70c9381c5ad48d9a8a0",
+    "mods/street-cars-wave2/assets/cars/outback_2002/mesh/w261_decal_fandf_vs1.d8m": "fd580de3dc660124647604c07080f6c116424f9a02c11ff5e05eb45e805ead75",
+    "mods/street-cars-wave2/assets/cars/outback_2002/mesh/w261_decal_fandf_vs4.d8m": "660ed6825cc4bc23edcd43d63cd6eb02f4d26f9fff9adc7d8a74cd12570c5757",
+    "mods/street-cars-wave2/assets/cars/outback_2002/mesh/w261_decal_crew_vs8.d8m": "ddef44fdff2511b0ac7844036efa98c6bb1349f57c658a275257e3015a4bf30f",
+    "mods/street-cars-wave2/assets/cars/outback_2002/mesh/w261_decal_crew_vs7.d8m": "11a29e657b207b131577b72917ed69970ea3f8a094d33ae74d81f0611c97dd16",
+    "mods/street-cars-wave2/assets/cars/outback_2002/mesh/w261_decal_checks_vs3.d8m": "134c3e28412cee30efea9dc9dd652d18812e9eecf2e0d412fc1a2139b9b9c619",
+    "mods/street-cars-wave2/assets/cars/outback_2002/mesh/w261_decal_crew_vs1.d8m": "25230eddf01c27529d7c8eedcd73afda58bf11b7568bc0737b15229d304bb416",
+    "mods/street-cars-wave2/assets/cars/outback_2002/mesh/w261_decal_fandf_vs10.d8m": "ece997a21cc90e1000700daa8ee7b7e240eae74cdea8b29e4006a451f9ddb96f",
+    "mods/street-cars-wave2/assets/cars/outback_2002/mesh/w261_decal_fandf_vs7.d8m": "1c1c7c63167c77d70491b1212c3c175708ef2ee4a20fcff69b2b938d172fe2a5",
+    "mods/street-cars-wave2/assets/cars/outback_2002/mesh/w261_decal_crew_vs2.d8m": "c733d45b9003df79cd4dda07a82feb840c8382b61200bc94d2ab249ca2d9f182",
+    "mods/street-cars-wave2/assets/cars/outback_2002/mesh/w261_chass.d8m": "457ec8f542a2388076025e47b2d0f359cc64a92315ef92020a73f56deca01f46",
+    "mods/street-cars-wave2/assets/cars/outback_2002/mesh/w261_fbump.d8m": "559a92b28ab56f30d627ee50ec99303fc506b2cee5aaa2d02a521ddf57300d03",
+    "mods/street-cars-wave2/assets/cars/outback_2002/mesh/w261_rbump.d8m": "fb4abe28265b86f04e146d7081b2bbfac31c4d1aeaa4b9b952064ea4497bf720",
+    "mods/street-cars-wave2/assets/cars/outback_2002/mesh/w261_sskirt_l.d8m": "a683270bbce57eccf884a7e83aa62d759157aeb6898824fe9debca43565ce14a",
+    "mods/street-cars-wave2/assets/cars/outback_2002/mesh/w261_sskirt_r.d8m": "9069de549adb210f07b64b3bf4f65a6d03f560ef8e96ba3b21395c1bc7063282",
+    "mods/street-cars-wave2/assets/cars/outback_2002/models/outback_2002_stock.boh": "1382d7ca627ed4a0dac7821e761d35aca234ee2c4a1086cc39dc6f3de71f2729",
+    "mods/street-cars-wave2/assets/cars/outback_2002/mesh/w261_wheel.d8m": "0254fd99415e5ba0d5b6b8db4ad0154d82a55e4f5dcde686d7a64a2a25246a90"
+  },
+  "author_sha256": "9b190729d10d783304606ce6010c375fb54487764141f94bb3cfad7d7e7eae07",
+  "method": "Untouched stock receivers; lower closed skirts with buried upper mounts; actual exported triangle intersection proof",
+  "mounts_native_cm": {
+    "sskirt_l": [
+      [
+        -81.05730438232422,
+        30.671350479125977,
+        -91.1221923828125
+      ],
+      [
+        -81.05730438232422,
+        30.671350479125977,
+        -84.61346435546875
+      ],
+      [
+        -81.05729675292969,
+        30.671350479125977,
+        -78.104736328125
+      ],
+      [
+        -81.05730438232422,
+        30.671350479125977,
+        -71.59600830078125
+      ],
+      [
+        -81.05730438232422,
+        30.671350479125977,
+        -65.0872802734375
+      ],
+      [
+        -81.05731201171875,
+        30.671350479125977,
+        -58.578556060791016
+      ],
+      [
+        -81.05730438232422,
+        30.671350479125977,
+        -52.069828033447266
+      ],
+      [
+        -81.05730438232422,
+        30.671350479125977,
+        -45.56109619140625
+      ],
+      [
+        -81.05731201171875,
+        30.671350479125977,
+        -39.0523681640625
+      ],
+      [
+        -81.05731201171875,
+        30.671350479125977,
+        -32.54364013671875
+      ],
+      [
+        -81.05730438232422,
+        30.671350479125977,
+        -26.034914016723633
+      ],
+      [
+        -81.05729675292969,
+        30.671350479125977,
+        -19.52618408203125
+      ],
+      [
+        -81.05730438232422,
+        30.671350479125977,
+        -13.017457008361816
+      ],
+      [
+        -81.05729675292969,
+        30.671350479125977,
+        -6.508728504180908
+      ],
+      [
+        -81.05729675292969,
+        30.671350479125977,
+        0.0
+      ],
+      [
+        -81.05730438232422,
+        30.671350479125977,
+        6.508728504180908
+      ],
+      [
+        -81.05731201171875,
+        30.671350479125977,
+        13.017457008361816
+      ],
+      [
+        -81.05731201171875,
+        30.671350479125977,
+        19.52618408203125
+      ],
+      [
+        -81.05730438232422,
+        30.671350479125977,
+        26.034914016723633
+      ],
+      [
+        -81.05730438232422,
+        30.671350479125977,
+        32.54364013671875
+      ],
+      [
+        -81.05730438232422,
+        30.671350479125977,
+        39.0523681640625
+      ],
+      [
+        -81.05731201171875,
+        30.671350479125977,
+        45.56109619140625
+      ],
+      [
+        -81.05731201171875,
+        30.671350479125977,
+        52.069828033447266
+      ],
+      [
+        -81.05729675292969,
+        30.671350479125977,
+        58.578556060791016
+      ],
+      [
+        -81.05730438232422,
+        30.671350479125977,
+        65.0872802734375
+      ],
+      [
+        -81.05730438232422,
+        30.671350479125977,
+        71.59600830078125
+      ],
+      [
+        -81.05731201171875,
+        30.671350479125977,
+        78.104736328125
+      ],
+      [
+        -81.05730438232422,
+        30.671350479125977,
+        84.61346435546875
+      ],
+      [
+        -81.05730438232422,
+        30.671350479125977,
+        91.1221923828125
+      ]
+    ],
+    "sskirt_r": [
+      [
+        81.19102478027344,
+        30.67794418334961,
+        -91.1221923828125
+      ],
+      [
+        81.19102478027344,
+        30.67794418334961,
+        -84.61346435546875
+      ],
+      [
+        81.19102478027344,
+        30.67794418334961,
+        -78.104736328125
+      ],
+      [
+        81.19102478027344,
+        30.67794418334961,
+        -71.59600830078125
+      ],
+      [
+        81.19102478027344,
+        30.67794418334961,
+        -65.0872802734375
+      ],
+      [
+        81.19102478027344,
+        30.67794418334961,
+        -58.578556060791016
+      ],
+      [
+        81.19102478027344,
+        30.67794418334961,
+        -52.069828033447266
+      ],
+      [
+        81.1910171508789,
+        30.67794418334961,
+        -45.56109619140625
+      ],
+      [
+        81.1910171508789,
+        30.67794418334961,
+        -39.0523681640625
+      ],
+      [
+        81.19102478027344,
+        30.67794418334961,
+        -32.54364013671875
+      ],
+      [
+        81.1910171508789,
+        30.67794418334961,
+        -26.034914016723633
+      ],
+      [
+        81.19102478027344,
+        30.67794418334961,
+        -19.52618408203125
+      ],
+      [
+        81.1910171508789,
+        30.67794418334961,
+        -13.017457008361816
+      ],
+      [
+        81.19102478027344,
+        30.67794418334961,
+        -6.508728504180908
+      ],
+      [
+        81.19102478027344,
+        30.67794418334961,
+        0.0
+      ],
+      [
+        81.19102478027344,
+        30.67794418334961,
+        6.508728504180908
+      ],
+      [
+        81.19102478027344,
+        30.67794418334961,
+        13.017457008361816
+      ],
+      [
+        81.19102478027344,
+        30.67794418334961,
+        19.52618408203125
+      ],
+      [
+        81.19102478027344,
+        30.67794418334961,
+        26.034914016723633
+      ],
+      [
+        81.19102478027344,
+        30.67794418334961,
+        32.54364013671875
+      ],
+      [
+        81.19102478027344,
+        30.67794418334961,
+        39.0523681640625
+      ],
+      [
+        81.1910171508789,
+        30.67794418334961,
+        45.56109619140625
+      ],
+      [
+        81.19102478027344,
+        30.67794418334961,
+        52.069828033447266
+      ],
+      [
+        81.19102478027344,
+        30.67794418334961,
+        58.578556060791016
+      ],
+      [
+        81.1910171508789,
+        30.67794418334961,
+        65.0872802734375
+      ],
+      [
+        81.19102478027344,
+        30.67794418334961,
+        71.59600830078125
+      ],
+      [
+        81.19102478027344,
+        30.67794418334961,
+        78.104736328125
+      ],
+      [
+        81.1910171508789,
+        30.67794418334961,
+        84.61346435546875
+      ],
+      [
+        81.1910171508789,
+        30.67794418334961,
+        91.1221923828125
+      ]
+    ]
+  },
+  "variants": {
+    "2": {
+      "extra_drop_cm": 0.0,
+      "proof": {
+        "export_sha256": "c699042dfa56c33eefc9470b1e26241a853f6920f4c2bce0974a36c6674007c5",
+        "all31_source_meshes": true,
+        "convex_triangle_overlaps": 0,
+        "greatest_new_surface_x_in_front_of_decal_cm": null,
+        "minimum_required_clearance_cm": 0.03,
+        "violations": 0,
+        "worst": []
+      },
+      "trials": [
+        {
+          "extra_drop_cm": 0.0,
+          "proof": {
+            "export_sha256": "c699042dfa56c33eefc9470b1e26241a853f6920f4c2bce0974a36c6674007c5",
+            "all31_source_meshes": true,
+            "convex_triangle_overlaps": 0,
+            "greatest_new_surface_x_in_front_of_decal_cm": null,
+            "minimum_required_clearance_cm": 0.03,
+            "violations": 0,
+            "worst": []
+          }
+        }
+      ]
+    },
+    "3": {
+      "extra_drop_cm": 0.0,
+      "proof": {
+        "export_sha256": "e3c98fc5a61abd6a3d7b1ba3a5c87df9d7117ee560dd64c0f2b322458cc04248",
+        "all31_source_meshes": true,
+        "convex_triangle_overlaps": 0,
+        "greatest_new_surface_x_in_front_of_decal_cm": null,
+        "minimum_required_clearance_cm": 0.03,
+        "violations": 0,
+        "worst": []
+      },
+      "trials": [
+        {
+          "extra_drop_cm": 0.0,
+          "proof": {
+            "export_sha256": "e3c98fc5a61abd6a3d7b1ba3a5c87df9d7117ee560dd64c0f2b322458cc04248",
+            "all31_source_meshes": true,
+            "convex_triangle_overlaps": 0,
+            "greatest_new_surface_x_in_front_of_decal_cm": null,
+            "minimum_required_clearance_cm": 0.03,
+            "violations": 0,
+            "worst": []
+          }
+        }
+      ]
+    }
+  }
+}

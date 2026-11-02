@@ -1,0 +1,160 @@
+{
+  "status": "PRIVATE; not installed or visually approved",
+  "study": "/run/media/martin/Ediloco/OpenJuice-builds/20261031-fitted-kits/jetta_mk5_fsi-study06",
+  "baseline": "/run/media/martin/Ediloco/OpenJuice-builds/20261031-fitted-kits/combined06-step3",
+  "meshes": [
+    {
+      "path": "assets/cars/jetta_mk5_fsi/mesh/w260_kit2_fbump.d8m",
+      "sha256": "c54403307116b35e563d9a6e6622e7c658421472afb60efd63da1f5508101840",
+      "stock_sha256": "467d8c0c3c0bd1d1fde2607ea04c5fa24da8c3be689ad45b70ee7b289345ac2f",
+      "added_triangles": 0,
+      "changed_vertices": 141,
+      "protected_vertices": 15502
+    },
+    {
+      "path": "assets/cars/jetta_mk5_fsi_ui/mesh/w260_kit2_fbump.d8m",
+      "sha256": "c54403307116b35e563d9a6e6622e7c658421472afb60efd63da1f5508101840",
+      "stock_sha256": "467d8c0c3c0bd1d1fde2607ea04c5fa24da8c3be689ad45b70ee7b289345ac2f",
+      "added_triangles": 0,
+      "changed_vertices": 141,
+      "protected_vertices": 15502
+    },
+    {
+      "path": "assets/cars/jetta_mk5_fsi/mesh/w260_kit2_rbump.d8m",
+      "sha256": "a726913f030b5caacce8bd3104e1c8ac320d71d2adbfa4b4bd497dc14306edd2",
+      "stock_sha256": "22a70f71ca267404106b9d409bc07d9ffd71804f8c2c701337a0780a7b26bd48",
+      "added_triangles": 1114,
+      "changed_vertices": 0,
+      "protected_vertices": 4088
+    },
+    {
+      "path": "assets/cars/jetta_mk5_fsi_ui/mesh/w260_kit2_rbump.d8m",
+      "sha256": "a726913f030b5caacce8bd3104e1c8ac320d71d2adbfa4b4bd497dc14306edd2",
+      "stock_sha256": "22a70f71ca267404106b9d409bc07d9ffd71804f8c2c701337a0780a7b26bd48",
+      "added_triangles": 1114,
+      "changed_vertices": 0,
+      "protected_vertices": 4088
+    },
+    {
+      "path": "assets/cars/jetta_mk5_fsi/mesh/w260_kit2_sskirt_l.d8m",
+      "sha256": "391d294c939988db6678509b69a68d599a3249952dce434b41f93c80b3ed7573",
+      "stock_sha256": "100604e26723991064f115f7bfff6d60cde71b5baec50830716fb9bda86ba283",
+      "added_triangles": 636,
+      "changed_vertices": 0,
+      "protected_vertices": 1304
+    },
+    {
+      "path": "assets/cars/jetta_mk5_fsi_ui/mesh/w260_kit2_sskirt_l.d8m",
+      "sha256": "391d294c939988db6678509b69a68d599a3249952dce434b41f93c80b3ed7573",
+      "stock_sha256": "100604e26723991064f115f7bfff6d60cde71b5baec50830716fb9bda86ba283",
+      "added_triangles": 636,
+      "changed_vertices": 0,
+      "protected_vertices": 1304
+    },
+    {
+      "path": "assets/cars/jetta_mk5_fsi/mesh/w260_kit2_sskirt_r.d8m",
+      "sha256": "04f2e1cc7d9c89899b1f8ed9f119f97213f6c1273374e3f2671de80c210c6e5c",
+      "stock_sha256": "6ede6a9e87f7dfce9de8f0496852f611182ca90c61dcd3561ddb15543e8b0dcf",
+      "added_triangles": 636,
+      "changed_vertices": 0,
+      "protected_vertices": 1265
+    },
+    {
+      "path": "assets/cars/jetta_mk5_fsi_ui/mesh/w260_kit2_sskirt_r.d8m",
+      "sha256": "04f2e1cc7d9c89899b1f8ed9f119f97213f6c1273374e3f2671de80c210c6e5c",
+      "stock_sha256": "6ede6a9e87f7dfce9de8f0496852f611182ca90c61dcd3561ddb15543e8b0dcf",
+      "added_triangles": 636,
+      "changed_vertices": 0,
+      "protected_vertices": 1265
+    },
+    {
+      "path": "assets/cars/jetta_mk5_fsi/mesh/w260_kit3_fbump.d8m",
+      "sha256": "7539a9788301746a8cc71439c98bed0b13a424f5690e2c2e2c5bdcc12d142d22",
+      "stock_sha256": "467d8c0c3c0bd1d1fde2607ea04c5fa24da8c3be689ad45b70ee7b289345ac2f",
+      "added_triangles": 1136,
+      "changed_vertices": 141,
+      "protected_vertices": 15502
+    },
+    {
+      "path": "assets/cars/jetta_mk5_fsi_ui/mesh/w260_kit3_fbump.d8m",
+      "sha256": "7539a9788301746a8cc71439c98bed0b13a424f5690e2c2e2c5bdcc12d142d22",
+      "stock_sha256": "467d8c0c3c0bd1d1fde2607ea04c5fa24da8c3be689ad45b70ee7b289345ac2f",
+      "added_triangles": 1136,
+      "changed_vertices": 141,
+      "protected_vertices": 15502
+    },
+    {
+      "path": "assets/cars/jetta_mk5_fsi/mesh/w260_kit3_rbump.d8m",
+      "sha256": "29751f5927341342975c436cbf0e5989c9f70e494848fa156261bc8ef88543e3",
+      "stock_sha256": "22a70f71ca267404106b9d409bc07d9ffd71804f8c2c701337a0780a7b26bd48",
+      "added_triangles": 1120,
+      "changed_vertices": 0,
+      "protected_vertices": 4088
+    },
+    {
+      "path": "assets/cars/jetta_mk5_fsi_ui/mesh/w260_kit3_rbump.d8m",
+      "sha256": "29751f5927341342975c436cbf0e5989c9f70e494848fa156261bc8ef88543e3",
+      "stock_sha256": "22a70f71ca267404106b9d409bc07d9ffd71804f8c2c701337a0780a7b26bd48",
+      "added_triangles": 1120,
+      "changed_vertices": 0,
+      "protected_vertices": 4088
+    },
+    {
+      "path": "assets/cars/jetta_mk5_fsi/mesh/w260_kit3_sskirt_l.d8m",
+      "sha256": "cc7b48f284eb7ed964b1b2846323d1613fef2b0d89b83eae6bd8afe7e7180bdb",
+      "stock_sha256": "100604e26723991064f115f7bfff6d60cde71b5baec50830716fb9bda86ba283",
+      "added_triangles": 636,
+      "changed_vertices": 0,
+      "protected_vertices": 1304
+    },
+    {
+      "path": "assets/cars/jetta_mk5_fsi_ui/mesh/w260_kit3_sskirt_l.d8m",
+      "sha256": "cc7b48f284eb7ed964b1b2846323d1613fef2b0d89b83eae6bd8afe7e7180bdb",
+      "stock_sha256": "100604e26723991064f115f7bfff6d60cde71b5baec50830716fb9bda86ba283",
+      "added_triangles": 636,
+      "changed_vertices": 0,
+      "protected_vertices": 1304
+    },
+    {
+      "path": "assets/cars/jetta_mk5_fsi/mesh/w260_kit3_sskirt_r.d8m",
+      "sha256": "bc223e1977378239b35461c281710d54f63a83f7526b3f9dea9d4bcfa3c7fad5",
+      "stock_sha256": "6ede6a9e87f7dfce9de8f0496852f611182ca90c61dcd3561ddb15543e8b0dcf",
+      "added_triangles": 636,
+      "changed_vertices": 0,
+      "protected_vertices": 1265
+    },
+    {
+      "path": "assets/cars/jetta_mk5_fsi_ui/mesh/w260_kit3_sskirt_r.d8m",
+      "sha256": "bc223e1977378239b35461c281710d54f63a83f7526b3f9dea9d4bcfa3c7fad5",
+      "stock_sha256": "6ede6a9e87f7dfce9de8f0496852f611182ca90c61dcd3561ddb15543e8b0dcf",
+      "added_triangles": 636,
+      "changed_vertices": 0,
+      "protected_vertices": 1265
+    }
+  ],
+  "exports": {
+    "jetta_mk5_fsi-kit2.glb": "c1e6c9ed638036435f9b11fa078be49bb4ea025189f274f7ea5142c0330e021d",
+    "jetta_mk5_fsi-kit3.glb": "aa55f4aef73c3b18328509474183146ee4c90a4170e0bf31f5532e0c5610fd58"
+  },
+  "changed_files": [
+    "assets/cars/jetta_mk5_fsi/mesh/w260_kit2_fbump.d8m",
+    "assets/cars/jetta_mk5_fsi/mesh/w260_kit2_rbump.d8m",
+    "assets/cars/jetta_mk5_fsi/mesh/w260_kit2_sskirt_l.d8m",
+    "assets/cars/jetta_mk5_fsi/mesh/w260_kit2_sskirt_r.d8m",
+    "assets/cars/jetta_mk5_fsi/mesh/w260_kit3_fbump.d8m",
+    "assets/cars/jetta_mk5_fsi/mesh/w260_kit3_rbump.d8m",
+    "assets/cars/jetta_mk5_fsi/mesh/w260_kit3_sskirt_l.d8m",
+    "assets/cars/jetta_mk5_fsi/mesh/w260_kit3_sskirt_r.d8m",
+    "assets/cars/jetta_mk5_fsi_ui/mesh/w260_kit2_fbump.d8m",
+    "assets/cars/jetta_mk5_fsi_ui/mesh/w260_kit2_rbump.d8m",
+    "assets/cars/jetta_mk5_fsi_ui/mesh/w260_kit2_sskirt_l.d8m",
+    "assets/cars/jetta_mk5_fsi_ui/mesh/w260_kit2_sskirt_r.d8m",
+    "assets/cars/jetta_mk5_fsi_ui/mesh/w260_kit3_fbump.d8m",
+    "assets/cars/jetta_mk5_fsi_ui/mesh/w260_kit3_rbump.d8m",
+    "assets/cars/jetta_mk5_fsi_ui/mesh/w260_kit3_sskirt_l.d8m",
+    "assets/cars/jetta_mk5_fsi_ui/mesh/w260_kit3_sskirt_r.d8m"
+  ],
+  "all_other_runtime_files_unchanged": true,
+  "original_uvs_colours_unknown_vertex_data_preserved": true,
+  "protected_receiver_vertices_unchanged": true
+}

@@ -11,6 +11,22 @@ void touchDriving(bool driving);
 void touchBindings(const std::vector<ActionMap>& maps);
 void overlayInput(bool enabled);
 void openControllerSettings();
+inline void addCrewBindings(std::vector<ActionMap>& maps) {
+    constexpr const char* names[] = {"DRIVER_TACTICS_UP", "DRIVER_TACTICS_RIGHT",
+        "DRIVER_TACTICS_DOWN", "DRIVER_TACTICS_LEFT", "DRIVER_TACTICS3_UP", "DRIVER_TACTICS3_DOWN"};
+    for (auto& map : maps) {
+        if (map.name != "DRIVER1" || (!map.device.empty() && map.device != "ACTION_MAP")) continue;
+        for (int i = 0; i < 6; ++i) {
+            const auto semantic = "OJ_CREW_" + std::to_string(i);
+            std::erase_if(map.actions, [&](const ControlAction& a) { return a.control == semantic; });
+            ControlAction a;
+            a.name = names[i];
+            a.oneShot = true;
+            a.control = a.controlText = semantic;
+            map.actions.push_back(std::move(a));
+        }
+    }
+}
 struct ControllerConfig {
     int deadzone = 12;
     std::map<int, int> remap;

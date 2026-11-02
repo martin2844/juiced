@@ -65,46 +65,37 @@ def subset(p, mask):
                 uv=p['uv'][used].copy(), tri=inverse.reshape(-1,3))
 
 
-def carbon_panel(part):
-    """Split triangles at a clean inset bonnet outline, keeping the original skin.
+def source_bonnet(part):
+    """Select the detached front lid of the pinned source, including its edges."""
+    if part['mat']!='ferrari_458_body':return np.zeros(len(part['tri']),dtype=bool)
+    _,inverse=np.unique(np.round(part['pos'],4),axis=0,return_inverse=True)
+    parent=list(range(int(inverse.max())+1))
+    def find(i):
+        while parent[i]!=i:parent[i]=parent[parent[i]];i=parent[i]
+        return i
+    for triangle in inverse[part['tri']]:
+        a=find(triangle[0])
+        for b in triangle[1:]:parent[find(b)]=a
+    groups={}
+    for index,triangle in enumerate(inverse[part['tri']]):groups.setdefault(find(triangle[0]),[]).append(index)
+    candidates=[]
+    for indices in groups.values():
+        vertices=part['pos'][part['tri'][indices]].reshape(-1,3);lo,hi=vertices.min(0),vertices.max(0)
+        # Source-space identity: one broad, high front panel, not the low bumper.
+        if lo[2]>70 and hi[2]>200 and lo[1]>50 and hi[1]<95 and lo[0]<-70 and hi[0]>70:
+            candidates.append(indices)
+    if len(candidates)!=1:raise ValueError('Pinned Ferrari source bonnet is not uniquely identifiable')
+    selected=np.zeros(len(part['tri']),dtype=bool);selected[candidates[0]]=True
+    return selected
 
-    Selecting whole triangles by centroid produces a saw-tooth carbon boundary.
-    Clip and interpolate all vertex attributes instead; outside fragments retain
-    the car paint. No new raised hood/scoop geometry is introduced.
-    """
+
+def carbon_panel(part):
+    """Apply carbon to the actual full lid; retain its source surface and seams."""
     if part['mat']!='ferrari_458_body':return [part]
-    # Plane dot(position, normal) + offset >= 0. Taper towards the front badge.
-    planes=[(0,0,1,-98),(0,0,-1,176),(1,0,0,46),(-1,0,0,46),
-            (1,0,-.22,69),(-1,0,-.22,69)]
-    inside=[];outside=[]
-    attributes=np.c_[part['pos'],part['norm'],part['uv']]
-    def cut(poly,plane):
-        a=np.array(plane[:3]);dist=[v[:3]@a+plane[3] for v in poly]
-        positive=[];negative=[]
-        for i,v in enumerate(poly):
-            w=poly[(i+1)%len(poly)];d=dist[i];e=dist[(i+1)%len(poly)]
-            (positive if d>=0 else negative).append(v)
-            if (d>=0)!=(e>=0):
-                crossing=v+(w-v)*(d/(d-e));positive.append(crossing);negative.append(crossing)
-        return positive,negative
-    def triangles(poly,out):
-        for i in range(1,len(poly)-1):out.extend((poly[0],poly[i],poly[i+1]))
-    for tri in part['tri']:
-        poly=list(attributes[tri])
-        for plane in planes:
-            if len(poly)<3:break
-            poly,remainder=cut(poly,plane);triangles(remainder,outside)
-        triangles(poly,inside)
-    result=[]
-    for vertices,material in [(inside,'f458_carbon'),(outside,'ferrari_458_body')]:
-        if not vertices:continue
-        a=np.array(vertices);normal=a[:,3:6];normal/=np.maximum(np.linalg.norm(normal,axis=1)[:,None],1e-12)
-        uv=a[:,6:8]
-        if material=='f458_carbon':
-            x,z=a[:,0],a[:,2];uv=np.c_[(x+z)/16.97,(z-x)/16.97]
-        result.append(dict(mat=material,pos=a[:,:3],norm=normal,uv=uv,
-                           tri=np.arange(len(a)).reshape(-1,3)))
-    return result
+    result=dict(part);result['mat']='f458_carbon'
+    x,z=part['pos'][:,0],part['pos'][:,2]
+    result['uv']=np.c_[(x+z)/16.97,(z-x)/16.97]
+    return [result]
 
 
 def box(lo, hi, material):
@@ -222,7 +213,7 @@ def build(args):
             keys[(z<-183)&(y<75)]='RBUMP'
             keys[(abs(x)>77)&(y<31)&(z>-105)&(z<85)&(x<0)]='SSKIRT_L'
             keys[(abs(x)>77)&(y<31)&(z>-105)&(z<85)&(x>=0)]='SSKIRT_R'
-        if source=='body':keys[(z>83)&(z<188)&(y>62)&(abs(x)<54)]='BONNET'
+        if source=='body':keys[source_bonnet(p)]='BONNET'
         if source in ('chrome','interior_dark','metal','plastic_gray'):
             keys[(abs(x)<31)&(z<-217)&(y>28)&(y<58)]='EXHAUST'
         for key in np.unique(keys):zones[key].append(subset(p,keys==key))
@@ -413,7 +404,7 @@ Scratch = f458_scratch.ptd
     defs += '\n' + '\n'.join(block) + '\n'
     write('scripts/cardefs.txt',defs.encode('latin1'))
     dynamics=r.read('scripts/dynamic_falcon.txt').decode('latin1').replace('falcon', 'ferrari_458')
-    changes={'Name':'Ferrari458Spider','Mass':'1535','CentreOfGravity':'0 0.32 -0.25','FrontWeightDistribution':'0.42',
+    changes={'Name':'Ferrari458Spider','Mass':'1535','CentreOfGravity':'0 0.32 -0.25','FrontWeightDistribution':'0.50',
       'TorqueCurveX':'1000 2000 3250 4500 6000 7500 9000 9400','TorqueCurveY':'0.50 0.67 0.82 0.94 1.0 0.98 0.825 0.0',
       'MaxTorque':'540','ForwardGearRatios':'3.077 2.185 1.626 1.286 1.028 0.839 0.693',
       'EngineInertia':'0.8','ClutchSpeed':'9','PowerRangeMin':'6000','PowerRangeMax':'9000','FinalDrive':'5.143',
@@ -424,6 +415,10 @@ Scratch = f458_scratch.ptd
         replacement=f'[BeginLineCollider]\nID {i}\nPoint {x:.4f} {y+12:.4f} {z:.4f}\nEnd {x:.4f} -6 {z:.4f}\n[EndLineCollider]'
         dynamics=re.sub(r'\[BeginLineCollider\]\s*ID '+str(i)+r'\b.*?\[EndLineCollider\]',replacement,dynamics,flags=re.S)
     dynamics=dynamics.replace('WeightDistribution 0.26','WeightDistribution 0.21').replace('WeightDistribution 0.24','WeightDistribution 0.29')
+    # Calibrated against Juiced's native arcade physics, not a real-world simulation.
+    # Rear-biased .42 was unstable under this engine; retail NSX also uses a game-tuned balance.
+    dynamics=dynamics.replace('MaxSteerAngle 0.6','MaxSteerAngle 0.45')
+    dynamics=re.sub(r'(ContactId 2\s+)(WeightDistribution)',r'\1LateralMu 3.8\nLongitudinalMu 3.3\n\2',dynamics)
     write('scripts/dynamic_ferrari_458.txt',dynamics)
     for mat,c in [('f458_stop','255 45 25'),('f458_head','220 235 255')]:
         carfile('mesh/mats/'+mat+'.pmd','Material Program = Constant Colour\nColour = '+c+'\n')

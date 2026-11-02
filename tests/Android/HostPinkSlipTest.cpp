@@ -1,10 +1,18 @@
 #include "Core/Input/Input.h"
+#include "Game/Frontend/Career/PinkSlipCrew.h"
+#include "Game/Frontend/Career/CrewRaceSetup.h"
+#include "Game/Frontend/Career/GridWalk.h"
+#include "Game/Frontend/Career/CharacterScreen.h"
 #include "Framework/Fakes/FakeCareerHost.h"
 #include "Core/Career/CareerEvents.h"
 #include "Core/Cars/CarPhysics.h"
 #include "Mods/Runtime.h"
 #include "Mods/Creative.h"
+#ifdef OJ_LINUX
+#include "Linux/Render/GlesDevice.h"
+#else
 #include "Android/Render/GlesDevice.h"
+#endif
 #include <SDL3/SDL.h>
 #include <iostream>
 #include <stdexcept>
@@ -163,19 +171,111 @@ int main(int argc, char** argv) {
         career.profile.raceCarCount = 1; career.profile.raceCars[0] = 0; career.profile.raceMembers[0] = 0;
         data.setupRace(random);
         check(career.session.count == 2, "Native race session has two racers");
-        career.bets.crew = 2; career.bets.won = 1;
-        const auto size = career.garage.size();
+        check(frontend::pinkSlipCrewSelection(*event, event->round), "Crew package permits driver selection for a pink duel");
+        career.profile.memberCount = 2;
+        career.members[1] = 1;
+        auto crewScreen = host.open("CMSCrewRaceSetup");
+        frontend::CrewRaceSetup crewSetup;
+        crewSetup.enter(host, *crewScreen);
+        crewScreen->setCurrentButton("driver2value");
+        crewSetup.update(host, *crewScreen, input::kSelect);
+        crewSetup.update(host, *crewScreen, input::kSelect); // Finished, selected by the first press.
+        check(career.profile.raceMembers[0] == 1 && career.profile.raceCarsChosen == 0,
+              "Crew selector delegates the duel without a human driver");
+        check(host.requests.back().first == "CMSRaceSetup", "Delegated driver proceeds to car selection");
+        career.garage[0].base = 0xFF112233;
+        car.base = 0xFF445566;
+        car.grid->made[7] = true;
+        car.grid->saved[7] = 6.0f;
+        career.garage.push_back(car);
+        car.base = 0xFF778899;
+        career.garage.push_back(car); // Unselected car after the stake catches wrong-slot loss.
+        career.profile.raceCars[0] = 1;
+        career.profile.racing = 1;
+        career.profile.watching = 0;
+        career.session.needsSetup = 1;
+        data.setupRace(random);
+        bool delegated = false;
+        for (unsigned i = 0; i < career.session.count; ++i) {
+            const auto& racer = career.session.racers[i];
+            if (racer.crew == 0) delegated = racer.member == 1 && racer.driver == 0 && racer.car == 1;
+        }
+        check(delegated && leaderCar(career, 0) == 1, "AI teammate and title preview use the selected car, not garage slot zero");
+        frontend::GridWalk grid;
+        auto gridScreen = host.open("CMSGridWalk");
+        grid.enter(host, *gridScreen);
+        gridScreen->setCurrentButton("Go");
+        host.requests.clear();
+        grid.update(host, *gridScreen, input::kSelect);
+        check(career.bets.placed && career.bets.pinkSlip && career.bets.crew == 2,
+              "Delegated driver must stake the title");
+        check(host.requests.size() == 1 && host.requests[0].first == "careerload",
+              "Title confirmation cannot be overwritten by immediate race loading");
+        grid.leave();
+        // Exercise the actual confirmation/autosave/reinsert contract before settlement.
+        frontend::CharacterScreen character;
+        auto characterScreen = host.open("character");
+        data.saving = 1;
+        host.requests.clear();
+        host.messages.clear();
+        host.messageOpen = false;
+        host.switchPending = false;
+        character.enter(host, *characterScreen);
+        bool autosaved = false;
+        for (int step = 0; step < 100 && !autosaved; ++step) {
+            character.update(host, *characterScreen, input::kSelect);
+            for (auto& message : host.messages) {
+                if (message.answer) *message.answer = 1;
+            }
+            if (host.messageOpen) host.closeMessage();
+            for (const auto& request : host.requests) autosaved |= request.first == "autosave";
+        }
+        check(autosaved, "Actual title confirmation reaches autosave");
+        check(career.garage.size() == 2 && career.garage[0].base == 0xFF112233 &&
+                  career.garage[1].base == 0xFF778899,
+              "Autosave excludes exactly the selected middle car");
+        Career autosave;
+        check(autosave.read(career.write(), &error) && autosave.garage.size() == 2 &&
+                  autosave.garage[0].base == 0xFF112233 && autosave.garage[1].base == 0xFF778899,
+              "Serialized autosave preserves both unselected cars");
+        host.switchPending = false;
+        character.update(host, *characterScreen, 0);
+        check(career.garage.size() == 3 && career.garage.back().base == 0xFF445566 &&
+                  career.garage.back().grid && career.garage.back().grid->saved[7] == 6.0f,
+              "Stake returns at garage end without repairing existing damage");
+        check(career.profile.raceCars[0] == 2 && leaderCar(career, 0) == 2,
+              "Delegated racer references reinserted stake, not old garage index");
+        character.leave(host);
+        const auto beforeSettlement = career.garage;
+        const auto rival = career.opponentCars.at(static_cast<size_t>(leaderCar(career, 2)));
+        career.bets.crew = 2;
+        career.bets.won = 1;
         pinkSlipCar(career, data.catalogue);
-        check(career.garage.size() == size + 1, "Native win settlement transfers rival car");
+        check(career.garage.size() == 4 && career.garage[2].base == 0xFF445566 &&
+                  career.garage.back().modelName() == rival.modelName(),
+              "Win keeps own stake and transfers the selected rival car");
+        Career won;
+        check(won.read(career.write(), &error) && won.garage.size() == 4 &&
+                  won.garage[2].base == 0xFF445566 && won.garage.back().modelName() == rival.modelName(),
+              "Win ownership survives save reload");
+        // Start loss from the same pre-settlement garage, not from the winning garage.
+        career.garage = beforeSettlement;
         career.bets.won = 0;
         pinkSlipCar(career, data.catalogue);
-        check(career.garage.size() == size && career.profile.raceCarKept == 0, "Native loss settlement removes staked car");
+        check(career.garage.size() == 2 && career.profile.raceCarKept == 0 &&
+                  career.garage[0].base == 0xFF112233 && career.garage[1].base == 0xFF778899,
+              "Loss removes own selected stake and preserves both unselected cars");
+        Career lost;
+        check(lost.read(career.write(), &error) && lost.garage.size() == 2 &&
+                  lost.garage[0].base == 0xFF112233 && lost.garage[1].base == 0xFF778899,
+              "Loss ownership survives save reload");
         host.meeting.askDefaults(); host.meeting.enterSetup(host, *setup);
         check(setup->textOf("Location") != L"OPPONENT", "Regular setup restores location label");
         host.meeting.enterRace(host, *race);
         check(race->textOf("Crewnum") != L"OPPONENT" && race->textOf("prize") != L"STAKES",
               "Regular race restores team and prize labels");
         mods::runtime::load({});
+        check(!frontend::pinkSlipCrewSelection(*event, event->round), "Disabling crew mod restores player-only selection");
         test::FakeCareerHost disabled; disabled.data = &data;
         auto ordinary = disabled.open("CMSHostMeetingSetup");
         disabled.meeting.askDefaults(); disabled.meeting.enterSetup(disabled, *ordinary);

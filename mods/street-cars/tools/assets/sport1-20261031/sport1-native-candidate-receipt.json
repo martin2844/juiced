@@ -1,0 +1,176 @@
+{
+  "status": "PRIVATE; geometry/graphics review required",
+  "baseline": "/home/martin/.local/share/openjuice/mods/street-cars",
+  "candidate": "/run/media/martin/Ediloco/OpenJuice-builds/20261031-wave2-kit1/first-wave-candidate02",
+  "meshes": [
+    {
+      "path": "assets/cars/integra_db8/mesh/db8_sport_fbump.d8m",
+      "sha256": "96144b45728f089efeecc9a5625986bc0069b75b03ed6cf5f0e1ead2eede34ab",
+      "stock_sha256": "a7214d489bcf9a524610b9c58fc9a0688a5d8a38fbf54566f4ebb70b51be0b04",
+      "added_triangles": 672,
+      "all_stock_parts_retained_byte_for_byte": true
+    },
+    {
+      "path": "assets/cars/integra_db8_ui/mesh/db8_sport_fbump.d8m",
+      "sha256": "96144b45728f089efeecc9a5625986bc0069b75b03ed6cf5f0e1ead2eede34ab",
+      "stock_sha256": "a7214d489bcf9a524610b9c58fc9a0688a5d8a38fbf54566f4ebb70b51be0b04",
+      "added_triangles": 672,
+      "all_stock_parts_retained_byte_for_byte": true
+    },
+    {
+      "path": "assets/cars/integra_db8/mesh/db8_sport_rbump.d8m",
+      "sha256": "86dd53a03a0a7b5ec9e82989ab258fb3e3f8135d3b44475cc892e937a02c3165",
+      "stock_sha256": "5b0470fc4468280404d64ebc6648bba515f8be735fc4d05cdbc9849decf19796",
+      "added_triangles": 880,
+      "all_stock_parts_retained_byte_for_byte": true
+    },
+    {
+      "path": "assets/cars/integra_db8_ui/mesh/db8_sport_rbump.d8m",
+      "sha256": "86dd53a03a0a7b5ec9e82989ab258fb3e3f8135d3b44475cc892e937a02c3165",
+      "stock_sha256": "5b0470fc4468280404d64ebc6648bba515f8be735fc4d05cdbc9849decf19796",
+      "added_triangles": 880,
+      "all_stock_parts_retained_byte_for_byte": true
+    },
+    {
+      "path": "assets/cars/integra_db8/mesh/db8_sport_sskirt_l.d8m",
+      "sha256": "9f97eb87e224d4fdac72fa3efdcd118cc71ce4127b9e957330fc989dae9a6530",
+      "stock_sha256": "6a706a659668fffd10a3a386ed9e97808cacc1b525f73a27fa7dde8ead044044",
+      "added_triangles": 716,
+      "all_stock_parts_retained_byte_for_byte": true
+    },
+    {
+      "path": "assets/cars/integra_db8_ui/mesh/db8_sport_sskirt_l.d8m",
+      "sha256": "9f97eb87e224d4fdac72fa3efdcd118cc71ce4127b9e957330fc989dae9a6530",
+      "stock_sha256": "6a706a659668fffd10a3a386ed9e97808cacc1b525f73a27fa7dde8ead044044",
+      "added_triangles": 716,
+      "all_stock_parts_retained_byte_for_byte": true
+    },
+    {
+      "path": "assets/cars/integra_db8/mesh/db8_sport_sskirt_r.d8m",
+      "sha256": "b5824c4be0ec758be72bfb8d3293335863c9f850e32ab5d2e5cf1f9eab8ddee5",
+      "stock_sha256": "125fd894e81982e377d7b46321487969ba8cc4d3652e1bc497ac4468dfa8d065",
+      "added_triangles": 716,
+      "all_stock_parts_retained_byte_for_byte": true
+    },
+    {
+      "path": "assets/cars/integra_db8_ui/mesh/db8_sport_sskirt_r.d8m",
+      "sha256": "b5824c4be0ec758be72bfb8d3293335863c9f850e32ab5d2e5cf1f9eab8ddee5",
+      "stock_sha256": "125fd894e81982e377d7b46321487969ba8cc4d3652e1bc497ac4468dfa8d065",
+      "added_triangles": 716,
+      "all_stock_parts_retained_byte_for_byte": true
+    },
+    {
+      "path": "assets/cars/bmw_e36/mesh/e36_sport_fbump.d8m",
+      "sha256": "9b3c71839535d16c0f9fc1d452ba696006bd591869ca9fa7244ffabd9a3e6fc3",
+      "stock_sha256": "6395edca2f683a339049dd1129bc08e5c1f88c338c5907cb1abe695df1eb1349",
+      "added_triangles": 712,
+      "all_stock_parts_retained_byte_for_byte": true
+    },
+    {
+      "path": "assets/cars/bmw_e36_ui/mesh/e36_sport_fbump.d8m",
+      "sha256": "9b3c71839535d16c0f9fc1d452ba696006bd591869ca9fa7244ffabd9a3e6fc3",
+      "stock_sha256": "6395edca2f683a339049dd1129bc08e5c1f88c338c5907cb1abe695df1eb1349",
+      "added_triangles": 712,
+      "all_stock_parts_retained_byte_for_byte": true
+    },
+    {
+      "path": "assets/cars/bmw_e36/mesh/e36_sport_rbump.d8m",
+      "sha256": "f753a139b61f12ca6851e982df6dfd0bef8bac7e6646584c08ec49c612e773fe",
+      "stock_sha256": "6f6af4e1e4fe3452f56705d3f633a2d050573ec6688f5c73dc1fa003cd699fdf",
+      "added_triangles": 940,
+      "all_stock_parts_retained_byte_for_byte": true
+    },
+    {
+      "path": "assets/cars/bmw_e36_ui/mesh/e36_sport_rbump.d8m",
+      "sha256": "f753a139b61f12ca6851e982df6dfd0bef8bac7e6646584c08ec49c612e773fe",
+      "stock_sha256": "6f6af4e1e4fe3452f56705d3f633a2d050573ec6688f5c73dc1fa003cd699fdf",
+      "added_triangles": 940,
+      "all_stock_parts_retained_byte_for_byte": true
+    },
+    {
+      "path": "assets/cars/bmw_e36/mesh/e36_sport_sskirt_l.d8m",
+      "sha256": "24bff00c22af5f3a34b6395241aff0d31d6f27c9b864ae103af17bef491c0e62",
+      "stock_sha256": "364141141778f300bfc92b1fd0520c9ed15656659c19b497cdeff315e46fa16a",
+      "added_triangles": 660,
+      "all_stock_parts_retained_byte_for_byte": true
+    },
+    {
+      "path": "assets/cars/bmw_e36_ui/mesh/e36_sport_sskirt_l.d8m",
+      "sha256": "24bff00c22af5f3a34b6395241aff0d31d6f27c9b864ae103af17bef491c0e62",
+      "stock_sha256": "364141141778f300bfc92b1fd0520c9ed15656659c19b497cdeff315e46fa16a",
+      "added_triangles": 660,
+      "all_stock_parts_retained_byte_for_byte": true
+    },
+    {
+      "path": "assets/cars/bmw_e36/mesh/e36_sport_sskirt_r.d8m",
+      "sha256": "a2bd4332b13bc4f5a3e9f3788cf576f493c47eb7004534860ff834eb625235e3",
+      "stock_sha256": "e38904d30d73a3248ed4defcf9834054e85642317b4aa9d196dfbe91cb520d95",
+      "added_triangles": 660,
+      "all_stock_parts_retained_byte_for_byte": true
+    },
+    {
+      "path": "assets/cars/bmw_e36_ui/mesh/e36_sport_sskirt_r.d8m",
+      "sha256": "a2bd4332b13bc4f5a3e9f3788cf576f493c47eb7004534860ff834eb625235e3",
+      "stock_sha256": "e38904d30d73a3248ed4defcf9834054e85642317b4aa9d196dfbe91cb520d95",
+      "added_triangles": 660,
+      "all_stock_parts_retained_byte_for_byte": true
+    },
+    {
+      "path": "assets/cars/levin_ae92/mesh/ae92_sport_fbump.d8m",
+      "sha256": "ee99baee39136909042c739ae0a64ad9498f3ab715596a3c2f7802a31f6f39eb",
+      "stock_sha256": "ea086454dbf2c06b6207193c74089ad48ee7bf5c00383e78eea5aa02030eea94",
+      "added_triangles": 840,
+      "all_stock_parts_retained_byte_for_byte": true
+    },
+    {
+      "path": "assets/cars/levin_ae92_ui/mesh/ae92_sport_fbump.d8m",
+      "sha256": "ee99baee39136909042c739ae0a64ad9498f3ab715596a3c2f7802a31f6f39eb",
+      "stock_sha256": "ea086454dbf2c06b6207193c74089ad48ee7bf5c00383e78eea5aa02030eea94",
+      "added_triangles": 840,
+      "all_stock_parts_retained_byte_for_byte": true
+    },
+    {
+      "path": "assets/cars/levin_ae92/mesh/ae92_sport_rbump.d8m",
+      "sha256": "166683943331db761217cd91871d5af123f13cc59be89b3f9aa534bd66cf00c3",
+      "stock_sha256": "d0e6e9be7799241685ab16e3b943808b74db19e6463d791ee0fac45efcc2dd37",
+      "added_triangles": 708,
+      "all_stock_parts_retained_byte_for_byte": true
+    },
+    {
+      "path": "assets/cars/levin_ae92_ui/mesh/ae92_sport_rbump.d8m",
+      "sha256": "166683943331db761217cd91871d5af123f13cc59be89b3f9aa534bd66cf00c3",
+      "stock_sha256": "d0e6e9be7799241685ab16e3b943808b74db19e6463d791ee0fac45efcc2dd37",
+      "added_triangles": 708,
+      "all_stock_parts_retained_byte_for_byte": true
+    },
+    {
+      "path": "assets/cars/levin_ae92/mesh/ae92_sport_sskirt_l.d8m",
+      "sha256": "a32493dfd2eeba3be2f07b091e22cf5e1c2836f176c68028a5e70a89efffa620",
+      "stock_sha256": "83c9c1f0536afbacc92ba790edc4da3ff47c78696b1782c8bdbfcde1d6eb46e6",
+      "added_triangles": 660,
+      "all_stock_parts_retained_byte_for_byte": true
+    },
+    {
+      "path": "assets/cars/levin_ae92_ui/mesh/ae92_sport_sskirt_l.d8m",
+      "sha256": "a32493dfd2eeba3be2f07b091e22cf5e1c2836f176c68028a5e70a89efffa620",
+      "stock_sha256": "83c9c1f0536afbacc92ba790edc4da3ff47c78696b1782c8bdbfcde1d6eb46e6",
+      "added_triangles": 660,
+      "all_stock_parts_retained_byte_for_byte": true
+    },
+    {
+      "path": "assets/cars/levin_ae92/mesh/ae92_sport_sskirt_r.d8m",
+      "sha256": "ce573273202a0b45029c894065d3afad7203e9e1fd2244a8a8f250637dbd04d9",
+      "stock_sha256": "eee721aeda84a86676a5954e10959ac4451379cfaf895f838db49244dcb7d369",
+      "added_triangles": 660,
+      "all_stock_parts_retained_byte_for_byte": true
+    },
+    {
+      "path": "assets/cars/levin_ae92_ui/mesh/ae92_sport_sskirt_r.d8m",
+      "sha256": "ce573273202a0b45029c894065d3afad7203e9e1fd2244a8a8f250637dbd04d9",
+      "stock_sha256": "eee721aeda84a86676a5954e10959ac4451379cfaf895f838db49244dcb7d369",
+      "added_triangles": 660,
+      "all_stock_parts_retained_byte_for_byte": true
+    }
+  ],
+  "other_files_preserved": true
+}

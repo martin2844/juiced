@@ -133,7 +133,8 @@ void carState(const RaceCar& car, bool paused, bool horn, uint8_t* s) {
     s[0x35] = static_cast<uint8_t>(x87::nearest(body.steering * 127.0f));
     putF(s + 0x38, car.competitor != nullptr ? car.competitor->raceDistance : 0.0f);
     auto flags = static_cast<uint32_t>(s[0x3D]);
-    flags = (flags & ~7u) | (body.gear & 7u);
+    // Legacy packets only represent six forward gears; never wrap seventh into reverse.
+    flags = (flags & ~7u) | std::min(body.gear, 7u);
     flags = (flags & 0xE7u) | (body.engineOn ? 0x08u : 0u);
     flags = (flags & ~0x20u) | (paused ? 0x20u : 0u);
     flags = (flags & 0x7Fu) | (car.nitroAsked ? 0x80u : 0u);

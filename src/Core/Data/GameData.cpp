@@ -57,26 +57,9 @@ bool GameData::load(CrtRandom& random, std::string* error) {
     // Optional additive vinyl catalogue. Never replaces retail indices.
     if (const auto vinyls = scriptText(m_files, "mod_vinyls.txt")) {
         for (const auto& line : parseScript(*vinyls)) {
-            if (_stricmp(line.keyword.c_str(), "Vinyl") != 0) continue;
-            auto car = std::find_if(defs.cars.begin(), defs.cars.end(), [&](const auto& d) {
-                return _stricmp(d.name.c_str(), line.word(0).c_str()) == 0;
-            });
-            const auto mesh = line.word(1);
-            if (car == defs.cars.end() || !mesh.starts_with("DECAL_NFS_") || mesh.size() >= 32 ||
-                mesh.find_first_not_of("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_") != std::string::npos) {
-                if (error) *error = "Invalid car or mesh in mod_vinyls.txt";
-                return false;
-            }
-            auto& parts = car->parts[kDecal].parts;
-            if (parts.size() >= 125 || std::any_of(parts.begin(), parts.end(), [&](const auto& p) { return p.model == mesh; })) {
-                if (error) *error = "Duplicate vinyl or decal capacity exceeded in mod_vinyls.txt";
-                return false;
-            }
-            CarPart part;
-            part.model = mesh;
-            part.label = line.word(2);
-            part.index = static_cast<uint16_t>(parts.size());
-            parts.push_back(std::move(part));
+            const bool optional = _stricmp(line.keyword.c_str(), "VinylIfPresent") == 0;
+            if (!optional && _stricmp(line.keyword.c_str(), "Vinyl") != 0) continue;
+            if (!defs.appendVinyl(line.word(0), line.word(1), line.word(2), optional, error)) return false;
         }
     }
 

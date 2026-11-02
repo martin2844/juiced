@@ -145,6 +145,8 @@ LaunchOptions parseCommandLine(const char* commandLine) {
                 o.net = args[i + 1];
             } else if (a == "--autopilot") {
                 o.autopilot = true;
+            } else if (a == "--replay-capture-frame" && i + 1 < args.size()) {
+                o.replayCaptureFrame = static_cast<uint32_t>(std::strtoul(args[i + 1].c_str(), nullptr, 10));
             }
             continue;
         }

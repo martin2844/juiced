@@ -1,0 +1,87 @@
+{
+  "status": "PRIVATE; not installed or visually approved",
+  "study": "/run/media/martin/Ediloco/OpenJuice-builds/20261031-wave2-kit1/outback_2002-study02",
+  "baseline": "/run/media/martin/Ediloco/OpenJuice-builds/20261031-wave2-kit1/combined-step7",
+  "meshes": [
+    {
+      "path": "assets/cars/outback_2002/mesh/w261_kit1_fbump.d8m",
+      "sha256": "6dfe78474ea3fae37134157ebfd5f5faa38521773887ae857f930d817fcad781",
+      "stock_sha256": "559a92b28ab56f30d627ee50ec99303fc506b2cee5aaa2d02a521ddf57300d03",
+      "added_triangles": 852,
+      "changed_vertices": 169,
+      "protected_vertices": 620
+    },
+    {
+      "path": "assets/cars/outback_2002_ui/mesh/w261_kit1_fbump.d8m",
+      "sha256": "6dfe78474ea3fae37134157ebfd5f5faa38521773887ae857f930d817fcad781",
+      "stock_sha256": "559a92b28ab56f30d627ee50ec99303fc506b2cee5aaa2d02a521ddf57300d03",
+      "added_triangles": 852,
+      "changed_vertices": 169,
+      "protected_vertices": 620
+    },
+    {
+      "path": "assets/cars/outback_2002/mesh/w261_kit1_rbump.d8m",
+      "sha256": "abc0aeb10ec5c3bc1d5bb1bbdcb418788293f1308a6b46c2c11a0060d5984399",
+      "stock_sha256": "fb4abe28265b86f04e146d7081b2bbfac31c4d1aeaa4b9b952064ea4497bf720",
+      "added_triangles": 1252,
+      "changed_vertices": 0,
+      "protected_vertices": 299
+    },
+    {
+      "path": "assets/cars/outback_2002_ui/mesh/w261_kit1_rbump.d8m",
+      "sha256": "abc0aeb10ec5c3bc1d5bb1bbdcb418788293f1308a6b46c2c11a0060d5984399",
+      "stock_sha256": "fb4abe28265b86f04e146d7081b2bbfac31c4d1aeaa4b9b952064ea4497bf720",
+      "added_triangles": 1252,
+      "changed_vertices": 0,
+      "protected_vertices": 299
+    },
+    {
+      "path": "assets/cars/outback_2002/mesh/w261_kit1_sskirt_l.d8m",
+      "sha256": "7e3b13733570e3378e7afad396440a59ed863191e82e8d437b571666f808b93c",
+      "stock_sha256": "a683270bbce57eccf884a7e83aa62d759157aeb6898824fe9debca43565ce14a",
+      "added_triangles": 660,
+      "changed_vertices": 0,
+      "protected_vertices": 55
+    },
+    {
+      "path": "assets/cars/outback_2002_ui/mesh/w261_kit1_sskirt_l.d8m",
+      "sha256": "7e3b13733570e3378e7afad396440a59ed863191e82e8d437b571666f808b93c",
+      "stock_sha256": "a683270bbce57eccf884a7e83aa62d759157aeb6898824fe9debca43565ce14a",
+      "added_triangles": 660,
+      "changed_vertices": 0,
+      "protected_vertices": 55
+    },
+    {
+      "path": "assets/cars/outback_2002/mesh/w261_kit1_sskirt_r.d8m",
+      "sha256": "aea9329e64de60ab69a6d20a00d21f116f4ef2d09cc8a51f932bc759562d733d",
+      "stock_sha256": "9069de549adb210f07b64b3bf4f65a6d03f560ef8e96ba3b21395c1bc7063282",
+      "added_triangles": 660,
+      "changed_vertices": 0,
+      "protected_vertices": 82
+    },
+    {
+      "path": "assets/cars/outback_2002_ui/mesh/w261_kit1_sskirt_r.d8m",
+      "sha256": "aea9329e64de60ab69a6d20a00d21f116f4ef2d09cc8a51f932bc759562d733d",
+      "stock_sha256": "9069de549adb210f07b64b3bf4f65a6d03f560ef8e96ba3b21395c1bc7063282",
+      "added_triangles": 660,
+      "changed_vertices": 0,
+      "protected_vertices": 82
+    }
+  ],
+  "exports": {
+    "outback_2002-kit1.glb": "fc05a6f1c75ef469ff4a87e5ffeab7a2f2719ea10f38ad5dccd0457937c797d4"
+  },
+  "changed_files": [
+    "assets/cars/outback_2002/mesh/w261_kit1_fbump.d8m",
+    "assets/cars/outback_2002/mesh/w261_kit1_rbump.d8m",
+    "assets/cars/outback_2002/mesh/w261_kit1_sskirt_l.d8m",
+    "assets/cars/outback_2002/mesh/w261_kit1_sskirt_r.d8m",
+    "assets/cars/outback_2002_ui/mesh/w261_kit1_fbump.d8m",
+    "assets/cars/outback_2002_ui/mesh/w261_kit1_rbump.d8m",
+    "assets/cars/outback_2002_ui/mesh/w261_kit1_sskirt_l.d8m",
+    "assets/cars/outback_2002_ui/mesh/w261_kit1_sskirt_r.d8m"
+  ],
+  "all_other_runtime_files_unchanged": true,
+  "original_uvs_colours_unknown_vertex_data_preserved": true,
+  "protected_receiver_vertices_unchanged": true
+}

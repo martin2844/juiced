@@ -1,0 +1,13 @@
+{
+  "study": "/run/media/martin/Ediloco/OpenJuice-builds/20261031-wave2-kits/outback-study-02",
+  "coating_receipt": "/home/martin/Projects/juiced/openjuice-port/out/validation/linux-current-20261029/ten-car-kit-review/outback-coating-04.json",
+  "coating_sha256": "12a9ce446f0e6262370a34eea82cd05cf2ac60aaa18b421ab83f2499a4090642",
+  "status": "Native inspected kit04 source; local delivery verification required",
+  "authoring_tools_sha256": {
+    "build_morphed_kit_study.py": "aec349e217b469cdc61b609464885e787eb99ecc9787619cc09e137f3e16c6cb",
+    "package_morphed_kit_study.py": "febc618e938c170445f10827522f69b4d344833283bb221d7e9537a68cb9482f",
+    "coat_outback_kit_study.py": "13f9c36e31617ad141015839ffc8c41f6571d7f18e90c924f64763dd5054cfd0",
+    "apply_kit_coating_blender.py": "2e8319cc7687afb98e433fb353f649298b0396c4890acc5259060b5ec1e57a99"
+  },
+  "review": "Accepted Linux kit04 presentation; actual native capture and independent topology/UV verification in ten-car-kit-review."
+}

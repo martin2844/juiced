@@ -14,7 +14,7 @@ class SaveHost : public virtual ProfileHost {
 public:
     // The front end's +0x110: busy with the device (no network message window while set, 0x005A7F90).
     virtual void setSaveBusy(int32_t busy) = 0;
-    // scripts\jettext<language>.txt, read by the driver window's first enter.
+    // scripts\jettext<language>.txt, read on first entering the driver or replay window.
     virtual TextTable& jetTexts() = 0;
     // The game's side of the device (what a driver's and the records' files hold).
     virtual save::SaveGameSide& saveSide() = 0;

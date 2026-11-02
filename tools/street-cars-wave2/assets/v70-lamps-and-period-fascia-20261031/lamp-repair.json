@@ -1,0 +1,305 @@
+{
+  "status": "PRIVATE; native review required",
+  "baseline": "/home/martin/.local/share/openjuice/mods/street-cars-wave2",
+  "source_sha256": "bccddb59a10a6158175909abfb01c9f1360d7220a5a4064143df9fe823f63dac",
+  "author_sha256": "29dc8b89bf63320ae3a0b338424405902248b704171aba5d7e7a5b8a0c976fd1",
+  "method": "Existing rings conform to local source lens planes; normals/winding face outward; existing bulbs translated per local lens; no added pieces or textures",
+  "centres_native_cm": [
+    [
+      -72.50534057617188,
+      66.13204956054688,
+      194.6314697265625
+    ],
+    [
+      -53.851600646972656,
+      66.13204956054688,
+      194.6314697265625
+    ],
+    [
+      52.96333312988281,
+      66.13206481933594,
+      194.6314697265625
+    ],
+    [
+      71.6170654296875,
+      66.13206481933594,
+      194.6314697265625
+    ]
+  ],
+  "reflector_xy_scales": [
+    1.0,
+    0.94,
+    0.92,
+    1.0
+  ],
+  "lens_z_at_centres_cm": [
+    200.8477783203125,
+    210.78927612304688,
+    211.13864135742188,
+    201.58224487304688
+  ],
+  "bulb_forward_shift_cm": [
+    4.21630859375,
+    14.157806396484375,
+    14.507171630859375,
+    4.950775146484375
+  ],
+  "original_reflector_vertices_hidden_by_opaque_body": 254,
+  "corrected_reflector_vertices_hidden_by_opaque_body": 0,
+  "minimum_corrected_housing_clearance_cm": 3.2372589111328125,
+  "minimum_lens_clearance_cm": 0.8000030517578125,
+  "meshes": [
+    {
+      "path": "assets/cars/volvo_v70_24/mesh/w263_fbump.d8m",
+      "sha256": "6d0fc415b274fb4e149c9acf922ab00f87b9d850b064f70da29aa88fef8ae751",
+      "parts": [
+        {
+          "material": "w263_m12",
+          "vertices": 364,
+          "old_z_min": 192.21270751953125,
+          "old_z_max": 196.61798095703125,
+          "new_z_min": 194.19505310058594,
+          "new_z_max": 212.46202087402344
+        },
+        {
+          "material": "w263_m13",
+          "vertices": 324,
+          "old_z_min": 193.6263427734375,
+          "old_z_max": 195.6365966796875,
+          "new_z_min": 197.8426513671875,
+          "new_z_max": 210.14376831054688
+        }
+      ]
+    },
+    {
+      "path": "assets/cars/volvo_v70_24/mesh/w263_kit1_fbump.d8m",
+      "sha256": "f72d4e9232096b18a64e580970bfa75423059ff3a451ad47111c956691904484",
+      "parts": [
+        {
+          "material": "w263_m12",
+          "vertices": 364,
+          "old_z_min": 192.21270751953125,
+          "old_z_max": 196.61798095703125,
+          "new_z_min": 194.19505310058594,
+          "new_z_max": 212.46202087402344
+        },
+        {
+          "material": "w263_m13",
+          "vertices": 324,
+          "old_z_min": 193.6263427734375,
+          "old_z_max": 195.6365966796875,
+          "new_z_min": 197.8426513671875,
+          "new_z_max": 210.14376831054688
+        }
+      ]
+    },
+    {
+      "path": "assets/cars/volvo_v70_24/mesh/w263_kit2_fbump.d8m",
+      "sha256": "4e2ed729491c4411cdd700ba04ee09b1475f64625d6db0638ac4d5dfefe03b24",
+      "parts": [
+        {
+          "material": "w263_m12",
+          "vertices": 364,
+          "old_z_min": 192.21270751953125,
+          "old_z_max": 196.61798095703125,
+          "new_z_min": 194.19505310058594,
+          "new_z_max": 212.46202087402344
+        },
+        {
+          "material": "w263_m13",
+          "vertices": 324,
+          "old_z_min": 193.6263427734375,
+          "old_z_max": 195.6365966796875,
+          "new_z_min": 197.8426513671875,
+          "new_z_max": 210.14376831054688
+        }
+      ]
+    },
+    {
+      "path": "assets/cars/volvo_v70_24/mesh/w263_kit3_fbump.d8m",
+      "sha256": "26fd7a0f8aa03e29ee497f1462e577efaf3c347a75082ccff801add6031088ef",
+      "parts": [
+        {
+          "material": "w263_m12",
+          "vertices": 364,
+          "old_z_min": 192.21270751953125,
+          "old_z_max": 196.61798095703125,
+          "new_z_min": 194.19505310058594,
+          "new_z_max": 212.46202087402344
+        },
+        {
+          "material": "w263_m13",
+          "vertices": 324,
+          "old_z_min": 193.6263427734375,
+          "old_z_max": 195.6365966796875,
+          "new_z_min": 197.8426513671875,
+          "new_z_max": 210.14376831054688
+        }
+      ]
+    },
+    {
+      "path": "assets/cars/volvo_v70_24/mesh/w263_lightson.d8m",
+      "sha256": "eb667436c89e923a33282fbaee8d7b425fad8942b9e30e28a7812b6476c9db0d",
+      "parts": [
+        {
+          "material": "w263_head",
+          "vertices": 324,
+          "old_z_min": 193.556396484375,
+          "old_z_max": 195.70729064941406,
+          "new_z_min": 197.7742156982422,
+          "new_z_max": 210.2137451171875
+        }
+      ],
+      "added_emissive_reflector_vertices": 364,
+      "added_emissive_reflector_triangles": 536
+    },
+    {
+      "path": "assets/cars/volvo_v70_24/mesh/w263_sport_fbump.d8m",
+      "sha256": "0d439412aeb75239ed7c22b116dd44688161fa972a0f108b1f94f4ba634a96f1",
+      "parts": [
+        {
+          "material": "w263_m12",
+          "vertices": 364,
+          "old_z_min": 192.21270751953125,
+          "old_z_max": 196.73904418945312,
+          "new_z_min": 194.19505310058594,
+          "new_z_max": 212.46202087402344
+        },
+        {
+          "material": "w263_m13",
+          "vertices": 324,
+          "old_z_min": 193.6263427734375,
+          "old_z_max": 195.6365966796875,
+          "new_z_min": 197.8426513671875,
+          "new_z_max": 210.14376831054688
+        }
+      ]
+    },
+    {
+      "path": "assets/cars/volvo_v70_24_ui/mesh/w263_fbump.d8m",
+      "sha256": "6d0fc415b274fb4e149c9acf922ab00f87b9d850b064f70da29aa88fef8ae751",
+      "parts": [
+        {
+          "material": "w263_m12",
+          "vertices": 364,
+          "old_z_min": 192.21270751953125,
+          "old_z_max": 196.61798095703125,
+          "new_z_min": 194.19505310058594,
+          "new_z_max": 212.46202087402344
+        },
+        {
+          "material": "w263_m13",
+          "vertices": 324,
+          "old_z_min": 193.6263427734375,
+          "old_z_max": 195.6365966796875,
+          "new_z_min": 197.8426513671875,
+          "new_z_max": 210.14376831054688
+        }
+      ]
+    },
+    {
+      "path": "assets/cars/volvo_v70_24_ui/mesh/w263_kit1_fbump.d8m",
+      "sha256": "f72d4e9232096b18a64e580970bfa75423059ff3a451ad47111c956691904484",
+      "parts": [
+        {
+          "material": "w263_m12",
+          "vertices": 364,
+          "old_z_min": 192.21270751953125,
+          "old_z_max": 196.61798095703125,
+          "new_z_min": 194.19505310058594,
+          "new_z_max": 212.46202087402344
+        },
+        {
+          "material": "w263_m13",
+          "vertices": 324,
+          "old_z_min": 193.6263427734375,
+          "old_z_max": 195.6365966796875,
+          "new_z_min": 197.8426513671875,
+          "new_z_max": 210.14376831054688
+        }
+      ]
+    },
+    {
+      "path": "assets/cars/volvo_v70_24_ui/mesh/w263_kit2_fbump.d8m",
+      "sha256": "4e2ed729491c4411cdd700ba04ee09b1475f64625d6db0638ac4d5dfefe03b24",
+      "parts": [
+        {
+          "material": "w263_m12",
+          "vertices": 364,
+          "old_z_min": 192.21270751953125,
+          "old_z_max": 196.61798095703125,
+          "new_z_min": 194.19505310058594,
+          "new_z_max": 212.46202087402344
+        },
+        {
+          "material": "w263_m13",
+          "vertices": 324,
+          "old_z_min": 193.6263427734375,
+          "old_z_max": 195.6365966796875,
+          "new_z_min": 197.8426513671875,
+          "new_z_max": 210.14376831054688
+        }
+      ]
+    },
+    {
+      "path": "assets/cars/volvo_v70_24_ui/mesh/w263_kit3_fbump.d8m",
+      "sha256": "26fd7a0f8aa03e29ee497f1462e577efaf3c347a75082ccff801add6031088ef",
+      "parts": [
+        {
+          "material": "w263_m12",
+          "vertices": 364,
+          "old_z_min": 192.21270751953125,
+          "old_z_max": 196.61798095703125,
+          "new_z_min": 194.19505310058594,
+          "new_z_max": 212.46202087402344
+        },
+        {
+          "material": "w263_m13",
+          "vertices": 324,
+          "old_z_min": 193.6263427734375,
+          "old_z_max": 195.6365966796875,
+          "new_z_min": 197.8426513671875,
+          "new_z_max": 210.14376831054688
+        }
+      ]
+    },
+    {
+      "path": "assets/cars/volvo_v70_24_ui/mesh/w263_lightson.d8m",
+      "sha256": "eb667436c89e923a33282fbaee8d7b425fad8942b9e30e28a7812b6476c9db0d",
+      "parts": [
+        {
+          "material": "w263_head",
+          "vertices": 324,
+          "old_z_min": 193.556396484375,
+          "old_z_max": 195.70729064941406,
+          "new_z_min": 197.7742156982422,
+          "new_z_max": 210.2137451171875
+        }
+      ],
+      "added_emissive_reflector_vertices": 364,
+      "added_emissive_reflector_triangles": 536
+    },
+    {
+      "path": "assets/cars/volvo_v70_24_ui/mesh/w263_sport_fbump.d8m",
+      "sha256": "0d439412aeb75239ed7c22b116dd44688161fa972a0f108b1f94f4ba634a96f1",
+      "parts": [
+        {
+          "material": "w263_m12",
+          "vertices": 364,
+          "old_z_min": 192.21270751953125,
+          "old_z_max": 196.73904418945312,
+          "new_z_min": 194.19505310058594,
+          "new_z_max": 212.46202087402344
+        },
+        {
+          "material": "w263_m13",
+          "vertices": 324,
+          "old_z_min": 193.6263427734375,
+          "old_z_max": 195.6365966796875,
+          "new_z_min": 197.8426513671875,
+          "new_z_max": 210.14376831054688
+        }
+      ]
+    }
+  ]
+}

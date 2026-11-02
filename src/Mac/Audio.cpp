@@ -160,7 +160,11 @@ HRESULT IDirectSoundBuffer::SetFrequency(DWORD f) {
 }
 HRESULT IDirectSoundBuffer::SetPan(LONG mb) {
     std::lock_guard l(audioMutex);
-    pan = std::clamp(mb / 10000.f, -1.f, 1.f);
+    // DirectSound's pan is attenuation in hundredths of a decibel, whereas
+    // the mixer and 3D positioning use a linear channel balance.
+    const float value = std::clamp(static_cast<float>(mb), -10000.f, 10000.f);
+    const float quiet = std::abs(value) >= 10000.f ? 0.f : std::pow(10.f, -std::abs(value) / 2000.f);
+    pan = std::copysign(1.f - quiet, value);
     return S_OK;
 }
 HRESULT IDirectSound3DBuffer::SetPosition(float x, float, float z, DWORD) {

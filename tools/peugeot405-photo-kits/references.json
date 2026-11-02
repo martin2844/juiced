@@ -1,0 +1,10 @@
+{
+  "coordinate_authority": "Existing Peugeot405 source body, wheelbase266.9cm; photos provide proportions and design, not calibrated photogrammetry.",
+  "kits": [
+    {"slot": 1, "name": "Gutmann interpretation", "url": "https://www.kustomorphose.com/kit-carrosserie-367/kit-carrosserie-peugeot-405-look-6801.html", "photos": ["gutmann-6.jpg", "gutmann-3.jpg", "gutmann-1.jpg", "gutmann-blue.jpg"], "observed": "Four rectangular foglights, shallow central trapezoid, five apron slots, straight period bands, concave skirts, restrained rear apron.", "adaptation": "Retains Juiced stock upper bumper/plate, lights, wheel arches and left exhaust. No claimed exact commercial-kit replica."},
+    {"slot": 2, "name": "Stratos interpretation", "url": "https://www.avb-sports.be/peugeot/405/1987-1996/bodycomponents/bodykits/13218/", "photos": ["stratos-1.jpg", "stratos-2.jpg", "white-kit.jpg"], "observed": "Three large tapered rounded front openings, thin curved bridges, smooth skirts, two low rear recesses.", "adaptation": "Photo's twin central exhaust replaced with actual left-side engine exhaust clearance. Catalogue upper bumper seams stay."},
+    {"slot": 3, "name": "Blue Morette showcase interpretation", "url": "https://www.morette.com/gb/peugeot/96-peugeot-405.html", "photos": ["morette-2002.jpg", "morette-2005.jpg"], "observed": "Single shallow central opening, four round foglights, outer ducts, double lower lip, centred tapered bonnet scoop.", "adaptation": "Unidentified body-kit maker. Morette is the photo/headlight source, not a claim about kit manufacturer. Rear not shown: original clean adaptation. Stock Juiced headlights retained."}
+  ],
+  "hoods": "Factory pressing and original supplied normals retained; plain carbon and painted/carbon central scoops. Old paired rectangular louvres removed. Scoop is derived from the blue photo and fitted within the existing centre panel.",
+  "limitations": "Photo-derived game-scale interpretations, not laser scans. Existing opaque glazing hides the source model's incomplete cabin. Existing native vinyl receiver faces retained. No renderer/physics modifications."
+}

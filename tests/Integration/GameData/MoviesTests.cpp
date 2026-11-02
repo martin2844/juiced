@@ -10,6 +10,7 @@
 
 #include <chrono>
 #include <cstdio>
+#include <fstream>
 #include <string>
 #include <thread>
 #include <vector>
@@ -47,13 +48,24 @@ OJ_INTEGRATION_TEST(Movies, Bink) {
                   bink->field(m, 0xF0) == 0 && sum != 0;
             bink->close(m);
         }
-        const uint32_t b = bink->open(game.root() / "movies" / "Biggi" / "BIGGI_ACCEPT_BET1.bik", 0x804000);
+        const auto leaderFile = game.root() / "movies" / "Biggi" / "BIGGI_ACCEPT_BET1.bik";
+        // Retail language editions have different track counts. Read the BIK
+        // header independently instead of assuming the eight-track edition.
+        std::ifstream source(leaderFile, std::ios::binary);
+        uint8_t header[44]{};
+        source.read(reinterpret_cast<char*>(header), sizeof(header));
+        const uint32_t tracks = uint32_t(header[40]) | (uint32_t(header[41]) << 8)
+            | (uint32_t(header[42]) << 16) | (uint32_t(header[43]) << 24);
+        const bool validHeader = source.gcount() == sizeof(header) && header[0] == 'B'
+            && header[1] == 'I' && header[2] == 'K' && tracks > 0 && tracks <= 256;
+        const uint32_t b = bink->open(leaderFile, 0x804000);
         if (b != 0) {
-            leader = bink->field(b, 0xF0) == 8;
+            leader = validHeader && bink->field(b, 0xF0) == tracks;
+            std::printf("     leader: header %u tracks, decoder %u tracks\n", tracks, bink->field(b, 0xF0));
             bink->close(b);
         }
     }
-    check(hub && leader, "movies: the game's binkw32.dll opens hub_01 and a leader's clip, decodes frame 30");
+    check(hub && leader, "movies: Bink opens hub_01 and a leader's clip, decodes frame 30");
 }
 // OpenJuice's own BinkWait (the 64-bit build's) after a stall, as binkw32 measured: a 25 fps movie stalled 1 s (a
 // window loading under a menu's movie) goes on at its pace, about 10 frames in the next 0.4 s, not the 25 missed ones

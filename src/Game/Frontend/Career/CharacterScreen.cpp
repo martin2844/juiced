@@ -782,6 +782,7 @@ void CharacterScreen::update(CareerHost& host, ui::Screen& screen, uint32_t even
             host.sound("CLICK");
         } else {
             host.sound("CLICK");
+            data.startRace(random, automaticGearbox);
             host.request("loading", SwitchMode::Replace);
         }
         m_stage = kIdle;

@@ -1,0 +1,14 @@
+{
+  "source_study": "/run/media/martin/Ediloco/OpenJuice-builds/20261031-fitted-kits/volvo_v70_24-study06",
+  "files": {
+    "native-candidate-receipt.json": "b7003c93ad287500e91675f7e088f99031d4212a191c2c97f9f9439c9a3c0c9a",
+    "volvo_v70_24-kit2.glb": "a87283237a378cdae781d8cc5dea16973904b30426eb40290628880409eede15",
+    "volvo_v70_24-fitted-kits.blend": "6cc859395a71d6845dacd336c1b1e9331b77c76439f1cc53d2003f3b3e80236b",
+    "native-vertex-study.json": "9b2a925968f7fbcb951961716fd2e8eee7e6d578af96022f380185832a6f7037",
+    "volvo_v70_24-kit3.glb": "9c24c114396561351d722391fc7605dce1a473e529ca8fdac69dc4a278d207f9"
+  },
+  "authoring_tool_sha256": "da43ee82b1372be6fbdfab1ccbf4abb041265408ab0421cd606b9b9b63877b3b",
+  "adapter_sha256": "1bc3f4d2d335cbfcb018bd6a06492a88fa0b821c1e2d594be4a9781c226ac74a",
+  "approval_scope": "kit2/3 fit correction, not full ten-car acceptance",
+  "installed_source_verified_in_bundle": "r14 / Wave2 12"
+}

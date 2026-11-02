@@ -134,6 +134,9 @@ public final class JuicedActivity extends SDLActivity {
           new java.io.RandomAccessFile(new java.io.File(getFilesDir(), "installation.lock"), "rw");
       installLock = installLockFile.getChannel().tryLock();
       if (installLock == null) throw new java.io.IOException("Import in progress");
+      // Android may kill the previous native process before its overlay destructor
+      // runs. With the installation lock held, none of those derived files is live.
+      ModStore.clearDerivedModCache(getFilesDir());
     } catch (java.io.IOException e) {
       super.onCreate(state);
       getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -208,6 +211,9 @@ public final class JuicedActivity extends SDLActivity {
     if ("diagnostics".equals(mode)) return new String[] {root, "--diagnostics"};
     if ("stock".equals(mode)) return new String[] {root, "--no-mods"};
     if ("mods".equals(mode)) return new String[] {root, "--mods-menu"};
+    if ((getApplicationInfo().flags & android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE) != 0
+        && "render-check".equals(mode))
+      return new String[] {root, "--render-check"};
     if ((getApplicationInfo().flags & android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE) != 0
         && "garage-check".equals(mode))
       return new String[] {root, "--screen", "instant_selcar", "--frames", "360", "--capture", root + "/android-garage.bmp"};

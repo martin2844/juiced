@@ -1,0 +1,72 @@
+{
+  "decision": "Accept fitted V70 lamp assembly/visible on overlay and source-component body-colour kit3 fascia on405/240; full ten-car acceptance remains open",
+  "native_views_inspected": 176,
+  "sheets": {
+    "pilot04/gallery-v70lamp04/VOLVO_V70_24-contact.jpg": {
+      "sha256": "c8e19f13d878471204f0f27f0ff31f051f42e55dd569f2fccb48dde2f5e30531",
+      "views": 32,
+      "actually_inspected": true
+    },
+    "pilot04/close-clear-v70lamp04/VOLVO_V70_24-contact.jpg": {
+      "sha256": "b51ebac453028078aa9c63a67d8668dde611983c627c457baa9f9f49f1389200",
+      "views": 16,
+      "actually_inspected": true
+    },
+    "lamp-switch05/kits0-1-contact.jpg": {
+      "sha256": "65b5ec53e958d01a660fe9c066c96009fb3bf87ee5936184ac12de63c4be1c90",
+      "views": 12,
+      "actually_inspected": true
+    },
+    "lamp-switch05/kits2-3-contact.jpg": {
+      "sha256": "b824e3099be2dd17572ed433fd60dc40b4459f147f6c9f1c8e2a762b128fc962",
+      "views": 12,
+      "actually_inspected": true
+    },
+    "period-pilot07/gallery-period07/PEUGEOT_405_GLX-contact.jpg": {
+      "sha256": "27aacb448b9d80060d36d1adb5225a887414ba4a6c25a368056aeb964b76812f",
+      "views": 32,
+      "actually_inspected": true
+    },
+    "period-pilot06/close-clear-period06/PEUGEOT_405_GLX-contact.jpg": {
+      "sha256": "7209e351bbdf922c1b0a63f980efa04a987357dbf4029b904fd93f3f27ffe2a2",
+      "views": 16,
+      "actually_inspected": true
+    },
+    "period-pilot08/gallery-period08/VOLVO_240_TURBO-contact.jpg": {
+      "sha256": "47fe9e82b9a206db1d3ec2d2f779652d97a021bdc972bd5e57e3d0df0133bb63",
+      "views": 32,
+      "actually_inspected": true
+    },
+    "period-pilot08/close-clear-period08/VOLVO_240_TURBO-contact.jpg": {
+      "sha256": "69142840f4ffe53e07047768ebd57e955c820b5b153f9a8725753eb37ab20ad1",
+      "views": 16,
+      "actually_inspected": true
+    },
+    "paint-red/alternate-paint-contact.jpg": {
+      "sha256": "d73254de6f874aa716bc3636e602a092a780e78b21a8f149948dc89c1809177d",
+      "views": 8,
+      "actually_inspected": true
+    }
+  },
+  "reuse_proof": "reuse-proof.json;V70 off geometry unchanged04->05;405 output unchanged06->07->08; exact16/12-image pixel comparisons",
+  "findings": [
+    "Four existing V70 reflectors now face outward and sit between original lenses and housing; no fabricated extra physical components.",
+    "LIGHTSON reuses reflector surfaces as visible native emissive areas; source lamp openings remain intact on stock and all3 kits.",
+    "405 kit3 fascia uses native player paint; chrome, lamps, plate and underbody atlas stay on original materials.",
+    "240 kit3 coats complete source bumper components1290/940 faces, preserving grille and separate inner chassis.",
+    "Alternate red paint follows original player body colour; no baked-blue replacement."
+  ],
+  "rejected_trials": {
+    "V70_01_02": "Three ring-edge points intersected lower bumper mask; not installed.",
+    "V70_03": "Audit sampled oldXY after source rings were shrunk; corrected audit and04 passed.",
+    "V70_04_lightson": "Off assembly accepted; bulb-only emissive area too small, replaced by05 reflector overlay.",
+    "period06": "Normal/position facet filter left patchy black triangles.",
+    "period07_240": "Height-only selection also coloured inner chassis; rejected in favour of08 source components."
+  },
+  "limits": [
+    "Private UI LIGHTSON toggle is not a night-race or Android FPS test.",
+    "Original housing/approximate reflector design retained; not OEM CAD optics.",
+    "Existing kit1 finish on Wave2 and declared handling-variant uncertainties remain pending.",
+    "No physical RP5 access."
+  ]
+}

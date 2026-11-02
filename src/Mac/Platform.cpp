@@ -194,6 +194,7 @@ bool Platform::takeScreenshotRequest() {
 std::vector<input::KeyEvent> Platform::takeKeyEvents() {
     return std::exchange(events, {});
 }
+#ifndef OJ_LINUX
 struct InputDevices::State {};
 InputDevices::InputDevices() : m_state(std::make_unique<State>()) {}
 InputDevices::~InputDevices() = default;
@@ -205,9 +206,12 @@ std::vector<input::ControllerPort *> InputDevices::controllers() const {
 }
 input::KeyboardPort *InputDevices::keyboard() const { return nullptr; }
 bool InputDevices::configure(const input::MapFormat&) { return false; }
+#endif
 // The Mac controls overlay stays in the game window; these DirectInput hooks are unused.
 void Platform::beginControlsWindow() {}
 void Platform::endControlsWindow() {}
+#ifndef OJ_LINUX
 void InputDevices::startWheels(HWND) {}
 void InputDevices::stopWheels() {}
+#endif
 } // namespace oj

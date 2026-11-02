@@ -3,6 +3,7 @@
 #include "Game/Frontend/Career/RaceSetup.h"
 
 #include "Core/Data/GameTexts.h"
+#include "Game/Frontend/Career/PinkSlipCrew.h"
 #include "Game/Frontend/Garage/CarStats.h"
 #include "Game/Frontend/WindowTools.h"
 
@@ -15,7 +16,7 @@ namespace {
 // A crew's leave: a crew of more than one member in a round not a cruise nor a challenge, and not a pink slip.
 bool crewRace(const Career& career, const CalendarEvent& e, const EventRound& round) {
     return career.profile.memberCount != 1 && round.type != EventKind::Showoff && round.type != EventKind::Challenge &&
-           e.pinkSlip == 0;
+           (e.pinkSlip == 0 || pinkSlipCrewSelection(e, round));
 }
 
 }  // namespace

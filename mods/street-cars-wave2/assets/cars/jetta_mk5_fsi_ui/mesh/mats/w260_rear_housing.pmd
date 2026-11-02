@@ -1,0 +1,7 @@
+Material Program = Specular Opaque
+Colour = 255 255 255
+Specular Colour = 110 110 110
+Specular Highlight = 55
+Shininess = 40
+Double-sided = TRUE
+Opaque Texture = w260_rear_housing.ptd

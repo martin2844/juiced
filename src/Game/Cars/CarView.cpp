@@ -156,10 +156,12 @@ void CarView::load(Job& j) {
     std::this_thread::sleep_for(std::chrono::milliseconds(10));
     const CarFolders folders(m_engine);
     j.model = CarModel::load(m_engine, j.loaded, m_catalogue, *j.loading, true);
-    j.neon = m_engine.loadModel("gen_neon", *j.loading, true);
-    j.mirror = CarModel::load(m_engine, j.loaded, m_catalogue, *j.loading, true);
-    if (j.mirror) j.mirror->mirror();
-    j.shadow = m_engine.loadModel("arcade_shadow", *j.loading, true);
+    if (m_setup.shadow) j.neon = m_engine.loadModel("gen_neon", *j.loading, true);
+    if (m_setup.mirror) {
+        j.mirror = CarModel::load(m_engine, j.loaded, m_catalogue, *j.loading, true);
+        if (j.mirror) j.mirror->mirror();
+    }
+    if (m_setup.shadow) j.shadow = m_engine.loadModel("arcade_shadow", *j.loading, true);
 }
 
 void CarView::frame(float dt, CrtRandom& random) {

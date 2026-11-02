@@ -52,6 +52,20 @@ void CreativeMenu::notice(const std::string &text) {
     m_message.restartTransitions();
     ui::openMessage(m_message, ui::MessageType::Note, toWide(text + "\n\nENTER: CONTINUE"));
 }
+bool CreativeMenu::updateUi(uint32_t event) {
+    // Reuse the menu's actions with the same mapped/repeating UI events as the
+    // retail frontend. Do not also submit raw keys: one keyboard press must not
+    // move the selection twice.
+    uint8_t code = 0;
+    switch (event) {
+    case input::kUp: code = 200; break;
+    case input::kDown: code = 208; break;
+    case input::kSelect: code = 28; break;
+    case input::kBack: code = 1; break;
+    default: break;
+    }
+    return update(code != 0 ? std::vector<input::KeyEvent>{{code, true}} : std::vector<input::KeyEvent>{});
+}
 bool CreativeMenu::update(const std::vector<input::KeyEvent> &keys) {
     for (auto k : keys) {
         if (!k.down)

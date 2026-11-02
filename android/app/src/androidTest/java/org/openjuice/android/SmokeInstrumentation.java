@@ -35,7 +35,7 @@ public final class SmokeInstrumentation extends Instrumentation {
             "stream",
             "PASS: real-save clone edit, money/car/respect roundtrip, backup, stale edit rejection,"
                 + " restore, original untouched\n");
-        finish(Activity.RESULT_OK, result);
+        finishResult(Activity.RESULT_OK, result);
         return;
       }
       if ("touch".equals(mode) || "touch-race".equals(mode)) {
@@ -43,9 +43,10 @@ public final class SmokeInstrumentation extends Instrumentation {
         if ("touch-race".equals(mode)) TouchInstrumentedTest.race(this);
         result.putString(
             "stream",
-            "PASS: touch view multitouch, partial release, cancellation, menu transition and menu"
+            ("touch-race".equals(mode) ? "PASS: live race Go, acceleration, steering, partial release, braking and neutral; " : "PASS: ")
+                + "touch view multitouch, partial release, cancellation, menu transition and menu"
                 + " key isolation\n");
-        finish(Activity.RESULT_OK, result);
+        finishResult(Activity.RESULT_OK, result);
         return;
       }
       File files = getTargetContext().getFilesDir(),
@@ -55,26 +56,36 @@ public final class SmokeInstrumentation extends Instrumentation {
       check(base.startsWith("OK:"), "stock native data: " + base);
       String modded = NativeBridge.validate(game.getPath(), mods.getPath());
       check(modded.startsWith("OK:"), "modded native data: " + modded);
-      for (boolean ferrari : new boolean[] {false, true})
-        for (boolean wheels : new boolean[] {false, true}) {
-          File f = new File(mods, "ferrari/disabled"), w = new File(mods, "wheels/disabled");
-          boolean oldF = f.exists(), oldW = w.exists();
-          try {
-            if (ferrari) f.delete();
-            else f.createNewFile();
-            if (wheels) w.delete();
-            else w.createNewFile();
+      // The added-car packs have documented contiguous stable IDs: Ferrari 53,
+      // Street Cars 54..56, Wave 2 57..63. A suffix without its prerequisite is
+      // deliberately invalid; testing it as a successful catalogue hides the contract.
+      String[] ids = {"ferrari", "street-cars", "street-cars-wave2", "wheels"};
+      boolean[] disabled = new boolean[ids.length];
+      for (int i = 0; i < ids.length; ++i)
+        disabled[i] = new File(mods, ids[i] + "/disabled").exists();
+      boolean fullCarPack = new File(mods, "street-cars/mod.ini").isFile()
+          && new File(mods, "street-cars-wave2/mod.ini").isFile();
+      try {
+        int[] counts = {53, 54, 57, 64};
+        for (int prefix = 0; prefix <= (fullCarPack ? 3 : 1); ++prefix)
+          for (boolean wheels : new boolean[] {false, true}) {
+            for (int i = 0; i < 3; ++i)
+              if (new File(mods, ids[i] + "/mod.ini").isFile())
+                enabled(mods, ids[i], prefix > i);
+            enabled(mods, "wheels", wheels);
             String value = NativeBridge.validate(game.getPath(), mods.getPath());
-            check(
-                value.startsWith("OK:"),
-                "Ferrari=" + ferrari + ", wheels=" + wheels + ": " + value);
-          } finally {
-            if (oldF) f.createNewFile();
-            else f.delete();
-            if (oldW) w.createNewFile();
-            else w.delete();
+            check(value.startsWith("OK: " + counts[prefix] + " cars loaded."),
+                "car-prefix=" + prefix + ", wheels=" + wheels + ": " + value);
           }
+        if (fullCarPack) {
+          enabled(mods, "ferrari", false);
+          String rejected = NativeBridge.validate(game.getPath(), mods.getPath());
+          check(rejected.startsWith("ERROR:"), "missing car-pack prerequisite rejected: " + rejected);
         }
+      } finally {
+        for (int i = 0; i < ids.length; ++i)
+          if (new File(mods, ids[i] + "/mod.ini").isFile()) enabled(mods, ids[i], !disabled[i]);
+      }
       File picture = new File(files, "test-image.png"),
           output = new File(files, "image-check/images");
       output.mkdirs();
@@ -98,10 +109,28 @@ public final class SmokeInstrumentation extends Instrumentation {
       picture.delete();
       result.putString(
           "stream", "Android native catalogues, package combinations and image import passed.\n");
-      finish(Activity.RESULT_OK, result);
+      finishResult(Activity.RESULT_OK, result);
     } catch (Throwable e) {
       result.putString("stream", "FAIL: " + android.util.Log.getStackTraceString(e));
-      finish(Activity.RESULT_CANCELED, result);
+      finishResult(Activity.RESULT_CANCELED, result);
     }
+  }
+
+  private void finishResult(int code, Bundle result) {
+    // Keep a device-side receipt even if the host's ADB connection is interrupted.
+    try {
+      String name = mode != null && mode.matches("[a-z-]+") ? mode : "catalogues";
+      Files.write(new File(getTargetContext().getFilesDir(), "instrumentation-" + name + ".txt").toPath(),
+          ("result=" + code + "\n" + result.getString("stream", "")).getBytes(java.nio.charset.StandardCharsets.UTF_8));
+    } catch (IOException e) {
+      throw new RuntimeException("Cannot preserve instrumentation result", e);
+    }
+    finish(code, result);
+  }
+
+  private static void enabled(File mods, String id, boolean enabled) throws IOException {
+    File marker = new File(mods, id + "/disabled");
+    if (enabled) Files.deleteIfExists(marker.toPath());
+    else if (!marker.exists()) Files.createFile(marker.toPath());
   }
 }

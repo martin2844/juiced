@@ -135,9 +135,8 @@ void RaceHud::update(const HudRace& race, float dt) {
         }
         if (p.absLight >= 0) s.setHidden(p.absLight, !(body.absActive && lights > 5.0f));
         if (p.tcLight >= 0) s.setHidden(p.tcLight, !body.asrActive);
-        if (p.gear >= 0 && body.gear <= 7) {
-            static const char* const kGears[] = {"R", "N", "1", "2", "3", "4", "5", "6"};
-            text(p.gear, kGears[body.gear]);
+        if (p.gear >= 0) {
+            text(p.gear, body.gear == 0 ? "R" : body.gear == 1 ? "N" : std::to_string(body.gear - 1));
         }
         // The place among the competitors once the lap counts, else "-".
         if (p.pos >= 0 && p.posNum >= 0 && p.posTh >= 0) {

@@ -1,0 +1,135 @@
+{
+  "approved_max_bhp": 400,
+  "measured": [
+    {
+      "model": "PEUGEOT_405_GLX",
+      "level": "-1",
+      "bhp": "101.9177",
+      "rating": "101.8641",
+      "displayClass": "8",
+      "turbo": "1.0000",
+      "torque": "153.0000",
+      "exhaustValue": "1.0000",
+      "inductionValue": "1.0000"
+    },
+    {
+      "model": "PEUGEOT_405_GLX",
+      "level": "0",
+      "bhp": "148.6571",
+      "rating": "148.8083",
+      "displayClass": "8",
+      "turbo": "1.3750",
+      "torque": "162.3024",
+      "exhaustValue": "1.0400",
+      "inductionValue": "1.0200"
+    },
+    {
+      "model": "PEUGEOT_405_GLX",
+      "level": "1",
+      "bhp": "218.1364",
+      "rating": "218.5920",
+      "displayClass": "7",
+      "turbo": "1.8200",
+      "torque": "179.9280",
+      "exhaustValue": "1.1200",
+      "inductionValue": "1.0500"
+    },
+    {
+      "model": "PEUGEOT_405_GLX",
+      "level": "2",
+      "bhp": "320.1899",
+      "rating": "321.0926",
+      "displayClass": "6",
+      "turbo": "2.3625",
+      "torque": "203.4594",
+      "exhaustValue": "1.2200",
+      "inductionValue": "1.0900"
+    },
+    {
+      "model": "PEUGEOT_405_GLX",
+      "level": "3",
+      "bhp": "400.0001",
+      "rating": "401.2523",
+      "displayClass": "5",
+      "turbo": "2.5957",
+      "torque": "231.3360",
+      "exhaustValue": "1.3500",
+      "inductionValue": "1.1200"
+    }
+  ],
+  "unchanged_reference_cases": [
+    [
+      "PEUGEOT_405_GLX",
+      "-1"
+    ],
+    [
+      "none",
+      "-1"
+    ],
+    [
+      "none",
+      "0"
+    ],
+    [
+      "none",
+      "1"
+    ],
+    [
+      "none",
+      "2"
+    ],
+    [
+      "none",
+      "3"
+    ],
+    [
+      "CELICA",
+      "-1"
+    ],
+    [
+      "CELICA",
+      "0"
+    ],
+    [
+      "CELICA",
+      "1"
+    ],
+    [
+      "CELICA",
+      "2"
+    ],
+    [
+      "CELICA",
+      "3"
+    ],
+    [
+      "civicR",
+      "-1"
+    ],
+    [
+      "civicR",
+      "0"
+    ],
+    [
+      "civicR",
+      "1"
+    ],
+    [
+      "civicR",
+      "2"
+    ],
+    [
+      "civicR",
+      "3"
+    ]
+  ],
+  "factory_power_unchanged": true,
+  "classes": [
+    8,
+    8,
+    7,
+    6,
+    5
+  ],
+  "limits": "Deterministic flat-ground physics probe; not road-performance certification or a race/FPS measurement."
+}

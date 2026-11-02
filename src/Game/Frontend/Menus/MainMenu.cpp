@@ -123,7 +123,14 @@ void MainMenu::update(MainMenuHost& host, ui::Screen& s, uint32_t event) {
     const std::string item = s.menuItemCommand("MENU", selected);
     static const std::pair<const char*, const char*> kNext[] = {
         {"career", "careerload"},  {"instant", "Arcade_Championship"}, {"custom", "instant_manu"},
-        {"multi", "link_search"},  {"Extras", "Extras"},
+#if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
+        // Native ports expose the existing local/LAN selector. Starting the
+        // network belongs to its LAN action, not to opening Multiplay.
+        {"multi", "multi"},
+#else
+        {"multi", "link_search"},
+#endif
+        {"Extras", "Extras"},
         {"options", "opts_bg"},
     };
     for (const auto& [name, next] : kNext) {
@@ -136,7 +143,7 @@ void MainMenu::update(MainMenuHost& host, ui::Screen& s, uint32_t event) {
             // 0x00468B9D: multi starts Winsock (0x00597690; off line, [0x0075F040] 0) or says "An error occurred
             // starting the network adaptor. .." (513) and stays; else the race a custom one of type 5 and CLICK a
             // second time.
-            if (_stricmp(name, "multi") == 0) {
+            if (_stricmp(name, "multi") == 0 && _stricmp(next, "link_search") == 0) {
                 if (!net::startWinsock()) {
                     host.message(MessageType::Continue, texts.at(kTextNoNetwork), false, nullptr);
                     return;

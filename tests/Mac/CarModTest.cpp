@@ -4,6 +4,7 @@
 #include "Core/Cars/CarPhysics.h"
 #include "Core/Career/CareerInit.h"
 #include "Core/Data/GameData.h"
+#include "Core/Formats/Model.h"
 #include "Game/Cars/CarModel.h"
 #include "Framework/Fakes/NullRenderDevice.h"
 #include <algorithm>
@@ -94,6 +95,22 @@ int main(int argc, char** argv) {
     oj::test::NullRenderDevice device;
     oj::scene::Engine engine(device, data.tables, 3, false);
     for (bool garage : {false, true}) {
+        const auto folder = std::filesystem::path("cars") / (garage ? "ferrari_458_ui" : "ferrari_458") / "mesh";
+        const auto readMesh = [&](const char* name) -> std::optional<oj::Mesh> {
+            const auto bytes = data.files().read(folder / name);
+            if (!bytes) return std::nullopt;
+            const auto* begin = reinterpret_cast<const uint8_t*>(bytes->data());
+            return oj::parseMesh(std::vector<uint8_t>(begin, begin + bytes->size()));
+        };
+        const auto stockHood = readMesh("f458_bonnet.d8m");
+        const auto carbonHood = readMesh("f458_sport_bonnet.d8m");
+        check(stockHood && stockHood->bounds.max[0] - stockHood->bounds.min[0] > 150 &&
+                  stockHood->bounds.max[2] - stockHood->bounds.min[2] > 120,
+              "bonnet uses the complete detached source lid, not a rectangular inset");
+        check(carbonHood && !carbonHood->parts.empty() &&
+                  std::all_of(carbonHood->parts.begin(), carbonHood->parts.end(),
+                              [](const auto& part) { return part.name == "f458_carbon"; }),
+              "carbon covers the whole source lid without a painted rectangular border");
         oj::Car car; car.def = &*found; car.setModel(found->model);
         auto model = oj::scene::CarModel::load(engine, car, data.catalogue, random, garage);
         check(model != nullptr, garage ? "garage model loads" : "race model loads");

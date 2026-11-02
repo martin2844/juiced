@@ -1,0 +1,189 @@
+{
+  "status": "NOT INSTALLED; native visual review required",
+  "base": "/run/media/martin/Ediloco/OpenJuice-builds/20261031-fitted-kits/outback-safe-candidate01",
+  "candidate": "/run/media/martin/Ediloco/OpenJuice-builds/20261031-fitted-kits/outback-safe-candidate02",
+  "results": [
+    {
+      "file": "assets/cars/outback_2002/mesh/w261_kit3_sskirt_l.d8m",
+      "painted_triangles": 36,
+      "paint_faces": [
+        {
+          "source_part": 0,
+          "triangle_indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35
+          ]
+        }
+      ],
+      "sha256": "c278a1fae0425caaad48d1ff2ab3400489bfb0a905c2543c64f87abd24b421b8"
+    },
+    {
+      "file": "assets/cars/outback_2002/mesh/w261_kit3_sskirt_r.d8m",
+      "painted_triangles": 30,
+      "paint_faces": [
+        {
+          "source_part": 0,
+          "triangle_indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29
+          ]
+        }
+      ],
+      "sha256": "cccd44f615c304f163f8d3c8e77f315160da493e071e1b29fe95af4fd140abbd"
+    },
+    {
+      "file": "assets/cars/outback_2002_ui/mesh/w261_kit3_sskirt_l.d8m",
+      "painted_triangles": 36,
+      "paint_faces": [
+        {
+          "source_part": 0,
+          "triangle_indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35
+          ]
+        }
+      ],
+      "sha256": "c278a1fae0425caaad48d1ff2ab3400489bfb0a905c2543c64f87abd24b421b8"
+    },
+    {
+      "file": "assets/cars/outback_2002_ui/mesh/w261_kit3_sskirt_r.d8m",
+      "painted_triangles": 30,
+      "paint_faces": [
+        {
+          "source_part": 0,
+          "triangle_indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29
+          ]
+        }
+      ],
+      "sha256": "cccd44f615c304f163f8d3c8e77f315160da493e071e1b29fe95af4fd140abbd"
+    }
+  ],
+  "no_new_textures": true,
+  "all_other_files_unchanged": true
+}

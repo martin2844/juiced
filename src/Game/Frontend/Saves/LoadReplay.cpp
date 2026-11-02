@@ -53,6 +53,12 @@ std::wstring systemDate(uint64_t written) {
 // 0x004694B0: the windows' enter, the record cleared (0x004693A0), +0x38 0, LAPSTITLE "CARS" (65, its FontModifier
 // started again).
 void LoadReplay::enter(SaveHost& host, ui::Screen& s) {
+    // Extras is available before loading a driver, so its replay window cannot
+    // rely on Driver::enter having initialized the save-device messages.
+    if (host.jetTexts().size() == 0) {
+        host.jetTexts().load(std::filesystem::path("scripts") /
+            ("jettext" + std::string(1, host.language().controlsLetter) + ".txt"));
+    }
     const TextTable& texts = host.gameTexts();
     clear(host, s);
     m_noteShown = 0;

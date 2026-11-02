@@ -1,6 +1,7 @@
 // CMSGridWalk: the grid before a race and the bets on it (CMSBet over it).
 
 #include "Game/Frontend/Career/GridWalk.h"
+#include "Game/Frontend/Career/TeamRaceText.h"
 
 #include "Core/Base/Log.h"
 #include "Core/Data/GameTexts.h"
@@ -157,7 +158,7 @@ void GridWalk::enter(CareerHost& host, ui::Screen& s) {
         if (round.type == EventKind::Circuit) {
             info += texts.at(kTextLaps) + toWide(std::format(" {}", static_cast<int>(round.laps))) + L"   ";
         }
-        info += texts.at(kTextTeamSizes + static_cast<size_t>(std::max<int>(round.teamSize, 0)));
+        info += teamRaceCaption(texts, round);
         s.setText("RaceInfo", info);
         if (const int ticker = s.find("RaceInfo"); ticker >= 0) s.measureTicker(ticker);
     }
@@ -390,7 +391,7 @@ void GridWalk::update(CareerHost& host, ui::Screen& s, uint32_t event) {
         }
         if (named("Go")) {
             CareerBets& bets = career.bets;
-            if (p.raceCarsChosen != 0 && e->pinkSlip != 0) {
+            if ((p.raceCarsChosen != 0 || p.racing != 0) && e->pinkSlip != 0) {
                 int crew = 0;
                 for (uint32_t i = 0; i < session.count && i < 6; ++i) {
                     crew = session.racers[i].crew;
@@ -406,6 +407,7 @@ void GridWalk::update(CareerHost& host, ui::Screen& s, uint32_t event) {
                 bets.amount = 0.0f;
                 host.request("careerload", SwitchMode::Replace);
                 data->careerScreen = CareerScreen::Character;
+                return; // Confirm the title before starting, also for a delegated driver.
             }
             if (p.raceCarsChosen != 0 && bets.placed == 0 && bets.rivalAsked == 0 &&
                 x87::unit(static_cast<int>(gameRandom().next())) < 0.333f && e->hostedByPlayer == 0) {

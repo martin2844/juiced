@@ -1,0 +1,489 @@
+[
+  {
+    "model": "peugeot_405_glx",
+    "prefix": "w257",
+    "upper_heights_cm": {
+      "fbump": 28,
+      "rbump": 26,
+      "skirts": 26
+    },
+    "level2_drop_cm": {
+      "fbump": 4,
+      "rbump": 2.8,
+      "skirts": 2.5
+    },
+    "vinyl_min_height_cm": 29.075414657592773,
+    "receiver_protection_floor_cm": 28.875414657592774,
+    "exhaust_cutouts_x_cm": [
+      [
+        -55.49533653259277,
+        -29.64005470275879
+      ]
+    ],
+    "exhaust_source": "EXHAUST_S33",
+    "exhaust_source_sha256": "a8378805d627163fb245db52bc9c59cf6a7f22b14b0a815be32fb79fb42126cf",
+    "stock_exhaust_tip_bounds_cm": [
+      [
+        -52.99533653259277,
+        17.031373500823975,
+        -200.44078159332275
+      ],
+      [
+        -32.14005470275879,
+        29.865389823913574,
+        -188.52741813659668
+      ]
+    ],
+    "vinyl_source_sha256": {
+      "w257_decal_crew_vs6.d8m": "767c0256bce6f0cd79e6aae01374176e9abdc56c59ec2f9492b2c948ead29008",
+      "w257_decal_tribal_vs4.d8m": "dd92251993c46bf077c71b764f76519b6c6104c15b7b28ee7e91a791f7a9635c",
+      "w257_decal_tribal_vs5.d8m": "567474110a65e5a0566e60dcd692acca1fc0c8ba43eb56b1f9e3e6e3604a1ed0",
+      "w257_decal_fandf_vs2.d8m": "ee10a4915e4c682b32737acb9f75b33f7f6297d576c9fc59a69540724d7cb960",
+      "w257_decal_tribal_vs6.d8m": "f9ee8d2ff9d83923a2d479756e9642fae2ab3f5ff8c954c1fe78f0d847d83bf7",
+      "w257_decal_crew_vs7.d8m": "2c4ab47b3780ae25744dcb3dec6b58db850007e5e97b62de1d9f0b8735aa7eed",
+      "w257_decal_crew_vs8.d8m": "fa2a1ef1b9b65e67983a2686faf2240a19fd34aba9e25880ad81ef0a5450c640",
+      "w257_decal_checks_vs1.d8m": "e9da1fb5f337ac7294cf3184bd513bcc142dc1b6bd04f49f6c4f61dcd119cfc4",
+      "w257_decal_flames_vs1.d8m": "1c560abc0635a37520c293699c460301f79ad50b4c4302dfa3cf4768e92ecbda",
+      "w257_decal_fandf_vs8.d8m": "54f23dd713e82e564974738ff15b62d98339b00cc4c9b38ffb2696d5d7cf5c0c",
+      "w257_decal_tribal_vs1.d8m": "535eafd9560991ae535b04410660b1ce4c146a1700b62d9fee01cf6b1a281e3b",
+      "w257_decal_tribal_vs3.d8m": "6fe4dd9a4b13ec9544f92e74bb3206f07ba79f665963399bc87fc27f6209fc3e",
+      "w257_decal_fandf_vs7.d8m": "1d0185aebcfe23f5e290a201a667995baaa61abe90a54920288911a3f7a0f2b9",
+      "w257_decal_proto_vs1.d8m": "9076384af6e9eab3330c09d77c559496a1e4730566656ae0d58362e15d46dbcc",
+      "w257_decal_crew_vs5.d8m": "e70d1ced1cb6b713a13a4d0260b41c325b2f1ad5b762b0afe44a74402536a086",
+      "w257_decal_fandf_vs6.d8m": "d27b81fc247d6cd0b7dfd5696b9c622f7a65457128ea48fd48375eaf6fa8c010",
+      "w257_decal_checks_vs2.d8m": "d515074c0cb48b490a2bafdcf0f16775c458f4e2e9eabc05b0f8702d16a90ba3",
+      "w257_decal_crew_vs3.d8m": "c7dea887c7b7380f8a20d3977e00606ad49716e27c488bcc4e0430be8cd0e0f6",
+      "w257_decal_tribal_vs2.d8m": "72ea652c3304b31f9d5af05bc16dd077f0c7882c0281ccc2fb30c3d246c8f141",
+      "w257_decal_fandf_vs1.d8m": "c689a18f967960cf6304740c75aff88f6c3110a2f5aae4bfb4c44d8013982735",
+      "w257_decal_checks_vs3.d8m": "05b8c4bd987c2943c17a05f75ffd0ede990d018cf72a223ed97e88937aee5a4b",
+      "w257_decal_crew_vs1.d8m": "4d11b707959ae5acf87b6aab55cd04550d025f67971343791a514eff33ee831f",
+      "w257_decal_tribal_vs8.d8m": "3d870bf6dbafb4f1caf182e8392c06bceb0f2fb7c7a01bb13d9e94b0ba51d0a3",
+      "w257_decal_fandf_vs4.d8m": "503c3dc0657abfac2f0f28ac4ead65961c004fcf71f8a105e1295a9cfc70f1da",
+      "w257_decal_fandf_vs9.d8m": "2a22b40ddaec4d0f0ac6b1f8fbfb67c51f8fc27c88c0a453d698a1ce7d6f6041",
+      "w257_decal_fandf_vs3.d8m": "e64e0ee87c5aac83ea40c765dbab7a7afd3be415b81b86ef95aa1047c8941191",
+      "w257_decal_fandf_vs10.d8m": "8598e70f6597f7ecab30a252b1d3c9099a419ed1187131a4b6e744dda303bdb7",
+      "w257_decal_fandf_vs5.d8m": "31afef472b1d4e3ed2d02636c0ec0232bde31b1e8184325af8730ecc83fc1b7d",
+      "w257_decal_crew_vs4.d8m": "a8fcbc0ae154e7d344564b2e011545436e7aaf8864e43fa9976b74920e2f473a",
+      "w257_decal_tribal_vs7.d8m": "d4d9b4d223518206ed577d21926d6ac227905696800f1d0a8736060b13d31eba",
+      "w257_decal_crew_vs2.d8m": "b436d55a1b6bf42169c5ff916c4698c4316b283e55b0c60645d35eff7ac29ab6"
+    }
+  },
+  {
+    "model": "peugeot_406_coupe",
+    "prefix": "w258",
+    "upper_heights_cm": {
+      "fbump": 29,
+      "rbump": 35,
+      "skirts": 26
+    },
+    "level2_drop_cm": {
+      "fbump": 4,
+      "rbump": 5,
+      "skirts": 3
+    },
+    "vinyl_min_height_cm": 29.808996200561523,
+    "receiver_protection_floor_cm": 29.608996200561524,
+    "exhaust_cutouts_x_cm": [
+      [
+        -54.5573844909668,
+        -32.675065994262695
+      ]
+    ],
+    "exhaust_source": "EXHAUST_S14",
+    "exhaust_source_sha256": "21744b00357ad2bc1f486e600221abcdcee1cdc1720ea4805f32cc5e97307727",
+    "stock_exhaust_tip_bounds_cm": [
+      [
+        -52.0573844909668,
+        19.392293453216553,
+        -196.22770500183105
+      ],
+      [
+        -35.175065994262695,
+        27.134751081466675,
+        -196.2277011871338
+      ]
+    ],
+    "vinyl_source_sha256": {
+      "w258_decal_tribal_vs6.d8m": "eb421fbc0b19be6ec858d1986c3b8afbca04be2bb2a0b1a918ed9bb856c399d3",
+      "w258_decal_fandf_vs10.d8m": "73f861f51c7a7122a04c16d068a829beb2e7d5c5f41996bb920616fdf86e0fc9",
+      "w258_decal_crew_vs8.d8m": "db3bba060cc663fcaa1941b02700f7dc162f678820919ff9764ffdbbf4d886f6",
+      "w258_decal_fandf_vs5.d8m": "898046741e67c5f5862a874f481345e1f0a33025d75751aedf23a2193619c4b6",
+      "w258_decal_crew_vs6.d8m": "65f8a90e636b612b903ac0a906ebb984e83f2de4b1de9ad5d9b06cf30d5fefd6",
+      "w258_decal_fandf_vs2.d8m": "d9b271b673228ec883e116e46e390354c58b9cf4115191a526459c72e6c44c38",
+      "w258_decal_checks_vs1.d8m": "02f7b578a7eccbb00d86ba5b2467f9e29c2629a8c2d3ff20b4b722853fb663eb",
+      "w258_decal_tribal_vs2.d8m": "b75d17753597cb023fb81d77141f99d40e2166a14cb4ebf355fda9efffe0e33b",
+      "w258_decal_flames_vs1.d8m": "ab6b592b2d144b5872cc07636f08424b6ee477b545f6b17d9bf119ee0210f23e",
+      "w258_decal_crew_vs1.d8m": "70529f1c2fbee0e19142ffb7d5378ad4dd0a25baddcbc84caee647e91ba486a0",
+      "w258_decal_tribal_vs8.d8m": "1fd723cf3050fbe695ef9b831b77254d15b7ca08da28e9b433c246bdf8e9f8c1",
+      "w258_decal_tribal_vs1.d8m": "e89a6660e2d2f9bf2df290d4522a794ef10ca4bfc4a4457d841ae8ff2b8d7023",
+      "w258_decal_tribal_vs7.d8m": "f414cd71aa0f54d4e03b8c3bc15fac410bef5c9ebe9e4a47711fbf85d49f35f1",
+      "w258_decal_tribal_vs3.d8m": "7c08a680eb3b4ff588a311e25f5660c3eda3c92ef1fa5edb9e7ebe3231d09b35",
+      "w258_decal_fandf_vs9.d8m": "c807c51ff1f5870a021a79cb2045c994e562c2e636247ae7e882a273e916f53e",
+      "w258_decal_fandf_vs1.d8m": "8c9b9e0a0bb759a28f0c75f362350ec70476427ae96ef6a8a1c4ecd9738510eb",
+      "w258_decal_tribal_vs5.d8m": "0af30d8e6f635f1cc0af7b9857552be027f66c3de6575047a209dcb85a6f1033",
+      "w258_decal_fandf_vs6.d8m": "486665df0730865e83dfe2d98c9250f75f5acf3ffc0390af8076cbca4294a220",
+      "w258_decal_fandf_vs4.d8m": "62b82f95ea9e603dfdeb7cd053e9c426d8e15008a09ed145cdd7c4f561f6296f",
+      "w258_decal_fandf_vs7.d8m": "0169af94f8687d97456aed72e409f85926e5eb2aceec9be338663e9c70531e9f",
+      "w258_decal_crew_vs3.d8m": "e2d54fd345dac28e5624cc2bb9ab3b059e2e25756ffc243e03a69ef1ea0ba178",
+      "w258_decal_fandf_vs8.d8m": "a506aa39e8790cea7f2dfbf11da47ce4b1203f8846be373fac22f1908801bb8a",
+      "w258_decal_checks_vs3.d8m": "1d6e572b1c86e5d95521c874466e04850359f05fc35d17bdf20780099783e062",
+      "w258_decal_crew_vs4.d8m": "3226f924a8ea442cdd69e476ba6da51753d3efd969a858e198e1ac00af4013a7",
+      "w258_decal_crew_vs5.d8m": "8a72a4b2d4338fdac32967d67f8499d19ba1a748c4e5a497ac62cd58e41336eb",
+      "w258_decal_crew_vs7.d8m": "a476784959b938507ba8e2e9349f21c107735ea2b3d01d1c3de31953cf408f2f",
+      "w258_decal_tribal_vs4.d8m": "b12872e010177f0912509c8c5508a5302936f9b2adcc08a56e3eca1a3e818234",
+      "w258_decal_proto_vs1.d8m": "bbd7e634a0ed4b10e61637a1b33929f04350a66f5dcc09b1bd15ca11f4d0c6ee",
+      "w258_decal_fandf_vs3.d8m": "6bee84c545570d9cae02c2ac3bc4d656ac7b551db15ec5683ee4fb1c02e60fd5",
+      "w258_decal_crew_vs2.d8m": "03c8a9418e84de06f3fe312725d64a6024d0b904f11be5890478e20def70559d",
+      "w258_decal_checks_vs2.d8m": "9baca8726d39ccd400e72b4cbf9aee04121ccf7bec0d5fa38f21353bf058a605"
+    }
+  },
+  {
+    "model": "golf_mk5_r32",
+    "prefix": "w259",
+    "upper_heights_cm": {
+      "fbump": 30,
+      "rbump": 32,
+      "skirts": 27
+    },
+    "level2_drop_cm": {
+      "fbump": 5,
+      "rbump": 5,
+      "skirts": 3
+    },
+    "vinyl_min_height_cm": 29.039968490600586,
+    "receiver_protection_floor_cm": 28.839968490600587,
+    "exhaust_cutouts_x_cm": [
+      [
+        -57.20713710784912,
+        -33.248297691345215
+      ],
+      [
+        -20,
+        20
+      ]
+    ],
+    "exhaust_source": "EXHAUST_S25",
+    "exhaust_source_sha256": "4654326021f065ad38b3dc9e142d9aaf262a08096db49c34867878f604300098",
+    "stock_exhaust_tip_bounds_cm": [
+      [
+        -54.70713710784912,
+        19.310473918914795,
+        -182.013521194458
+      ],
+      [
+        -35.748297691345215,
+        30.477365493774414,
+        -171.11405754089355
+      ]
+    ],
+    "vinyl_source_sha256": {
+      "w259_decal_tribal_vs3.d8m": "5429ba2031277dedb21a5650a1cd53a297f810be0354358e596d7729cb0da630",
+      "w259_decal_fandf_vs3.d8m": "ab998fa4cb2fa8e8d0e6d168741534ceab0012c11b146b536508387b2aca673d",
+      "w259_decal_fandf_vs2.d8m": "408994dd9f676508a81c398d6706ca389628f3a12311f59dfc152ec125c7a5e2",
+      "w259_decal_crew_vs3.d8m": "0f253cb268bc3c7cac5e1171bb9bbf0dd5ff234a3c58dfbee0d18e277447c7c1",
+      "w259_decal_crew_vs2.d8m": "30c49957438038f287cd16a4b5f2f9bfea23fd4a1a863e35bbea2c1eb6bb42ed",
+      "w259_decal_tribal_vs8.d8m": "2238e9ed66d8f08d76bfbaf922203685d750049ba36c45aa7a42314ef6d69276",
+      "w259_decal_tribal_vs7.d8m": "93d6e8fb0c709c7b0a1cb7023d196e49c14e6f187724099ab9c36e4ac1526b11",
+      "w259_decal_tribal_vs5.d8m": "e6a8a8d217f5161b3227a9c326b3d99c40d65fe81b8098913ff6c4fad4b35070",
+      "w259_decal_flames_vs1.d8m": "1e47e17201a6f1ea53455d3f2f825f711ef60967f63c0b2e8c924d99d0dde5ae",
+      "w259_decal_checks_vs3.d8m": "bd4a485515a989a991cabf277276b02a86df6b4bc9752bde335e8922674597dc",
+      "w259_decal_fandf_vs1.d8m": "f29983f49a123d8ed4b1c16b2e6793c33b12ee33530977fd101fc4f3657b6f21",
+      "w259_decal_checks_vs1.d8m": "504d161a210d0cd09c828c59e7ae78db5f399dcb4730ef308e29c66565de8835",
+      "w259_decal_fandf_vs7.d8m": "97fbfc946b57f87dbf1b2747993256d84da7690bb7be567e7e6b5a35180e8b08",
+      "w259_decal_tribal_vs6.d8m": "2ebe8d09bedb3c0cf35121801640a7124415fd5a63aa1ed15a4bda58061a9769",
+      "w259_decal_crew_vs7.d8m": "3def29937fb436542f2bfb04b6abc708bec4b07b7e309d4e1e0a4c44fe22f226",
+      "w259_decal_crew_vs5.d8m": "d7b8bafdf6941ef938139a0014b137fa9cf21a8284d818aae95663c90d5fe234",
+      "w259_decal_crew_vs6.d8m": "167322a3fd91427049717053c700e6da2b4f8f3fb8fa33c1b25550d981a3e641",
+      "w259_decal_fandf_vs6.d8m": "d7b83eb6717be640fb8bd5f6f4db7e76d9237b33acac9959d086eae6e3611672",
+      "w259_decal_fandf_vs5.d8m": "19e36d641add82a37a1b4035eccb5f33c7f8cba653c473ef4bbed9d2836d4068",
+      "w259_decal_proto_vs1.d8m": "edf061ec48b97f999dcaca9daf7455ca43a1e22872b60f2a430b7264d07ceb17",
+      "w259_decal_crew_vs4.d8m": "248c08c2ead080f517818c0c8252a2877d6f8820d890db8b1b370682ef664669",
+      "w259_decal_crew_vs1.d8m": "4e0da4b0922f83ab20bad04e1cf5db05c7ca13390d056d6d47b004d774497bb7",
+      "w259_decal_crew_vs8.d8m": "a625d1948d8eb6684f83a90759577b38b3f6ceeff0f690495606dc778915cf38",
+      "w259_decal_tribal_vs2.d8m": "ea617ee4ddb2f1aaee1abcc22b0f0f0dcbec5b52aa2e8ed386eae0734bd3f529",
+      "w259_decal_tribal_vs4.d8m": "a177b4f0c0c1b9b26e4ae2e336c33a94d8ce2ef039b4786a3cb8ac350ca2c1f8",
+      "w259_decal_fandf_vs10.d8m": "4b95c007e728efa84ac56a89d4625284da8767cbc110f476b1a61c1e2d026840",
+      "w259_decal_fandf_vs8.d8m": "86a3fe2db8408f0dede21c730de58cc4d7f332272053858a7d5ee231a1b8eb2c",
+      "w259_decal_checks_vs2.d8m": "c0d27601937a0106919ca160b305793c13603a210fc6ff04868d7907331ba3b3",
+      "w259_decal_fandf_vs4.d8m": "1f0e217117807c6f357a1208c7b85a880d50879fb03dd8a4f149690618818541",
+      "w259_decal_fandf_vs9.d8m": "54e875d1c072a25fba82e1ece48f4bbe09402469e35eb1a28a1def6ab0990127",
+      "w259_decal_tribal_vs1.d8m": "559c5e40626c0cabc04002890155845470ef1e7060e92e1dde9a95c8740eeb41"
+    }
+  },
+  {
+    "model": "jetta_mk5_fsi",
+    "prefix": "w260",
+    "upper_heights_cm": {
+      "fbump": 28,
+      "rbump": 32,
+      "skirts": 28
+    },
+    "level2_drop_cm": {
+      "fbump": 4,
+      "rbump": 5,
+      "skirts": 3.5
+    },
+    "vinyl_min_height_cm": 28.424779891967773,
+    "receiver_protection_floor_cm": 28.224779891967774,
+    "exhaust_cutouts_x_cm": [
+      [
+        -54.774725914001465,
+        -43.14648425579071
+      ]
+    ],
+    "exhaust_source": "EXHAUST_S24",
+    "exhaust_source_sha256": "0e5b3f9e344ba5697b66da3a8e2852088560137aef8c993f85e25f78fa131eda",
+    "stock_exhaust_tip_bounds_cm": [
+      [
+        -52.274725914001465,
+        21.685877323150635,
+        -225.90704154968262
+      ],
+      [
+        -45.64648425579071,
+        28.3141188621521,
+        -220.0630760192871
+      ]
+    ],
+    "vinyl_source_sha256": {
+      "w260_decal_crew_vs6.d8m": "0c5098dfa9d016ca6050d27c408b8add73a78c3f71b6ca2f29c63a5b276340bc",
+      "w260_decal_tribal_vs1.d8m": "684a4572b33f8f6f9d1eaebdc4fc55ca16db87efae8fc97b658152684fe2b336",
+      "w260_decal_tribal_vs2.d8m": "b3982ce00a787ae0be77666346ed255f0c0e7ac042306efb3382b5dd92604eb1",
+      "w260_decal_tribal_vs5.d8m": "2d96465c62ae1fafbe08ada5b6541a793c658c15e61962bdca781b4d489a1227",
+      "w260_decal_fandf_vs3.d8m": "66860a97022cc291b5fd1138046388fa97c4683595980c6ee5b6a8f4455b8e57",
+      "w260_decal_fandf_vs6.d8m": "024a0c9cdfe4343faa0bb54a2e1278f56a504ed570b1d48ff1d37b4e3fa96dbe",
+      "w260_decal_crew_vs7.d8m": "1bffe9233d803d31ff64c1f7d247c53c00e2b0bf3a3b84df43e193b18c482229",
+      "w260_decal_flames_vs1.d8m": "7edf957c4583a815c7358df67d7fd2fb139634aeb92266f447de6ab05e837552",
+      "w260_decal_crew_vs4.d8m": "080799a604679ba739ad6e475339f91e0dccaa3477b595e89236e78fb10ba901",
+      "w260_decal_crew_vs5.d8m": "500976f0209412f7b18b04318e3b704940ab6d3ac5cf2a37755e1f8d19e8e2a4",
+      "w260_decal_tribal_vs7.d8m": "c4c325d7adedc6d394d858288440610e1b1e612809d89c099ad5b22604e88541",
+      "w260_decal_crew_vs8.d8m": "42b2a3351944286b893b901d1c00214f116fd677c25cdf79c04e3475505c8cc5",
+      "w260_decal_checks_vs3.d8m": "c44964b57331c64cc50b6a0d7c8c184527c46bd4f2d1e0a0bada7b31c3e44698",
+      "w260_decal_proto_vs1.d8m": "5eb79d788aa16cf1d1cf1b783ee7d014a8f5e54ccc352162d2e2bf0fc6853574",
+      "w260_decal_fandf_vs10.d8m": "7f36938ebf6c70fa75ed0aea03abf848d3c53f0f2e7197a23239ffffd89ce76a",
+      "w260_decal_tribal_vs6.d8m": "43d6651424cb68d6c717561f0cd12506fdbc0dbc52379cd1472f4120d0859b02",
+      "w260_decal_checks_vs2.d8m": "26fb479572ef8b07fb31598db817d54d0140026efdbf0e0852fc95fe64aae690",
+      "w260_decal_fandf_vs2.d8m": "3e48fbc373f44da284a6004a67ef41cfc069add0861f1c57827ddd556b2c5190",
+      "w260_decal_fandf_vs7.d8m": "ac9daec4f4ccebcc85e537b5427b97916e314252df8d49e305642ee4e5b32dc7",
+      "w260_decal_tribal_vs8.d8m": "090c5fb8477997374374c733a16b3e8587ff8975b96cd964ab301eea029840c1",
+      "w260_decal_crew_vs1.d8m": "62e5813ff0ac62fa123b906e6730d230d8ded4337c67345a10248c8664a92181",
+      "w260_decal_fandf_vs4.d8m": "effdc587a46b3f676a122f9dc916b03fb188ad35d1a98aba66e827c90ca867e5",
+      "w260_decal_fandf_vs1.d8m": "ed57679307e955d55e412223781cb115034fe62b8a4266592646b274d8df2ca8",
+      "w260_decal_fandf_vs5.d8m": "cd2313fe408e26b144d2beafb267b52dda7423caee592ab11d4b41521454b27e",
+      "w260_decal_tribal_vs4.d8m": "f55b00cc91fc1c8764060ee29cd8c6411f0fb788a45b2a292d52c3595a56bce5",
+      "w260_decal_crew_vs2.d8m": "c0f87e444bffe722fbdf404d2347c7ce956d560744b08e761c06d9bc4936b015",
+      "w260_decal_checks_vs1.d8m": "10f807da65458f0a33129f12bbce3e49a65ae7a702c358b8460c9a3124d59f99",
+      "w260_decal_fandf_vs9.d8m": "0311e1c8c7c69cf91ea5f1fd99461429a5e9b5181217cc539b54a41f30f8e2b3",
+      "w260_decal_tribal_vs3.d8m": "4d7ec960b7626f1d478d071fa16ca4a2828c34bda717bde87663f1e4266cd6c4",
+      "w260_decal_fandf_vs8.d8m": "a935d550d39cd166e6383e344186f42d9ec3671fa727b870ce46431b55675123",
+      "w260_decal_crew_vs3.d8m": "3f5173bc98f82c61354565b406dbc9b7a91c3a0841ea437d74e3d217ee08c80c"
+    }
+  },
+  {
+    "model": "volvo_240_turbo",
+    "prefix": "w262",
+    "upper_heights_cm": {
+      "fbump": 35,
+      "rbump": 34,
+      "skirts": 33
+    },
+    "level2_drop_cm": {
+      "fbump": 5,
+      "rbump": 5,
+      "skirts": 3.5
+    },
+    "vinyl_min_height_cm": 28.221681594848633,
+    "receiver_protection_floor_cm": 28.021681594848634,
+    "exhaust_cutouts_x_cm": [
+      [
+        -45.57692503929138,
+        -35.7583224773407
+      ]
+    ],
+    "exhaust_source": "EXHAUST_S31",
+    "exhaust_source_sha256": "51c7bea37f790cdf61db7427149f6dcb9c6111bc7c4ab18598f998ea54df2e95",
+    "stock_exhaust_tip_bounds_cm": [
+      [
+        -43.07692503929138,
+        21.46802830696106,
+        -228.0405979156494
+      ],
+      [
+        -38.2583224773407,
+        26.2866313457489,
+        -220.59349155426025
+      ]
+    ],
+    "vinyl_source_sha256": {
+      "w262_decal_crew_vs1.d8m": "132e1d04ae00bb7f415bf51f5a360462bfdfdc1ca89d80c17f662b3e53f70230",
+      "w262_decal_tribal_vs2.d8m": "46a1b92681079ce72f92de4261609fd69cbf98ea2161be2439258ba412a22abe",
+      "w262_decal_fandf_vs9.d8m": "68606a1f535f1536da395c575048629bb2ad2aedfbb04afdb7e06588ea7d9a10",
+      "w262_decal_crew_vs3.d8m": "cf398b608cf2f7fca99bbb32f767f7ed4055809da9962135645c5554b717bf9b",
+      "w262_decal_fandf_vs2.d8m": "ad0aeb33b83adfba95e62b4b9a3df939d5dcef9fa32ba0cf6e59d56b862e504b",
+      "w262_decal_checks_vs1.d8m": "9e53ce4476e6a340f50e2e754b6fc9f94ffd315eb4509d22f72f7d4224b73d33",
+      "w262_decal_checks_vs2.d8m": "3304202132b37f5e9b27b00591f8392c149092a9ed2cb975274805aa854dc3a5",
+      "w262_decal_fandf_vs10.d8m": "022c7d260babc2101634224eeb18b80412a310a63f76635bf53609814a3500c0",
+      "w262_decal_fandf_vs4.d8m": "8294bf8437dd1f766dde00c0e403fd149e3acaca90d26d682aa1d74bd0bfa6dc",
+      "w262_decal_tribal_vs3.d8m": "6066df44d4dcb9cc906abe9811ae157924380394781b1a1d005d3b0c67e8ef62",
+      "w262_decal_fandf_vs3.d8m": "cef49f91a2fd23e35cb02f8e0fb57da6479f3efb4df07adb16d7432d77d74fe0",
+      "w262_decal_crew_vs7.d8m": "9a69d3b8c1a2f8b20eee6a6c70eff57f9de27b347006cda32c0af857cc96f169",
+      "w262_decal_tribal_vs1.d8m": "bd1559893bd8659ed2bc4ec884c8f7699e7d31de6c340831a8d776dca770b1d1",
+      "w262_decal_flames_vs1.d8m": "757396d2487ef6bd8151bc06c3ebef07bbc5f5d05506b16547a31c7e7d7e1f26",
+      "w262_decal_fandf_vs7.d8m": "ab01e0fcd6c2fb84a071929f35dab9d5582b57d51fccab5caaa67f49075142f7",
+      "w262_decal_tribal_vs8.d8m": "3e89c27cb6682bf1d21ff9b0d94f43c66a984a55d3506c735c628d2877ec4e35",
+      "w262_decal_tribal_vs5.d8m": "619e699ee11c86d937fa69281d55b3f5639ae5575ac0b021fee33e3c797134ec",
+      "w262_decal_crew_vs5.d8m": "3daa8ea1580738ead65a0eb645bfde38d57aec3d8c62e60c62ecdf803669a184",
+      "w262_decal_crew_vs8.d8m": "c3b0b3cb6558c3935eb8b320af91717921ded96e540ad63092e3cd090cf47fa1",
+      "w262_decal_proto_vs1.d8m": "eb4dc640a23f71018ab50c76a5d431e440744479b705ca4961ca36283a3dab40",
+      "w262_decal_fandf_vs5.d8m": "42373bb15ca09e741deaf0ead9a7ee1cb2773421fb7e2aac58a38dd698ca8c65",
+      "w262_decal_fandf_vs8.d8m": "30ac3c713f7e328d88538489f1ab0783725c0f081c17f50b2474f4cdf544c7a3",
+      "w262_decal_crew_vs2.d8m": "4f608a2b2970eadb80686029dff31940563c6945f7f22520278d04ce44986dd3",
+      "w262_decal_crew_vs4.d8m": "9d6f6e7738e52e0b4702b9713002b22a03ab5e8a034947af622c523028e53993",
+      "w262_decal_fandf_vs6.d8m": "c69909a151040560e967baa18559b3f8eb3cc91d0cb03d7ccd51be3f082849f3",
+      "w262_decal_checks_vs3.d8m": "fe34c77b88c4197f265514eb6e721f614de053d05d3614a61adabfc40026f71f",
+      "w262_decal_tribal_vs6.d8m": "b551378fabd4cbc756dea25bab96dbaa04ece519e2d425cb9cc1b1b2d83678f0",
+      "w262_decal_tribal_vs4.d8m": "fca16672c87da3bf8b10ff190c86f6adb93a28aea80cdb4b50ede9b417ee37e9",
+      "w262_decal_fandf_vs1.d8m": "113505e5b9e0e067d4d5ac554ef39f1d99ccd09b7fce8deee71e81c300264449",
+      "w262_decal_tribal_vs7.d8m": "ed07dd7740d73ffc4542c265ac8c51cfe0aa66eb24c81990edca49bdd810c904",
+      "w262_decal_crew_vs6.d8m": "e23e9882bb91a238f20496812f3bd73bf83b71e1b530a9d02f54ebdfded867c2"
+    }
+  },
+  {
+    "model": "volvo_v70_24",
+    "prefix": "w263",
+    "upper_heights_cm": {
+      "fbump": 34,
+      "rbump": 38,
+      "skirts": 31
+    },
+    "level2_drop_cm": {
+      "fbump": 5,
+      "rbump": 5,
+      "skirts": 3
+    },
+    "vinyl_min_height_cm": 32.81121063232422,
+    "receiver_protection_floor_cm": 32.611210632324216,
+    "exhaust_cutouts_x_cm": [
+      [
+        -56.73737621307373,
+        -45.109134554862976
+      ]
+    ],
+    "exhaust_source": "EXHAUST_S24",
+    "exhaust_source_sha256": "0e5b3f9e344ba5697b66da3a8e2852088560137aef8c993f85e25f78fa131eda",
+    "stock_exhaust_tip_bounds_cm": [
+      [
+        -54.23737621307373,
+        21.685877323150635,
+        -223.41900444030762
+      ],
+      [
+        -47.609134554862976,
+        28.3141188621521,
+        -217.5750389099121
+      ]
+    ],
+    "vinyl_source_sha256": {
+      "w263_decal_tribal_vs4.d8m": "e625b754664357bf0c5c92d1eb18d612f8899d7e1801081cbede94a00ead1ad0",
+      "w263_decal_checks_vs3.d8m": "07ff81d943b08453af9c04e4cf200313a045b372f68b444092712a2da0a6ba0e",
+      "w263_decal_fandf_vs9.d8m": "13fed1cd5f9018bb7232c4b01c6d44c6e4f00998f6eb2ccf39059a6a6090aff0",
+      "w263_decal_crew_vs5.d8m": "ac3fcc98f08833e973fa005103c524e146be9d79212467b7cb0218f912ee4c43",
+      "w263_decal_fandf_vs3.d8m": "e4ea7bc91b8b01d1e7203fe11145a5ffcbdaf1c72351f984b769d640d7590c41",
+      "w263_decal_crew_vs1.d8m": "c80fad9c54484205da03d5a6b9acb873f56e75154ad4814443a532cc7989bc04",
+      "w263_decal_crew_vs3.d8m": "416ae12cbcdf49b23f58a574dcb22d553f6bd6f4209fb8bfc0ee2f0ac618364b",
+      "w263_decal_fandf_vs4.d8m": "938b032f07133dcca9790d3acfd7e4bd55b7f17ba30c9aa9341a193f29dde5a4",
+      "w263_decal_fandf_vs7.d8m": "93ca1e9ca8c0c87caebd5fd3b62c34338d3cc8329d75effb61d52d7a07d4e047",
+      "w263_decal_fandf_vs5.d8m": "fb62411d21af58de5e18f2a70894a4ed2f6184dde7db519db70330a217d7fe6e",
+      "w263_decal_crew_vs7.d8m": "392fb7d661e36e510ec7380c341038f74a803d783fbbb5d7ab2ca973634655d0",
+      "w263_decal_tribal_vs8.d8m": "0830aa6e26b70c8da031ffb8b2dfb3a1ef89772e8dbd3681c71f01d03b66fc0b",
+      "w263_decal_fandf_vs8.d8m": "777023d47d8b2403ac344b15333e6c496435bfd9260621be6da4d1a9d229f1de",
+      "w263_decal_tribal_vs5.d8m": "965e15c1bfa4a05245ae633a48e24c44b14069b915875d7a082b3229ea2496da",
+      "w263_decal_crew_vs2.d8m": "23774e0bd07afc766814730caf9be50d23830d041fb840b67c65faf18d0ac2dd",
+      "w263_decal_crew_vs8.d8m": "6d84ee079f609fe7514f379538218d50a822f869b61413592094fe5c35b9a4b4",
+      "w263_decal_fandf_vs2.d8m": "27e5272ac8a77c96d61e88bde57407cb786c0124716350d63b3f4dd6128862ba",
+      "w263_decal_tribal_vs2.d8m": "51e7ac5b0bda309c48f0393ad8a030a7d927bde81c334b1d5a96141772272821",
+      "w263_decal_tribal_vs1.d8m": "a233ba89ccc832f562c569d2eac72ceec88e65eeb1b00ef33fae2d105fa63609",
+      "w263_decal_flames_vs1.d8m": "8cfbfabf4d7de7346267d497f866af37217b7edc97b3e42896d28768f15943eb",
+      "w263_decal_crew_vs6.d8m": "3811cba3cb841606efb671521f4369d5825293e7a5e8e41d7e02a15634d401b0",
+      "w263_decal_tribal_vs6.d8m": "bde3a0a3f14053e83273743b24d06bf7436bba3eb3a82af3e17465282bc9dbd7",
+      "w263_decal_crew_vs4.d8m": "04c759357e61600437691236b6cff156168646a25da5669d7df18b9128007170",
+      "w263_decal_fandf_vs1.d8m": "32bd6fb004d67bab39005b36c1cacbf93e2b6e48e23cc578ee3100a90f50dd29",
+      "w263_decal_proto_vs1.d8m": "268f5979fdc03e57620c606804aab99abf631e90776ef73c0353704b340a1373",
+      "w263_decal_tribal_vs3.d8m": "a06cb62da26b7367c90063edb89c558cae70b5ecda51327c5c6122821d4ec659",
+      "w263_decal_tribal_vs7.d8m": "2139eac03885c06de8c1a9f819e37e348bb270d9cb9e276a18a14a5eb5996589",
+      "w263_decal_checks_vs2.d8m": "78da5ccfa8023aead11db73554b9cbbc4a7c835287a340020aa6eb061e71ac2e",
+      "w263_decal_fandf_vs10.d8m": "f32a62384e7a4b24b0b639276f80fe49def7687de2829988811a504b4369bcc2",
+      "w263_decal_checks_vs1.d8m": "1f63e32844f432fcb17b1f6a7545dbdcf9d033ac31c4dce84141c5411615eb80",
+      "w263_decal_fandf_vs6.d8m": "159c9c8fa4dd96c117454916180361489c8b115c034bc86a597dcd3a4fa8e281"
+    }
+  },
+  {
+    "model": "outback_2002",
+    "prefix": "w261",
+    "upper_heights_cm": {
+      "fbump": 37,
+      "rbump": 37,
+      "skirts": 31
+    },
+    "level2_drop_cm": {
+      "fbump": 5,
+      "rbump": 5,
+      "skirts": 3.5
+    },
+    "vinyl_min_height_cm": 31.459802627563477,
+    "receiver_protection_floor_cm": 31.259802627563477,
+    "exhaust_cutouts_x_cm": [
+      [
+        -64.45539951324463,
+        -49.51777696609497
+      ]
+    ],
+    "exhaust_source": "w261_exhaust",
+    "exhaust_source_sha256": "91a6fe44e8b1e35aad528a6c63653cbbedac12444aabc3b7cecb762bcbd672b0",
+    "stock_exhaust_tip_bounds_cm": [
+      [
+        -61.95539951324463,
+        33.02330780029297,
+        -236.4279022216797
+      ],
+      [
+        -52.01777696609497,
+        40.5851354598999,
+        -226.5685691833496
+      ]
+    ],
+    "vinyl_source_sha256": {
+      "w261_decal_tribal_vs2.d8m": "80454deb1f21a60fb1453b4d80efe16c9cda1aeb4cf88ed6c3e9239569765f3f",
+      "w261_decal_fandf_vs3.d8m": "9c08f58e273cf8a1b7a6e4ad6d8e213de59e2871fd26319c02eb6a22011afdf8",
+      "w261_decal_checks_vs1.d8m": "a4e56b493928b216dd5138b7a045e7fabdc104da49a4341e966760321380e30e",
+      "w261_decal_checks_vs2.d8m": "c30d3b99e048abed7f63316fb8c7527984b5674fca6528824068d01a3e82d930",
+      "w261_decal_tribal_vs1.d8m": "19374a34b680b215a48a114b87f7fff29bed35a785377b6938f288c1f95e1a94",
+      "w261_decal_tribal_vs5.d8m": "2b441fe01693b7d4ff55e8d6402376a0bd7c52e000519aba4708e456d8c6041a",
+      "w261_decal_tribal_vs8.d8m": "594ac298a6e6c82cc3cbb1de24b15fa27361df6a25b9872ad599afdab6e62180",
+      "w261_decal_flames_vs1.d8m": "cb18fa9c0739b3b0dfe652a7bfbae1593f70aca9dfb491d554f809aaffaeccea",
+      "w261_decal_fandf_vs6.d8m": "ba4cbde7943a98ebb7cf9979456801785cc34a6622df7882b77251b652dadf8d",
+      "w261_decal_crew_vs3.d8m": "5bfc141b47ff7f1a8a3bdfd5116225c3863689946ed5697dd43a51343cea745f",
+      "w261_decal_fandf_vs8.d8m": "e21faa7a0646af95739e9a03635a41add24cfb6f4919fa6ec0c370a2182cb0a4",
+      "w261_decal_crew_vs6.d8m": "77240f4efd44b636edc03592e825c3889af397695bd4d67cbd1b775e88ee0f9a",
+      "w261_decal_proto_vs1.d8m": "fcc0888f4308218dd9902eb3da1c56718418bb28fe37f7b39528170191c80ad5",
+      "w261_decal_crew_vs4.d8m": "b1a5be3c6bc8e9e7ae49c2e8715e8b141629e354cbe78609dacd0110bc2c4697",
+      "w261_decal_fandf_vs5.d8m": "09561da2aaf90409c56ec3da6be9784a8c4af718282118e30ebd0ae7050e8cd9",
+      "w261_decal_tribal_vs6.d8m": "0831bdb0d10bcdaea82fb3cb02b7db67ddbe5f4566dc931e802f0e246c5f15b5",
+      "w261_decal_tribal_vs7.d8m": "705eb9b00db22cd87c3907e1b2f55bff6872d2c6da26636aee45a88c2b2be0a9",
+      "w261_decal_tribal_vs4.d8m": "c54c206c63fd4ecad992d325ac4f66c3a2bc70bc8c468c255431129f677f41b2",
+      "w261_decal_crew_vs5.d8m": "2b7de110876ad3305c404723822de66209ca34b8d414e7e103eeb903fc0db4b5",
+      "w261_decal_tribal_vs3.d8m": "442736aa35e8ce4e46575263ad2df5fc9a7ff0eef60148ecff4389e5e6bf5ff4",
+      "w261_decal_fandf_vs9.d8m": "70f6ee0c4025a84fb3cd087ad71a39465a8c95148ea31e5bd5c38cafe30c9c77",
+      "w261_decal_fandf_vs2.d8m": "8ed59ad51292b2f784fe04f51210d7138ae939626a14e70c9381c5ad48d9a8a0",
+      "w261_decal_fandf_vs1.d8m": "fd580de3dc660124647604c07080f6c116424f9a02c11ff5e05eb45e805ead75",
+      "w261_decal_fandf_vs4.d8m": "660ed6825cc4bc23edcd43d63cd6eb02f4d26f9fff9adc7d8a74cd12570c5757",
+      "w261_decal_crew_vs8.d8m": "ddef44fdff2511b0ac7844036efa98c6bb1349f57c658a275257e3015a4bf30f",
+      "w261_decal_crew_vs7.d8m": "11a29e657b207b131577b72917ed69970ea3f8a094d33ae74d81f0611c97dd16",
+      "w261_decal_checks_vs3.d8m": "134c3e28412cee30efea9dc9dd652d18812e9eecf2e0d412fc1a2139b9b9c619",
+      "w261_decal_crew_vs1.d8m": "25230eddf01c27529d7c8eedcd73afda58bf11b7568bc0737b15229d304bb416",
+      "w261_decal_fandf_vs10.d8m": "ece997a21cc90e1000700daa8ee7b7e240eae74cdea8b29e4006a451f9ddb96f",
+      "w261_decal_fandf_vs7.d8m": "1c1c7c63167c77d70491b1212c3c175708ef2ee4a20fcff69b2b938d172fe2a5",
+      "w261_decal_crew_vs2.d8m": "c733d45b9003df79cd4dda07a82feb840c8382b61200bc94d2ab249ca2d9f182"
+    }
+  }
+]

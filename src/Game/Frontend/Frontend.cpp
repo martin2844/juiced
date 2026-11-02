@@ -111,7 +111,7 @@ void Frontend::keepGameWindows() {
         "link_search", "link_lobby", "link_selcar", "split_selcar",
         // 0x0042C530
         "Arcade_Race", "Arcade_Championship", "Arcade_Results", "Arcade_Loading",
-        "CMSMainMenu", "CMSCalendar", "CMSCalendarHelp", "CMSCrew", "CMSAtMeeting", "CMSChallengeResults",
+        "CMSMainMenu", "CMSGamble", "CMSCalendar", "CMSCalendarHelp", "CMSCrew", "CMSAtMeeting", "CMSChallengeResults",
         "CMSHostMeetingSetup", "CMSHostMeetingSetupRace", "CMSHostMeetingSummary", "CMSMobilePhone",
         "CMSMobilePhoneMenu", "CMSMobilePhoneContacts", "CMSRaceSetup", "CMSCrewRaceSetup", "CMSCarCollection2",
         "CMSCarDealership",
@@ -192,6 +192,7 @@ void Frontend::prepareWindow(ui::Screen& screen) {
     screen.sound = [this](const char* name) { m_sounds->play(name); };
     if (m_scene != nullptr) {
         screen.setView3dFactory([this](const ui::Element& e) -> std::unique_ptr<ui::View3d> {
+            if (e.name == "POKER_TABLE") return makePokerView(m_device, m_gamble);
             return std::make_unique<scene::View3d>(*m_scene, e, gameRandom());
         });
     }
@@ -250,6 +251,7 @@ void Frontend::releaseRecords() {
 }
 
 void Frontend::leaveState(const std::string& state) {
+    if (is(m_state, "CMSGamble") && !is(state, "CMSGamble")) m_gamble.leave(*this);
     if (m_screen && !is(state, m_state.c_str()) && keepsMenu(m_state)) baseLeave(*m_screen, m_state);
     if (m_state == "keyboard" && state != "keyboard") {
         m_keyboard.clear();  // 0x00460840 when the window closes
@@ -376,6 +378,8 @@ void Frontend::enterState(const std::string& state) {
         m_meeting.enter(*this, *m_screen);
     } else if (is(state, "CMSMainMenu")) {
         m_careerMenu.enter(*this, *m_screen);
+    } else if (is(state, "CMSGamble")) {
+        m_gamble.enter(*this, *m_screen);
     } else if (is(state, "unregistered:demomenu")) {
         m_demoMenu.enter();
     } else if (is(state, "unregistered:byebye")) {
@@ -801,6 +805,8 @@ void Frontend::updateState(const FrontendInput& in) {
         m_meeting.update(*this, *m_screen, in.ui.event);
     } else if (is(m_state, "CMSMainMenu")) {
         m_careerMenu.update(*this, *m_screen, in.ui.event);
+    } else if (is(m_state, "CMSGamble")) {
+        m_gamble.update(*this, *m_screen, in.ui.event);
     } else if (is(m_state, "unregistered:demomenu")) {
         m_demoMenu.update(*this, *m_screen, in.ui.event);
     } else if (is(m_state, "unregistered:byebye")) {

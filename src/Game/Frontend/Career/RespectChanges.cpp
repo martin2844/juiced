@@ -2,6 +2,7 @@
 
 #include "Game/Frontend/Career/RespectChanges.h"
 
+#include "Core/Career/CareerInit.h"
 #include "Core/Data/GameTexts.h"
 #include "Game/Frontend/WindowTools.h"
 
@@ -191,6 +192,15 @@ void RespectChanges::next(CareerHost& host, ui::Screen& s, Career& career) {
     ++m_step;
     if (m_step == career.respectChanges.count) {
         host.stopSpeech();
+        // The notes animate individual deltas, but updateRespect's final value
+        // also includes floors/host penalties. Commit that value before saving
+        // or recording history, rather than waiting until this window leaves.
+        for (size_t i = 1; i < career.crews.size(); ++i) {
+            Crew& crew = career.crews[i];
+            crew.respect = crew.respectNow;
+            s.setText(std::format("val{}", i), toWide(groupThousands(crew.respect, host.language().index)));
+            s.setMeter(std::format("meter{}", i), std::min(1.0f, static_cast<float>(crew.respect) / 1500.0f), true);
+        }
         for (int i = 1; i < 9; ++i) s.setHidden(std::format("fade{}", i), true);
         for (size_t p = 0; p < 4; ++p) {
             s.setHidden(kPrivilegeTitles[p], false);
@@ -355,7 +365,7 @@ void RespectChanges::update(CareerHost& host, ui::Screen& s, uint32_t event) {
     if (m_finished) {
         clearNotes(career, career.respectChanges);
         clearNotes(career, career.meeting);
-        host.afterRaceResults();
+        host.afterRaceResults(true);
         return;
     }
     if (m_textDelay > 0.0f) {
@@ -372,6 +382,7 @@ void RespectChanges::update(CareerHost& host, ui::Screen& s, uint32_t event) {
         host.sound("CLICK");
         if (m_step >= career.respectChanges.count) {
             host.stopSpeech();
+            recordHistory(career);
             if (data->saving != 0) host.request("autosave", SwitchMode::Push);
             m_finished = true;
             return;
@@ -384,7 +395,8 @@ void RespectChanges::update(CareerHost& host, ui::Screen& s, uint32_t event) {
 // 0x004D0000: leaving CMSRespectChanges: both message lists emptied, the front end's music back, crews
 // 1 .. 8's respect their respect now (+0x74) and the history's step (0x004BD8A0). Stock problem: 0x004BAEE0 has
 // taken a step already; the history takes two for the event (three after CMSMeetingSummary's). The fixed build takes
-// no step here: 0x004BAEE0's is the event's one.
+// no step here: the terminal summary records once before autosave, and tells
+// afterRaceResults not to repeat that step on continuation.
 void RespectChanges::leave(CareerHost& host) {
     GameData* data = host.gameData();
     if (data == nullptr || !data->career) return;

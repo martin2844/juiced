@@ -1,0 +1,87 @@
+{
+  "status": "PRIVATE; not installed or visually approved",
+  "study": "/run/media/martin/Ediloco/OpenJuice-builds/20261031-wave2-kit1/peugeot_406_coupe-study01",
+  "baseline": "/run/media/martin/Ediloco/OpenJuice-builds/20261031-wave2-kit1/combined-step2",
+  "meshes": [
+    {
+      "path": "assets/cars/peugeot_406_coupe/mesh/w258_kit1_fbump.d8m",
+      "sha256": "389135b3c487979f39d0300c26b407776294c23bfa9c0f2086c579a8fcc06509",
+      "stock_sha256": "612b985f9eeb0a8d95317094c97edcdae1b63a5cd2257beaf7d5f15eefc24c5f",
+      "added_triangles": 820,
+      "changed_vertices": 379,
+      "protected_vertices": 5665
+    },
+    {
+      "path": "assets/cars/peugeot_406_coupe_ui/mesh/w258_kit1_fbump.d8m",
+      "sha256": "389135b3c487979f39d0300c26b407776294c23bfa9c0f2086c579a8fcc06509",
+      "stock_sha256": "612b985f9eeb0a8d95317094c97edcdae1b63a5cd2257beaf7d5f15eefc24c5f",
+      "added_triangles": 820,
+      "changed_vertices": 379,
+      "protected_vertices": 5665
+    },
+    {
+      "path": "assets/cars/peugeot_406_coupe/mesh/w258_kit1_rbump.d8m",
+      "sha256": "f0c84481a56e6cd5137f0f919fc20af7021d6ba6cac095f0ef5629f466587547",
+      "stock_sha256": "0ddb82407fe7cf2a46040bf9dd3d956cf8479917f19dc71b123c92962d8a2adf",
+      "added_triangles": 1620,
+      "changed_vertices": 48,
+      "protected_vertices": 1822
+    },
+    {
+      "path": "assets/cars/peugeot_406_coupe_ui/mesh/w258_kit1_rbump.d8m",
+      "sha256": "f0c84481a56e6cd5137f0f919fc20af7021d6ba6cac095f0ef5629f466587547",
+      "stock_sha256": "0ddb82407fe7cf2a46040bf9dd3d956cf8479917f19dc71b123c92962d8a2adf",
+      "added_triangles": 1620,
+      "changed_vertices": 48,
+      "protected_vertices": 1822
+    },
+    {
+      "path": "assets/cars/peugeot_406_coupe/mesh/w258_kit1_sskirt_l.d8m",
+      "sha256": "1bfb74cecbe2f5a2fea1e17de6feee54f33917024ebdfb5c7d461ce101fa267e",
+      "stock_sha256": "df3f1703a2b365627e39383ffc6859a661bea42361b08713061da23e87383583",
+      "added_triangles": 668,
+      "changed_vertices": 0,
+      "protected_vertices": 160
+    },
+    {
+      "path": "assets/cars/peugeot_406_coupe_ui/mesh/w258_kit1_sskirt_l.d8m",
+      "sha256": "1bfb74cecbe2f5a2fea1e17de6feee54f33917024ebdfb5c7d461ce101fa267e",
+      "stock_sha256": "df3f1703a2b365627e39383ffc6859a661bea42361b08713061da23e87383583",
+      "added_triangles": 668,
+      "changed_vertices": 0,
+      "protected_vertices": 160
+    },
+    {
+      "path": "assets/cars/peugeot_406_coupe/mesh/w258_kit1_sskirt_r.d8m",
+      "sha256": "95992f327b83816457a8afa882f6865cc5eb75fc302480bf531ede78ae7ab160",
+      "stock_sha256": "f9c17cea6671751e0cd7aa80070a6e3e87476f1f051c081568c6e472948fc958",
+      "added_triangles": 668,
+      "changed_vertices": 0,
+      "protected_vertices": 151
+    },
+    {
+      "path": "assets/cars/peugeot_406_coupe_ui/mesh/w258_kit1_sskirt_r.d8m",
+      "sha256": "95992f327b83816457a8afa882f6865cc5eb75fc302480bf531ede78ae7ab160",
+      "stock_sha256": "f9c17cea6671751e0cd7aa80070a6e3e87476f1f051c081568c6e472948fc958",
+      "added_triangles": 668,
+      "changed_vertices": 0,
+      "protected_vertices": 151
+    }
+  ],
+  "exports": {
+    "peugeot_406_coupe-kit1.glb": "c621cd850dbf007216bed8676b103460b7f2b5d0404adc39a2cf252965225658"
+  },
+  "changed_files": [
+    "assets/cars/peugeot_406_coupe/mesh/w258_kit1_fbump.d8m",
+    "assets/cars/peugeot_406_coupe/mesh/w258_kit1_rbump.d8m",
+    "assets/cars/peugeot_406_coupe/mesh/w258_kit1_sskirt_l.d8m",
+    "assets/cars/peugeot_406_coupe/mesh/w258_kit1_sskirt_r.d8m",
+    "assets/cars/peugeot_406_coupe_ui/mesh/w258_kit1_fbump.d8m",
+    "assets/cars/peugeot_406_coupe_ui/mesh/w258_kit1_rbump.d8m",
+    "assets/cars/peugeot_406_coupe_ui/mesh/w258_kit1_sskirt_l.d8m",
+    "assets/cars/peugeot_406_coupe_ui/mesh/w258_kit1_sskirt_r.d8m"
+  ],
+  "all_other_runtime_files_unchanged": true,
+  "original_uvs_colours_unknown_vertex_data_preserved": true,
+  "protected_receiver_vertices_unchanged": true
+}

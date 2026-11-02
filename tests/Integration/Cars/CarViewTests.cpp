@@ -52,6 +52,50 @@ void partsBelow(const oj::render::Node& node, std::set<oj::render::BufferId>& op
 
 }  // namespace
 
+OJ_INTEGRATION_TEST(CarView, LoadsOnlyVisibleFeatures) {
+    oj::test::InGameFolder folder;
+    if (!folder.valid()) { check(false, "Game assets required for car-view loading regression"); return; }
+    const auto& shared = oj::test::sharedGameData();
+    check(shared.carDefsRead && shared.defs.cars.size() > 1, "Car definitions available");
+    if (!shared.carDefsRead || shared.defs.cars.size() <= 1) return;
+    class CountingDevice : public oj::test::NullRenderDevice {
+    public:
+        std::atomic<size_t> uploads{0};
+        oj::render::BufferId createVertexBuffer(const void* data, uint32_t size) override {
+            ++uploads;
+            return NullRenderDevice::createVertexBuffer(data, size);
+        }
+    };
+    std::array<size_t, 3> uploads{};
+    for (int mode = 0; mode < 3; ++mode) {
+        CountingDevice device;
+        oj::scene::Engine engine(device, shared.tables, 3, false);
+        oj::CrtRandom random;
+        auto screen = std::make_shared<oj::ui::Screen>(device, *oj::Language::byName("english"));
+        screen->setView3dFactory([&](const oj::ui::Element& e) -> std::unique_ptr<oj::ui::View3d> {
+            return std::make_unique<oj::scene::View3d>(engine, e, random);
+        });
+        check(screen->load("cmscarcollection2"), "Retail car-collection view loads");
+        oj::Car car;
+        car.def = &shared.defs.cars[1];
+        oj::frontend::customrace::clearParts(car);
+        oj::scene::CarView::Setup setup;
+        setup.element = "CAR3D";
+        setup.mirror = mode == 1;
+        setup.shadow = mode == 2;
+        oj::scene::CarView view(engine, *screen, setup, shared.catalogue, shared.tables);
+        const auto before = device.uploads.load();
+        view.show(car, nullptr, 0, 0, 0, false, random);
+        view.finish(.05f, random);
+        uploads[mode] = device.uploads.load() - before;
+        auto* scene = dynamic_cast<oj::scene::View3d*>(screen->view("CAR3D"));
+        check(view.hasModel() && scene && scene->listedCount() == 1 + mode,
+              "Requested car, reflection and shadow/neon remain visible");
+    }
+    check(uploads[0] > 0 && uploads[1] > uploads[0], "No reflection means no duplicate car GPU upload");
+    check(uploads[2] > uploads[0], "No shadow/neon means their GPU uploads are skipped");
+}
+
 // The car asked for loads on the loading thread (0x0045A080 -> 0x00463D60) while the car shown fades out; a newer car
 // takes the place of one whose load has not started (0x0045A0A7), and the view, faded out, stays empty until the load
 // is done (0x00459EE0: +0x08 3): a list scrolled through faster than a car loads stays dark and loads only the car it

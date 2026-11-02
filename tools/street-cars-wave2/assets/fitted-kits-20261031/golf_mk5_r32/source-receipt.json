@@ -1,0 +1,14 @@
+{
+  "source_study": "/run/media/martin/Ediloco/OpenJuice-builds/20261031-fitted-kits/golf_mk5_r32-study06",
+  "files": {
+    "native-candidate-receipt.json": "5838e82482467cdcb4b5d913f6c3a44b0c6c1afea61bbb0fbf93b3a0ea2d9a32",
+    "golf_mk5_r32-kit2.glb": "a060f6d394f7617b75ae4e2bdf3bb04713a7814b307a99000c449ff62d760279",
+    "golf_mk5_r32-kit3.glb": "acf84d9b155a60b54a150bd44fa30abfbfc6205d766b3e7f456ebbe7db791920",
+    "native-vertex-study.json": "68d67b34d4f39924ec2aab25ad9765793f20b17519ada1cade2e97df27fd4141",
+    "golf_mk5_r32-fitted-kits.blend": "545ac055b112881f43924545d063fc6efe7389ccacd62290468ad4e9d792b834"
+  },
+  "authoring_tool_sha256": "da43ee82b1372be6fbdfab1ccbf4abb041265408ab0421cd606b9b9b63877b3b",
+  "adapter_sha256": "1bc3f4d2d335cbfcb018bd6a06492a88fa0b821c1e2d594be4a9781c226ac74a",
+  "approval_scope": "kit2/3 fit correction, not full ten-car acceptance",
+  "installed_source_verified_in_bundle": "r14 / Wave2 12"
+}

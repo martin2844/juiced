@@ -24,6 +24,7 @@
 #include "Game/Frontend/Career/CalendarHelp.h"
 #include "Game/Frontend/Career/CarCollection.h"
 #include "Game/Frontend/Career/CareerMenu.h"
+#include "Game/Frontend/Career/Gamble.h"
 #include "Game/Frontend/Career/CareerHost.h"
 #include "Game/Frontend/Career/CareerLoad.h"
 #include "Game/Frontend/Career/CareerChallengeResults.h"
@@ -475,7 +476,7 @@ private:
     // 0x004B69B0 from the windows: the phone's state; idle also stops the speech.
     // The ring's or the dial's sound of the phone ([0x0075EF74]) stopped and forgotten.
     void statsCar(Car* car, int32_t garage) override;
-    void afterRaceResults() override;
+    void afterRaceResults(bool historyRecorded = false) override;
     void firstEventDealer() override;
 
     render::IRenderDevice& m_device;
@@ -554,6 +555,7 @@ private:
     static inline frontend::CalendarHelp m_calendarHelp;
     static inline frontend::CareerLoad m_careerLoad;
     static inline frontend::CareerMenu m_careerMenu;
+    frontend::Gamble m_gamble;
     static inline frontend::OldCareerMenu m_oldCareerMenu;
     static inline frontend::NewCont m_newCont;
     static inline frontend::DemoFlyby m_demoFlyby;

@@ -548,7 +548,17 @@ void Input::pollDevice(Device& d, bool active, float dt) {
             }
         }
     } else {
-        for (size_t i = 0; i < 256; ++i) d.state[i] = m_keyboard.physical[i] ? 0x80 : 0;
+        bool readsKeyboard = true;
+#ifdef OJ_LINUX
+        // SDL exposes a dedicated keyboard device before its stable gamepad
+        // slots. Raw Enter belongs to that device: broadcasting it to pads
+        // lets the last empty slot take the player at the title screen and
+        // immediately report a lost controller in the driver selector. Keep
+        // the original combined-device behavior when no keyboard port exists.
+        readsKeyboard = d.controller == nullptr || m_devices.front().controller != nullptr;
+#endif
+        for (size_t i = 0; i < 256; ++i)
+            d.state[i] = readsKeyboard && m_keyboard.physical[i] ? 0x80 : 0;
         scanCharacters(d);
     }
     step(d, dt);

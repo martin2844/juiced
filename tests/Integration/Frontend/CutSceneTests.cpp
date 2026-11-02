@@ -73,7 +73,13 @@ OJ_INTEGRATION_TEST(CutScene, LastShotPausesTheSounds) {
         return;
     }
     oj::audio::System& sound = oj::audio::system();
-    if (!sound.start(GetDesktopWindow(), 0x20)) {
+    if (!sound.start(
+#if defined(OJ_MACOS) || defined(OJ_LINUX)
+            nullptr,
+#else
+            GetDesktopWindow(),
+#endif
+            0x20)) {
         check(false, "the sound system started (the tests need a DirectSound device)");
         return;
     }

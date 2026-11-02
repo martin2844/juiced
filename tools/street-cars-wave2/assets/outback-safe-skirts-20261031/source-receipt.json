@@ -1,0 +1,16 @@
+{
+  "source": "/run/media/martin/Ediloco/OpenJuice-builds/20261031-fitted-kits/outback-safe-skirts01",
+  "files": {
+    "coating.json": "d776f6043d4b2df77a77b7eb7af6f2ee4a4abc10ff46dd964503c0fb1c9f3804",
+    "outback_2002-kit3.glb": "e3c98fc5a61abd6a3d7b1ba3a5c87df9d7117ee560dd64c0f2b322458cc04248",
+    "safe-skirt-study.json": "3fd23a2e317f7b078e7d047257c5087f07b2ef1456edd7ad3ca7dc4660bd48e5",
+    "outback_2002-kit2.glb": "c699042dfa56c33eefc9470b1e26241a853f6920f4c2bce0974a36c6674007c5",
+    "native-candidate-receipt.json": "630879bd00d8cbfd8bbc4fa1fffd84e454ece998371611f307db9f43f1b516f9",
+    "outback-safe-skirts.blend": "0ca120cf6e2c6e0c6843144812ec078ca522309e718590b4bed013ace9835b15"
+  },
+  "author_sha256": "9b190729d10d783304606ce6010c375fb54487764141f94bb3cfad7d7e7eae07",
+  "adapter_sha256": "0eb7b831b09bef8764e6bb843bd99f538a8334f04d3ddbed00d20fcfc991bfaa",
+  "coating_tool_sha256": "8ebd3a3b9348fcdd6a582b747b9e9157b07b74ccfa00f8e6eccb1cfd52087ac9",
+  "native_final_candidate": "/run/media/martin/Ediloco/OpenJuice-builds/20261031-fitted-kits/outback-safe-candidate02",
+  "installed_source_verified_in_bundle": "r14 / Wave2 12"
+}

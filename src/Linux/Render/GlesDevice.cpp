@@ -8,6 +8,7 @@
 #include <array>
 #include <bit>
 #include <cmath>
+#include <chrono>
 #include <cstring>
 #include <map>
 #include <stdexcept>
@@ -33,6 +34,8 @@ GLenum primitive(uint32_t t) {
     return t < 7 ? v[t] : GL_TRIANGLES;
 }
 GLenum blend(uint32_t t) {
+    if (t == 14) return GL_CONSTANT_COLOR;
+    if (t == 15) return GL_ONE_MINUS_CONSTANT_COLOR;
     static GLenum v[] = {GL_ZERO,
                          GL_ZERO,
                          GL_ONE,
@@ -76,8 +79,8 @@ in vec4 oj_uv4;in vec4 oj_uv5;in vec4 oj_uv6;in vec4 oj_uv7;
 out highp vec4 io_5_0;out highp vec4 io_5_1;out highp vec4 io_5_2;out highp vec4 io_5_3;
 out highp vec4 io_5_4;out highp vec4 io_5_5;out highp vec4 io_5_6;out highp vec4 io_5_7;
 out highp vec4 io_10_0;out highp vec4 io_10_1;
-uniform mat4 oj_mvp;uniform float oj_flip;
-void main(){gl_Position=oj_mvp*oj_pos;gl_Position.z=2.0*gl_Position.z-gl_Position.w;gl_Position.y*=oj_flip;
+uniform mat4 oj_mvp;uniform float oj_flip;uniform vec2 oj_screen;
+void main(){if(oj_screen.x>0.0){float w=oj_pos.w!=0.0?1.0/oj_pos.w:1.0;gl_Position=vec4(((oj_pos.x+.5)/oj_screen.x*2.0-1.0)*w,(1.0-(oj_pos.y+.5)/oj_screen.y*2.0)*w,oj_pos.z*w,w);}else{gl_Position=oj_mvp*oj_pos;}gl_Position.z=2.0*gl_Position.z-gl_Position.w;gl_Position.y*=oj_flip;
 io_5_0=oj_uv0;io_5_1=oj_uv1;io_5_2=oj_uv2;io_5_3=oj_uv3;io_5_4=oj_uv4;io_5_5=oj_uv5;io_5_6=oj_uv6;io_5_7=oj_uv7;io_10_0=oj_color.bgra;io_10_1=vec4(0);})";
 } // namespace
 struct GlesDevice::Impl {
@@ -196,6 +199,10 @@ void main(){)";
         glDepthMask(states[14] ? GL_TRUE : GL_FALSE);
         glDepthFunc(compare(states[23]));
         enabled(GL_BLEND, states[27]);
+        const uint32_t blendColour = states[193];
+        glBlendColor(((blendColour >> 16) & 255) / 255.f,
+                     ((blendColour >> 8) & 255) / 255.f,
+                     (blendColour & 255) / 255.f, (blendColour >> 24) / 255.f);
         glBlendFuncSeparate(blend(states[19]), blend(states[20]), states[206] ? blend(states[207]) : blend(states[19]),
                             states[206] ? blend(states[208]) : blend(states[20]));
         static GLenum blendOps[] = {GL_FUNC_ADD, GL_FUNC_ADD, GL_FUNC_SUBTRACT, GL_FUNC_REVERSE_SUBTRACT,
@@ -290,6 +297,7 @@ void main(){)";
             states[22] = 1;
         }
         GLuint program = prepare(true, simple);
+        glUniform2f(glGetUniformLocation(program, "oj_screen"), 0, 0);
         states[7] = z;
         states[14] = zw;
         states[22] = cull;
@@ -304,6 +312,32 @@ void main(){)";
             attribute(glGetAttribLocation(program, ("oj_uv" + std::to_string(i)).c_str()), 4, GL_FLOAT, false,
                       sizeof(FixedVertex), offsetof(FixedVertex, uv) + i * 16);
         glDrawArrays(primitive(type), 0, count);
+    }
+    void transformedStream(uint32_t type, uint32_t start, uint32_t count) {
+        const auto& buffer = buffers.at(stream);
+        const uint32_t vertices = vertexCount(type, count);
+        if (!stride || (uint64_t(start) + vertices) * stride > buffer.size)
+            throw std::runtime_error("Transformed vertex stream out of bounds");
+        const GLuint program = prepare(true);
+        glUniform2f(glGetUniformLocation(program, "oj_screen"), tw(), th());
+        glBindBuffer(GL_ARRAY_BUFFER, buffer.gl);
+        attribute(glGetAttribLocation(program,"oj_pos"),4,GL_FLOAT,false,stride,0);
+        size_t offset = 16;
+        if (fvf & Fvf::PointSize) offset += 4;
+        const GLint colour = glGetAttribLocation(program,"oj_color");
+        if (fvf & Fvf::Diffuse) {
+            attribute(colour,4,GL_UNSIGNED_BYTE,true,stride,offset);
+            offset += 4;
+        } else if (colour >= 0) glVertexAttrib4f(colour,1,1,1,1);
+        if (fvf & Fvf::Specular) offset += 4;
+        for (unsigned i=0;i<std::min((fvf>>8)&15,8u);++i) {
+            const unsigned dims=(fvf>>(16+i*2))&3;
+            const unsigned components=dims==0?2:dims==1?3:dims==2?4:1;
+            attribute(glGetAttribLocation(program,("oj_uv"+std::to_string(i)).c_str()),components,GL_FLOAT,false,stride,offset);
+            offset += components*4;
+        }
+        if (offset > stride) throw std::runtime_error("Transformed FVF exceeds vertex stride");
+        glDrawArrays(primitive(type),start,vertices);
     }
 };
 GlesDevice::GlesDevice(const DeviceDesc &desc) : p(std::make_unique<Impl>()) {
@@ -450,7 +484,7 @@ uint32_t GlesDevice::displayFormat() const {
     return 21;
 }
 uint32_t GlesDevice::sourceBlendCaps() const {
-    return 0x1fff;
+    return 0x3fff; // D3DPBLENDCAPS_BLENDFACTOR covers constant and inverse constant.
 }
 bool GlesDevice::fullScreenGamma() const {
     return false;
@@ -774,6 +808,7 @@ void GlesDevice::setPixelShaderConstantB(uint32_t start, const int32_t *d, uint3
 }
 void GlesDevice::setDeclaration(DeclarationId id) {
     p->decl = id;
+    p->fvf = 0;
 }
 void GlesDevice::setStream(BufferId id, uint32_t stride) {
     p->stream = id;
@@ -789,6 +824,10 @@ void GlesDevice::drawIndexed(uint32_t type, uint32_t, uint32_t start, uint32_t c
     glDrawElements(primitive(type), vertexCount(type, count), GL_UNSIGNED_SHORT, (void *)(uintptr_t(start) * 2));
 }
 void GlesDevice::draw(uint32_t type, uint32_t start, uint32_t count) {
+    if ((p->fvf & 0xe) == Fvf::XyzRhw) {
+        p->transformedStream(type,start,count);
+        return;
+    }
     auto program = p->prepare(false);
     p->declaration(program);
     glDrawArrays(primitive(type), start, vertexCount(type, count));
@@ -798,7 +837,21 @@ void GlesDevice::setViewport(const Viewport &v) {
 }
 void GlesDevice::clear(uint32_t flags, uint32_t argb, float z, uint32_t st) {
     p->framebuffer();
-    glDisable(GL_SCISSOR_TEST);
+    // D3D9 Clear affects the current viewport intersected with its scissor.
+    // GL clear ignores glViewport, so explicitly restrict every attachment clear.
+    int64_t left=p->viewport.x, top=p->viewport.y;
+    int64_t right=left+p->viewport.width, bottom=top+p->viewport.height;
+    if(p->clipped) {
+        left=std::max(left,static_cast<int64_t>(p->clip.x0));
+        top=std::max(top,static_cast<int64_t>(p->clip.y0));
+        right=std::min(right,static_cast<int64_t>(p->clip.x1));
+        bottom=std::min(bottom,static_cast<int64_t>(p->clip.y1));
+    }
+    left=std::clamp<int64_t>(left,0,p->tw()); top=std::clamp<int64_t>(top,0,p->th());
+    right=std::clamp<int64_t>(right,left,p->tw()); bottom=std::clamp<int64_t>(bottom,top,p->th());
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(static_cast<GLint>(left),static_cast<GLint>(p->target?top:p->th()-bottom),
+              static_cast<GLsizei>(right-left),static_cast<GLsizei>(bottom-top));
     glColorMask(1, 1, 1, 1);
     glDepthMask(1);
     glStencilMask(255);
@@ -909,7 +962,9 @@ void GlesDevice::drawUp(uint32_t type, uint32_t count, const void *data, uint32_
         }
     }
     auto matrix = screen ? identity() : multiply(multiply(p->transforms[256], p->transforms[2]), p->transforms[3]);
-    p->fixedDraw(out.data(), n, type, matrix, screen, false);
+    // DrawPrimitiveUP honors depth/cull states even for transformed vertices.
+    // Only the explicit 2D helpers request overlay state.
+    p->fixedDraw(out.data(), n, type, matrix, false, false);
 }
 bool GlesDevice::capture(const std::wstring &file) {
     std::vector<uint8_t> pixels;
@@ -947,9 +1002,20 @@ std::optional<std::vector<uint8_t>> compile(const std::vector<std::byte> &, cons
 namespace oj::render {
 void GlesDevice::letLoadingRun() {
     if (std::this_thread::get_id() != owner) return;
-    std::deque<std::function<void()>> pending;
-    { std::lock_guard lock(workMutex); pending.swap(work); }
-    for (auto& task : pending) task();
+    // Synchronous loaders enqueue their next upload after the previous one completes.
+    // Service follow-up work within a bounded slice instead of delaying each upload
+    // to the next frame. Empty ordinary frames return immediately; GL stays on owner.
+    std::unique_lock lock(workMutex);
+    if (work.empty()) return;
+    const auto deadline = std::chrono::steady_clock::now() + std::chrono::milliseconds(4);
+    do {
+        auto task = std::move(work.front());
+        work.pop_front();
+        lock.unlock();
+        task();
+        lock.lock();
+        if (std::chrono::steady_clock::now() >= deadline) break;
+    } while (workReady.wait_until(lock, deadline, [this] { return !work.empty(); }));
 }
 void GlesDevice::waitForService() {
     if (std::this_thread::get_id() != owner) onOwner([] {});

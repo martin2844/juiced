@@ -42,11 +42,13 @@
       2.087,
       1.469,
       1.15,
-      0.9345532454361055,
-      0.7631402129817445
+      0.9226363636363637,
+      0.7534090909090909
     ],
-    "final_drive": 3.944,
-    "status": "candidate: verify gearing, mass conventions, acceleration, braking and cornering before release"
+    "final_drive": 4.235294117647059,
+    "status": "candidate: verify gearing, mass conventions, acceleration, braking and cornering before release",
+    "secondary_final_drive": 3.272727272727273,
+    "ratio_status": "Individual gear pairs remain provisional; source identifies final drives and shaft allocation. Reverse effective ratio retained until exact selected-market gear pair evidence."
   },
   {
     "model": "JETTA_MK5_FSI",
@@ -88,14 +90,16 @@
     "mass_kg": 1330,
     "drive": "RWD",
     "gears": [
-      3.71,
+      4.03,
       2.16,
       1.37,
       1,
       0.797
     ],
     "final_drive": 3.73,
-    "status": "candidate: verify gearing, mass conventions, acceleration, braking and cornering before release"
+    "status": "candidate: verify gearing, mass conventions, acceleration, braking and cornering before release",
+    "reverse_gear_ratio": -3.68,
+    "ratio_status": "M46 forward/reverse supported by Volvo 1984 Swedish owners manual p100; precise .797 overdrive by TP30425/4 p80. 3.73 axle and 1330kg mass remain estimates for the chosen European Turbo variant."
   },
   {
     "model": "VOLVO_V70_24",

@@ -12,6 +12,7 @@ class CreativeMenu {
             m_request.finished();
     }
     bool update(const std::vector<input::KeyEvent> &keys);
+    bool updateUi(uint32_t event);
     void draw();
 
   private:

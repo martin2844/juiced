@@ -67,9 +67,23 @@ public final class SaveEditorActivity extends Activity {
   public void onCreate(Bundle state) {
     super.onCreate(state);
     ImportJob.lockFile = new File(getFilesDir(), "installation.lock");
+    // Shared profiles can contain added cars: start with the installed, enabled roster.
+    for (File pack : ModStore.packages(new File(getFilesDir(), "mods"))) {
+      if (!new File(pack, "disabled").exists()) {
+        modded = true;
+        break;
+      }
+    }
+    if (state != null) modded = state.getBoolean("modded", modded);
     getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
     render();
     loadCatalog();
+  }
+
+  @Override
+  public void onSaveInstanceState(Bundle state) {
+    state.putBoolean("modded", modded);
+    super.onSaveInstanceState(state);
   }
 
   @Override

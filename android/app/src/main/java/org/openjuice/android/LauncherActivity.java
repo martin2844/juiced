@@ -343,6 +343,8 @@ public final class LauncherActivity extends Activity {
           false,
           () -> startActivity(new Intent(this, ControllerActivity.class)),
           idle);
+      note("Team races: D-pad Up/Down raises/lowers teammate 1 intensity; Right/Left controls"
+          + " teammate 2. Hold Select (Back) + Up/Down for teammate 3. Each press changes one level.");
       note("Live button and stick testing is included in gamepad setup.");
       content = controlBody;
     } else if (page.equals("Saves")) {

@@ -1,0 +1,337 @@
+{
+  "author_sha256": "1aad150b338a0fe91f0bbd5046cc2c138f8e58f337839b6808df1e37eab8d98c",
+  "source": "/home/martin/.local/share/openjuice/mods/street-cars-wave2",
+  "changed": [
+    "assets/cars/peugeot_405_glx/mesh/w257_kit1_fbump.d8m",
+    "assets/cars/peugeot_405_glx/mesh/w257_kit1_rbump.d8m",
+    "assets/cars/peugeot_405_glx/mesh/w257_kit1_sskirt_l.d8m",
+    "assets/cars/peugeot_405_glx/mesh/w257_kit1_sskirt_r.d8m",
+    "assets/cars/peugeot_405_glx/mesh/w257_kit2_fbump.d8m",
+    "assets/cars/peugeot_405_glx/mesh/w257_kit2_rbump.d8m",
+    "assets/cars/peugeot_405_glx/mesh/w257_kit2_sskirt_l.d8m",
+    "assets/cars/peugeot_405_glx/mesh/w257_kit2_sskirt_r.d8m",
+    "assets/cars/peugeot_405_glx/mesh/w257_kit3_fbump.d8m",
+    "assets/cars/peugeot_405_glx/mesh/w257_kit3_rbump.d8m",
+    "assets/cars/peugeot_405_glx/mesh/w257_kit3_sskirt_l.d8m",
+    "assets/cars/peugeot_405_glx/mesh/w257_kit3_sskirt_r.d8m",
+    "assets/cars/peugeot_405_glx/mesh/w257_sport_bonnet.d8m",
+    "assets/cars/peugeot_405_glx/mesh/w257_vented_carbon_bonnet.d8m",
+    "assets/cars/peugeot_405_glx/mesh/w257_vented_paint_bonnet.d8m",
+    "assets/cars/peugeot_405_glx_ui/mesh/w257_kit1_fbump.d8m",
+    "assets/cars/peugeot_405_glx_ui/mesh/w257_kit1_rbump.d8m",
+    "assets/cars/peugeot_405_glx_ui/mesh/w257_kit1_sskirt_l.d8m",
+    "assets/cars/peugeot_405_glx_ui/mesh/w257_kit1_sskirt_r.d8m",
+    "assets/cars/peugeot_405_glx_ui/mesh/w257_kit2_fbump.d8m",
+    "assets/cars/peugeot_405_glx_ui/mesh/w257_kit2_rbump.d8m",
+    "assets/cars/peugeot_405_glx_ui/mesh/w257_kit2_sskirt_l.d8m",
+    "assets/cars/peugeot_405_glx_ui/mesh/w257_kit2_sskirt_r.d8m",
+    "assets/cars/peugeot_405_glx_ui/mesh/w257_kit3_fbump.d8m",
+    "assets/cars/peugeot_405_glx_ui/mesh/w257_kit3_rbump.d8m",
+    "assets/cars/peugeot_405_glx_ui/mesh/w257_kit3_sskirt_l.d8m",
+    "assets/cars/peugeot_405_glx_ui/mesh/w257_kit3_sskirt_r.d8m",
+    "assets/cars/peugeot_405_glx_ui/mesh/w257_sport_bonnet.d8m",
+    "assets/cars/peugeot_405_glx_ui/mesh/w257_vented_carbon_bonnet.d8m",
+    "assets/cars/peugeot_405_glx_ui/mesh/w257_vented_paint_bonnet.d8m"
+  ],
+  "meshes": [
+    {
+      "name": "w257_kit1_fbump",
+      "objects": [
+        "Photo_fitted_front_skin",
+        "Front_opening_00_painted_rolled_rim",
+        "Front_opening_00_reveal",
+        "Front_opening_00_recessed_back",
+        "Front_opening_00_diamond_screen",
+        "Front_opening_01_painted_rolled_rim",
+        "Front_opening_01_reveal",
+        "Front_opening_01_recessed_back",
+        "Front_opening_01_diamond_screen",
+        "Front_opening_02_painted_rolled_rim",
+        "Front_opening_02_reveal",
+        "Front_opening_02_recessed_back",
+        "Front_opening_02_diamond_screen",
+        "Front_opening_03_painted_rolled_rim",
+        "Front_opening_03_reveal",
+        "Front_opening_03_recessed_back",
+        "Front_opening_03_diamond_screen",
+        "Front_opening_04_painted_rolled_rim",
+        "Front_opening_04_reveal",
+        "Front_opening_04_recessed_back",
+        "Front_opening_04_diamond_screen",
+        "Front_opening_05_painted_rolled_rim",
+        "Front_opening_05_reveal",
+        "Front_opening_05_recessed_back",
+        "Front_opening_05_diamond_screen",
+        "Front_opening_06_painted_rolled_rim",
+        "Front_opening_06_reveal",
+        "Front_opening_06_recessed_back",
+        "Front_opening_06_diamond_screen",
+        "Front_opening_07_painted_rolled_rim",
+        "Front_opening_07_reveal",
+        "Front_opening_07_recessed_back",
+        "Front_opening_07_diamond_screen",
+        "Rectangular_glass_fog_lamp",
+        "Fluted_fog_lens",
+        "Fluted_fog_lens.001",
+        "Fluted_fog_lens.002",
+        "Fluted_fog_lens.003",
+        "Fluted_fog_lens.004",
+        "Fluted_fog_lens.005",
+        "Rectangular_glass_fog_lamp.001",
+        "Fluted_fog_lens.006",
+        "Fluted_fog_lens.007",
+        "Fluted_fog_lens.008",
+        "Fluted_fog_lens.009",
+        "Fluted_fog_lens.010",
+        "Fluted_fog_lens.011",
+        "Rectangular_glass_fog_lamp.002",
+        "Fluted_fog_lens.012",
+        "Fluted_fog_lens.013",
+        "Fluted_fog_lens.014",
+        "Fluted_fog_lens.015",
+        "Fluted_fog_lens.016",
+        "Fluted_fog_lens.017",
+        "Rectangular_glass_fog_lamp.003",
+        "Fluted_fog_lens.018",
+        "Fluted_fog_lens.019",
+        "Fluted_fog_lens.020",
+        "Fluted_fog_lens.021",
+        "Fluted_fog_lens.022",
+        "Fluted_fog_lens.023",
+        "Gutmann_lower_painted_web",
+        "Gutmann_period_bumper_strip",
+        "Integrated_lower_edge"
+      ],
+      "authored_triangles": 10528,
+      "total_triangles": 11572,
+      "sha256": "da3ce288914a71745d7fd283c6bb4a0ae0d318eb8f4c5c327a746a56e50f75f6"
+    },
+    {
+      "name": "w257_kit1_rbump",
+      "objects": [
+        "Photo_adapted_rear_valance",
+        "Rear_recess_0_painted_rolled_rim",
+        "Rear_recess_0_reveal",
+        "Rear_recess_0_recessed_back",
+        "Rear_painted_rolled_edge",
+        "Rear_period_rub_strip"
+      ],
+      "authored_triangles": 3230,
+      "total_triangles": 3997,
+      "sha256": "7b6998a3407b4e742694c39d88024129586955c2b0055e57830832be64acd5f0"
+    },
+    {
+      "name": "w257_kit1_sskirt_l",
+      "objects": [
+        "Continuous_photo_rocker_profile"
+      ],
+      "authored_triangles": 1474,
+      "total_triangles": 1536,
+      "sha256": "13eb28b7f51e064030d110d421127635fac6e56206abdc32232c7f31835a504a"
+    },
+    {
+      "name": "w257_kit1_sskirt_r",
+      "objects": [
+        "Continuous_photo_rocker_profile.001"
+      ],
+      "authored_triangles": 1474,
+      "total_triangles": 1537,
+      "sha256": "221c7a6b8064815158704fda680ac94accc86e2a46bc767045cd9b4c99c9eeaa"
+    },
+    {
+      "name": "w257_kit2_fbump",
+      "objects": [
+        "Photo_fitted_front_skin.001",
+        "Front_opening_00_painted_rolled_rim.001",
+        "Front_opening_00_reveal.001",
+        "Front_opening_00_recessed_back.001",
+        "Front_opening_00_diamond_screen.001",
+        "Front_opening_01_painted_rolled_rim.001",
+        "Front_opening_01_reveal.001",
+        "Front_opening_01_recessed_back.001",
+        "Front_opening_01_diamond_screen.001",
+        "Front_opening_02_painted_rolled_rim.001",
+        "Front_opening_02_reveal.001",
+        "Front_opening_02_recessed_back.001",
+        "Front_opening_02_diamond_screen.001",
+        "Integrated_lower_edge.001"
+      ],
+      "authored_triangles": 8894,
+      "total_triangles": 9938,
+      "sha256": "3493ae9bf5f44e701577f068e37b1d8479bc9760928066e83d72411c72bbebe2"
+    },
+    {
+      "name": "w257_kit2_rbump",
+      "objects": [
+        "Photo_adapted_rear_valance.001",
+        "Rear_recess_0_painted_rolled_rim.001",
+        "Rear_recess_0_reveal.001",
+        "Rear_recess_0_recessed_back.001",
+        "Rear_recess_1_painted_rolled_rim",
+        "Rear_recess_1_reveal",
+        "Rear_recess_1_recessed_back",
+        "Rear_recess_2_painted_rolled_rim",
+        "Rear_recess_2_reveal",
+        "Rear_recess_2_recessed_back",
+        "Rear_painted_rolled_edge.001"
+      ],
+      "authored_triangles": 2244,
+      "total_triangles": 3011,
+      "sha256": "8e0cff0347cdc2541818e56c8451d9f6610b7d941e563918c085dae85249cecd"
+    },
+    {
+      "name": "w257_kit2_sskirt_l",
+      "objects": [
+        "Continuous_photo_rocker_profile.002"
+      ],
+      "authored_triangles": 1140,
+      "total_triangles": 1202,
+      "sha256": "297101d55e6cb0492ddf7abeff5cba0c2e67ab60e971dae56dfee78f48580163"
+    },
+    {
+      "name": "w257_kit2_sskirt_r",
+      "objects": [
+        "Continuous_photo_rocker_profile.003"
+      ],
+      "authored_triangles": 1140,
+      "total_triangles": 1203,
+      "sha256": "f380459141a87f0e44fb69017f4d59be928b1c00f1d380ccdee451252a179fd2"
+    },
+    {
+      "name": "w257_kit3_fbump",
+      "objects": [
+        "Photo_fitted_front_skin.002",
+        "Front_opening_00_painted_rolled_rim.002",
+        "Front_opening_00_reveal.002",
+        "Front_opening_00_recessed_back.002",
+        "Front_opening_00_diamond_screen.002",
+        "Front_opening_01_painted_rolled_rim.002",
+        "Front_opening_01_reveal.002",
+        "Front_opening_01_recessed_back.002",
+        "Front_opening_01_diamond_screen.002",
+        "Front_opening_02_painted_rolled_rim.002",
+        "Front_opening_02_reveal.002",
+        "Front_opening_02_recessed_back.002",
+        "Front_opening_02_diamond_screen.002",
+        "Circular_fog_housing_painted_rolled_rim",
+        "Circular_fog_housing_reveal",
+        "Circular_fog_housing_recessed_back",
+        "Circular_glass_fog",
+        "Circular_fog_housing_painted_rolled_rim.001",
+        "Circular_fog_housing_reveal.001",
+        "Circular_fog_housing_recessed_back.001",
+        "Circular_glass_fog.001",
+        "Circular_fog_housing_painted_rolled_rim.002",
+        "Circular_fog_housing_reveal.002",
+        "Circular_fog_housing_recessed_back.002",
+        "Circular_glass_fog.002",
+        "Circular_fog_housing_painted_rolled_rim.003",
+        "Circular_fog_housing_reveal.003",
+        "Circular_fog_housing_recessed_back.003",
+        "Circular_glass_fog.003",
+        "Blue_show_car_double_lower_lip",
+        "Integrated_lower_edge.002"
+      ],
+      "authored_triangles": 7090,
+      "total_triangles": 8134,
+      "sha256": "60c6b5f5dca1dc6939df675fd126015c1801427cc3db7c11e7a90d8b044281b1"
+    },
+    {
+      "name": "w257_kit3_rbump",
+      "objects": [
+        "Photo_adapted_rear_valance.002",
+        "Rear_recess_0_painted_rolled_rim.002",
+        "Rear_recess_0_reveal.002",
+        "Rear_recess_0_recessed_back.002",
+        "Rear_recess_1_painted_rolled_rim.001",
+        "Rear_recess_1_reveal.001",
+        "Rear_recess_1_recessed_back.001",
+        "Rear_painted_rolled_edge.002"
+      ],
+      "authored_triangles": 2120,
+      "total_triangles": 2887,
+      "sha256": "deac8cdde3e94d1b0fbe96655a09036b85dc3c4ad77fd2b8d22568213672058b"
+    },
+    {
+      "name": "w257_kit3_sskirt_l",
+      "objects": [
+        "Continuous_photo_rocker_profile.004"
+      ],
+      "authored_triangles": 1470,
+      "total_triangles": 1532,
+      "sha256": "4b879604d611d2776a378bbb7da9f7d6fc67b82b84daa27fe9aaca23ef0270a0"
+    },
+    {
+      "name": "w257_kit3_sskirt_r",
+      "objects": [
+        "Continuous_photo_rocker_profile.005"
+      ],
+      "authored_triangles": 1470,
+      "total_triangles": 1533,
+      "sha256": "510efae6a4cab840a4ca471435b41853f9c806b852074a44864897f92a98a969"
+    },
+    {
+      "name": "w257_sport_bonnet",
+      "sha256": "dd090965099ec890f1d7b18b6f0eb904f606f95ef24345af03211bb84c026861",
+      "factory_normals_preserved": true,
+      "centre_scoop": false
+    },
+    {
+      "name": "w257_vented_paint_bonnet",
+      "sha256": "8514f6cdcffad490bf83ec0c18f1a870b732b541fa831e6bf1707f0efa5ea281",
+      "factory_normals_preserved": true,
+      "centre_scoop": true
+    },
+    {
+      "name": "w257_vented_carbon_bonnet",
+      "sha256": "9b92301d544a777aab4171dd8644ac4061291b09a4a03b55acc9f9aa7f9b2cfd",
+      "factory_normals_preserved": true,
+      "centre_scoop": true
+    }
+  ],
+  "references": {
+    "coordinate_authority": "Existing Peugeot405 source body, wheelbase266.9cm; photos provide proportions and design, not calibrated photogrammetry.",
+    "kits": [
+      {
+        "slot": 1,
+        "name": "Gutmann interpretation",
+        "url": "https://www.kustomorphose.com/kit-carrosserie-367/kit-carrosserie-peugeot-405-look-6801.html",
+        "photos": [
+          "gutmann-6.jpg",
+          "gutmann-3.jpg",
+          "gutmann-1.jpg",
+          "gutmann-blue.jpg"
+        ],
+        "observed": "Four rectangular foglights, shallow central trapezoid, five apron slots, straight period bands, concave skirts, restrained rear apron.",
+        "adaptation": "Retains Juiced stock upper bumper/plate, lights, wheel arches and left exhaust. No claimed exact commercial-kit replica."
+      },
+      {
+        "slot": 2,
+        "name": "Stratos interpretation",
+        "url": "https://www.avb-sports.be/peugeot/405/1987-1996/bodycomponents/bodykits/13218/",
+        "photos": [
+          "stratos-1.jpg",
+          "stratos-2.jpg",
+          "white-kit.jpg"
+        ],
+        "observed": "Three large tapered rounded front openings, thin curved bridges, smooth skirts, two low rear recesses.",
+        "adaptation": "Photo's twin central exhaust replaced with actual left-side engine exhaust clearance. Catalogue upper bumper seams stay."
+      },
+      {
+        "slot": 3,
+        "name": "Blue Morette showcase interpretation",
+        "url": "https://www.morette.com/gb/peugeot/96-peugeot-405.html",
+        "photos": [
+          "morette-2002.jpg",
+          "morette-2005.jpg"
+        ],
+        "observed": "Single shallow central opening, four round foglights, outer ducts, double lower lip, centred tapered bonnet scoop.",
+        "adaptation": "Unidentified body-kit maker. Morette is the photo/headlight source, not a claim about kit manufacturer. Rear not shown: original clean adaptation. Stock Juiced headlights retained."
+      }
+    ],
+    "hoods": "Factory pressing and original supplied normals retained; plain carbon and painted/carbon central scoops. Old paired rectangular louvres removed. Scoop is derived from the blue photo and fitted within the existing centre panel.",
+    "limitations": "Photo-derived game-scale interpretations, not laser scans. Existing opaque glazing hides the source model's incomplete cabin. Existing native vinyl receiver faces retained. No renderer/physics modifications."
+  },
+  "scope": "405 body kits and hoods only; all part identities, wings, handling, saves and other cars unchanged",
+  "status": "PRIVATE CANDIDATE: native review pending"
+}

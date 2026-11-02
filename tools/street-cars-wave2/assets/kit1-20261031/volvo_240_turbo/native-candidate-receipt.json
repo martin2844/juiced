@@ -1,0 +1,87 @@
+{
+  "status": "PRIVATE; not installed or visually approved",
+  "study": "/run/media/martin/Ediloco/OpenJuice-builds/20261031-wave2-kit1/volvo_240_turbo-study01",
+  "baseline": "/run/media/martin/Ediloco/OpenJuice-builds/20261031-wave2-kit1/combined-step5",
+  "meshes": [
+    {
+      "path": "assets/cars/volvo_240_turbo/mesh/w262_kit1_fbump.d8m",
+      "sha256": "481988de1bd33edf82b2c0158ff8e8b37e37d90bf26991f4fbf2606af8b81e4b",
+      "stock_sha256": "3960fdfe696a7e0bfe4b3ab6e38d2321b04d28a6376a4a78e2fcccfda220946f",
+      "added_triangles": 852,
+      "changed_vertices": 1324,
+      "protected_vertices": 6322
+    },
+    {
+      "path": "assets/cars/volvo_240_turbo_ui/mesh/w262_kit1_fbump.d8m",
+      "sha256": "481988de1bd33edf82b2c0158ff8e8b37e37d90bf26991f4fbf2606af8b81e4b",
+      "stock_sha256": "3960fdfe696a7e0bfe4b3ab6e38d2321b04d28a6376a4a78e2fcccfda220946f",
+      "added_triangles": 852,
+      "changed_vertices": 1324,
+      "protected_vertices": 6322
+    },
+    {
+      "path": "assets/cars/volvo_240_turbo/mesh/w262_kit1_rbump.d8m",
+      "sha256": "893966211a853d086d9a9aae8b0630a5431f837d5948540bef3cb683a9512e04",
+      "stock_sha256": "d73fe5cd088ea84c78ef901d4898d3ea31bd80ebece7e72a7d4ecbfc9edfb0f1",
+      "added_triangles": 2136,
+      "changed_vertices": 186,
+      "protected_vertices": 1386
+    },
+    {
+      "path": "assets/cars/volvo_240_turbo_ui/mesh/w262_kit1_rbump.d8m",
+      "sha256": "893966211a853d086d9a9aae8b0630a5431f837d5948540bef3cb683a9512e04",
+      "stock_sha256": "d73fe5cd088ea84c78ef901d4898d3ea31bd80ebece7e72a7d4ecbfc9edfb0f1",
+      "added_triangles": 2136,
+      "changed_vertices": 186,
+      "protected_vertices": 1386
+    },
+    {
+      "path": "assets/cars/volvo_240_turbo/mesh/w262_kit1_sskirt_l.d8m",
+      "sha256": "b088c6fed384b72d52c3ac1f2ba8b252adc2447c639ed5be07c6eba56eaecdac",
+      "stock_sha256": "639cf069fcdd58e887340bcf6450295d238af01d708409d48dd8cc2a1e17f143",
+      "added_triangles": 636,
+      "changed_vertices": 0,
+      "protected_vertices": 154
+    },
+    {
+      "path": "assets/cars/volvo_240_turbo_ui/mesh/w262_kit1_sskirt_l.d8m",
+      "sha256": "b088c6fed384b72d52c3ac1f2ba8b252adc2447c639ed5be07c6eba56eaecdac",
+      "stock_sha256": "639cf069fcdd58e887340bcf6450295d238af01d708409d48dd8cc2a1e17f143",
+      "added_triangles": 636,
+      "changed_vertices": 0,
+      "protected_vertices": 154
+    },
+    {
+      "path": "assets/cars/volvo_240_turbo/mesh/w262_kit1_sskirt_r.d8m",
+      "sha256": "818bebb52d1f73817cde93a8b2644133e5c046472d14a672b8b63ecc1e0d6289",
+      "stock_sha256": "d2cf2cfdd995df2fff92a98936bfb54f02f20140e53b1a21925784c8fdc476ce",
+      "added_triangles": 636,
+      "changed_vertices": 0,
+      "protected_vertices": 154
+    },
+    {
+      "path": "assets/cars/volvo_240_turbo_ui/mesh/w262_kit1_sskirt_r.d8m",
+      "sha256": "818bebb52d1f73817cde93a8b2644133e5c046472d14a672b8b63ecc1e0d6289",
+      "stock_sha256": "d2cf2cfdd995df2fff92a98936bfb54f02f20140e53b1a21925784c8fdc476ce",
+      "added_triangles": 636,
+      "changed_vertices": 0,
+      "protected_vertices": 154
+    }
+  ],
+  "exports": {
+    "volvo_240_turbo-kit1.glb": "a51030b02020bd0d12c34ceb8f9734e20b65dcac0eee2a4e194976776589b050"
+  },
+  "changed_files": [
+    "assets/cars/volvo_240_turbo/mesh/w262_kit1_fbump.d8m",
+    "assets/cars/volvo_240_turbo/mesh/w262_kit1_rbump.d8m",
+    "assets/cars/volvo_240_turbo/mesh/w262_kit1_sskirt_l.d8m",
+    "assets/cars/volvo_240_turbo/mesh/w262_kit1_sskirt_r.d8m",
+    "assets/cars/volvo_240_turbo_ui/mesh/w262_kit1_fbump.d8m",
+    "assets/cars/volvo_240_turbo_ui/mesh/w262_kit1_rbump.d8m",
+    "assets/cars/volvo_240_turbo_ui/mesh/w262_kit1_sskirt_l.d8m",
+    "assets/cars/volvo_240_turbo_ui/mesh/w262_kit1_sskirt_r.d8m"
+  ],
+  "all_other_runtime_files_unchanged": true,
+  "original_uvs_colours_unknown_vertex_data_preserved": true,
+  "protected_receiver_vertices_unchanged": true
+}

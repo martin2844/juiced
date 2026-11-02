@@ -1330,6 +1330,13 @@ int32_t leaderCar(const Career& career, int32_t crew) {
     for (uint32_t i = 0; i < s.count && i < s.racers.size(); ++i) {
         if (s.racers[i].crew == crew && s.racers[i].member == 0) return s.racers[i].car;
     }
+    // In a delegated pink-slip duel there is no member 0 on our side.
+    // Resolve the actual staked car for previews instead of unrelated garage slot 0.
+    if (crew == 0 && s.event != nullptr && s.event->pinkSlip != 0 &&
+        s.round != nullptr && s.round->teamSize == 1) {
+        for (uint32_t i = 0; i < s.count && i < s.racers.size(); ++i)
+            if (s.racers[i].crew == 0) return s.racers[i].car;
+    }
     return 0;
 }
 

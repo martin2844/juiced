@@ -61,6 +61,11 @@ void fit(CarDynamics& d, Car& car, const PartCatalogue& catalogue) {
     }
     if (const CarPart* turbo = fitted(car, catalogue, kTurbo)) {
         d.turbo = turbo->dataValue;
+        if (turbo->level >= 0 && turbo->level < static_cast<int>(d.turboUpgradeScale.size())) {
+            const float scale = d.turboUpgradeScale[static_cast<size_t>(turbo->level)];
+            // Keep the original path and rounding for every unconfigured car.
+            if (scale != 1.0f) d.turbo = static_cast<float>(R(d.turbo) * scale);
+        }
     } else if (car.def != nullptr && car.def->stockTurbo) {
         d.turbo = 1.01f;
     }

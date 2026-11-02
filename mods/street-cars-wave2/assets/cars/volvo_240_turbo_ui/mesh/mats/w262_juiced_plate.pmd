@@ -1,0 +1,6 @@
+Material Program = Specular Opaque
+Specular Colour = 35 35 35
+Specular Highlight = 10
+Shininess = 16
+Double-sided = TRUE
+Opaque Texture = w262_juiced_plate.ptd

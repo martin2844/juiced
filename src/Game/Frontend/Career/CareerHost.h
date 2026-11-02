@@ -23,8 +23,9 @@ public:
     virtual void statsCar(Car* car, int32_t garage) = 0;
     // The record of Car_Stats2purple, whose garage flag the windows that open it set.
     virtual CarStats& carStatsPurple() = 0;
-    // 0x004BAEE0: the career's next window after a race.
-    virtual void afterRaceResults() = 0;
+    // 0x004BAEE0: the career's next window after a race. A terminal summary
+    // records history before its autosave; the continuation must not add it again.
+    virtual void afterRaceResults(bool historyRecorded = false) = 0;
     // The dealer after the first event (as in 0x004BAEE0): the profile's +0x4E4 the money, the dealer's offers and
     // CMSCarDealership.
     virtual void firstEventDealer() = 0;

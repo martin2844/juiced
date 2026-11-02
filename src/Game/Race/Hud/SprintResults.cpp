@@ -4,6 +4,7 @@
 #include "Game/Race/Hud/HudInternal.h"
 
 #include "Core/Data/GameTexts.h"
+#include "Core/Cars/CarDisplayName.h"
 #include "Core/Input/Input.h"
 #include "Core/Network/OnlineRecords.h"
 
@@ -148,7 +149,7 @@ void SprintResults::fill(const HudRace& race) {
                 set(m_heatTime[i], widen(std::format("{} ", points)) + m_texts.at(kTextPts) +
                                        widen(std::format("  ({})", hudTime(c->raceTime))));
                 if (car != nullptr && car->carRecord != nullptr && car->carRecord->def != nullptr) {
-                    set(m_car[i], m_texts.at(kTextModels + static_cast<size_t>(car->carRecord->def->id)));
+                    set(m_car[i], carDisplayName(m_texts, *car->carRecord->def));
                 }
                 if (c == own) {
                     for (const int e : {m_name[i], m_team[i], m_heatTime[i], m_car[i]}) {
@@ -202,7 +203,7 @@ void SprintResults::leaderboard(const HudRace& race) {
             if (car != nullptr) set(m_team[i], m_texts.at(kTextCrewNames + static_cast<size_t>(car->crew)));
             set(m_heatTime[i], widen(std::format("{}", x87::chop(c->points))));
             if (car != nullptr && car->carRecord != nullptr && car->carRecord->def != nullptr) {
-                set(m_car[i], m_texts.at(kTextModels + static_cast<size_t>(car->carRecord->def->id)));
+                set(m_car[i], carDisplayName(m_texts, *car->carRecord->def));
             }
             if (c == own) {
                 for (const int e : {m_name[i], m_team[i], m_heatTime[i]}) {

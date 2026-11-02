@@ -84,7 +84,7 @@ void Frontend::firstEventDealer() {
 // the profile's +0x618) the dealer's +0x00, +0x08, +0x27D4, +0x27DC cleared, the garage listed (0x004B4440, +0x27D8
 // the garage) and the player's race car chosen (0x004BB150, 0x004B52F0), its +0x0C 0, the profile's +0x4E4 the money,
 // garageload (the career's +0xA4 0); else CMSMainMenu.
-void Frontend::afterRaceResults() {
+void Frontend::afterRaceResults(bool historyRecorded) {
     Career& career = *m_data->career;
     CareerProfile& profile = career.profile;
     Dealer& dealer = career.dealer;
@@ -96,7 +96,7 @@ void Frontend::afterRaceResults() {
         request("CMSRespectChanges", SwitchMode::Replace);
         return;
     }
-    recordHistory(career);
+    if (!historyRecorded) recordHistory(career);
     if (profile.introduction != 0) {
         firstEventDealer();
     } else if (profile.raceCarKept == 0) {

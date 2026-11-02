@@ -35,6 +35,14 @@ std::string unquoted(std::string_view value) {
 // axis of the racing genre (DIVIRTUAL_DRIVING_RACE 0x01000000), the "any" axes and buttons (0xFF......), the keyboard's
 // keys (0x81000400 + the key's code).
 constexpr Semantic kSemantics[] = {
+    // Native crew commands, independent of retail DirectInput buttons.
+    {"OJ_CREW_0", 0x7F000100u, 0},
+    {"OJ_CREW_1", 0x7F000101u, 0},
+    {"OJ_CREW_2", 0x7F000102u, 0},
+    {"OJ_CREW_3", 0x7F000103u, 0},
+    {"OJ_CREW_4", 0x7F000104u, 0},
+    {"OJ_CREW_5", 0x7F000105u, 0},
+
     {"DIAXIS_ANY_X_1", 0xFF00C201u, 1},
     {"DIAXIS_ANY_Y_1", 0xFF014201u, 1},
     {"DIAXIS_ANY_A_1", 0xFF03C201u, 1},

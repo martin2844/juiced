@@ -16,11 +16,16 @@ public:
     frontend::CarStats stats;
     int meetings = 0;
     bool watching = true;  // the front end's +0x38: its players' controllers watched
+    int resultsContinued = 0;
+    bool resultsHistoryRecorded = false;
 
     void respectMessage(int, float, float, const std::wstring&) override {}
     void statsCar(Car*, int32_t) override {}
     frontend::CarStats& carStatsPurple() override { return stats; }
-    void afterRaceResults() override {}
+    void afterRaceResults(bool historyRecorded = false) override {
+        ++resultsContinued;
+        resultsHistoryRecorded = historyRecorded;
+    }
     void firstEventDealer() override {}
     void phoneFrame(ui::Screen&) override {}
     void watchControllers(bool on) override { watching = on; }

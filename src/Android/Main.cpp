@@ -15,6 +15,9 @@
 #include <fstream>
 #include <iostream>
 int runDiagnostics(const std::filesystem::path &support, const std::filesystem::path &game);
+#ifdef OJ_ANDROID_RENDER_CHECK
+int runRenderCheck();
+#endif
 int main(int argc, char **argv) {
     struct Overlay {
         std::filesystem::path path;
@@ -30,6 +33,9 @@ int main(int argc, char **argv) {
         std::filesystem::path support, game;
         std::string command;
         bool diagnostics = false, noMods = false, modsMenu = false;
+#ifdef OJ_ANDROID_RENDER_CHECK
+        bool renderCheck = false;
+#endif
 #ifdef __ANDROID__
         if (argc < 2)
             return 2;
@@ -45,6 +51,12 @@ int main(int argc, char **argv) {
 #endif
         for (int i = first; i < argc; i++) {
             std::string a = argv[i];
+#ifdef OJ_ANDROID_RENDER_CHECK
+            if (a == "--render-check") {
+                renderCheck = true;
+                continue;
+            }
+#endif
             if (a == "--no-mods") {
                 noMods = true;
                 continue;
@@ -69,6 +81,14 @@ int main(int argc, char **argv) {
             command += '"' + a + '"';
             command += ' ';
         }
+#ifdef OJ_ANDROID_RENDER_CHECK
+        if (renderCheck) {
+            std::filesystem::create_directories(support);
+            const int result = runRenderCheck();
+            std::ofstream(support / "render-check-result.txt") << (result == 0 ? "PASS" : "FAIL") << '\n';
+            return result;
+        }
+#endif
         if (game.empty() || !oj::GameFiles(game).valid()) {
             std::cerr << "Import Juiced game data first\n";
             return 2;

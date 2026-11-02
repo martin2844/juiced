@@ -1,0 +1,4 @@
+Material Program = Standard Alpha Blend
+Z-Write = FALSE
+Disable Fog = FALSE
+Alpha Texture = DECAL_NFS_AI_JETTA.ptd

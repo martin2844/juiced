@@ -29,7 +29,7 @@ OJ_INTEGRATION_TEST(VoiceManager, KeptVoiceNotTaken) {
     if (!folder.valid()) return;
     oj::audio::System& sound = oj::audio::system();
     if (!sound.start(
-#ifdef OJ_MACOS
+#if defined(OJ_MACOS) || defined(OJ_LINUX)
             nullptr
 #else
             GetDesktopWindow()
@@ -84,7 +84,7 @@ OJ_INTEGRATION_TEST(VoiceManager, FadingVoiceKept) {
     if (!folder.valid()) return;
     oj::audio::System& sound = oj::audio::system();
     if (!sound.start(
-#ifdef OJ_MACOS
+#if defined(OJ_MACOS) || defined(OJ_LINUX)
             nullptr
 #else
             GetDesktopWindow()

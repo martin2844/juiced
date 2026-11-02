@@ -1,0 +1,138 @@
+{
+  "author_sha256": "46ec54e5a307eb9d67ad4c3e68e39d7b4b6978ff45f5ee4efacf6b406480eeef",
+  "helper_sha256": "1aad150b338a0fe91f0bbd5046cc2c138f8e58f337839b6808df1e37eab8d98c",
+  "source": "/home/martin/.local/share/openjuice/mods/street-cars-wave2",
+  "changed": [
+    "assets/cars/peugeot_405_glx/mesh/w257_chass.d8m",
+    "assets/cars/peugeot_405_glx/mesh/w257_fbump.d8m",
+    "assets/cars/peugeot_405_glx/mesh/w257_kit1_fbump.d8m",
+    "assets/cars/peugeot_405_glx/mesh/w257_kit1_rbump.d8m",
+    "assets/cars/peugeot_405_glx/mesh/w257_kit2_fbump.d8m",
+    "assets/cars/peugeot_405_glx/mesh/w257_kit2_rbump.d8m",
+    "assets/cars/peugeot_405_glx/mesh/w257_kit3_fbump.d8m",
+    "assets/cars/peugeot_405_glx/mesh/w257_kit3_rbump.d8m",
+    "assets/cars/peugeot_405_glx/mesh/w257_rbump.d8m",
+    "assets/cars/peugeot_405_glx_ui/mesh/w257_chass.d8m",
+    "assets/cars/peugeot_405_glx_ui/mesh/w257_fbump.d8m",
+    "assets/cars/peugeot_405_glx_ui/mesh/w257_kit1_fbump.d8m",
+    "assets/cars/peugeot_405_glx_ui/mesh/w257_kit1_rbump.d8m",
+    "assets/cars/peugeot_405_glx_ui/mesh/w257_kit2_fbump.d8m",
+    "assets/cars/peugeot_405_glx_ui/mesh/w257_kit2_rbump.d8m",
+    "assets/cars/peugeot_405_glx_ui/mesh/w257_kit3_fbump.d8m",
+    "assets/cars/peugeot_405_glx_ui/mesh/w257_kit3_rbump.d8m",
+    "assets/cars/peugeot_405_glx_ui/mesh/w257_rbump.d8m"
+  ],
+  "meshes": [
+    {
+      "name": "w257_chass",
+      "parts": 17,
+      "triangles": 6029,
+      "sha256": "029dd9bb1c3d622b9ac761e43f18d9f2dd1a428249d00ade466fb83faa05ad7f"
+    },
+    {
+      "name": "w257_fbump",
+      "parts": 4,
+      "triangles": 826,
+      "sha256": "3b4b104c5de508ceb6299aebc8b8cb1fdcade39bb3cfc34190f12e0f04b89d3a"
+    },
+    {
+      "name": "w257_rbump",
+      "parts": 4,
+      "triangles": 947,
+      "sha256": "e2c68dd14f93aa266c823fb979b4a1c556e7fc18c8ce5236469624b7dbf3c118"
+    },
+    {
+      "name": "w257_kit1_fbump",
+      "parts": 65,
+      "triangles": 11302,
+      "sha256": "c755df6999114fce501a3426f04a70cf23837768f4d252aeb21deef9a0122d14"
+    },
+    {
+      "name": "w257_kit2_fbump",
+      "parts": 15,
+      "triangles": 9647,
+      "sha256": "9ed8ec72b2d8435687635ac011db271ccad1a994898211ad0c7b98f4466f358f"
+    },
+    {
+      "name": "w257_kit3_fbump",
+      "parts": 32,
+      "triangles": 7713,
+      "sha256": "d63a606085b9e804e4ee30d8c6c577cb2a7f69cf0bcfdb1289c327db70552b2a"
+    },
+    {
+      "name": "w257_kit1_rbump",
+      "parts": 10,
+      "triangles": 3044,
+      "sha256": "740254eb5ee6fab700146116893b86be3baf5c268414a77097a19e2fe032c3c4"
+    },
+    {
+      "name": "w257_kit2_rbump",
+      "parts": 13,
+      "triangles": 3457,
+      "sha256": "30a7f86386e1dc2787f94655906a216e182641211be87d4f601152b9eb043cab"
+    },
+    {
+      "name": "w257_kit3_rbump",
+      "parts": 13,
+      "triangles": 3248,
+      "sha256": "b7c9edbe16e528baac066556500428ddcfdfbe502a62e766ea76a58017050c66"
+    }
+  ],
+  "partition_area_cm2": {
+    "before": 235168.78866813405,
+    "after": 235168.78866813422
+  },
+  "factory_mounts": {
+    "fbump": 57.0,
+    "rbump": 63.0
+  },
+  "painted_section_rows": {
+    "fbump": 141,
+    "rbump": 136
+  },
+  "kits": [
+    {
+      "zone": "fbump",
+      "kit": 1,
+      "discarded_inherited_source_skin_parts": 5,
+      "new_mounting_seam_cm": 57.0,
+      "authored_shell_only": true
+    },
+    {
+      "zone": "fbump",
+      "kit": 2,
+      "discarded_inherited_source_skin_parts": 5,
+      "new_mounting_seam_cm": 57.0,
+      "authored_shell_only": true
+    },
+    {
+      "zone": "fbump",
+      "kit": 3,
+      "discarded_inherited_source_skin_parts": 5,
+      "new_mounting_seam_cm": 57.0,
+      "authored_shell_only": true
+    },
+    {
+      "zone": "rbump",
+      "kit": 1,
+      "discarded_inherited_source_skin_parts": 5,
+      "new_mounting_seam_cm": 63.0,
+      "authored_shell_only": true
+    },
+    {
+      "zone": "rbump",
+      "kit": 2,
+      "discarded_inherited_source_skin_parts": 5,
+      "new_mounting_seam_cm": 63.0,
+      "authored_shell_only": true
+    },
+    {
+      "zone": "rbump",
+      "kit": 3,
+      "discarded_inherited_source_skin_parts": 5,
+      "new_mounting_seam_cm": 63.0,
+      "authored_shell_only": true
+    }
+  ],
+  "scope": "Nine405 mesh pairs only: fixed body / stock slots / six complete custom shells; no other assets, parts, physics or saves"
+}

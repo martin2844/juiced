@@ -4,10 +4,13 @@
 #include "Framework/Test.h"
 #include "Framework/Fixtures.h"
 #include "Framework/Fakes/FakeWindowHost.h"
+#include "Framework/Fakes/FakeCustomRaceHost.h"
 
 #include "Core/Data/GameTexts.h"
 #include "Core/Input/Input.h"
+#include "Core/Network/NetTransport.h"
 #include "Game/Frontend/Menus/MainMenu.h"
+#include "Game/Frontend/Network/LinkWindows.h"
 
 #include <memory>
 #include <string>
@@ -61,6 +64,71 @@ bool asked(const FakeMainMenuHost& host, const char* state, oj::frontend::Switch
 
 }  // namespace
 
+#if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
+OJ_INTEGRATION_TEST(MainMenu, MultiplayDoesNotRequireNetworkStartup) {
+    MainMenuWindow w;
+    if (!w.ok()) return;
+    oj::net::stopWinsock();
+    w.enter();
+    const bool found = w.highlight("multi");
+    w.update(oj::input::kSelect);
+    check(found && asked(w.host, "multi", oj::frontend::SwitchMode::Replace) &&
+              !oj::net::winsockStarted(),
+          "menu: local/LAN selector opens without starting the network");
+}
+#endif
+
+OJ_INTEGRATION_TEST(Multi, LocalGateLanAndBack) {
+    oj::test::InGameFolder folder;
+    if (!folder.valid()) return;
+    struct Host : oj::test::FakeCustomRaceHost {
+        size_t devices = 1;
+        int releases = 0;
+        size_t inputDevices() const override { return devices; }
+        void askSecondPlayerRelease() override { ++releases; }
+    } host;
+    oj::GameData data(oj::test::gameFiles().root());
+    host.data = &data;
+    auto s = host.open("multi");
+    if (!s) return;
+    oj::frontend::Multi window;
+    oj::net::stopWinsock();
+    window.enter(host, *s);
+    window.update(host, *s, 0);
+    auto select = [&](const char* command) {
+        for (size_t i = 0; i < s->menuSize("MENU"); ++i) {
+            if (s->menuItemCommand("MENU", i) == command) {
+                s->selectMenuItem("MENU", i);
+                return true;
+            }
+        }
+        return false;
+    };
+    select("split");
+    const bool disabled = !s->menuItemEnabled("MENU", s->selectedMenuItem("MENU"));
+    check(disabled && host.releases == 1,
+          "multiplay: split screen requires a second input device; stale player-two binding released");
+    host.devices = 2;
+    window.update(host, *s, 0);
+    const bool split = select("split");
+    window.update(host, *s, oj::input::kSelect);
+    check(split && host.requests.size() == 1 && host.requests.back().first == "instant_manu" &&
+              data.race.mode == oj::RaceMode::SplitScreen && data.race.players == 2 &&
+              data.race.type == oj::RaceType::Circuit && !oj::net::winsockStarted(),
+          "multiplay: two-device local choice opens split setup without networking");
+    host.requests.clear();
+    const bool lan = select("link");
+    window.update(host, *s, oj::input::kSelect);
+    check(lan && host.requests.size() == 1 && host.requests.back().first == "link_search" &&
+              data.race.mode == oj::RaceMode::Custom && oj::net::winsockStarted(),
+          "multiplay: LAN still starts networking and opens LAN search");
+    host.requests.clear();
+    window.update(host, *s, oj::input::kBack);
+    check(host.requests.size() == 1 && host.requests.back().first == "menu",
+          "multiplay: back returns to main menu");
+    oj::net::stopWinsock();
+}
+
 // SELECT on an item goes to its window (mode 1) after CLICK: the arcade's championships, the custom race, the
 // options and the extras.
 OJ_INTEGRATION_TEST(MainMenu, SelectGoesToItsWindow) {
@@ -68,7 +136,13 @@ OJ_INTEGRATION_TEST(MainMenu, SelectGoesToItsWindow) {
     if (!w.ok()) return;
     w.enter();
     const std::pair<const char*, const char*> kItems[] = {
-        {"instant", "Arcade_Championship"}, {"custom", "instant_manu"}, {"options", "opts_bg"}, {"Extras", "Extras"}};
+        {"instant", "Arcade_Championship"}, {"custom", "instant_manu"}, {"options", "opts_bg"}, {"Extras", "Extras"},
+#if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
+        {"multi", "multi"},
+#else
+        {"multi", "link_search"},
+#endif
+    };
     for (const auto& [item, next] : kItems) {
         w.clear();
         const bool found = w.highlight(item);

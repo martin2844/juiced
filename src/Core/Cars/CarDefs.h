@@ -101,6 +101,10 @@ struct CarDefs {
     void load(std::string_view text, const ExeTables& tables, CrtRandom& random);
     const CarDef* byId(int id) const;
     const CarDef* byModel(std::string_view model) const;
+    // Additive mod entries preserve existing indices. Optional targets may be
+    // absent when the user disables a car pack; malformed entries still fail.
+    bool appendVinyl(std::string_view car, std::string_view mesh, std::string_view label,
+                     bool optional, std::string* error = nullptr);
 };
 
 }  // namespace oj

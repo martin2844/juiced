@@ -28,7 +28,7 @@ OJ_INTEGRATION_TEST(SoundListener, CameraTurned) {
     if (!folder.valid()) return;
     oj::audio::System& sound = oj::audio::system();
     if (!sound.start(
-#ifdef OJ_MACOS
+#if defined(OJ_MACOS) || defined(OJ_LINUX)
             nullptr
 #else
             GetDesktopWindow()

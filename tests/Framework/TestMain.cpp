@@ -65,17 +65,33 @@ int wmain(int argc, wchar_t** argv) {
             suite = oj::toUtf8(argv[++i]);
         } else if (a == L"--list") {
             list = true;
+        } else if (a.starts_with(L"--")) {
+            std::fprintf(stderr, "Unknown option or missing argument: %s\n", oj::toUtf8(a).c_str());
+            return 2;
         } else {
             root = a;
         }
     }
     oj::test::setSaveRoot(root);
+    if (!unit && !integration) {
+        std::fprintf(stderr, "--unit and --integration are mutually exclusive\n");
+        return 2;
+    }
 
     std::vector<oj::test::TestCase> tests = oj::test::registry();
     std::stable_sort(tests.begin(), tests.end(), [](const oj::test::TestCase& a, const oj::test::TestCase& b) {
         if (a.kind != b.kind) return a.kind < b.kind;
         return std::string(a.suite) < std::string(b.suite);
     });
+    std::erase_if(tests, [&](const oj::test::TestCase& t) {
+        return (t.kind == oj::test::Kind::Unit && !unit)
+            || (t.kind == oj::test::Kind::Integration && !integration)
+            || (!suite.empty() && suite != t.suite);
+    });
+    if (tests.empty()) {
+        std::fprintf(stderr, "No tests match the requested selection\n");
+        return 2;
+    }
     if (list) {
         for (const oj::test::TestCase& t : tests) {
             std::printf("%s %s.%s\n", t.kind == oj::test::Kind::Unit ? "unit" : "integration", t.suite, t.name);
@@ -85,12 +101,12 @@ int wmain(int argc, wchar_t** argv) {
 
     std::printf("save root %s\n", oj::toUtf8(root.wstring()).c_str());
     for (const oj::test::TestCase& t : tests) {
-        if ((t.kind == oj::test::Kind::Unit && !unit) || (t.kind == oj::test::Kind::Integration && !integration)) {
-            continue;
-        }
-        if (!suite.empty() && suite != t.suite) continue;
         t.run();
     }
     std::printf("%d passed, %d failed\n", oj::test::passed(), oj::test::failed());
+    if (oj::test::passed() + oj::test::failed() == 0) {
+        std::fprintf(stderr, "Selected tests executed no checks\n");
+        return 2;
+    }
     return oj::test::failed() == 0 ? 0 : 1;
 }

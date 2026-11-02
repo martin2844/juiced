@@ -1,0 +1,17 @@
+
+## r22 — Peugeot405 fit and finish in the actual workshop
+
+All three front/rear kits have denser mounting contours projected onto the
+actual fixed body; the collar is welded into the shell and its winding stays
+outward. Front/rear mounts are58.25/64.5cm. Wheel-arch clearance was reduced
+from the oversized39cm envelope to33.8cm, with turned-in returns. Redundant
+intersecting lower strips were removed and the continuous skins have smooth
+normals. A conformal intake liner blocks views through the duct ends. Fog lamps
+reuse the original fluted headlight glass texture instead of flat colour discs.
+Only the405 reveal/rubber materials become two-sided for their thin inner walls.
+Stock surfaces retain their original area, UVs and normals. Catalogue identities,
+other cars, other405 assets, physics and saves remain unchanged. The r20 approved
+102-to-400BHP preparation is retained. Checked using actual GarageView lighting,
+close front/rear views and the native selector. No Android installation included.
+Sources and editable Blender assembly: tools/peugeot405-fit-finish.
+Earlier model/photo attribution remains applicable.

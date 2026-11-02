@@ -5,6 +5,7 @@
 #include <future>
 #include <deque>
 #include <functional>
+#include <condition_variable>
 namespace oj::render {
 class GlesDevice final : public IRenderDevice {
   public:
@@ -89,11 +90,13 @@ class GlesDevice final : public IRenderDevice {
     // All OpenGL work stays on the context owner; callers wait with their input data alive.
     const std::thread::id owner = std::this_thread::get_id();
     mutable std::mutex workMutex;
+    mutable std::condition_variable workReady;
     mutable std::deque<std::function<void()>> work;
     template<class F> auto onOwner(F&& fn) const -> decltype(fn()) {
         auto task = std::make_shared<std::packaged_task<decltype(fn())()>>(std::forward<F>(fn));
         auto result = task->get_future();
         { std::lock_guard lock(workMutex); work.emplace_back([task] { (*task)(); }); }
+        workReady.notify_one();
         return result.get();
     }
     struct Impl;

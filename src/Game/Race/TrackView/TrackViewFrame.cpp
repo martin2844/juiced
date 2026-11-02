@@ -317,7 +317,8 @@ void TrackView::raceFrame(float dt, bool impacts) {
             const oj::Competitor& c = *s->car.competitor;
             oj::log::info("race: car {} place {} lap {} next {} line {} distance {:.0f} speed {:.1f} steer {:.2f} "
                           "throttle {:.2f} brake {:.2f}{}", c.index, c.place, c.lap, c.next, c.line,
-                          c.raceDistance, s->body->localVelocity[2], c.steering, c.throttle, c.brake,
+                          c.raceDistance, s->body->localVelocity[2], s->body->steering,
+                          s->body->throttle, s->body->brake,
                           c.finished ? " finished" : "");
         }
     }

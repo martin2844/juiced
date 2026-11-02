@@ -2,6 +2,7 @@
 
 #include "Framework/Test.h"
 #include "Framework/Fixtures.h"
+#include "Framework/RetailEffects.h"
 
 #include "Core/Base/GameFiles.h"
 #include "Core/Formats/Ddt.h"
@@ -11,6 +12,7 @@
 #include <filesystem>
 #include <map>
 #include <optional>
+#include <set>
 #include <string>
 #include <utility>
 #include <vector>
@@ -32,12 +34,21 @@ OJ_INTEGRATION_TEST(Effects, EveryEffect) {
     const std::filesystem::path folder = game.root() / L"effects";
     size_t effects = 0, bad = 0, shaders = 0, withTable = 0, programs = 0, programsBad = 0, preshaders = 0;
     std::map<std::string, oj::fx::Effect> byName;
+    std::set<std::filesystem::path> effectFiles;
+    for (const char* name : oj::test::retailEffects) effectFiles.emplace(name);
     std::error_code ec;
     for (auto it = std::filesystem::directory_iterator(folder, ec);
          it != std::filesystem::directory_iterator(); it.increment(ec)) {
         if (ec || it->path().extension() != L".fxo") continue;
-        const auto content = oj::GameFiles(folder).read(it->path().filename());
-        if (!content) continue;
+        effectFiles.insert(it->path().filename());
+    }
+    for (const auto& filename : effectFiles) {
+        const auto content = game.read(std::filesystem::path("effects") / filename);
+        if (!content) {
+            ++bad;
+            std::printf("     missing effect: %s\n", filename.string().c_str());
+            continue;
+        }
         ++effects;
         const auto effect = oj::fx::parseEffect(bytesOf(*content));
         if (!effect) {
@@ -65,7 +76,7 @@ OJ_INTEGRATION_TEST(Effects, EveryEffect) {
                 if (!oj::fx::parseProgram(*pres)) ++programsBad;
             }
         }
-        byName[it->path().stem().string()] = std::move(*effect);
+        byName[filename.stem().string()] = std::move(*effect);
     }
     std::printf("     effects: %zu (%zu not read), %zu shaders (%zu with a constant table), %zu expressions, "
                 "%zu preshaders (%zu not read)\n",

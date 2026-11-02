@@ -30,8 +30,20 @@ public class ModStoreTest {
       check(new File(files, "mods/test/main.lua").exists(), "installed");
       write(new File(files, "mods/test/disabled"), "");
       write(new File(imported, "test/main.lua"), "updated");
+      // Updating a package must not need to read/copy the outgoing payload.
+      File outgoing = new File(files, "mods/test/main.lua");
+      check(outgoing.setReadable(false, false), "make outgoing payload unreadable");
       ModStore.install(files, imported, f -> "OK: updated");
       check(new File(files, "mods/test/disabled").exists(), "preserve disabled");
+      check(new File(files, "mods/test/disabled").delete(), "enable existing package");
+      write(new File(imported, "test/disabled"), "disabled by package author");
+      pkg(new File(files, "mods"), "untouched");
+      write(new File(files, "mods/collection.ini"), "collection preferences");
+      ModStore.install(files, imported, f -> "OK: keep user choices");
+      check(!new File(files, "mods/test/disabled").exists(), "preserve enabled despite imported marker");
+      check(new File(files, "mods/untouched/main.lua").isFile(), "unreplaced package preserved");
+      check(Files.readString(new File(files, "mods/collection.ini").toPath()).equals("collection preferences"),
+          "collection preferences preserved");
       try {
         ModStore.install(files, imported, f -> "ERROR: invalid script");
         throw new AssertionError("bad accepted");
@@ -46,6 +58,25 @@ public class ModStoreTest {
           "simulate interruption");
       ModStore.recover(files);
       check(new File(files, "mods/test/main.lua").exists(), "recover interrupted activation");
+      File fixture = new File(files, "unreadable-fixture"), locked = new File(fixture, "mods");
+      pkg(locked, "untouched");
+      File replacement = new File(fixture, "incoming");
+      pkg(replacement, "test");
+      check(locked.setReadable(false, false), "make existing package list unreadable");
+      boolean[] validated = {false};
+      try {
+        check(locked.listFiles() == null, "unreadable directory fixture effective");
+        try {
+          ModStore.install(fixture, replacement, f -> { validated[0] = true; return "OK: test"; });
+          throw new AssertionError("unreadable existing mods accepted");
+        } catch (IOException expected) {
+        }
+      } finally {
+        locked.setReadable(true, false);
+        new File(fixture, "mods-previous").setReadable(true, false);
+      }
+      check(!validated[0], "unreadable existing package list rejected before validation/activation");
+      check(new File(locked, "untouched/main.lua").isFile(), "unreadable installation preserved");
       ByteArrayOutputStream bytes = new ByteArrayOutputStream();
       try (ZipOutputStream zip = new ZipOutputStream(bytes)) {
         zip.putNextEntry(new ZipEntry("../escape"));

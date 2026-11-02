@@ -13,6 +13,8 @@ def main():
     cases={
         'absent':(None,'No imported vinyls'),
         'unknown car':('Vinyl NONEXISTENT DECAL_NFS_V000 "test"','Invalid car or mesh'),
+        'optional missing car':('VinylIfPresent NONEXISTENT DECAL_NFS_V000 "test"','No imported vinyls'),
+        'optional path traversal':('VinylIfPresent NONEXISTENT ../DECAL_NFS_V000 "test"','Invalid car or mesh'),
         'path traversal':('Vinyl SUPRA ../DECAL_NFS_V000 "test"','Invalid car or mesh'),
         'duplicate':(('Vinyl SUPRA DECAL_NFS_V000 "test"\n')*2,'Duplicate vinyl'),
         'overflow':('\n'.join(f'Vinyl SUPRA DECAL_NFS_V{i:05} "test"' for i in range(126)),

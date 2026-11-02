@@ -159,3 +159,20 @@ The arithmetic runs on the x87: each result is rounded to the precision of the t
 thread (single precision after Direct3D 9 made its device) every operation rounds to a float; in a thread at the
 runtime's double precision the intermediate results are doubles and only the stores (rpm, speed, best power, the
 fields) round to floats. The two give ratings that can differ in the last bit; the saves hold ratings of both kinds.
+
+## Optional native-port preparation extension
+
+`TurboUpgradeScale street sports competition prototype` is an optional four-value
+multiplier table in a car's dynamics file. This is a port extension, not a
+recovered retail instruction. It defaults to `1 1 1 1`; a fitted turbo's catalogue
+DATAVAL is multiplied by the entry for that part's level before both driving and
+rating use the fitted dynamics. Without a fitted turbo it has no effect. Invalid
+lengths or nonpositive/nonfinite values leave the existing table intact.
+
+The405 r20 package alone opts in with `1.10 1.40 1.75 1.85409`: factory power stays
+unchanged and complete upgraded builds reach approximately149/218/320/400BHP.
+The table lives in the model definition, not the serialized car/save. Profile
+loading refreshes cached ratings for opted-in models so old equipped cars gain
+the current class without replacing parts. Every unconfigured model keeps its
+original arithmetic and saved rating. Older executables ignore this keyword
+and retain original tuning values; applying an assets ZIP does not update them.

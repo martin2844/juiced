@@ -432,7 +432,7 @@ std::optional<CarDynamics> parseFile(std::string_view text, std::optional<Object
                    same(k, "ClutchSpeed") || same(k, "SteeringFactor") || same(k, "SteeringSpeed") ||
                    same(k, "PowerRangeMin") || same(k, "PowerRangeMax") || same(k, "Turbo") || same(k, "Nitro") ||
                    same(k, "ABS") || same(k, "ASR") || same(k, "ASRFactor") || same(k, "TimeFactor") ||
-                   same(k, "FrontWeightDistribution")) {
+                   same(k, "FrontWeightDistribution") || same(k, "TurboUpgradeScale")) {
             handled = car != nullptr;
             if (!handled) {
             } else if (same(k, "TorqueCurveX")) {
@@ -463,6 +463,18 @@ std::optional<CarDynamics> parseFile(std::string_view text, std::optional<Object
                 car->powerRangeMax = line.real(0);
             } else if (same(k, "Turbo")) {
                 car->turbo = line.real(0);
+            } else if (same(k, "TurboUpgradeScale")) {
+                // Read an optional complete preparation curve atomically. A
+                // malformed mod line must not feed zero/NaN into the engine.
+                std::array<float, 4> values{};
+                bool valid = line.words.size() == values.size();
+                if (valid) {
+                    for (size_t i = 0; i < values.size(); ++i) {
+                        values[i] = line.real(i);
+                        valid = valid && std::isfinite(values[i]) && values[i] > 0.0f;
+                    }
+                }
+                if (valid) car->turboUpgradeScale = values;
             } else if (same(k, "Nitro")) {
                 car->nitro = line.real(0);
                 car->nitroTime = line.real(1);

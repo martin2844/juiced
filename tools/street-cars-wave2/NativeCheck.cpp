@@ -120,15 +120,35 @@ int main(int argc, char **argv) {
                 return indices;
             };
             const auto stockGeometrySize = geometrySize();
-            check(def->parts[3].parts.empty() && !model->slotMesh(oj::scene::CarModel::kSpoiler),
-                  "rear body panels are not detachable spoilers");
+            size_t stockWingIndices = 0;
+            if (const auto *wing = model->slotMesh(oj::scene::CarModel::kSpoiler))
+                for (const auto &part : wing->parts()) stockWingIndices += part.indexCount;
+            check(def->parts[3].parts.size() == 4 &&
+                      (def->parts[3].standard || def->parts[3].parts[0].model == "NONE"),
+                  "stock wing or NONE plus three custom wing choices");
             car.body[3] = 0x7f;
             model->refitParts(car, data.catalogue);
-            check(geometrySize() == stockGeometrySize, "no-spoiler selection preserves stock body geometry");
+            check(!model->slotMesh(oj::scene::CarModel::kSpoiler) &&
+                      geometrySize() + stockWingIndices == stockGeometrySize,
+                  "no-spoiler removes only the detachable wing, preserving body geometry");
+            for (uint8_t choice = 1; choice <= 3; ++choice) {
+                car.body[3] = choice;
+                model->refitParts(car, data.catalogue);
+                const auto *wing = model->slotMesh(oj::scene::CarModel::kSpoiler);
+                check(wing && !wing->parts().empty(), "custom wing geometry loads");
+                bool materials = wing != nullptr;
+                if (wing)
+                    for (const auto &part : wing->parts()) materials &= part.material != nullptr;
+                check(materials, "custom wing materials resolve");
+            }
+            car.body[3] = 0;
+            model->refitParts(car, data.catalogue);
             for (int i = 0; i < 4; ++i)
                 check(model->wheelNode(i) && model->wheelNode(i)->mesh, "wheel attached");
             auto *f = model->wheelNode(0);
             auto *r = model->wheelNode(2);
+            check(f && r && std::abs(f->local[7] - r->local[7]) < .5f,
+                  "equal-radius stock axles have matching hub height");
             check(f && r &&
                       std::abs(f->local[11] - r->local[11] -
                                std::array<float, 7>{266.9f,270.f,257.8f,257.8f,265.f,264.f,275.5f}[id-57]) < .1f,

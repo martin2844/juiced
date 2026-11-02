@@ -1,6 +1,7 @@
 // CMSCalendar: the career's calendar, its days, events and flyers.
 
 #include "Game/Frontend/Career/Calendar.h"
+#include "Game/Frontend/Career/TeamRaceText.h"
 
 #include "Core/Data/GameTexts.h"
 #include "Game/Frontend/Career/HostMeeting.h"
@@ -303,7 +304,7 @@ void eventFlyer(WindowHost& host, ui::Screen& s, Career& career, const CalendarE
     if (const int team = s.find("FlyerTeam"); team >= 0) {
         colour(team);
         if (e.round.teamSize > 1) {
-            s.setText(team, line(kTextTeamSizes + static_cast<size_t>(e.round.teamSize)));
+            s.setText(team, teamRaceCaption(texts, e.round));
         } else {
             s.setHidden(team, true);
         }

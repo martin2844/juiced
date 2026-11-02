@@ -17,6 +17,7 @@
 #include <cstdio>
 #include <filesystem>
 #include <optional>
+#include <map>
 #include <string>
 #include <vector>
 
@@ -47,6 +48,14 @@ OJ_INTEGRATION_TEST(Tracks, EveryTrack) {
     };
     size_t tracks = 0, routes = 0, badRoutes = 0, layers = 0, instances = 0, badTxb = 0, cldRead = 0;
     size_t corners = 0;
+    // DAT archives expose hashed paths, not directory entries. Enumerate the same
+    // track catalogue used by race setup, and retain extra loose fixture tracks.
+    std::map<std::string, std::filesystem::path> trackFiles;
+    for (const auto& route : shared.tables.routes) {
+        if (route.track.empty()) continue;
+        trackFiles.emplace(lower(route.track), std::filesystem::path("tracks") /
+                           route.track / (route.track + ".tdf"));
+    }
     std::error_code ec;
     for (const auto& dir : std::filesystem::directory_iterator(game.root() / "tracks", ec)) {
         if (!dir.is_directory()) continue;
@@ -55,9 +64,17 @@ OJ_INTEGRATION_TEST(Tracks, EveryTrack) {
         for (const auto& f : std::filesystem::directory_iterator(dir.path(), ec)) {
             if (_stricmp(f.path().extension().string().c_str(), ".tdf") == 0) tdfPath = f.path();
         }
-        const auto tdfBytes = tdfPath.empty() ? std::nullopt : readFile(tdfPath);
+        if (!tdfPath.empty()) trackFiles[lower(trackFolder)] = tdfPath;
+    }
+    for (const auto& [name, tdfPath] : trackFiles) {
+        const std::string trackFolder = tdfPath.parent_path().filename().string();
+        const auto tdfBytes = readFile(tdfPath);
         const auto tdf = tdfBytes ? oj::parseTdf(*tdfBytes) : std::nullopt;
-        if (!tdf) continue;
+        if (!tdf) {
+            check(false, "tracks: catalogue track TDF readable");
+            std::printf("     missing or invalid track: %s\n", tdfPath.string().c_str());
+            continue;
+        }
         ++tracks;
         const std::filesystem::path base = std::filesystem::path("tracks") / trackFolder;
         const std::string prefix = tdf->track + "_";

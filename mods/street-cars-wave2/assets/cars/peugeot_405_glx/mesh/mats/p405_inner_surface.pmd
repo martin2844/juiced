@@ -1,0 +1,6 @@
+Material Program = Specular Opaque
+Specular Colour = 0 0 0
+Specular Highlight = 0
+Shininess = 1
+Double-sided = TRUE
+Opaque Texture = p405_inner_surface.ptd

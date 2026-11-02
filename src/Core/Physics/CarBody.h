@@ -116,7 +116,7 @@ public:
     // 0x004F7710: another gear; the clutch opens again while the engine is on.
     void shift(uint32_t gear);
 
-    // 0x004F7610: 0 reverse, 1 neutral, 2 .. 7 the forward gears (more is 7).
+    // 0x004F7610: 0 reverse, 1 neutral, 2 onward the forward gears, clamped to this car's transmission.
     void setGear(uint32_t gear);
 
     // 0x004F7550: the turbo's boost of the engine's speed, 0 .. 1 (the HUD's turbo dial).

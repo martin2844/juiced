@@ -1,7 +1,7 @@
 import os,subprocess,shutil,re,argparse
 from pathlib import Path
-from PIL import Image
-parser=argparse.ArgumentParser();parser.add_argument('--cars',nargs='+',default=['PEUGEOT_405_GLX','PEUGEOT_406_COUPE','GOLF_MK5_R32','JETTA_MK5_FSI','OUTBACK_2002','VOLVO_240_TURBO','VOLVO_V70_24']);parser.add_argument('--levels',nargs='+',type=int,default=[0]);parser.add_argument('--frames',type=int,default=1600);parser.add_argument('--game',type=Path,required=True);parser.add_argument('--work',type=Path,required=True);parser.add_argument('--executable',default='out/linux/juiced');args=parser.parse_args()
+from PIL import Image,ImageStat
+parser=argparse.ArgumentParser();parser.add_argument('--cars',nargs='+',default=['PEUGEOT_405_GLX','PEUGEOT_406_COUPE','GOLF_MK5_R32','JETTA_MK5_FSI','OUTBACK_2002','VOLVO_240_TURBO','VOLVO_V70_24']);parser.add_argument('--levels',nargs='+',type=int,default=[0]);parser.add_argument('--frames',type=int,default=1600);parser.add_argument('--game',type=Path,required=True);parser.add_argument('--work',type=Path,required=True);parser.add_argument('--executable',default='out/linux/juiced');parser.add_argument('--bonnet',type=int);parser.add_argument('--decal',type=int);parser.add_argument('--label',default='');args=parser.parse_args()
 base=args.work.resolve();stage=base/'qa-stage';env=dict(os.environ,DISPLAY=os.environ.get('DISPLAY',':0'),JUICED_SUPPORT_DIR=str(base/'qa-support'))
 for car in args.cars:
  qa=base/('qa-'+car);qa.mkdir(exist_ok=True)
@@ -21,18 +21,28 @@ for car in args.cars:
    if not link.exists():link.symlink_to(child)
  for level in args.levels:
   style='stock' if level==0 else 'kit'+str(level)
+  extra=''
+  for name,value in [('BONNET',args.bonnet),('DECAL',args.decal)]:
+   if value is not None:style+='-'+name.lower()+str(value);extra+=f'Modification {name} {value}\n'
+  if args.label:style+='-'+args.label
   collection=qa/'scripts'/'arcadecollection.txt'
   if collection.is_symlink():collection.unlink()
   text=(stage/'scripts'/'arcadecollection.txt').read_text()
-  text=re.sub(r'(?i)(BeginCar '+car+r'\b.*?)(EndCar)',lambda m:m[1]+f'BaseColour 25 80 165\nModification FBUMP {level}\nModification RBUMP {level}\nModification SSKIRT {level}\n'+m[2],text,flags=re.S)
+  text=re.sub(r'(?i)(BeginCar '+car+r'\b.*?)(EndCar)',lambda m:m[1]+f'BaseColour 25 80 165\nModification FBUMP {level}\nModification RBUMP {level}\nModification SSKIRT {level}\n'+extra+m[2],text,flags=re.S)
   collection.write_text(text)
   bmp=base/(car+'-'+style+'.bmp');png=base/(car+'-'+style+'.png')
   bmp.unlink(missing_ok=True);png.unlink(missing_ok=True)
   command=[args.executable,'--game',str(args.game.resolve()),'--mod',str(qa),'--screen','instant_selcar','--frames',str(args.frames),'--capture',str(base/(car+'-'+style+'.bmp')),'--test']
   if style=='sport':command+=['--press','1200:209']
   with open(base/(car+'-'+style+'.log'),'w') as f:r=subprocess.run(command,env=env,stdout=f,stderr=subprocess.STDOUT,timeout=180,check=True)
-  print(car,style,r.returncode,flush=True)
   if not bmp.is_file():raise RuntimeError('Successful process produced no screenshot: '+str(bmp))
   temporary=png.with_suffix('.tmp.png')
-  with Image.open(bmp) as shot:shot.save(temporary)
+  with Image.open(bmp) as shot:
+   # A screenshot can exist before the asynchronous car load finishes. The
+   # empty preview is black; it must not be reported as successful visual QA.
+   region=shot.crop((shot.width//4,shot.height//3,shot.width*3//4,shot.height*2//3)).convert('L')
+   if ImageStat.Stat(region).mean[0]<5:
+    raise RuntimeError('Car preview is still empty; increase --frames: '+car)
+   shot.save(temporary)
   temporary.replace(png)
+  print(car,style,r.returncode,flush=True)

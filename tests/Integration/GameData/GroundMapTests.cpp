@@ -9,6 +9,7 @@
 #include <cstdio>
 #include <filesystem>
 #include <functional>
+#include <set>
 #include <vector>
 
 namespace {
@@ -22,6 +23,18 @@ using oj::test::check;
 OJ_INTEGRATION_TEST(GroundMaps, EverySqhPqh) {
     const oj::GameFiles& game = oj::test::gameFiles();
     if (!game.valid()) return;
+    // All four retail light sets have both maps in each track DAT. Include
+    // expected paths even when absent, so a missing map cannot silently pass.
+    std::set<std::filesystem::path> paths;
+    for (const auto& route : oj::test::sharedGameData().tables.routes) {
+        if (route.track.empty()) continue;
+        for (int light = 0; light < 4; ++light) {
+            for (const char* ext : {".sqh", ".pqh"}) {
+                paths.insert(std::filesystem::path("tracks") / route.track /
+                             (route.track + "_" + std::to_string(light) + ext));
+            }
+        }
+    }
     size_t mapFiles = 0, read = 0, agree = 0;
     std::error_code error;
     for (const auto& entry : std::filesystem::recursive_directory_iterator(game.root() / "tracks", error)) {
@@ -30,8 +43,11 @@ OJ_INTEGRATION_TEST(GroundMaps, EverySqhPqh) {
             (_wcsicmp(ext.wstring().c_str(), L".sqh") != 0 && _wcsicmp(ext.wstring().c_str(), L".pqh") != 0)) {
             continue;
         }
+        paths.insert(entry.path().lexically_relative(game.root()));
+    }
+    for (const auto& path : paths) {
         ++mapFiles;
-        const auto file = game.read(entry.path().lexically_relative(game.root()));
+        const auto file = game.read(path);
         if (!file) continue;
         const std::vector<uint8_t> raw(reinterpret_cast<const uint8_t*>(file->data()),
                                        reinterpret_cast<const uint8_t*>(file->data()) + file->size());
@@ -84,6 +100,6 @@ OJ_INTEGRATION_TEST(GroundMaps, EverySqhPqh) {
         if (same) ++agree;
     }
     std::printf("     ground maps: %zu of %zu read, %zu walked as filled\n", read, mapFiles, agree);
-    check(mapFiles > 0 && read == mapFiles && agree == mapFiles,
+    check(mapFiles >= 72 && read == mapFiles && agree == mapFiles,
           "ground maps: every .sqh and .pqh read to its end, its quadtree walked as filled");
 }

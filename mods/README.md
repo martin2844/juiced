@@ -23,9 +23,9 @@ Errors and loaded script names appear in `~/Library/Application Support/Juiced/J
 ## Packages and in-game toggles
 
 Every shipped mod has its own folder and `mod.ini`: `controls`, `neon`,
-`driver-photo`, `custom-logo`, `ferrari`, `wheels`, and `host-pink-slips`. Script packages contain
+`driver-photo`, `custom-logo`, `ferrari`, `wheels`, `host-pink-slips`, and `crew-pink-slips`. Script packages contain
 `main.lua`; asset packages contain `assets/`, `patches/`, and their authoring tools.
-All seven packages, including ready-to-load car/wheel assets, are committed here.
+These packages, including ready-to-load car/wheel assets, are committed here.
 
 Open **Options → Mods**, select a mod and press Enter to turn it on/off. An asterisk
 marks a change pending restart. Toggles are saved immediately; Back closes the menu.
@@ -115,3 +115,11 @@ Host Pink Slip Races adds an optional type to career event setup. Select a rival
 with at least 600 respect and compatible cars; the original 1v1 car-wager flow
 settles the result. Requires a native build containing this hook (Android .7+).
 See [package instructions](host-pink-slips/README.md).
+
+## Crew Pink Slip Races
+
+`crew-pink-slips` lets you select a recruited teammate to race a single-car pink-slip duel on your behalf. Choose the driver, then the car at risk. See [the package guide](crew-pink-slips/README.md). Requires the updated executable; importing Lua alone into an older build does not enable driver selection.
+
+`street-cars` adds the Honda Integra DB8 Type R, BMW M3 E36 and Toyota Corolla
+Levin AE92 as stable IDs 54–56. Keep `ferrari` enabled (ID 53). See
+[Street Cars](street-cars/README.md) for features, licensing and rebuild instructions.

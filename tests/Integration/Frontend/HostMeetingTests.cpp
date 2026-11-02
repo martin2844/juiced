@@ -8,10 +8,13 @@
 
 #include "Core/Base/Random.h"
 #include "Core/Career/CareerEvents.h"
+#include "Core/Career/CareerInit.h"
 #include "Core/Data/GameData.h"
 #include "Core/Input/Input.h"
 #include "Core/Race/RaceKinds.h"
 #include "Game/Frontend/Career/HostMeeting.h"
+#include "Game/Frontend/Career/Calendar.h"
+#include "Game/Frontend/Career/CrewRaceSetup.h"
 
 #include <memory>
 #include <string>
@@ -29,6 +32,72 @@ size_t itemValued(const oj::ui::Screen& s, float value) {
 }
 
 }  // namespace
+
+// The retail two-member caption names three crews. A four-car event must name
+// two, while a not-yet-entered event can still gain the player's third crew.
+OJ_INTEGRATION_TEST(HostMeeting, TeamLabelsMatchEntrants) {
+    oj::test::InGameFolder folder;
+    if (!folder.valid() || !oj::test::sharedGameData().carDefsRead) return;
+    oj::GameData data(oj::test::gameFiles().root());
+    oj::CrtRandom random;
+    std::string error;
+    if (!data.load(random, &error) || !data.career) {
+        check(false, "team label game data: " + error);
+        return;
+    }
+    auto& career = *data.career;
+    oj::crewmateJoins(career, career.crewmates[1].number);
+    oj::crewmateJoins(career, career.crewmates[2].number);
+    career.calendar.events.fill(oj::CalendarEvent{});
+    auto& event = career.calendar.events[0];
+    event.used = 1;
+    event.dayOfMonth = static_cast<int8_t>(career.calendar.dayOfMonth);
+    event.month = career.calendar.month;
+    event.crew = 1;
+    event.location = 1;
+    event.type = oj::EventKind::Circuit;
+    event.challengeIndex = -1;
+    event.carClass = 8;
+    event.round.used = 1;
+    event.round.type = oj::EventKind::Circuit;
+    event.round.laps = 1;
+    career.meetingEvent = &event;
+    struct Case { int team, drivers; bool entered; oj::EventKind kind; const wchar_t* text; };
+    const Case cases[] = {
+        {2, 4, true, oj::EventKind::Circuit, L"2,2 TEAM RACE"},
+        {2, 4, false, oj::EventKind::Circuit, L"2,2,2 TEAM RACE"},
+        {2, 2, false, oj::EventKind::Circuit, L"2,2 TEAM RACE"},
+        {2, 6, true, oj::EventKind::Circuit, L"2,2,2 TEAM RACE"},
+        {3, 6, true, oj::EventKind::Circuit, L"3 ON 3 TEAM RACE"},
+        {2, 4, false, oj::EventKind::Sprint, L"2,2 TEAM RACE"},
+    };
+    oj::test::FakeCareerHost host;
+    host.data = &data;
+    auto flyer = host.open("CMSCalendar");
+    auto drivers = host.open("CMSCrewRaceSetup");
+    if (!flyer || !drivers) return;
+    for (const auto& c : cases) {
+        event.round.teamSize = static_cast<int8_t>(c.team);
+        event.round.drivers = static_cast<int8_t>(c.drivers);
+        event.round.crews[0] = c.entered;
+        event.round.type = c.kind;
+        oj::frontend::eventFlyer(host, *flyer, career, event);
+        check(flyer->textOf("FlyerTeam") == c.text, "event flyer names the actual entrant groups");
+        oj::frontend::CrewRaceSetup setup;
+        setup.enter(host, *drivers);
+        check(drivers->textOf("Type") == c.text, "driver selector agrees with the event entrant groups");
+    }
+    host.lang = *oj::Language::byName("german");
+    oj::TextTable german;
+    check(german.load("scripts/german.txt"), "German retail team captions load");
+    host.texts = std::move(german);
+    event.round.teamSize = 2;
+    event.round.drivers = 4;
+    event.round.crews[0] = 1;
+    event.round.type = oj::EventKind::Circuit;
+    oj::frontend::eventFlyer(host, *flyer, career, event);
+    check(flyer->textOf("FlyerTeam") == L"2-2-Team-Rennen", "German two-crew caption retains its translation");
+}
 
 // The event the player hosts is raced as its round's race, not as a crew's challenge: the stock code marks it as no
 // crew's challenge (0x004CDAE1: +0x06 -1), which the race's set up reads (0x004A3CC0). Left 0 the race took the

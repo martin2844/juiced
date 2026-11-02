@@ -2,6 +2,7 @@
 
 #include "Game/Frontend/Career/MeetingSummary.h"
 
+#include "Core/Career/CareerInit.h"
 #include "Core/Data/GameTexts.h"
 #include "Game/Frontend/WindowTools.h"
 
@@ -124,7 +125,7 @@ void MeetingSummary::update(CareerHost& host, ui::Screen& s, uint32_t event) {
     if (data == nullptr || !data->career) return;
     Career& career = *data->career;
     if (m_finished) {
-        host.afterRaceResults();
+        host.afterRaceResults(true);
         return;
     }
     if (event != input::kSelect) return;
@@ -137,6 +138,7 @@ void MeetingSummary::update(CareerHost& host, ui::Screen& s, uint32_t event) {
             host.request("CMSRespectChanges", SwitchMode::Replace);
             return;
         }
+        recordHistory(career);
         if (data->saving != 0) host.request("autosave", SwitchMode::Push);
         m_finished = true;
         return;
@@ -151,7 +153,8 @@ void MeetingSummary::update(CareerHost& host, ui::Screen& s, uint32_t event) {
 
 // 0x004CEC30: leaving CMSMeetingSummary: its list emptied, the front end's music back to the settings' volume, the
 // history's step (0x004BD8A0). Stock problem: the window is reached only from 0x004BAEE0, which takes the event's step
-// once the lists are empty, so the event took two (three with CMSRespectChanges'); the fixed build takes none here.
+// once the lists are empty, so the event took two (three with CMSRespectChanges');
+// the fixed build records once before the terminal summary's autosave, never here.
 void MeetingSummary::leave(CareerHost& host) {
     GameData* data = host.gameData();
     if (data == nullptr || !data->career) return;

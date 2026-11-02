@@ -11,6 +11,7 @@
 
 #include <windows.h>
 
+#include <algorithm>
 #include <array>
 #include <functional>
 #include <memory>
@@ -21,7 +22,22 @@ namespace {
 
 using oj::test::check;
 
+bool keepAliveOf(const std::vector<uint8_t>& packet, const std::vector<uint8_t>& heartbeat) {
+    return packet.size() == 5 && heartbeat.size() >= 5 && packet[0] == 0x08 && heartbeat[0] == 0x03 &&
+           std::equal(packet.begin() + 1, packet.end(), heartbeat.begin() + 1);
+}
+
 }  // namespace
+
+OJ_UNIT_TEST(Matchmaking, MasterKeepAliveIdentity) {
+    const std::vector<uint8_t> heartbeat{3, 1, 2, 3, 4, 0};
+    check(keepAliveOf({8, 1, 2, 3, 4}, heartbeat), "master stand-in: recognizes this QR2 instance's keepalive");
+    check(!keepAliveOf({8, 1, 2, 3, 5}, heartbeat), "master stand-in: does not discard a different instance");
+    check(!keepAliveOf({1, 1, 2, 3, 4}, heartbeat), "master stand-in: does not discard the challenge response");
+    check(!keepAliveOf({}, heartbeat) && !keepAliveOf({8, 1, 2, 3}, heartbeat) &&
+              !keepAliveOf({8, 1, 2, 3, 4, 0}, heartbeat) && !keepAliveOf({8, 1, 2, 3, 4}, {}),
+          "master stand-in: does not discard malformed packets or accept a missing instance");
+}
 
 // The matchmaking on the loopback with stand-ins of the master, the list server and the natneg servers: a host
 // listed by QR2 (its challenge and public address), a client's search (the list giving the host without keys,
@@ -110,15 +126,34 @@ OJ_INTEGRATION_TEST(Matchmaking, HostListJoin) {
         const oj::net::MatchAttribute* attributes[2] = {&name, &playing};
         const bool hosted = hostMm->host(0, 1, 5, 2, attributes);
         Datagram heartbeat;
-        const bool beat = hosted && receive(master, heartbeat) && heartbeat.bytes[0] == 0x03;
+        const bool beat = hosted && receive(master, heartbeat) && heartbeat.bytes.size() >= 5 &&
+                          heartbeat.bytes[0] == 0x03;
+        // QR2 keepalives may precede any reply to the master. Consume only well-formed keepalives
+        // belonging to this instance; retain all the original reply/content assertions below.
+        auto receiveMaster = [&](Datagram& out) {
+            for (int i = 0; i < 8; ++i) {
+                if (!receive(master, out)) return false;
+                if (!keepAliveOf(out.bytes, heartbeat.bytes)) return true;
+            }
+            return false;
+        };
+        if (beat) {
+            // Exercise this ordering every run, including when no periodic keepalive is due.
+            std::array<uint8_t, 5> keepAlive{0x08};
+            std::copy_n(heartbeat.bytes.begin() + 1, 4, keepAlive.begin() + 1);
+            hostLink.sendRaw({loop, master.localPort()}, keepAlive.data(), keepAlive.size());
+        }
         // The challenge with the host's address 127.0.0.1:33667 (0x8383).
         std::vector<uint8_t> c = {0xFE, 0xFD, 0x01};
-        c.insert(c.end(), heartbeat.bytes.begin() + 1, heartbeat.bytes.begin() + 5);
-        for (char ch : std::string("xyz7F0000018383")) c.push_back(static_cast<uint8_t>(ch));
-        c.push_back(0);
-        master.sendTo(heartbeat.from.ip, heartbeat.from.port, c.data(), c.size());
+        if (beat) {
+            c.insert(c.end(), heartbeat.bytes.begin() + 1, heartbeat.bytes.begin() + 5);
+            for (char ch : std::string("xyz7F0000018383")) c.push_back(static_cast<uint8_t>(ch));
+            c.push_back(0);
+            master.sendTo(heartbeat.from.ip, heartbeat.from.port, c.data(), c.size());
+        }
         Datagram answer;
-        listedUp = beat && receive(master, answer) && answer.bytes[0] == 0x01 && hostMm->hostingUp() &&
+        listedUp = beat && receiveMaster(answer) && !answer.bytes.empty() && answer.bytes[0] == 0x01 &&
+                   hostMm->hostingUp() &&
                    pump([&] { return hostMm->publicAddressKnown == 1; }) &&
                    hostMm->presenceAddress && hostMm->presenceAddress->port == swap16(33667);
         // The client's search.
@@ -172,7 +207,7 @@ OJ_INTEGRATION_TEST(Matchmaking, HostListJoin) {
             m.insert(m.end(), {1, 2, 3, 4, 0xFD, 0xFC, 0x1E, 0x66, 0x6A, 0xB2, 0x00, 0x77, 0x77, 0x77});
             master.sendTo(heartbeat.from.ip, heartbeat.from.port, m.data(), m.size());
             Datagram acknowledged;
-            const bool messageAcked = receive(master, acknowledged) && acknowledged.bytes.size() == 9 &&
+            const bool messageAcked = receiveMaster(acknowledged) && acknowledged.bytes.size() == 9 &&
                                       acknowledged.bytes[0] == 0x07;
             // The host's INITs (index 0); the CONNECT to its own socket with the second client's address.
             std::array<oj::net::Address, 3> from{};
@@ -188,7 +223,7 @@ OJ_INTEGRATION_TEST(Matchmaking, HostListJoin) {
             natneg.sendTo(from[1].ip, from[1].port, connect.data(), connect.size());
             Datagram ack;
             // The second client's ping back from its game socket, then its JOIN after the negotiation.
-            const bool acked = inits && receive(natneg, ack) && ack.bytes[7] == 6;
+            const bool acked = inits && receive(natneg, ack) && ack.bytes.size() > 7 && ack.bytes[7] == 6;
             std::vector<uint8_t> ping = {0xFD, 0xFC, 0x1E, 0x66, 0x6A, 0xB2, 2, 7, 0x00, 0x77, 0x77, 0x77,
                                          127, 0, 0, 1, 0x83, 0x83, 1, 0};
             secondLink.sendRaw({loop, swap16(33667)}, ping.data(), ping.size());
@@ -215,7 +250,8 @@ OJ_INTEGRATION_TEST(Matchmaking, HostListJoin) {
         firstMm->leave();
         hostMm->leave();
         Datagram bye;
-        left = receive(master, bye) && bye.bytes[0] == 0x03 && !hostMm->hostingUp() && hostMm->stoppedHosting == 1;
+        left = receiveMaster(bye) && !bye.bytes.empty() && bye.bytes[0] == 0x03 && !hostMm->hostingUp() &&
+               hostMm->stoppedHosting == 1;
     }
     firstMm.reset();
     hostMm.reset();

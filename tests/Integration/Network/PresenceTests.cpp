@@ -599,7 +599,12 @@ OJ_INTEGRATION_TEST(Presence, PeersAndTransfers) {
         them.send(message(103, "", "1"));
         pump([&] { return has(theirs, "\\m\\200\\xfer\\0 0 0"); });
         them.send(message(201, "\\xfer\\0 0 0\\version\\1\\result\\0", "ok"));
-        sendOk = pump([&] { return event(gp::kTransferDone) != nullptr; });
+        // Completion can be queued before the peer's TCP output is flushed.
+        // Observe the receiver's final frame before checking the wire transcript.
+        sendOk = pump([&] {
+            return event(gp::kTransferDone) != nullptr &&
+                   has(theirs, message(203, "\\xfer\\0 0 0\\file\\0\\md5\\827ccb0eea8a706c4c34a16891f84e7b", ""));
+        });
         const gp::TransferArg* accepted = event(gp::kTransferAccepted);
         const gp::TransferArg* progress = event(gp::kFileProgress);
         sendOk = sendOk &&

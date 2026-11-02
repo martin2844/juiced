@@ -40,9 +40,12 @@ are absent in the new race capture. No full-career or all-cars parity claim is m
 The async car-selection preview also completed (700 frames), and the fly-by was
 captured separately at 900 frames. The installed Nix package passed CTest.
 
-Installed package: `/nix/store/f5hmisn2xwfihcjqy9j3wlvm4dfdgbaw-openjuice-1.02.5-linux`.
-The launcher resolves it through `out/linux-result`; `out/linux-previous-result`
-retains the previous package as a rollback root. Source and runtime logs, screenshots
+Historical installed package: `/nix/store/f5hmisn2xwfihcjqy9j3wlvm4dfdgbaw-openjuice-1.02.5-linux`.
+As verified on 2026-10-29, the local desktop launcher runs `out/linux/juiced`
+with `--creative-mods --mod-defaults <repository>/mods`. Rebuild that target to
+update the local launcher; it does not currently select `out/linux-result`.
+`out/linux-previous-result` retains the previous package as a rollback root.
+Source and runtime logs, screenshots
 and the asset audit are in `out/validation/update-1.02.5/`. See the separate
 [installed-mod audit](mod-audit-2026-10-25.md).
 
@@ -94,7 +97,8 @@ case differences on Linux without renaming the user's files.
 Defaults:
 
 - Settings and remembered asset directory: `~/.config/openjuice`.
-- Saved games: `~/.local/share/openjuice/saves`.
+- Shared saved games: `~/.local/share/openjuice/ModSaves` (the launcher migrates
+  missing profiles from the older `saves` and legacy mod-save locations).
 - Runtime log: `~/.local/state/openjuice/Juiced.log`.
 
 XDG_CONFIG_HOME, XDG_DATA_HOME and XDG_STATE_HOME are respected. Setting
@@ -103,7 +107,7 @@ that override so they do not touch normal player saves.
 
 The managed desktop integration lives in `~/Projects/nixos-config`:
 `home/.local/bin/openjuice`, `home/.local/share/applications/openjuice.desktop`
-and corresponding `links.json` entries. The wrapper runs the Nix result with the
+and corresponding `links.json` entries. The wrapper runs the local development build with the
 local original assets. Super+Space → OpenJuice launches it. Desktop actions also
 offer an instant race and the keyboard binding editor.
 
@@ -137,3 +141,41 @@ or support for every GPU/distribution. Some glass/material and UI rendering
 artifacts are visible with the imported GL backend and remain to be corrected.
 Online, voice chat, wheel/force-feedback and gamepad support are not validated.
 Audio banks and music decoded during runtime; no listening-based audio QA was done.
+
+## Native Linux gamepads (2026-10-29)
+
+SDL3 gamepads now feed the engine's original action maps. The keyboard has its
+own port; up to four analog gamepads have stable hot-plug slots. Devices exposed
+as a gamepad without both left-stick axes (for example a keyboard with a D-pad)
+are ignored. Press a button to take a player in the menus. SDL must recognize
+the device as a gamepad; arbitrary unmapped joysticks are not covered.
+
+Default controller layout: left stick steers, RT accelerates, LT brakes,
+A/south selects, B/east goes back in menus and uses nitrous in a race,
+Y/north changes camera, X/west applies handbrake, LB/RB change gears,
+right-stick click looks back, and Start pauses. D-pad Up/Down adjusts teammate 1,
+Right/Left teammate 2; Back plus Up/Down adjusts teammate 3. Crew commands fire
+once per press and do not steer. Disconnecting sends neutral input before the
+engine receives the disconnected status. Keyboard input remains available on
+its separate port; automatic keyboard takeover is not asserted.
+
+Optional `controller.ini` in the data directory above (or JUICED_SUPPORT_DIR)
+sets `deadzone=12` (0–30 percent) and button numbers for `select`, `back`,
+`action1`, `action2`, `leftstick`, `rightstick`, `pause`, `leftshoulder`,
+`rightshoulder`. Numbers use SDL3's standard gamepad enum (0 south, 1 east,
+2 west, 3 north, 6 start, 7/8 stick clicks, 9/10 shoulders). The existing
+`--controls` overlay edits keyboard bindings. There is no new gamepad UI editor.
+
+The `juiced_controller_check GAME_DATA` target runs actual retail action maps
+through the production input backend using process-local SDL virtual gamepads.
+It checks automatic player acquisition, navigation, independent triggers,
+steering/deadzone, remap, crew commands, two independent pads, disconnect,
+reconnect and explicit keyboard selection. An old-backend negative control
+fails player acquisition. These checks do not establish physical-controller
+latency, Bluetooth reliability, wheel or force-feedback support.
+
+The direct `-i` launcher also prefers the first connected analog gamepad; without
+one it selects the keyboard. A normal executable session (without --test or
+--autopilot) has exercised menu/career navigation and direct-race acceleration,
+braking, steering, pause and resume using a process-local SDL virtual pad.
+Receipts and captures are linked from the dated verification closure document.

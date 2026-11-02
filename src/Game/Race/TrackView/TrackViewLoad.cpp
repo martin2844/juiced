@@ -552,7 +552,10 @@ oj::Spl::GridPoint TrackView::gridPlace(size_t i) const {
     const RaceSlot& s = *cars[i];
     const std::vector<oj::Spl::GridPoint>& grid = scene->lines().grid;
     if (net != nullptr || grid.empty()) return s.place;
-    const size_t index = oj::startingGridIndex(rules.mode, rules.type, rules.heat, cars.size(), i);
+    // Restarts advance the live race's heat; the initial rules copy keeps heat 0.
+    // Use the same current rules as the HUD so each Sprint heat rotates the grid.
+    const oj::RaceRules& current = race != nullptr ? race->rules() : rules;
+    const size_t index = oj::startingGridIndex(current.mode, current.type, current.heat, cars.size(), i);
     return grid[index % grid.size()];
 }
 

@@ -27,7 +27,9 @@ using oj::test::bytesOf;
 
 OJ_INTEGRATION_TEST(UserSaves, RegCf1) {
     const oj::GameFiles& files = oj::test::saveFiles();
-    if (const auto reg = files.read(L"reg.cf1")) {
+    const auto reg = files.read(L"reg.cf1");
+    check(reg.has_value(), "reg.cf1 is readable");
+    if (reg) {
         oj::save::RegCf1 r;
         const bool ok = r.read(*reg);
         check(ok, "reg.cf1 version and sum");
@@ -37,16 +39,34 @@ OJ_INTEGRATION_TEST(UserSaves, RegCf1) {
 OJ_INTEGRATION_TEST(UserSaves, Drivers) {
     const std::filesystem::path& root = oj::test::saveRoot();
     std::vector<std::pair<std::string, oj::Car>> savedCars;
-    for (const oj::save::Driver& d : oj::save::listDrivers(root / L"SAVE")) {
+    // Enumerate candidates independently: listDrivers intentionally hides broken
+    // USERDATA from the game's profile menu, which would hide it from this audit.
+    std::error_code ec;
+    std::filesystem::directory_iterator it(root / L"SAVE", ec);
+    check(!ec, "SAVE directory is readable");
+    if (ec) return;
+    size_t candidates = 0;
+    for (; it != std::filesystem::directory_iterator(); it.increment(ec)) {
+        if (ec) break;
+        const auto& entry = *it;
+        const std::wstring name = entry.path().filename().wstring();
+        if (!entry.is_directory() || name.empty() || name[0] != L'P') continue;
+        ++candidates;
+        oj::save::Driver d;
+        d.folder = entry.path();
         const std::string label = oj::toUtf8(d.folder.filename().wstring());
         const oj::GameFiles folder(d.folder);
         const auto userData = folder.read(L"USERDATA");
+        check(userData.has_value(), label + " USERDATA is readable");
+        if (!userData) continue;
+        const bool metadataOk = d.userData.read(*userData);
+        check(metadataOk, label + " USERDATA parses");
+        if (!metadataOk) continue;
         check(d.userData.write() == bytesOf(*userData),
               label + " USERDATA (" + oj::toUtf8(d.userData.name) + ") written back equals the file");
-        if (!d.hasArchive) {
-            continue;
-        }
         const auto file = folder.read(L"juicey.dat");
+        check(file.has_value(), label + " juicey.dat is readable");
+        if (!file) continue;
         oj::save::Archive archive;
         std::string error;
         const bool ok = archive.read(*file, &error);
@@ -60,6 +80,12 @@ OJ_INTEGRATION_TEST(UserSaves, Drivers) {
         }
         std::printf("     entries:%s\n", names.c_str());
         check(archive.write() == bytesOf(*file), label + " juicey.dat written back equals the file");
+        // buildProfile always writes these; CMSGlobal is optional before a
+        // career exists, so absence must not reject an arcade-only profile.
+        for (const char* required : {"UIHelp.sav", "ArcadeUnlock.sav", "settings.dat"}) {
+            check(archive.entries.find(required) != archive.entries.end(),
+                  label + " contains " + required);
+        }
         if (const auto found = archive.entries.find("UIHelp.sav"); found != archive.entries.end()) {
             oj::save::UiHelp help;
             check(help.read(found->second) && help.write() == found->second &&
@@ -97,4 +123,6 @@ OJ_INTEGRATION_TEST(UserSaves, Drivers) {
             }
         }
     }
+    check(!ec, "SAVE enumeration completed");
+    check(candidates != 0, "at least one driver was inspected");
 }

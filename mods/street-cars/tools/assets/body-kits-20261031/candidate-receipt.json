@@ -1,0 +1,315 @@
+{
+  "baseline": "/run/media/martin/Ediloco/OpenJuice-builds/20261031-first-wave-kits/installed-r4-backup",
+  "study": "/run/media/martin/Ediloco/OpenJuice-builds/20261031-first-wave-kits/study-08",
+  "output": "/run/media/martin/Ediloco/OpenJuice-builds/20261031-first-wave-kits/candidate-05",
+  "unchanged_existing_indices": [
+    0,
+    1
+  ],
+  "added_indices": [
+    2,
+    3
+  ],
+  "meshes": [
+    {
+      "path": "assets/cars/integra_db8/mesh/db8_kit2_fbump.d8m",
+      "sha256": "0cd220f3491f2a4f93beea85d3ac1990bff279bdfb492d0beb74cbb4c780f851",
+      "preserved_stock": "a7214d489bcf9a524610b9c58fc9a0688a5d8a38fbf54566f4ebb70b51be0b04",
+      "added_triangles": 784
+    },
+    {
+      "path": "assets/cars/integra_db8_ui/mesh/db8_kit2_fbump.d8m",
+      "sha256": "0cd220f3491f2a4f93beea85d3ac1990bff279bdfb492d0beb74cbb4c780f851",
+      "preserved_stock": "a7214d489bcf9a524610b9c58fc9a0688a5d8a38fbf54566f4ebb70b51be0b04",
+      "added_triangles": 784
+    },
+    {
+      "path": "assets/cars/integra_db8/mesh/db8_kit2_rbump.d8m",
+      "sha256": "a11b997df8e1b4e3c8e16b599c0a6e020c103f52524e74092be01b46752dc197",
+      "preserved_stock": "5b0470fc4468280404d64ebc6648bba515f8be735fc4d05cdbc9849decf19796",
+      "added_triangles": 864
+    },
+    {
+      "path": "assets/cars/integra_db8_ui/mesh/db8_kit2_rbump.d8m",
+      "sha256": "a11b997df8e1b4e3c8e16b599c0a6e020c103f52524e74092be01b46752dc197",
+      "preserved_stock": "5b0470fc4468280404d64ebc6648bba515f8be735fc4d05cdbc9849decf19796",
+      "added_triangles": 864
+    },
+    {
+      "path": "assets/cars/integra_db8/mesh/db8_kit2_sskirt_l.d8m",
+      "sha256": "f8ced49e7f61f1768f2d8fa20c4bd914c54ba4bf3270cac451ac1bf9bb4b4f6c",
+      "preserved_stock": "6a706a659668fffd10a3a386ed9e97808cacc1b525f73a27fa7dde8ead044044",
+      "added_triangles": 728
+    },
+    {
+      "path": "assets/cars/integra_db8_ui/mesh/db8_kit2_sskirt_l.d8m",
+      "sha256": "f8ced49e7f61f1768f2d8fa20c4bd914c54ba4bf3270cac451ac1bf9bb4b4f6c",
+      "preserved_stock": "6a706a659668fffd10a3a386ed9e97808cacc1b525f73a27fa7dde8ead044044",
+      "added_triangles": 728
+    },
+    {
+      "path": "assets/cars/integra_db8/mesh/db8_kit2_sskirt_r.d8m",
+      "sha256": "b1dddd861a90f3fdb5530f0ad7404c245da683c0edbe72a387fe37b4774ec9bd",
+      "preserved_stock": "125fd894e81982e377d7b46321487969ba8cc4d3652e1bc497ac4468dfa8d065",
+      "added_triangles": 728
+    },
+    {
+      "path": "assets/cars/integra_db8_ui/mesh/db8_kit2_sskirt_r.d8m",
+      "sha256": "b1dddd861a90f3fdb5530f0ad7404c245da683c0edbe72a387fe37b4774ec9bd",
+      "preserved_stock": "125fd894e81982e377d7b46321487969ba8cc4d3652e1bc497ac4468dfa8d065",
+      "added_triangles": 728
+    },
+    {
+      "path": "assets/cars/integra_db8/mesh/db8_kit3_fbump.d8m",
+      "sha256": "0f230e7f7c45a4a955731ad02cff4d9b6c687265ac8aeb043f8c2848e57501d6",
+      "preserved_stock": "a7214d489bcf9a524610b9c58fc9a0688a5d8a38fbf54566f4ebb70b51be0b04",
+      "added_triangles": 792
+    },
+    {
+      "path": "assets/cars/integra_db8_ui/mesh/db8_kit3_fbump.d8m",
+      "sha256": "0f230e7f7c45a4a955731ad02cff4d9b6c687265ac8aeb043f8c2848e57501d6",
+      "preserved_stock": "a7214d489bcf9a524610b9c58fc9a0688a5d8a38fbf54566f4ebb70b51be0b04",
+      "added_triangles": 792
+    },
+    {
+      "path": "assets/cars/integra_db8/mesh/db8_kit3_rbump.d8m",
+      "sha256": "fcc181974730d6a152498b79daae19aba4936f2ddd2c8eabaf97c1052b28d7b0",
+      "preserved_stock": "5b0470fc4468280404d64ebc6648bba515f8be735fc4d05cdbc9849decf19796",
+      "added_triangles": 864
+    },
+    {
+      "path": "assets/cars/integra_db8_ui/mesh/db8_kit3_rbump.d8m",
+      "sha256": "fcc181974730d6a152498b79daae19aba4936f2ddd2c8eabaf97c1052b28d7b0",
+      "preserved_stock": "5b0470fc4468280404d64ebc6648bba515f8be735fc4d05cdbc9849decf19796",
+      "added_triangles": 864
+    },
+    {
+      "path": "assets/cars/integra_db8/mesh/db8_kit3_sskirt_l.d8m",
+      "sha256": "a4f66357b0dd03564c539cbb744c22a0c56b6e1e9353c34dcf3348c62217703b",
+      "preserved_stock": "6a706a659668fffd10a3a386ed9e97808cacc1b525f73a27fa7dde8ead044044",
+      "added_triangles": 720
+    },
+    {
+      "path": "assets/cars/integra_db8_ui/mesh/db8_kit3_sskirt_l.d8m",
+      "sha256": "a4f66357b0dd03564c539cbb744c22a0c56b6e1e9353c34dcf3348c62217703b",
+      "preserved_stock": "6a706a659668fffd10a3a386ed9e97808cacc1b525f73a27fa7dde8ead044044",
+      "added_triangles": 720
+    },
+    {
+      "path": "assets/cars/integra_db8/mesh/db8_kit3_sskirt_r.d8m",
+      "sha256": "822c2002d88c56d93192b05a9868b5dea8bcc4e9719dd5841142c9cb2b2932fb",
+      "preserved_stock": "125fd894e81982e377d7b46321487969ba8cc4d3652e1bc497ac4468dfa8d065",
+      "added_triangles": 720
+    },
+    {
+      "path": "assets/cars/integra_db8_ui/mesh/db8_kit3_sskirt_r.d8m",
+      "sha256": "822c2002d88c56d93192b05a9868b5dea8bcc4e9719dd5841142c9cb2b2932fb",
+      "preserved_stock": "125fd894e81982e377d7b46321487969ba8cc4d3652e1bc497ac4468dfa8d065",
+      "added_triangles": 720
+    },
+    {
+      "path": "assets/cars/bmw_e36/mesh/e36_kit2_fbump.d8m",
+      "sha256": "43379f269cd672a57b4e85b89899a8b0a9c253a23de16d6a5b50e13ef40765f4",
+      "preserved_stock": "6395edca2f683a339049dd1129bc08e5c1f88c338c5907cb1abe695df1eb1349",
+      "added_triangles": 832
+    },
+    {
+      "path": "assets/cars/bmw_e36_ui/mesh/e36_kit2_fbump.d8m",
+      "sha256": "43379f269cd672a57b4e85b89899a8b0a9c253a23de16d6a5b50e13ef40765f4",
+      "preserved_stock": "6395edca2f683a339049dd1129bc08e5c1f88c338c5907cb1abe695df1eb1349",
+      "added_triangles": 832
+    },
+    {
+      "path": "assets/cars/bmw_e36/mesh/e36_kit2_rbump.d8m",
+      "sha256": "14afbf3cfcba1a678d6cfd9f0bad00c3c3f854ccf335b6d23c5ca75bd7252924",
+      "preserved_stock": "6f6af4e1e4fe3452f56705d3f633a2d050573ec6688f5c73dc1fa003cd699fdf",
+      "added_triangles": 968
+    },
+    {
+      "path": "assets/cars/bmw_e36_ui/mesh/e36_kit2_rbump.d8m",
+      "sha256": "14afbf3cfcba1a678d6cfd9f0bad00c3c3f854ccf335b6d23c5ca75bd7252924",
+      "preserved_stock": "6f6af4e1e4fe3452f56705d3f633a2d050573ec6688f5c73dc1fa003cd699fdf",
+      "added_triangles": 968
+    },
+    {
+      "path": "assets/cars/bmw_e36/mesh/e36_kit2_sskirt_l.d8m",
+      "sha256": "75d002b0a9680f7754445dd08a369523cc2c8c49e48e2c3fa70186b9dba92c92",
+      "preserved_stock": "364141141778f300bfc92b1fd0520c9ed15656659c19b497cdeff315e46fa16a",
+      "added_triangles": 660
+    },
+    {
+      "path": "assets/cars/bmw_e36_ui/mesh/e36_kit2_sskirt_l.d8m",
+      "sha256": "75d002b0a9680f7754445dd08a369523cc2c8c49e48e2c3fa70186b9dba92c92",
+      "preserved_stock": "364141141778f300bfc92b1fd0520c9ed15656659c19b497cdeff315e46fa16a",
+      "added_triangles": 660
+    },
+    {
+      "path": "assets/cars/bmw_e36/mesh/e36_kit2_sskirt_r.d8m",
+      "sha256": "1674fe1709ae92f52234b2982d9a7cab39d507e564388bfef97c76d61c663b6e",
+      "preserved_stock": "e38904d30d73a3248ed4defcf9834054e85642317b4aa9d196dfbe91cb520d95",
+      "added_triangles": 660
+    },
+    {
+      "path": "assets/cars/bmw_e36_ui/mesh/e36_kit2_sskirt_r.d8m",
+      "sha256": "1674fe1709ae92f52234b2982d9a7cab39d507e564388bfef97c76d61c663b6e",
+      "preserved_stock": "e38904d30d73a3248ed4defcf9834054e85642317b4aa9d196dfbe91cb520d95",
+      "added_triangles": 660
+    },
+    {
+      "path": "assets/cars/bmw_e36/mesh/e36_kit3_fbump.d8m",
+      "sha256": "95fd4d28a6aa4e4e19628b5f31a26400df65a498019337f4af75050e1d4418a6",
+      "preserved_stock": "6395edca2f683a339049dd1129bc08e5c1f88c338c5907cb1abe695df1eb1349",
+      "added_triangles": 832
+    },
+    {
+      "path": "assets/cars/bmw_e36_ui/mesh/e36_kit3_fbump.d8m",
+      "sha256": "95fd4d28a6aa4e4e19628b5f31a26400df65a498019337f4af75050e1d4418a6",
+      "preserved_stock": "6395edca2f683a339049dd1129bc08e5c1f88c338c5907cb1abe695df1eb1349",
+      "added_triangles": 832
+    },
+    {
+      "path": "assets/cars/bmw_e36/mesh/e36_kit3_rbump.d8m",
+      "sha256": "e674e3b2f0fd0b39cf02ee95b43ca916d42059620ad3bca29e99fec877888d72",
+      "preserved_stock": "6f6af4e1e4fe3452f56705d3f633a2d050573ec6688f5c73dc1fa003cd699fdf",
+      "added_triangles": 968
+    },
+    {
+      "path": "assets/cars/bmw_e36_ui/mesh/e36_kit3_rbump.d8m",
+      "sha256": "e674e3b2f0fd0b39cf02ee95b43ca916d42059620ad3bca29e99fec877888d72",
+      "preserved_stock": "6f6af4e1e4fe3452f56705d3f633a2d050573ec6688f5c73dc1fa003cd699fdf",
+      "added_triangles": 968
+    },
+    {
+      "path": "assets/cars/bmw_e36/mesh/e36_kit3_sskirt_l.d8m",
+      "sha256": "1586996ee7919cacb7669771e703784d594105746822ba8dbb948c8a05384be1",
+      "preserved_stock": "364141141778f300bfc92b1fd0520c9ed15656659c19b497cdeff315e46fa16a",
+      "added_triangles": 660
+    },
+    {
+      "path": "assets/cars/bmw_e36_ui/mesh/e36_kit3_sskirt_l.d8m",
+      "sha256": "1586996ee7919cacb7669771e703784d594105746822ba8dbb948c8a05384be1",
+      "preserved_stock": "364141141778f300bfc92b1fd0520c9ed15656659c19b497cdeff315e46fa16a",
+      "added_triangles": 660
+    },
+    {
+      "path": "assets/cars/bmw_e36/mesh/e36_kit3_sskirt_r.d8m",
+      "sha256": "6b59850e4112425d3fd645c09d1d4fae2d2dc0102bc8a55923dcb5f939eb59cd",
+      "preserved_stock": "e38904d30d73a3248ed4defcf9834054e85642317b4aa9d196dfbe91cb520d95",
+      "added_triangles": 660
+    },
+    {
+      "path": "assets/cars/bmw_e36_ui/mesh/e36_kit3_sskirt_r.d8m",
+      "sha256": "6b59850e4112425d3fd645c09d1d4fae2d2dc0102bc8a55923dcb5f939eb59cd",
+      "preserved_stock": "e38904d30d73a3248ed4defcf9834054e85642317b4aa9d196dfbe91cb520d95",
+      "added_triangles": 660
+    },
+    {
+      "path": "assets/cars/levin_ae92/mesh/ae92_kit2_fbump.d8m",
+      "sha256": "f4c92ffc7049aa53dcd53cff4574b3c6e9426d83772bfd59834bad709eca6f83",
+      "preserved_stock": "ea086454dbf2c06b6207193c74089ad48ee7bf5c00383e78eea5aa02030eea94",
+      "added_triangles": 860
+    },
+    {
+      "path": "assets/cars/levin_ae92_ui/mesh/ae92_kit2_fbump.d8m",
+      "sha256": "f4c92ffc7049aa53dcd53cff4574b3c6e9426d83772bfd59834bad709eca6f83",
+      "preserved_stock": "ea086454dbf2c06b6207193c74089ad48ee7bf5c00383e78eea5aa02030eea94",
+      "added_triangles": 860
+    },
+    {
+      "path": "assets/cars/levin_ae92/mesh/ae92_kit2_rbump.d8m",
+      "sha256": "d99660e952d8503cdde325b95ca481ebb12b9d3dba96d1acc2e2f0b8f3db222d",
+      "preserved_stock": "d0e6e9be7799241685ab16e3b943808b74db19e6463d791ee0fac45efcc2dd37",
+      "added_triangles": 818
+    },
+    {
+      "path": "assets/cars/levin_ae92_ui/mesh/ae92_kit2_rbump.d8m",
+      "sha256": "d99660e952d8503cdde325b95ca481ebb12b9d3dba96d1acc2e2f0b8f3db222d",
+      "preserved_stock": "d0e6e9be7799241685ab16e3b943808b74db19e6463d791ee0fac45efcc2dd37",
+      "added_triangles": 818
+    },
+    {
+      "path": "assets/cars/levin_ae92/mesh/ae92_kit2_sskirt_l.d8m",
+      "sha256": "8459cc1bbd4ac4fa19401501c06fb362b6bcebaa92531cf158e472871a7df8cd",
+      "preserved_stock": "83c9c1f0536afbacc92ba790edc4da3ff47c78696b1782c8bdbfcde1d6eb46e6",
+      "added_triangles": 660
+    },
+    {
+      "path": "assets/cars/levin_ae92_ui/mesh/ae92_kit2_sskirt_l.d8m",
+      "sha256": "8459cc1bbd4ac4fa19401501c06fb362b6bcebaa92531cf158e472871a7df8cd",
+      "preserved_stock": "83c9c1f0536afbacc92ba790edc4da3ff47c78696b1782c8bdbfcde1d6eb46e6",
+      "added_triangles": 660
+    },
+    {
+      "path": "assets/cars/levin_ae92/mesh/ae92_kit2_sskirt_r.d8m",
+      "sha256": "ffce187e871944e76823fc3b5643dce36728ca14f0a0fd51caf9259e3fd8d090",
+      "preserved_stock": "eee721aeda84a86676a5954e10959ac4451379cfaf895f838db49244dcb7d369",
+      "added_triangles": 660
+    },
+    {
+      "path": "assets/cars/levin_ae92_ui/mesh/ae92_kit2_sskirt_r.d8m",
+      "sha256": "ffce187e871944e76823fc3b5643dce36728ca14f0a0fd51caf9259e3fd8d090",
+      "preserved_stock": "eee721aeda84a86676a5954e10959ac4451379cfaf895f838db49244dcb7d369",
+      "added_triangles": 660
+    },
+    {
+      "path": "assets/cars/levin_ae92/mesh/ae92_kit3_fbump.d8m",
+      "sha256": "23e73db475ca50802d861efe73b3898c8702c0409fa14def385e6666442b9834",
+      "preserved_stock": "ea086454dbf2c06b6207193c74089ad48ee7bf5c00383e78eea5aa02030eea94",
+      "added_triangles": 828
+    },
+    {
+      "path": "assets/cars/levin_ae92_ui/mesh/ae92_kit3_fbump.d8m",
+      "sha256": "23e73db475ca50802d861efe73b3898c8702c0409fa14def385e6666442b9834",
+      "preserved_stock": "ea086454dbf2c06b6207193c74089ad48ee7bf5c00383e78eea5aa02030eea94",
+      "added_triangles": 828
+    },
+    {
+      "path": "assets/cars/levin_ae92/mesh/ae92_kit3_rbump.d8m",
+      "sha256": "2a4c9e3da82057a67b1f9b5c1c97dcbdf0908879e583b782ad95be920d6496ee",
+      "preserved_stock": "d0e6e9be7799241685ab16e3b943808b74db19e6463d791ee0fac45efcc2dd37",
+      "added_triangles": 824
+    },
+    {
+      "path": "assets/cars/levin_ae92_ui/mesh/ae92_kit3_rbump.d8m",
+      "sha256": "2a4c9e3da82057a67b1f9b5c1c97dcbdf0908879e583b782ad95be920d6496ee",
+      "preserved_stock": "d0e6e9be7799241685ab16e3b943808b74db19e6463d791ee0fac45efcc2dd37",
+      "added_triangles": 824
+    },
+    {
+      "path": "assets/cars/levin_ae92/mesh/ae92_kit3_sskirt_l.d8m",
+      "sha256": "f69ec07300ad12585d0b1f060e2106c846ff441572f002001ca1bae7d0b67176",
+      "preserved_stock": "83c9c1f0536afbacc92ba790edc4da3ff47c78696b1782c8bdbfcde1d6eb46e6",
+      "added_triangles": 660
+    },
+    {
+      "path": "assets/cars/levin_ae92_ui/mesh/ae92_kit3_sskirt_l.d8m",
+      "sha256": "f69ec07300ad12585d0b1f060e2106c846ff441572f002001ca1bae7d0b67176",
+      "preserved_stock": "83c9c1f0536afbacc92ba790edc4da3ff47c78696b1782c8bdbfcde1d6eb46e6",
+      "added_triangles": 660
+    },
+    {
+      "path": "assets/cars/levin_ae92/mesh/ae92_kit3_sskirt_r.d8m",
+      "sha256": "c21c6a2a3ceeb7fb68d8be6e28790486b45cdc5ed2cba63dd94c7aba0e933e1c",
+      "preserved_stock": "eee721aeda84a86676a5954e10959ac4451379cfaf895f838db49244dcb7d369",
+      "added_triangles": 660
+    },
+    {
+      "path": "assets/cars/levin_ae92_ui/mesh/ae92_kit3_sskirt_r.d8m",
+      "sha256": "c21c6a2a3ceeb7fb68d8be6e28790486b45cdc5ed2cba63dd94c7aba0e933e1c",
+      "preserved_stock": "eee721aeda84a86676a5954e10959ac4451379cfaf895f838db49244dcb7d369",
+      "added_triangles": 660
+    }
+  ],
+  "exports": {
+    "integra_db8-kit2.glb": "e4d098027e26c0f75dbf62fe192815a15ab261818eaa2ac0425d5b313ea9542e",
+    "integra_db8-kit3.glb": "4f7a321ad5e72b4deeb880ce640b50689b8c8e1546f1c0bd894aab1d13da86df",
+    "bmw_e36-kit2.glb": "0c63ab7d35eb48d690c67dd23bf5c55c2a3933b820fcf27464744a2751dc2895",
+    "bmw_e36-kit3.glb": "a78386637456c63243c4ff6b82b2c33cad3c3bbf10609507e0187bdb0c1955b3",
+    "levin_ae92-kit2.glb": "28a0dd83ec8a9d4418bf85fabd2fedcebd51837f3dad4823a33230ccf3d4fd6d",
+    "levin_ae92-kit3.glb": "cd08bd02c524c5b803057def0c86e4544100c2857345d4bc8e7773938c08c441"
+  },
+  "existing_files_changed": [
+    "mod.ini",
+    "patches/scripts/cardefs.txt.patch"
+  ]
+}

@@ -19,7 +19,9 @@
 #include "Core/Saves/OnlineAccount.h"
 #include "Core/Saves/Save.h"
 #include "Core/Base/Text.h"
+#include "Core/Cars/CarPhysics.h"
 
+#include <algorithm>
 #include <format>
 #include <fstream>
 
@@ -148,13 +150,26 @@ bool Frontend::applyProfile(const save::SaveSlot& slot, const save::SaveSource& 
         m_data->newCareer(gameRandom(), crewName8(m_data->profileName));
         std::string why;
         if (m_data->career->read(found->second, &why)) {
-            for (Car& car : m_data->career->garage) {
+            const auto bindAndRefresh = [&](Car& car, bool repairZeroRating) {
                 car.def = findCarDef(m_data->defs, car.modelName());
                 // Android editor .5 omitted the dealer's rating calculation. Recover
                 // those cars on load without altering their parts, damage or progress.
-                if (car.rating == 0 && car.def && m_data->dynamics)
-                    rateCar(car, m_data->dynamics->of(*car.def), m_data->catalogue);
-            }
+                if (!car.def || !m_data->dynamics) return;
+                const auto* dynamics = m_data->dynamics->of(*car.def);
+                const bool prepared = dynamics && std::any_of(dynamics->turboUpgradeScale.begin(),
+                    dynamics->turboUpgradeScale.end(), [](float scale) { return scale != 1.0f; });
+                // A model's opt-in preparation may change between mod revisions.
+                // Refresh its derived class before career eligibility uses a saved
+                // rating. Original models retain their saved ratings as before.
+                if ((repairZeroRating && car.rating == 0) || prepared) {
+                    const float before = Car::asFloat(car.rating);
+                    const float after = rateCar(car, dynamics, m_data->catalogue);
+                    if (prepared && before != after)
+                        log::info("frontend: prepared car {} rating {} -> {}", car.modelName(), before, after);
+                }
+            };
+            for (Car& car : m_data->career->garage) bindAndRefresh(car, true);
+            for (Car& car : m_data->career->opponentCars) bindAndRefresh(car, false);
         } else {
             log::error("frontend: the career of {} is not read: {}", toUtf8(slot.name), why);
         }

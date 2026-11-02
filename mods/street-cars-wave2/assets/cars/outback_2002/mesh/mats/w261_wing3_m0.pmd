@@ -1,0 +1,7 @@
+Material Program = Specular Opaque
+Shininess = 65.000000
+Specular Colour = 255 255 255
+Specular Highlight = 255.000000
+Double-sided = FALSE
+Z-Bias = 0.300000
+Opaque Texture = w261_wing3_m0_t0.ptd

@@ -48,7 +48,10 @@ int main(int argc, char **argv) {
         input.setControllers(devices.controllers());
         auto bytes = oj::GameFiles(argv[1]).read("scripts/controls_dx9_e.txt");
         require(bytes.has_value(), "Missing controls");
-        input.load(oj::parseControls(std::string_view((const char *)bytes->data(), bytes->size())));
+        auto maps = oj::parseControls(std::string_view((const char *)bytes->data(), bytes->size()));
+        oj::android::addCrewBindings(maps);
+        oj::android::addCrewBindings(maps);
+        input.load(maps);
         input.setPlayerDevice(0, 0);
         input.useUi();
         auto poll = [&] {
@@ -89,6 +92,22 @@ int main(int argc, char **argv) {
         SDL_SetJoystickVirtualAxis(joystick, SDL_GAMEPAD_AXIS_LEFTX, 2000);
         poll();
         require(input.analogue(0) == 0, "Small stick drift must be dead-zoned");
+        const SDL_GamepadButton crewButtons[] = {SDL_GAMEPAD_BUTTON_DPAD_UP,
+            SDL_GAMEPAD_BUTTON_DPAD_RIGHT, SDL_GAMEPAD_BUTTON_DPAD_DOWN,
+            SDL_GAMEPAD_BUTTON_DPAD_LEFT, SDL_GAMEPAD_BUTTON_DPAD_UP, SDL_GAMEPAD_BUTTON_DPAD_DOWN};
+        for (int slot = 0; slot < 6; ++slot) {
+            SDL_SetJoystickVirtualButton(joystick, SDL_GAMEPAD_BUTTON_BACK, slot >= 4);
+            SDL_SetJoystickVirtualButton(joystick, crewButtons[slot], true);
+            poll();
+            for (int action = 0; action < 6; ++action)
+                require(bool(input.digital(10 + action)) == (action == slot), "Crew command must target only its teammate/direction");
+            require(input.analogue(0) == 0, "Crew D-pad must not steer");
+            poll();
+            require(input.digital(10 + slot) == 0, "Held crew button must not repeat every frame");
+            SDL_SetJoystickVirtualButton(joystick, crewButtons[slot], false);
+            SDL_SetJoystickVirtualButton(joystick, SDL_GAMEPAD_BUTTON_BACK, false);
+            poll();
+        }
         input.useUi();
         poll();
         input.uiFrame(1.f / 30);

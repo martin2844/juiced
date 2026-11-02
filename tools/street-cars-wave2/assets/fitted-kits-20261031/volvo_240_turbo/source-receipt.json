@@ -1,0 +1,14 @@
+{
+  "source_study": "/run/media/martin/Ediloco/OpenJuice-builds/20261031-fitted-kits/volvo_240_turbo-study06",
+  "files": {
+    "native-candidate-receipt.json": "a5cf5c61f53a8428b50525e9f790b2a635018b9dafb5c9f0186fa833b85a3900",
+    "volvo_240_turbo-kit3.glb": "9302d754d71ce1620311b69934d1539637ee40d7c775f6bd2b0088f9e5f80276",
+    "volvo_240_turbo-kit2.glb": "d140b1e38fda402e4107587a3d6095f7af2d248f7d03b1932f5bd8366e535614",
+    "native-vertex-study.json": "88ef1482d9b7efe04e7fa4515e40709d3256021ffd42ba2625960eb1fb87fc67",
+    "volvo_240_turbo-fitted-kits.blend": "5b60a512f39e56e0c422728765a005fc1721875812d8e364e2902e0322478576"
+  },
+  "authoring_tool_sha256": "da43ee82b1372be6fbdfab1ccbf4abb041265408ab0421cd606b9b9b63877b3b",
+  "adapter_sha256": "1bc3f4d2d335cbfcb018bd6a06492a88fa0b821c1e2d594be4a9781c226ac74a",
+  "approval_scope": "kit2/3 fit correction, not full ten-car acceptance",
+  "installed_source_verified_in_bundle": "r14 / Wave2 12"
+}

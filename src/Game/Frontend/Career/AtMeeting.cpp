@@ -3,6 +3,7 @@
 #include "Game/Frontend/Career/AtMeeting.h"
 
 #include "Core/Data/GameTexts.h"
+#include "Game/Frontend/Career/PinkSlipCrew.h"
 #include "Game/Frontend/Career/Calendar.h"
 #include "Game/Frontend/WindowTools.h"
 
@@ -86,7 +87,7 @@ void AtMeeting::toRaceSetup(CareerHost& host) {
         }
     }
     if (p.memberCount != 1 && round.type != EventKind::Showoff && round.type != EventKind::Challenge &&
-        e->pinkSlip == 0) {
+        (e->pinkSlip == 0 || pinkSlipCrewSelection(*e, round))) {
         host.request("CMSCrewRaceSetup", SwitchMode::Replace);
         return;
     }

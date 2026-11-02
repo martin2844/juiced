@@ -114,6 +114,11 @@ public final class ModStore {
       throw new IOException("Cannot recover mods");
   }
 
+  /** Caller must hold installation.lock: an active game can still be using these overlays. */
+  public static void clearDerivedModCache(File files) throws IOException {
+    delete(new File(files, "mods/.cache"));
+  }
+
   public static String install(File files, File imported, Validator validator) throws Exception {
     recover(files);
     File root = imported;
@@ -137,17 +142,31 @@ public final class ModStore {
     delete(next);
     next.mkdirs();
     try {
-      if (live.exists()) copy(live, next);
+      Set<String> replacing = new HashSet<>();
       for (File pkg : incoming) {
         manifest(pkg);
         String id = pkg.getName();
         if (!id.matches("[a-z0-9_-]+") || id.equals("mods-import"))
           throw new IOException("A single mod ZIP must contain its named package folder");
+        replacing.add(id);
+      }
+      File[] existing = live.listFiles();
+      if (live.exists() && existing == null)
+        throw new IOException("Cannot read existing mods; installation preserved");
+      if (existing != null)
+        for (File entry : existing)
+          if (!entry.getName().startsWith(".")
+              && !entry.getName().equals("tools")
+              && !replacing.contains(entry.getName()))
+            copy(entry, child(next, entry.getName()));
+      for (File pkg : incoming) {
+        String id = pkg.getName();
         File dest = child(next, id);
-        boolean disabled = new File(dest, "disabled").exists();
-        delete(dest);
+        File old = child(live, id);
+        boolean existed = old.isDirectory(), disabled = new File(old, "disabled").exists();
         copy(pkg, dest);
         if (disabled) new File(dest, "disabled").createNewFile();
+        else if (existed) Files.deleteIfExists(new File(dest, "disabled").toPath());
       }
       File collection = new File(root, "collection.ini");
       if (collection.isFile()) copy(collection, new File(next, "collection.ini"));

@@ -8,10 +8,94 @@ from gltf import Gltf
 from import_ferrari import mesh_bytes,subset,node,name,pack,box
 from retail import Retail
 from package_overlay import recipe
+from native_decals import transfer as transfer_native_decal
 CONFIGS=[
  dict(key='integra',model='INTEGRA_DB8',id=54,label='INTEGRA DB8 TYPE R',prefix='db8',wb=262,donor='ac_integra',manufacturer='HONDA JAPAN',price=22000,mass=1100,torque=181.4,rpm='1000 2000 3000 4500 6000 7000 7500 8000 8500',curve='.4 .6 .75 .84 .92 .98 1 .967 0',paint='paint',glass='glass',brake='taillights',head='glasslight'),
  dict(key='bmw',model='BMW_E36',id=55,label='BMW M3 E36',prefix='e36',wb=270,donor='350z',manufacturer='NONE EUROPE',price=29000,mass=1441,torque=320,rpm='1000 2000 3000 3800 5000 6000 6800',curve='.55 .75 .95 1 .98 .89 0',paint='CarPaint',glass='Windows',brake='RearLights',head='HeadLights'),
  dict(key='levin',model='LEVIN_AE92',id=56,label='COROLLA LEVIN AE92',prefix='ae92',wb=243,donor='corolla',manufacturer='TOYOTA JAPAN',price=12500,mass=1030,torque=147.1,rpm='1000 2000 3000 4500 6000 7200 7800',curve='.4 .6 .8 .95 1 .93 0',paint='body',glass='WindowGlass',brake='TaillightGlass',head='HeadlightGlass')]
+
+# Their rear/high painted surfaces include the boot and hatch surrounds, not
+# just a detachable wing. Keep them in the chassis when parts are refitted.
+for config in CONFIGS:
+ config['fixed_stock_spoiler']=True
+
+# Authoring identities, checked against the retained source assemblies. A hood
+# is a complete panel, not a rectangle cut from the car's bounding box.
+BONNET_SOURCES={
+ 'golf-mk5-r32':('/Hood_Sub_',),
+ 'volvo-v70':('/xhood_0',),
+ 'peugeot-406-coupe':('/Peugeot_406_color-material.014',),
+ 'jetta-vento-mk5':('/jettaa5_body-material.010',),
+ 'subaru-outback-2002':('/Hood_Paint_',),
+ 'levin':('/Bonnet2_Door.',),
+}
+
+# These sources fuse the hood into the body mesh. Explicit source-space panel
+# outlines replace centroid selection (which leaves stair-step carbon edges).
+BONNET_OUTLINES={
+ 'peugeot-405-glx':[(-.68,.72),(.68,.72),(.73,1.95),(.64,2.10),(-.64,2.10),(-.73,1.95)],
+ # The source hood continues forward past z2.08 over the headlamp/grille lip.
+ # Its retained paint mesh ends at z2.283699; the old crop left a20cm blue band.
+ 'volvo-240':[(-.70,.72),(.70,.72),(.73,2.08),(.73,2.284),(-.73,2.284),(-.73,2.08)],
+ 'integra':[(-.46,.52),(.46,.52),(.51,1.30),(.44,1.43),(-.44,1.43),(-.51,1.30)],
+}
+
+def split_bonnet(part,outline,height):
+ inside=[];outside=[]
+ outline=np.array(outline)
+ area=sum(a[0]*b[1]-b[0]*a[1] for a,b in zip(outline,np.roll(outline,-1,axis=0)))
+ direction=1 if area>0 else -1
+ for tri in part['tri']:
+  polygon=[np.r_[part['pos'][i],part['norm'][i],part['uv'][i]] for i in tri]
+  if part['norm'][tri].mean(0)[1]<.3 or part['pos'][tri].mean(0)[1]<height*.4:
+   outside.extend(polygon);continue
+  for a,b in zip(outline,np.roll(outline,-1,axis=0)):
+   yes=[];no=[];edge=b-a
+   for p,q in zip(polygon,polygon[1:]+polygon[:1]):
+    vp=p[[0,2]]-a;vq=q[[0,2]]-a
+    dp=direction*(edge[0]*vp[1]-edge[1]*vp[0]);dq=direction*(edge[0]*vq[1]-edge[1]*vq[0])
+    (yes if dp>=0 else no).append(p)
+    if (dp>=0)!=(dq>=0):v=p+(q-p)*dp/(dp-dq);yes.append(v);no.append(v)
+   for i in range(1,len(no)-1):outside.extend([no[0],no[i],no[i+1]])
+   polygon=yes
+   if not polygon:break
+  for i in range(1,len(polygon)-1):inside.extend([polygon[0],polygon[i],polygon[i+1]])
+ result=[]
+ for points,panel in [(inside,True),(outside,False)]:
+  if not points:continue
+  a=np.array(points);q=dict(part);q.update(pos=a[:,:3],norm=a[:,3:6],uv=a[:,6:8],tri=np.arange(len(a)).reshape(-1,3),bonnet=panel);result.append(q)
+ return result
+
+def carbon_texture():
+ # A repeating weave without mipmaps aliases into large moving moire bands.
+ yy,xx=np.indices((128,128));weave=26+(((xx//4+yy//4)%2)*8)
+ pixels=np.empty((128,128,4),dtype=np.uint8);pixels[:,:,:3]=weave[:,:,None];pixels[:,:,3]=255
+ levels=[];im=Image.fromarray(pixels)
+ while True:
+  levels.append(np.asarray(im)[:,:,[2,1,0,3]].tobytes())
+  if im.width==1:break
+  im=im.resize((im.width//2,im.height//2),Image.Resampling.BOX)
+ return pack('9IfI',21,128,128,len(levels),2,2,2,1,1,0.,4)+b''.join(levels)
+
+def component_bonnet(part,height,front,width):
+ # The E36 OBJ merges materials but retains disconnected physical panels.
+ # Weld duplicate normal/UV vertices only for connectivity, not for export.
+ _,inverse=np.unique(np.round(part['pos'],4),axis=0,return_inverse=True)
+ parent=list(range(int(inverse.max())+1))
+ def root(i):
+  while parent[i]!=i:parent[i]=parent[parent[i]];i=parent[i]
+  return i
+ for tri in inverse[part['tri']]:
+  a=root(tri[0])
+  for b in tri[1:]:parent[root(b)]=a
+ groups={}
+ for i,tri in enumerate(inverse[part['tri']]):groups.setdefault(root(tri[0]),[]).append(i)
+ selected=np.zeros(len(part['tri']),dtype=bool)
+ for ids in groups.values():
+  v=part['pos'][part['tri'][ids]].reshape(-1,3);lo,hi=v.min(0),v.max(0)
+  if lo[2]>front*.3 and lo[1]>height*.4 and hi[0]-lo[0]>width and lo[0]<0<hi[0]:selected[ids]=True
+ if not selected.any():raise ValueError('Source bonnet panel not found')
+ return selected
 
 def cage(lo,hi):
  x=min(abs(lo[0]),hi[0])*.92;y0=lo[1]+12;roof=hi[1]*.96;z0=lo[2];z1=hi[2]
@@ -27,37 +111,23 @@ def cage(lo,hi):
  out+=pack('I',len(faces))+pack(f'{len(faces)}I',*range(len(faces)))
  return out+pack('I4ff12xiiII',1,*center,1,float(np.linalg.norm(verts-center,axis=1).max()),-1,-1,0,len(faces))
 
-def carbon_skin(part, carbon, half_width, zmin, zmax):
- # Clip at a continuous inset outline, preserving paint outside; no centroid sawtooth.
- inside=[];outside=[]
- for tri in part['tri']:
-  polygon=[np.r_[part['pos'][i],part['norm'][i],part['uv'][i]] for i in tri]
-  for axis,bound,sign in [(0,-half_width,1),(0,half_width,-1),(2,zmin,1),(2,zmax,-1)]:
-   yes=[];no=[]
-   for a,b in zip(polygon,polygon[1:]+polygon[:1]):
-    da=(a[axis]-bound)*sign;db=(b[axis]-bound)*sign
-    (yes if da>=0 else no).append(a)
-    if (da>=0)!=(db>=0):v=a+(b-a)*da/(da-db);yes.append(v);no.append(v)
-   for k in range(1,len(no)-1):outside.extend([no[0],no[k],no[k+1]])
-   polygon=yes
-   if not polygon:break
-  for k in range(1,len(polygon)-1):inside.extend([polygon[0],polygon[k],polygon[k+1]])
- result=[]
- for points,mat in [(inside,carbon),(outside,part['mat'])]:
-  if not points:continue
-  a=np.array(points);result.append(dict(mat=mat,pos=a[:,:3],norm=a[:,3:6],uv=a[:,[0,2]]/8 if mat==carbon else a[:,6:8],tri=np.arange(len(a)).reshape(-1,3)))
- return result
 
 def build(c,args,r):
  g=Gltf(args.sources/(c['key']+'-prepared.glb'));ps=g.parts();mats=g.j['materials'];prefix=c['prefix'];model=c['model'].lower()
  ps=[p for p in ps if mats[p['mi']].get('name')!='Scene']
  def wheel(p):
   s=p['source'].lower()
+  # The V70 source calls a rear body seam "whitexgaps". It was previously
+  # renamed as a wheel simply because its name starts with w. Including it
+  # in the wheel bounds moves the rear axle and changes the entire car scale.
+  if 'whitexgaps' in s:return False
   if c['key']=='bmw':return mats[p['mi']].get('name') in ['Tire.001','SeconadryColor.001','Textures.001','MainColor.001']
   return bool(re.search(r'/wheel(?:fl|fr|rl|rr|_[rl][fr])(?:/|_|$)',s))
  wp=[p for p in ps if wheel(p)];assert wp,'No source wheels'
  # Derive centres from actual tyre geometry, not author object pivots.
- tyres=[p for p in wp if any(k in mats[p['mi']].get('name','').lower() for k in ['rubber','tire','tyre'])];assert tyres
+ tyres=[p for p in wp if any(k in p['source'].lower() for k in ['_tire','_tyre','tire_','tyre_']) or mats[p['mi']].get('name','').lower() in ['rubber_oj_rubber','oj_rubber']]
+ if not tyres:tyres=[p for p in wp if any(k in mats[p['mi']].get('name','').lower() for k in ['rubber','tire','tyre'])]
+ assert tyres
  vertices=np.concatenate([p['pos'] for p in tyres]);midz=(vertices[:,2].min()+vertices[:,2].max())/2
  centres={}
  for key,xsign,zsign in [('FL',1,1),('FR',-1,1),('RL',1,-1),('RR',-1,-1)]:
@@ -67,6 +137,9 @@ def build(c,args,r):
   p['pos']=(p['pos']-offset)*scale*sign;p['norm']*=sign;p['tri']=p['tri'][:,[0,2,1]];p['mat']=(model+'_body' if mats[p['mi']].get('name')==c['paint'] else model+'_glass' if mats[p['mi']].get('name')==c['glass'] else prefix+'_m'+str(p['mi']))
  centres={k:(v-offset)*scale*sign for k,v in centres.items()}
  body=[p for p in ps if not wheel(p)];v=np.concatenate([p['pos'] for p in body]);lo,hi=v.min(0),v.max(0);height=hi[1];front=centres['FL'][2];rear=centres['RL'][2]
+ if c['key'] in BONNET_OUTLINES:
+  outline=[((-x-offset[0])*scale,(z-offset[2])*scale) for x,z in BONNET_OUTLINES[c['key']]]
+  body=[q for p in body for q in (split_bonnet(p,outline,height) if mats[p['mi']].get('name')==c['paint'] else [p])]
  root=args.output
  def write(path,data):
   p=root/path.lower();p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes(data.encode() if isinstance(data,str) else data)
@@ -85,18 +158,29 @@ def build(c,args,r):
   dark_kn5=c.get('key')=='golf-mk5-r32' and ('_blk' in mn or mn in ['black','ext_windowmask'])
   if dark_kn5:factor=[factor[0]*.035,factor[1]*.035,factor[2]*.035,factor[3]]
   if ti is not None:
-   im=g.j['images'][g.j['textures'][ti]['source']];bv=g.j['bufferViews'][im['bufferView']];raw=g.bin[bv.get('byteOffset',0):bv.get('byteOffset',0)+bv['byteLength']];pic=Image.open(io.BytesIO(raw)).convert('RGBA');pic.thumbnail((1024,1024));pixels=np.array(pic).astype(float)*factor;pixels=np.clip(pixels,0,255).astype(np.uint8)
+   im=g.j['images'][g.j['textures'][ti]['source']];bv=g.j['bufferViews'][im['bufferView']];raw=g.bin[bv.get('byteOffset',0):bv.get('byteOffset',0)+bv['byteLength']];pic=Image.open(io.BytesIO(raw)).convert('RGBA');limit=2048 if c['key']=='subaru-outback-2002' else 1024;pic.thumbnail((limit,limit));pixels=np.array(pic).astype(float)*factor;pixels=np.clip(pixels,0,255).astype(np.uint8)
   else:pixels=np.array([[np.array(factor)*255]],dtype=np.uint8)
   if mn==c['glass']:pixels=np.array([[[75,85,95,85]]],dtype=np.uint8)
+  opaque_lens=c['key']=='volvo-240' and mn==c['head']
+  if opaque_lens:pixels[:,:,3]=255
+  masked=m.get('alphaMode','OPAQUE')=='MASK' and not opaque_lens
+  if masked:
+   # Preserve glTF's cutout rather than treating its back-facing double-sided
+   # planes as Coloured Spec ABlend, which has no Double-sided parameter.
+   cutoff=m.get('alphaCutoff',.5)*255
+   pixels[:,:,3]=np.where(pixels[:,:,3]>=cutoff,255,0).astype(np.uint8)
   tex(n,pixels)
   if mn==c['paint']:
    material=f'''Material Program = Car Body\nCar Colour = 220 220 220\nSide Fresnel = 0.18\nFront Fresnel = 0.02\nMetallic Colour = 20 20 20\nPearlescent Colour = 0 0 0\nMetallic Shininess = 25\nPearlescent Shininess = 0\nMetallic = FALSE\nDouble-sided = FALSE\nPaint Work = {prefix}_paint.ptd\nScratch & Reflect = {prefix}_scratch.ptd\n'''
   elif mn==c['glass']:
    material=f'Material Program = Car Glass\nSide Fresnel = 0.12\nFront Fresnel = 0.02\nBase Opacity = 0.28\nStart Fade = 0\nEnd Fade = 10000\nColour = 110 120 130\nTexture = {n}.ptd\nScratch = {prefix}_scratch.ptd\n'
   else:
-   alpha=m.get('alphaMode','OPAQUE')!='OPAQUE'
-   material=f'Material Program = Coloured Spec {"ABlend" if alpha else "Opaque"}\nColour = 255 255 255\nSpecular Colour = 100 100 100\nSpecular Highlight = 50\nShininess = 32\nDouble-sided = {str(m.get("doubleSided",False)).upper()}\nTexture = {n}.ptd\n'
-   if c.get('source_two_sided') and not alpha:
+   alpha=m.get('alphaMode','OPAQUE')!='OPAQUE' and not opaque_lens
+   if masked:
+    material=f'Material Program = Specular ATest\nSpecular Colour = 100 100 100\nSpecular Highlight = 50\nShininess = 32\nDouble-sided = {str(m.get("doubleSided",False)).upper()}\nOpaque Texture = {n}.ptd\n'
+   else:
+    material=f'Material Program = Coloured Spec {"ABlend" if alpha else "Opaque"}\nColour = 255 255 255\nSpecular Colour = 100 100 100\nSpecular Highlight = 50\nShininess = 32\nDouble-sided = {str(m.get("doubleSided",False)).upper()}\nTexture = {n}.ptd\n'
+   if c.get('source_two_sided') and not alpha and not masked:
     # Coloured Spec ignores Double-sided; use the native material which implements it.
     material=f'Material Program = Specular Opaque\nSpecular Colour = 100 100 100\nSpecular Highlight = 50\nShininess = 32\nDouble-sided = {str(m.get("doubleSided",False)).upper()}\nOpaque Texture = {n}.ptd\n'
    if dark_kn5:material=material.replace('Specular Colour = 100 100 100','Specular Colour = 20 20 20').replace('Specular Highlight = 50','Specular Highlight = 8')
@@ -125,11 +209,15 @@ def build(c,args,r):
    keys[(z>front+28)&(y<height*.53)]='FBUMP';keys[(z<rear-28)&(y<height*.53)]='RBUMP'
    keys[(abs(x)>max(abs(lo[0]),hi[0])*.76)&(y<height*.23)&(z>rear)&(z<front)]=np.where(x[(abs(x)>max(abs(lo[0]),hi[0])*.76)&(y<height*.23)&(z>rear)&(z<front)]<0,'SSKIRT_L','SSKIRT_R')
   if mn==c['paint']:
-   keys[(z>front*.45)&(z<hi[2]-20)&(y>height*.40)&(norm[:,1]>.45)&(abs(x)<hi[0]*.77)]='BONNET'
+   if c['key']=='bmw':keys[component_bonnet(p,height,front,hi[0])]='BONNET'
+   elif c['key'] not in BONNET_SOURCES and c['key'] not in BONNET_OUTLINES:
+    keys[(z>front*.45)&(z<hi[2]-20)&(y>height*.40)&(norm[:,1]>.45)&(abs(x)<hi[0]*.77)]='BONNET'
    # A geometric rear/high cutoff also catches boot lids and rear doors.
    # Sources without explicitly separated detachable wings keep their stock body intact.
    if not c.get('fixed_stock_spoiler',False):
     keys[(z<rear*.95)&(y>height*.65)]='SPOILER'
+  if p.get('bonnet') or any(token in p['source'] for token in BONNET_SOURCES.get(c['key'],())):
+   keys[:]='BONNET'
   if mn.startswith(c['brake']) or mn==c['head']:
    q=copy.deepcopy(p);q['pos']+=q['norm']*.08;q['mat']=prefix+('_stop' if mn.startswith(c['brake']) else '_head');zones['BRKLIGHT' if mn.startswith(c['brake']) else 'LIGHTSON'].append(q)
   for key in np.unique(keys):zones[key].append(subset(p,keys==key))
@@ -143,13 +231,15 @@ def build(c,args,r):
   if q is not None:q['pos']-=centres['FL'];wheelparts.append(q)
  save(prefix+'_wheel',wheelparts);save(prefix+'_wheel_blur',wheelparts)
  # Mild fitted aero options; carbon bonnet retains actual source shape.
- carbon=prefix+'_carbon';yy,xx=np.indices((128,128));weave=24+(((xx//4+yy//4)%2)*12);pix=np.empty((128,128,4),dtype=np.uint8);pix[:,:,:3]=weave[:,:,None];pix[:,:,3]=255;tex(carbon,pix)
+ carbon=prefix+'_carbon';cf('textures/'+carbon+'.ddt',carbon_texture())
  cf('mesh/mats/'+carbon+'.pmd',f'Material Program = Coloured Spec Opaque\nColour = 255 255 255\nSpecular Colour = 110 110 110\nSpecular Highlight = 80\nShininess = 48\nTexture = {carbon}.ptd\n')
  for k in ['FBUMP','RBUMP','BONNET','SSKIRT_L','SSKIRT_R','SPOILER']:
   if not zones[k]:continue
   sport=copy.deepcopy(zones[k])
   if k=='BONNET':
-   sport=[q for p in sport for q in (carbon_skin(p,carbon,hi[0]*.59,front*.58,hi[2]-36) if p['mat']==model+'_body' else [p])]
+   for p in sport:
+    if p['mat']==model+'_body':
+     p['mat']=carbon;p['uv']=p['pos'][:,[0,2]]/8
   for p in sport:
    if k=='BONNET':continue
    elif k=='SPOILER':
@@ -182,19 +272,19 @@ def build(c,args,r):
     if not extra:raise ValueError(f'Missing kit {level} {key}')
     save(prefix+'_kit'+str(level)+'_'+key,copy.deepcopy(zones[key])+extra)
  paint=[p for p in body if mats[p['mi']].get('name')==c['paint']]
- # UV projections use the real painted shell, with bonnet and sides independently mapped.
- def skin(mat):
-  parts=[]
-  for p in paint:
-   cent=p['pos'][p['tri']].mean(1);normal=p['norm'][p['tri']].mean(1)
-   for side in [-1,1]:
-    q=subset(p,(normal[:,0]*side>.55)&(cent[:,1]<height*.68)&(cent[:,1]>height*.18))
-    if q is not None:q['mat']=mat;q['uv']=np.c_[(hi[2]-q['pos'][:,2])/(hi[2]-lo[2]),(height*.68-q['pos'][:,1])/(height*.5)];q['pos']+=q['norm']*.12;parts.append(q)
-   q=subset(p,(normal[:,1]>.65)&(cent[:,2]>front*.45)&(cent[:,2]<hi[2]-20)&(abs(cent[:,0])<hi[0]*.77))
-   if q is not None:q['mat']=mat;q['uv']=np.c_[(q['pos'][:,0]+hi[0]*.77)/(hi[0]*1.54),(hi[2]-20-q['pos'][:,2])/(hi[2]-20-front*.45)];q['pos']+=q['norm']*.12;parts.append(q)
-  return parts
+ decal_shell=paint
+ if c['key']=='subaru-outback-2002':
+  # The lower doors are factory cladding, not missing bodywork. Vinyl must
+  # continue across those exterior surfaces instead of losing its lower half.
+  decal_shell=list(paint)
+  for p in body:
+   if mats[p['mi']].get('name','').startswith('Subaru_Outback'):
+    cent=p['pos'][p['tri']].mean(1)
+    q=subset(p,(abs(cent[:,0])>max(abs(lo[0]),hi[0])*.75)&(cent[:,1]<height*.75)&(cent[:,1]>height*.15))
+    if q is not None:decal_shell.append(q)
  defs=r.read('scripts/cardefs.txt').decode('latin1');focus=re.search(r'\[BeginCar\]\s+focus_2\b(.*?)\[EndCar\]',defs,re.S|re.I).group(1);decals=re.findall(r'^\s*CUSTOM\s+DECAL\s+FOCUS_2_(DECAL_\w+)',focus,re.M|re.I)
- for decal in decals:save(prefix+'_'+decal,skin(decal.lower()))
+ for decal in decals:
+  save(prefix+'_'+decal,transfer_native_decal(r,decal,decal_shell,c['wb'],height,decal.lower()))
  # Clip sponsor stickers to small rectangles on actual door surfaces.
  sponsors=[]
  for index in range(9):
@@ -253,7 +343,10 @@ def build(c,args,r):
  block += [f'STANDARDWHEELS "{prefix}_wheel"','MATCH_STOCK_WHEELS 1',f'STANDARDEXHAUST "{exhaust}"',f'ENGINE_SOUND {sound}','MAXDROPHEIGHT 4','[EndCar]']
  dynamics=r.read('scripts/dynamic_'+c['donor']+'.txt').decode('latin1');dynamics=re.sub(re.escape(c['donor']),model,dynamics,flags=re.I)
  changes=dict(Name=c['model'],Mass=str(c['mass']),MaxTorque=str(c['torque']),TorqueCurveX=c['rpm'],TorqueCurveY=c['curve'])
- if c['key']=='levin':changes.update(ForwardGearRatios='3.166 1.904 1.310 0.969 0.815',FinalDrive='4.312')
+ # GT APEX 4A-GE: rated power at 7200 rpm, reverse 3.250 (Toyota catalog).
+ # Native automatic shifts above 1.02 * PowerRangeMax. 7000 puts the shift
+ # near rated power; 7200 stalls in fourth just below its 7344-rpm trigger.
+ if c['key']=='levin':changes.update(ForwardGearRatios='3.166 1.904 1.310 0.969 0.815',ReverseGearRatio='-3.250',FinalDrive='4.312',PowerRangeMax='7000')
  if c['key']=='bmw':changes.update(ForwardGearRatios='4.20 2.49 1.66 1.24 1.00',FinalDrive='3.23',FrontWeightDistribution='0.50')
  radius=(vertices[:,1].max()-vertices[:,1].min())*scale/200;changes['WheelRadius']=str(round(radius,4))
  for k,value in changes.items():dynamics=re.sub(r'^'+k+r'[^\r\n]*',k+' '+value,dynamics,flags=re.M)

@@ -1,0 +1,171 @@
+{
+  "candidate": "/run/media/martin/Ediloco/OpenJuice-builds/20261031-v70-lamps/candidate08",
+  "changed_meshes": 20,
+  "checks": [
+    {
+      "path": "assets/cars/peugeot_405_glx/mesh/w257_kit3_fbump.d8m",
+      "sha256": "93d5140347c307f6c8ff98f93e85b62e2c62c0cae0512ab983b9a695eb30e578",
+      "type": "material-only",
+      "every_original_triangle_corner_byte_preserved": true,
+      "painted_faces": 400,
+      "all_lamps_plates_chrome_grille_textures_unchanged": true
+    },
+    {
+      "path": "assets/cars/peugeot_405_glx/mesh/w257_kit3_rbump.d8m",
+      "sha256": "d27e7e69f2fa1e8271d27f23e410b35d20ce5e736b47987c06d04e5a63a0da1d",
+      "type": "material-only",
+      "every_original_triangle_corner_byte_preserved": true,
+      "painted_faces": 224,
+      "all_lamps_plates_chrome_grille_textures_unchanged": true
+    },
+    {
+      "path": "assets/cars/peugeot_405_glx_ui/mesh/w257_kit3_fbump.d8m",
+      "sha256": "93d5140347c307f6c8ff98f93e85b62e2c62c0cae0512ab983b9a695eb30e578",
+      "type": "material-only",
+      "every_original_triangle_corner_byte_preserved": true,
+      "painted_faces": 400,
+      "all_lamps_plates_chrome_grille_textures_unchanged": true
+    },
+    {
+      "path": "assets/cars/peugeot_405_glx_ui/mesh/w257_kit3_rbump.d8m",
+      "sha256": "d27e7e69f2fa1e8271d27f23e410b35d20ce5e736b47987c06d04e5a63a0da1d",
+      "type": "material-only",
+      "every_original_triangle_corner_byte_preserved": true,
+      "painted_faces": 224,
+      "all_lamps_plates_chrome_grille_textures_unchanged": true
+    },
+    {
+      "path": "assets/cars/volvo_240_turbo/mesh/w262_kit3_fbump.d8m",
+      "sha256": "c1214ba363e76ba616ac9a68def15778be0825929646fbeab8177d5397de6070",
+      "type": "material-only",
+      "every_original_triangle_corner_byte_preserved": true,
+      "painted_faces": 1290,
+      "all_lamps_plates_chrome_grille_textures_unchanged": true
+    },
+    {
+      "path": "assets/cars/volvo_240_turbo/mesh/w262_kit3_rbump.d8m",
+      "sha256": "eb276286630ae0a2dc4d813a6f9958c4dd628ada1daacd691fe9fd7694bcdf5e",
+      "type": "material-only",
+      "every_original_triangle_corner_byte_preserved": true,
+      "painted_faces": 940,
+      "all_lamps_plates_chrome_grille_textures_unchanged": true
+    },
+    {
+      "path": "assets/cars/volvo_240_turbo_ui/mesh/w262_kit3_fbump.d8m",
+      "sha256": "c1214ba363e76ba616ac9a68def15778be0825929646fbeab8177d5397de6070",
+      "type": "material-only",
+      "every_original_triangle_corner_byte_preserved": true,
+      "painted_faces": 1290,
+      "all_lamps_plates_chrome_grille_textures_unchanged": true
+    },
+    {
+      "path": "assets/cars/volvo_240_turbo_ui/mesh/w262_kit3_rbump.d8m",
+      "sha256": "eb276286630ae0a2dc4d813a6f9958c4dd628ada1daacd691fe9fd7694bcdf5e",
+      "type": "material-only",
+      "every_original_triangle_corner_byte_preserved": true,
+      "painted_faces": 940,
+      "all_lamps_plates_chrome_grille_textures_unchanged": true
+    },
+    {
+      "path": "assets/cars/volvo_v70_24/mesh/w263_fbump.d8m",
+      "sha256": "6d0fc415b274fb4e149c9acf922ab00f87b9d850b064f70da29aa88fef8ae751",
+      "type": "existing lamp fit / emissive overlay",
+      "all_non_lamp_parts_unchanged": true,
+      "uv_colour_unknown_data_preserved": true,
+      "reflector_winding_and_normals_outward": true
+    },
+    {
+      "path": "assets/cars/volvo_v70_24/mesh/w263_kit1_fbump.d8m",
+      "sha256": "f72d4e9232096b18a64e580970bfa75423059ff3a451ad47111c956691904484",
+      "type": "existing lamp fit / emissive overlay",
+      "all_non_lamp_parts_unchanged": true,
+      "uv_colour_unknown_data_preserved": true,
+      "reflector_winding_and_normals_outward": true
+    },
+    {
+      "path": "assets/cars/volvo_v70_24/mesh/w263_kit2_fbump.d8m",
+      "sha256": "4e2ed729491c4411cdd700ba04ee09b1475f64625d6db0638ac4d5dfefe03b24",
+      "type": "existing lamp fit / emissive overlay",
+      "all_non_lamp_parts_unchanged": true,
+      "uv_colour_unknown_data_preserved": true,
+      "reflector_winding_and_normals_outward": true
+    },
+    {
+      "path": "assets/cars/volvo_v70_24/mesh/w263_kit3_fbump.d8m",
+      "sha256": "26fd7a0f8aa03e29ee497f1462e577efaf3c347a75082ccff801add6031088ef",
+      "type": "existing lamp fit / emissive overlay",
+      "all_non_lamp_parts_unchanged": true,
+      "uv_colour_unknown_data_preserved": true,
+      "reflector_winding_and_normals_outward": true
+    },
+    {
+      "path": "assets/cars/volvo_v70_24/mesh/w263_lightson.d8m",
+      "sha256": "eb667436c89e923a33282fbaee8d7b425fad8942b9e30e28a7812b6476c9db0d",
+      "type": "existing lamp fit / emissive overlay",
+      "all_non_lamp_parts_unchanged": true,
+      "uv_colour_unknown_data_preserved": true,
+      "reflector_winding_and_normals_outward": true
+    },
+    {
+      "path": "assets/cars/volvo_v70_24/mesh/w263_sport_fbump.d8m",
+      "sha256": "0d439412aeb75239ed7c22b116dd44688161fa972a0f108b1f94f4ba634a96f1",
+      "type": "existing lamp fit / emissive overlay",
+      "all_non_lamp_parts_unchanged": true,
+      "uv_colour_unknown_data_preserved": true,
+      "reflector_winding_and_normals_outward": true
+    },
+    {
+      "path": "assets/cars/volvo_v70_24_ui/mesh/w263_fbump.d8m",
+      "sha256": "6d0fc415b274fb4e149c9acf922ab00f87b9d850b064f70da29aa88fef8ae751",
+      "type": "existing lamp fit / emissive overlay",
+      "all_non_lamp_parts_unchanged": true,
+      "uv_colour_unknown_data_preserved": true,
+      "reflector_winding_and_normals_outward": true
+    },
+    {
+      "path": "assets/cars/volvo_v70_24_ui/mesh/w263_kit1_fbump.d8m",
+      "sha256": "f72d4e9232096b18a64e580970bfa75423059ff3a451ad47111c956691904484",
+      "type": "existing lamp fit / emissive overlay",
+      "all_non_lamp_parts_unchanged": true,
+      "uv_colour_unknown_data_preserved": true,
+      "reflector_winding_and_normals_outward": true
+    },
+    {
+      "path": "assets/cars/volvo_v70_24_ui/mesh/w263_kit2_fbump.d8m",
+      "sha256": "4e2ed729491c4411cdd700ba04ee09b1475f64625d6db0638ac4d5dfefe03b24",
+      "type": "existing lamp fit / emissive overlay",
+      "all_non_lamp_parts_unchanged": true,
+      "uv_colour_unknown_data_preserved": true,
+      "reflector_winding_and_normals_outward": true
+    },
+    {
+      "path": "assets/cars/volvo_v70_24_ui/mesh/w263_kit3_fbump.d8m",
+      "sha256": "26fd7a0f8aa03e29ee497f1462e577efaf3c347a75082ccff801add6031088ef",
+      "type": "existing lamp fit / emissive overlay",
+      "all_non_lamp_parts_unchanged": true,
+      "uv_colour_unknown_data_preserved": true,
+      "reflector_winding_and_normals_outward": true
+    },
+    {
+      "path": "assets/cars/volvo_v70_24_ui/mesh/w263_lightson.d8m",
+      "sha256": "eb667436c89e923a33282fbaee8d7b425fad8942b9e30e28a7812b6476c9db0d",
+      "type": "existing lamp fit / emissive overlay",
+      "all_non_lamp_parts_unchanged": true,
+      "uv_colour_unknown_data_preserved": true,
+      "reflector_winding_and_normals_outward": true
+    },
+    {
+      "path": "assets/cars/volvo_v70_24_ui/mesh/w263_sport_fbump.d8m",
+      "sha256": "0d439412aeb75239ed7c22b116dd44688161fa972a0f108b1f94f4ba634a96f1",
+      "type": "existing lamp fit / emissive overlay",
+      "all_non_lamp_parts_unchanged": true,
+      "uv_colour_unknown_data_preserved": true,
+      "reflector_winding_and_normals_outward": true
+    }
+  ],
+  "all_other_payloads_unchanged": true,
+  "ui_and_race_meshes_identical": true,
+  "all31_decal_files_per_car_unchanged": true,
+  "v70_off_geometry_identical_to_inspected_pilot04": true,
+  "production_code_changed": false
+}

@@ -1,0 +1,106 @@
+{
+  "author_sha256": "c6b5751893b5e4febe084a44be9ed3abc9578666acc6706e26545616db056b19",
+  "source": "/home/martin/.local/share/openjuice/mods/street-cars-wave2",
+  "design_source": "/home/martin/Projects/juiced/openjuice-port/out/validation/peugeot405-bumper-replacement-20261101/r20-installed-rollback/assets/cars/peugeot_405_glx/mesh",
+  "meshes": [
+    {
+      "name": "w257_kit1_fbump",
+      "triangles": 12457,
+      "sha256": "b3ce0f3f2f0568951e36e18d72f5e4cf99aa345e13b2f5c1ee413097a7dbc12f"
+    },
+    {
+      "name": "w257_kit2_fbump",
+      "triangles": 13583,
+      "sha256": "4e4e124ffc261d4ec4b05771337a3bc918728cffdcd4ae1e6ffd02092b2107df"
+    },
+    {
+      "name": "w257_kit3_fbump",
+      "triangles": 10661,
+      "sha256": "c67892a05c080ecb0a88c90655311aed8652ddd4c725de2ce038c1ffcc6e1974"
+    },
+    {
+      "name": "w257_kit1_rbump",
+      "triangles": 7352,
+      "sha256": "12737551c4bdbe29f262491eb6c7bd66970b607569fd3a10cd9496f4b97ad786"
+    },
+    {
+      "name": "w257_kit2_rbump",
+      "triangles": 7463,
+      "sha256": "a310a04f30145e6300dc2197c6915ba06bc860b5e63341d53d0ae81ec6816be5"
+    },
+    {
+      "name": "w257_kit3_rbump",
+      "triangles": 7467,
+      "sha256": "47da688e3bb3113f88417415a7e7529782792d76cc22d47d68a6ddebb215a563"
+    }
+  ],
+  "changed": [
+    "assets/cars/peugeot_405_glx/mesh/mats/p405_inner_surface.pmd",
+    "assets/cars/peugeot_405_glx/mesh/w257_kit1_fbump.d8m",
+    "assets/cars/peugeot_405_glx/mesh/w257_kit1_rbump.d8m",
+    "assets/cars/peugeot_405_glx/mesh/w257_kit2_fbump.d8m",
+    "assets/cars/peugeot_405_glx/mesh/w257_kit2_rbump.d8m",
+    "assets/cars/peugeot_405_glx/mesh/w257_kit3_fbump.d8m",
+    "assets/cars/peugeot_405_glx/mesh/w257_kit3_rbump.d8m",
+    "assets/cars/peugeot_405_glx/textures/p405_inner_surface.ddt",
+    "assets/cars/peugeot_405_glx_ui/mesh/mats/p405_inner_surface.pmd",
+    "assets/cars/peugeot_405_glx_ui/mesh/w257_kit1_fbump.d8m",
+    "assets/cars/peugeot_405_glx_ui/mesh/w257_kit1_rbump.d8m",
+    "assets/cars/peugeot_405_glx_ui/mesh/w257_kit2_fbump.d8m",
+    "assets/cars/peugeot_405_glx_ui/mesh/w257_kit2_rbump.d8m",
+    "assets/cars/peugeot_405_glx_ui/mesh/w257_kit3_fbump.d8m",
+    "assets/cars/peugeot_405_glx_ui/mesh/w257_kit3_rbump.d8m",
+    "assets/cars/peugeot_405_glx_ui/textures/p405_inner_surface.ddt"
+  ],
+  "kits": [
+    {
+      "zone": "fbump",
+      "kit": 1,
+      "stock_mounting_band_starts_cm": 57.65,
+      "bottom_cm": 17,
+      "upper_band_triangles": 222,
+      "single_outer_surface": true
+    },
+    {
+      "zone": "fbump",
+      "kit": 2,
+      "stock_mounting_band_starts_cm": 57.65,
+      "bottom_cm": 15.5,
+      "upper_band_triangles": 222,
+      "single_outer_surface": true
+    },
+    {
+      "zone": "fbump",
+      "kit": 3,
+      "stock_mounting_band_starts_cm": 57.65,
+      "bottom_cm": 17,
+      "upper_band_triangles": 222,
+      "single_outer_surface": true
+    },
+    {
+      "zone": "rbump",
+      "kit": 1,
+      "stock_mounting_band_starts_cm": 63.9,
+      "bottom_cm": 19,
+      "upper_band_triangles": 218,
+      "single_outer_surface": true
+    },
+    {
+      "zone": "rbump",
+      "kit": 2,
+      "stock_mounting_band_starts_cm": 63.9,
+      "bottom_cm": 17.5,
+      "upper_band_triangles": 218,
+      "single_outer_surface": true
+    },
+    {
+      "zone": "rbump",
+      "kit": 3,
+      "stock_mounting_band_starts_cm": 63.9,
+      "bottom_cm": 18,
+      "upper_band_triangles": 218,
+      "single_outer_surface": true
+    }
+  ],
+  "scope": "Six complete bumper mesh pairs only. OEM mounting band is the single skin at the top; bespoke fascia is the single skin below it. No factory skin under the fascia. Fixed body, all other assets, engine and physics unchanged."
+}

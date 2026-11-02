@@ -1,0 +1,6302 @@
+[
+  {
+    "car": "3000GT",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/3000gt/mesh/3000gt_decal_fandf_vs1.d8m",
+        "sha256": "ee8f00d944f0f86d7034b03dd8d619320e1876e5a65bf62dde1ffbe0c9c5a4af"
+      },
+      {
+        "ui": true,
+        "path": "cars/3000gt_ui/mesh/3000gt_decal_fandf_vs1.d8m",
+        "sha256": "5a299c7e22fca5feb85152ef506d57506042a0ab941f0602b7330d1524a6e2be"
+      }
+    ]
+  },
+  {
+    "car": "300ZX",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/300zx/mesh/300zx_decal_fandf_vs1.d8m",
+        "sha256": "f1ae14f620f176982adff44a2c9cef86d6f7eb9d242a59bd597a9f9e549f11f2"
+      },
+      {
+        "ui": true,
+        "path": "cars/300zx_ui/mesh/300zx_decal_fandf_vs1.d8m",
+        "sha256": "2a09299a844c4243ad62e095f8bc2a756c62f311af544a9db96c04b72ad392ef"
+      }
+    ]
+  },
+  {
+    "car": "350Z",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/350z/mesh/350z_decal_fandf_vs1.d8m",
+        "sha256": "8984e4695273290e7a47a13c4bedfff6e3b54778e970f3127f16054fa48ffacb"
+      },
+      {
+        "ui": true,
+        "path": "cars/350z_ui/mesh/350z_decal_fandf_vs1.d8m",
+        "sha256": "ac308e0ac5ef58872140eba6c08591df682b09e84ca21301e79c5b404e0a8e2c"
+      }
+    ]
+  },
+  {
+    "car": "AC_INTEGRA",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/ac_integra/mesh/ac_integra_decal_fandf_vs1.d8m",
+        "sha256": "29383a829702cd90d241dd5f3ef23703ce819bcc8c07c74139077b3e8f9a95e7"
+      },
+      {
+        "ui": true,
+        "path": "cars/ac_integra_ui/mesh/ac_integra_decal_fandf_vs1.d8m",
+        "sha256": "e8f986384df0890bca90a8f17e3ceb6ed057243eaaf99687ad5f5b7e2c34a08a"
+      }
+    ]
+  },
+  {
+    "car": "AC_NSX",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/ac_nsx/mesh/ac_nsx_decal_fandf_vs1.d8m",
+        "sha256": "28a43b49484870b847f2d186fca2957df1fed238dde157c8e560dc9f1f3d402d"
+      },
+      {
+        "ui": true,
+        "path": "cars/ac_nsx_ui/mesh/ac_nsx_decal_fandf_vs1.d8m",
+        "sha256": "c6d23a7768b4ae455bb5d6b9299d52071cdb6b30ec51f1f774813333763cb286"
+      }
+    ]
+  },
+  {
+    "car": "BEETLE",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/beetle/mesh/beetle_decal_fandf_vs1.d8m",
+        "sha256": "a8bc211003e340ce15ea2b687a00fbea823c9bc14cb4814d6a6ad3dbd7ba0b6c"
+      },
+      {
+        "ui": true,
+        "path": "cars/beetle_ui/mesh/beetle_decal_fandf_vs1.d8m",
+        "sha256": "fd06187be2f66404aaafdb56aeec1854095e05cc3e10b4225f498609d2b54ed2"
+      }
+    ]
+  },
+  {
+    "car": "BMW_E36",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": true,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/bmw_e36/mesh/e36_decal_fandf_vs1.d8m",
+        "sha256": "1edf27f88672672c2189465cf8962eed82075993dca712a76eccc1e417c5cef4"
+      },
+      {
+        "ui": true,
+        "path": "cars/bmw_e36_ui/mesh/e36_decal_fandf_vs1.d8m",
+        "sha256": "1edf27f88672672c2189465cf8962eed82075993dca712a76eccc1e417c5cef4"
+      }
+    ]
+  },
+  {
+    "car": "CAMARO",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/camaro/mesh/camaro_decal_fandf_vs1.d8m",
+        "sha256": "9ab2c650cfa4dcdba565348ed2769944b5d44398091591df5aff3aec82cd8472"
+      },
+      {
+        "ui": true,
+        "path": "cars/camaro_ui/mesh/camaro_decal_fandf_vs1.d8m",
+        "sha256": "9aa506c68912d1858a0e8c6fb1094a76e23d97ce6b79cfca40ef46ec03f59d87"
+      }
+    ]
+  },
+  {
+    "car": "CELICA",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/celica/mesh/celica_decal_fandf_vs1.d8m",
+        "sha256": "afdc9e12321d5e732fc61cbe138cf4701e6789bfaf073f1f9167566416d1b2b3"
+      },
+      {
+        "ui": true,
+        "path": "cars/celica_ui/mesh/celica_decal_fandf_vs1.d8m",
+        "sha256": "5d6431fbb867a7503a39050421a2d40342d56646095680d173b04af78df63b6c"
+      }
+    ]
+  },
+  {
+    "car": "CELICA_2",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/celica_2/mesh/celica_2_decal_fandf_vs1.d8m",
+        "sha256": "3edd2309ceb6880ffecdb79aa06fce07e23b62f3e53c31f304dc5791ee666af2"
+      },
+      {
+        "ui": true,
+        "path": "cars/celica_2_ui/mesh/celica_2_decal_fandf_vs1.d8m",
+        "sha256": "b93da2d610430e00d7981f9b00789991782bc9cbb88c63d75c9d8841c244fe39"
+      }
+    ]
+  },
+  {
+    "car": "CIVIC_97",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/civic_97/mesh/civic_97_decal_fandf_vs1.d8m",
+        "sha256": "3a28204eaa8618c980591cd361eb975595e577a9eecc6d7f8d8bd6fd1d802eb3"
+      },
+      {
+        "ui": true,
+        "path": "cars/civic_97_ui/mesh/civic_97_decal_fandf_vs1.d8m",
+        "sha256": "03caed4ea435ae976f378d3ae599847d1fadfd7d02823627909e21d31bd5e365"
+      }
+    ]
+  },
+  {
+    "car": "CLIO",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/clio/mesh/clio_decal_fandf_vs1.d8m",
+        "sha256": "a90d4abeeda4c03f49a9b691e0b0a5648d7b6071b772e1f4f146d6cb9615530e"
+      },
+      {
+        "ui": true,
+        "path": "cars/clio_ui/mesh/clio_decal_fandf_vs1.d8m",
+        "sha256": "dad6489d8303e3830c86f8831dda986a9f8a372cde29d6e49f355f44906af580"
+      }
+    ]
+  },
+  {
+    "car": "COROLLA",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/corolla/mesh/corolla_decal_fandf_vs1.d8m",
+        "sha256": "f04bc1260720ed2a29f8678dbdbd3f940b46c1eadf4cfe599cb168039c2f7278"
+      },
+      {
+        "ui": true,
+        "path": "cars/corolla_ui/mesh/corolla_decal_fandf_vs1.d8m",
+        "sha256": "a5f21eef673835aa37a2b2a18dacd950f263cd44cb26295995e332020d27d724"
+      }
+    ]
+  },
+  {
+    "car": "CORSA",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/corsa/mesh/corsa_decal_fandf_vs1.d8m",
+        "sha256": "f67924a0e610c0e00c515aca3b7ca710e883854ad16fddb9203832333a3d9d28"
+      },
+      {
+        "ui": true,
+        "path": "cars/corsa_ui/mesh/corsa_decal_fandf_vs1.d8m",
+        "sha256": "580574905979a78823394b75b27a9de0fdbb2a077a5a61c1b2c132b03ec0070f"
+      }
+    ]
+  },
+  {
+    "car": "CRX",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/crx/mesh/crx_decal_fandf_vs1.d8m",
+        "sha256": "c0212ccd4786b96dd0824a37046d2fa1fd3a805bb19dc31edc0261b6d6797226"
+      },
+      {
+        "ui": true,
+        "path": "cars/crx_ui/mesh/crx_decal_fandf_vs1.d8m",
+        "sha256": "6dbb31d9f0ceb392bd7b58eebe89c3ec5322c3fb610355580c6e563fe5d33d9a"
+      }
+    ]
+  },
+  {
+    "car": "Charger",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/charger/mesh/charger_decal_fandf_vs1.d8m",
+        "sha256": "2e06392bcfae14cad8f0954c90f07737847ff9395ec7e798cbbb8114ce65c941"
+      },
+      {
+        "ui": true,
+        "path": "cars/charger_ui/mesh/charger_decal_fandf_vs1.d8m",
+        "sha256": "619e6f53da1c99134c1ad8d245688e12c5555cfb02c88408a32f7d58bf68a1e8"
+      }
+    ]
+  },
+  {
+    "car": "ECLIPSE",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/eclipse/mesh/eclipse_decal_fandf_vs1.d8m",
+        "sha256": "58b0366242ebaf9431ab20cbfcc9fff09d4a200862cb66b89d15bf7341a283cc"
+      },
+      {
+        "ui": true,
+        "path": "cars/eclipse_ui/mesh/eclipse_decal_fandf_vs1.d8m",
+        "sha256": "01d3f99c5351be55fac3f396948d122d7517a3d4fcdb33a965bf560e120a1cea"
+      }
+    ]
+  },
+  {
+    "car": "EVO6",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/evo6/mesh/evo6_decal_fandf_vs1.d8m",
+        "sha256": "0babba464db06160c2153148b2c5941c0180cc429b404246f0452800cff897d4"
+      },
+      {
+        "ui": true,
+        "path": "cars/evo6_ui/mesh/evo6_decal_fandf_vs1.d8m",
+        "sha256": "d97bdcfa43005d1072426a1af4012b2c014723581a96e4d846e132241676956b"
+      }
+    ]
+  },
+  {
+    "car": "EVO8",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/evo8/mesh/evo8_decal_fandf_vs1.d8m",
+        "sha256": "a5a614375d7683eed8eeb2caaf1f3a19e3c1a047073136684d8ac17d09063b5c"
+      },
+      {
+        "ui": true,
+        "path": "cars/evo8_ui/mesh/evo8_decal_fandf_vs1.d8m",
+        "sha256": "37ba70fdd30f1a1fc220cd9eee2d675bb8f1fba6e355e438e2ee7ed52c252a9b"
+      }
+    ]
+  },
+  {
+    "car": "FALCON",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/falcon/mesh/falcon_decal_fandf_vs1.d8m",
+        "sha256": "b0da6e80ac12665bcb7e10beaac9312c09ff2074f84082931c4c06c8d60be8d5"
+      },
+      {
+        "ui": true,
+        "path": "cars/falcon_ui/mesh/falcon_decal_fandf_vs1.d8m",
+        "sha256": "2a510a647012730daa31ae568645efbafa1962393cf4b5dd43cc16192896d460"
+      }
+    ]
+  },
+  {
+    "car": "FERRARI_458",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": true,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/ferrari_458/mesh/f458_decal_fandf_vs1.d8m",
+        "sha256": "9cfdf2425a252155aa1acabca32ffd35480d70c4bb0abd555e45341a38027620"
+      },
+      {
+        "ui": true,
+        "path": "cars/ferrari_458_ui/mesh/f458_decal_fandf_vs1.d8m",
+        "sha256": "9cfdf2425a252155aa1acabca32ffd35480d70c4bb0abd555e45341a38027620"
+      }
+    ]
+  },
+  {
+    "car": "FTO",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/fto/mesh/fto_decal_fandf_vs1.d8m",
+        "sha256": "73cf26430e1602bfbbe09539e26c2291d6b930df822517f0a886eda85c5892e5"
+      },
+      {
+        "ui": true,
+        "path": "cars/fto_ui/mesh/fto_decal_fandf_vs1.d8m",
+        "sha256": "6671ae97ad5276a66944f6210aaae119bf94cf0f35b1056ba69c167a91160604"
+      }
+    ]
+  },
+  {
+    "car": "GOLF",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/golf/mesh/golf_decal_fandf_vs1.d8m",
+        "sha256": "c63a85bd4e11220a4f02b7175ec3c7c284a7a24e670e1f2e41ec7d3bea90f279"
+      },
+      {
+        "ui": true,
+        "path": "cars/golf_ui/mesh/golf_decal_fandf_vs1.d8m",
+        "sha256": "0d921f0f5f6ce05bcf6b7568f9854c5a191a298c9661abb9975c8984d6bd3b43"
+      }
+    ]
+  },
+  {
+    "car": "GOLF_MK5_R32",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": true,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/golf_mk5_r32/mesh/w259_decal_fandf_vs1.d8m",
+        "sha256": "f29983f49a123d8ed4b1c16b2e6793c33b12ee33530977fd101fc4f3657b6f21"
+      },
+      {
+        "ui": true,
+        "path": "cars/golf_mk5_r32_ui/mesh/w259_decal_fandf_vs1.d8m",
+        "sha256": "f29983f49a123d8ed4b1c16b2e6793c33b12ee33530977fd101fc4f3657b6f21"
+      }
+    ]
+  },
+  {
+    "car": "GTR",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/gtr/mesh/gtr_decal_fandf_vs1.d8m",
+        "sha256": "04153a872827369ce3edf58f81683afd72d5d1f165ab78e832bd2afd12732066"
+      },
+      {
+        "ui": true,
+        "path": "cars/gtr_ui/mesh/gtr_decal_fandf_vs1.d8m",
+        "sha256": "c065c73a3769b4d9cc7fa02fb5c6c6e474b0f12b73a98dace4697ea1da1b3f83"
+      }
+    ]
+  },
+  {
+    "car": "IMP",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/imp/mesh/imp_decal_fandf_vs1.d8m",
+        "sha256": "0f73870bedcd9f26f817d301e373332eeb256bb5547c8f048878bd2176738012"
+      },
+      {
+        "ui": true,
+        "path": "cars/imp_ui/mesh/imp_decal_fandf_vs1.d8m",
+        "sha256": "689340ebd7e8303dbccf4ddcab336ac3f454c1e7ed12cce150c8bcd025ec8705"
+      }
+    ]
+  },
+  {
+    "car": "INTEGRA",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/integra/mesh/integra_decal_fandf_vs1.d8m",
+        "sha256": "29383a829702cd90d241dd5f3ef23703ce819bcc8c07c74139077b3e8f9a95e7"
+      },
+      {
+        "ui": true,
+        "path": "cars/integra_ui/mesh/integra_decal_fandf_vs1.d8m",
+        "sha256": "e8f986384df0890bca90a8f17e3ceb6ed057243eaaf99687ad5f5b7e2c34a08a"
+      }
+    ]
+  },
+  {
+    "car": "INTEGRA2",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/integra2/mesh/integra2_decal_fandf_vs1.d8m",
+        "sha256": "785f0550ae040d8cac4e1e3f166623057dfaf289d5535d07fe56328829ab515a"
+      },
+      {
+        "ui": true,
+        "path": "cars/integra2_ui/mesh/integra2_decal_fandf_vs1.d8m",
+        "sha256": "9745b143157536da50840a9ad2ea33071314ab5b4b6e8e7d4a4439448348b6b2"
+      }
+    ]
+  },
+  {
+    "car": "INTEGRA_DB8",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": true,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/integra_db8/mesh/db8_decal_fandf_vs1.d8m",
+        "sha256": "950e1cf34bd8442b3c9f828da0bd2e1cd4193b9d57dacf587d5bd64741830d93"
+      },
+      {
+        "ui": true,
+        "path": "cars/integra_db8_ui/mesh/db8_decal_fandf_vs1.d8m",
+        "sha256": "950e1cf34bd8442b3c9f828da0bd2e1cd4193b9d57dacf587d5bd64741830d93"
+      }
+    ]
+  },
+  {
+    "car": "JETTA_MK5_FSI",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": true,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/jetta_mk5_fsi/mesh/w260_decal_fandf_vs1.d8m",
+        "sha256": "ed57679307e955d55e412223781cb115034fe62b8a4266592646b274d8df2ca8"
+      },
+      {
+        "ui": true,
+        "path": "cars/jetta_mk5_fsi_ui/mesh/w260_decal_fandf_vs1.d8m",
+        "sha256": "ed57679307e955d55e412223781cb115034fe62b8a4266592646b274d8df2ca8"
+      }
+    ]
+  },
+  {
+    "car": "LEVIN_AE92",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": true,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/levin_ae92/mesh/ae92_decal_fandf_vs1.d8m",
+        "sha256": "cbcad980061e68a52a2bc5e85f3954078a6535de8752f7499021201f30ba07c7"
+      },
+      {
+        "ui": true,
+        "path": "cars/levin_ae92_ui/mesh/ae92_decal_fandf_vs1.d8m",
+        "sha256": "cbcad980061e68a52a2bc5e85f3954078a6535de8752f7499021201f30ba07c7"
+      }
+    ]
+  },
+  {
+    "car": "MONARO",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/monaro/mesh/monaro_decal_fandf_vs1.d8m",
+        "sha256": "a179a82c1df6fd4e664226b727e5f7beccc315a1d305e55d464dd7900a5036f2"
+      },
+      {
+        "ui": true,
+        "path": "cars/monaro_ui/mesh/monaro_decal_fandf_vs1.d8m",
+        "sha256": "bcc714aaf18db00ba6c19b335a3e99a1509f8ec2e45ee1b94d6fd016153fae0b"
+      }
+    ]
+  },
+  {
+    "car": "MR2",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/mr2/mesh/mr2_decal_fandf_vs1.d8m",
+        "sha256": "81d70293a8b8903161a6b40500811a31f359ab7e5a1ff8912f3e9a42fdd85c54"
+      },
+      {
+        "ui": true,
+        "path": "cars/mr2_ui/mesh/mr2_decal_fandf_vs1.d8m",
+        "sha256": "0790359b5724d99a8538f12f8761e57253fa8ce05d5281ca97edf455cdf95b2e"
+      }
+    ]
+  },
+  {
+    "car": "MUSTANG2",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/mustang2/mesh/mustang2_decal_fandf_vs1.d8m",
+        "sha256": "ef5476c8c6017b61736823d166c41f2558baca41463b8dd8bbdabf98dbd54e82"
+      },
+      {
+        "ui": true,
+        "path": "cars/mustang2_ui/mesh/mustang2_decal_fandf_vs1.d8m",
+        "sha256": "17a6386b070904061910503ecf08652deea7778d7290969866f89b621e634d51"
+      }
+    ]
+  },
+  {
+    "car": "MUSTANG68",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/mustang68/mesh/mustang68_decal_fandf_vs1.d8m",
+        "sha256": "404c31e0e34bf74c9d3569ac74f64e1acd9c17c5ff011acac22dd0a33283074a"
+      },
+      {
+        "ui": true,
+        "path": "cars/mustang68_ui/mesh/mustang68_decal_fandf_vs1.d8m",
+        "sha256": "cf2c96af42439f7c0dc9bbc2cd4348d4ca0c102ad436dba5fa7c6a2ce602643d"
+      }
+    ]
+  },
+  {
+    "car": "MX5",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/mx5/mesh/mx5_decal_fandf_vs1.d8m",
+        "sha256": "ec73c65b0a4f6c45744ef9033b20c99a4e85351123ee2c1a8203ede7f03a4956"
+      },
+      {
+        "ui": true,
+        "path": "cars/mx5_ui/mesh/mx5_decal_fandf_vs1.d8m",
+        "sha256": "a858c344883b6b9fbafb843b11169d993400bdeaf028e3dda1607d13e5408d15"
+      }
+    ]
+  },
+  {
+    "car": "NEON",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/neon/mesh/neon_decal_fandf_vs1.d8m",
+        "sha256": "ab3b71c8070ba6b9a25d54973576db1206cce08c135183077e7a8f767812503b"
+      },
+      {
+        "ui": true,
+        "path": "cars/neon_ui/mesh/neon_decal_fandf_vs1.d8m",
+        "sha256": "d813b56cd7f66cb21cc065b1762a789c58fb139635eea1544442d73306d708bb"
+      }
+    ]
+  },
+  {
+    "car": "NSX",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/nsx/mesh/nsx_decal_fandf_vs1.d8m",
+        "sha256": "28a43b49484870b847f2d186fca2957df1fed238dde157c8e560dc9f1f3d402d"
+      },
+      {
+        "ui": true,
+        "path": "cars/nsx_ui/mesh/nsx_decal_fandf_vs1.d8m",
+        "sha256": "c6d23a7768b4ae455bb5d6b9299d52071cdb6b30ec51f1f774813333763cb286"
+      }
+    ]
+  },
+  {
+    "car": "OUTBACK_2002",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": true,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/outback_2002/mesh/w261_decal_fandf_vs1.d8m",
+        "sha256": "fd580de3dc660124647604c07080f6c116424f9a02c11ff5e05eb45e805ead75"
+      },
+      {
+        "ui": true,
+        "path": "cars/outback_2002_ui/mesh/w261_decal_fandf_vs1.d8m",
+        "sha256": "fd580de3dc660124647604c07080f6c116424f9a02c11ff5e05eb45e805ead75"
+      }
+    ]
+  },
+  {
+    "car": "PEUGEOT_206",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/peugeot_206/mesh/peugeot_206_decal_fandf_vs1.d8m",
+        "sha256": "e16f92dad2eefd9e306fb952c13be6d4fb44f1427cca224f5a2183f3e85a222b"
+      },
+      {
+        "ui": true,
+        "path": "cars/peugeot_206_ui/mesh/peugeot_206_decal_fandf_vs1.d8m",
+        "sha256": "bfe1204e579e46fd1a6b5da67df6a86b841aba26fa96c9a1d85b8deb7e69d469"
+      }
+    ]
+  },
+  {
+    "car": "PEUGEOT_405_GLX",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": true,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/peugeot_405_glx/mesh/w257_decal_fandf_vs1.d8m",
+        "sha256": "c689a18f967960cf6304740c75aff88f6c3110a2f5aae4bfb4c44d8013982735"
+      },
+      {
+        "ui": true,
+        "path": "cars/peugeot_405_glx_ui/mesh/w257_decal_fandf_vs1.d8m",
+        "sha256": "c689a18f967960cf6304740c75aff88f6c3110a2f5aae4bfb4c44d8013982735"
+      }
+    ]
+  },
+  {
+    "car": "PEUGEOT_406_COUPE",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": true,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/peugeot_406_coupe/mesh/w258_decal_fandf_vs1.d8m",
+        "sha256": "8c9b9e0a0bb759a28f0c75f362350ec70476427ae96ef6a8a1c4ecd9738510eb"
+      },
+      {
+        "ui": true,
+        "path": "cars/peugeot_406_coupe_ui/mesh/w258_decal_fandf_vs1.d8m",
+        "sha256": "8c9b9e0a0bb759a28f0c75f362350ec70476427ae96ef6a8a1c4ecd9738510eb"
+      }
+    ]
+  },
+  {
+    "car": "PUNTO",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/punto/mesh/punto_decal_fandf_vs1.d8m",
+        "sha256": "f50c9fd83c00bd8573353459a0b9fd14ebe2b61107482c4dd2d648d78d0dcc6a"
+      },
+      {
+        "ui": true,
+        "path": "cars/punto_ui/mesh/punto_decal_fandf_vs1.d8m",
+        "sha256": "347e9ba7976e805806de22702956e203f89ac9fd18b267950655c0225790531f"
+      }
+    ]
+  },
+  {
+    "car": "RSX",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/rsx/mesh/rsx_decal_fandf_vs1.d8m",
+        "sha256": "785f0550ae040d8cac4e1e3f166623057dfaf289d5535d07fe56328829ab515a"
+      },
+      {
+        "ui": true,
+        "path": "cars/rsx_ui/mesh/rsx_decal_fandf_vs1.d8m",
+        "sha256": "9745b143157536da50840a9ad2ea33071314ab5b4b6e8e7d4a4439448348b6b2"
+      }
+    ]
+  },
+  {
+    "car": "RX7",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/rx7/mesh/rx7_decal_fandf_vs1.d8m",
+        "sha256": "dd7bcb3b33dfd6dd2a5b7bb92da7ebff0a649fee9f3d0d6a218d9c5142bc8ee5"
+      },
+      {
+        "ui": true,
+        "path": "cars/rx7_ui/mesh/rx7_decal_fandf_vs1.d8m",
+        "sha256": "63d7d324dfa416a8f64a4f323c61f20a3934636f42969f6cde96f3dc3a7795b9"
+      }
+    ]
+  },
+  {
+    "car": "RX8",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/rx8/mesh/rx8_decal_fandf_vs1.d8m",
+        "sha256": "191cda18c89a93ecd1f338cbc90dddc4c651eda3d54ea4c5639161c467e8cb96"
+      },
+      {
+        "ui": true,
+        "path": "cars/rx8_ui/mesh/rx8_decal_fandf_vs1.d8m",
+        "sha256": "c2128c3075b660b4d39439fa552363bbee735bb5719bb08c84cb94d64d07a254"
+      }
+    ]
+  },
+  {
+    "car": "S2000",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/s2000/mesh/s2000_decal_fandf_vs1.d8m",
+        "sha256": "0fa43f960904044e0d13e96b4a9b50aaeec3379a30fcdcdbd518334fd8ce6f63"
+      },
+      {
+        "ui": true,
+        "path": "cars/s2000_ui/mesh/s2000_decal_fandf_vs1.d8m",
+        "sha256": "0466dac5250284977e0700ec5dead7b1e6ab36d61c3ac9ba546d19185d7397fe"
+      }
+    ]
+  },
+  {
+    "car": "SUPRA",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/supra/mesh/supra_decal_fandf_vs1.d8m",
+        "sha256": "1d2db50acdb506ca4e26f6b11309d1254980d6171a3ee775c546571eada7f11a"
+      },
+      {
+        "ui": true,
+        "path": "cars/supra_ui/mesh/supra_decal_fandf_vs1.d8m",
+        "sha256": "e09f0f362e81cd04ef39c28b1415718d4361055598d2bc97d15e09df80dbb9f2"
+      }
+    ]
+  },
+  {
+    "car": "TRANS",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/trans/mesh/trans_decal_fandf_vs1.d8m",
+        "sha256": "5b6e82cd66315e3bba21a00cdf0e22ae49c5e914ae6e7a9eb4200395b66e1950"
+      },
+      {
+        "ui": true,
+        "path": "cars/trans_ui/mesh/trans_decal_fandf_vs1.d8m",
+        "sha256": "93328bad59a5b13370068480376e1e51220a1f308b0c2cc10d3fbcd7051c1a42"
+      }
+    ]
+  },
+  {
+    "car": "VOLVO_240_TURBO",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": true,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/volvo_240_turbo/mesh/w262_decal_fandf_vs1.d8m",
+        "sha256": "113505e5b9e0e067d4d5ac554ef39f1d99ccd09b7fce8deee71e81c300264449"
+      },
+      {
+        "ui": true,
+        "path": "cars/volvo_240_turbo_ui/mesh/w262_decal_fandf_vs1.d8m",
+        "sha256": "113505e5b9e0e067d4d5ac554ef39f1d99ccd09b7fce8deee71e81c300264449"
+      }
+    ]
+  },
+  {
+    "car": "VOLVO_V70_24",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": true,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/volvo_v70_24/mesh/w263_decal_fandf_vs1.d8m",
+        "sha256": "32bd6fb004d67bab39005b36c1cacbf93e2b6e48e23cc578ee3100a90f50dd29"
+      },
+      {
+        "ui": true,
+        "path": "cars/volvo_v70_24_ui/mesh/w263_decal_fandf_vs1.d8m",
+        "sha256": "32bd6fb004d67bab39005b36c1cacbf93e2b6e48e23cc578ee3100a90f50dd29"
+      }
+    ]
+  },
+  {
+    "car": "VW_CORRADO",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/vw_corrado/mesh/vw_corrado_decal_fandf_vs1.d8m",
+        "sha256": "05d9db28bbd74141aa24c25b2086bd24a5d77cf507bf2bf75157ee20ad4e5f66"
+      },
+      {
+        "ui": true,
+        "path": "cars/vw_corrado_ui/mesh/vw_corrado_decal_fandf_vs1.d8m",
+        "sha256": "401e4ff0aee02fc95be45aff4118bb27239a501b2d8c62ec43f2955375188c30"
+      }
+    ]
+  },
+  {
+    "car": "WRX2",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/wrx2/mesh/wrx2_decal_fandf_vs1.d8m",
+        "sha256": "9cd85f3a48efb7815b2fdf8e49150882e7da6e051a960106bf29a8ffee163dfc"
+      },
+      {
+        "ui": true,
+        "path": "cars/wrx2_ui/mesh/wrx2_decal_fandf_vs1.d8m",
+        "sha256": "01a5e348adc21063c285ed19860ddda8fd866897058516790db1e4ceb2a21b9f"
+      }
+    ]
+  },
+  {
+    "car": "camaro70",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/camaro70/mesh/camaro70_decal_fandf_vs1.d8m",
+        "sha256": "95e868409a0d3c792d5746aa3775280738595d6f0c3f21aabc2a4180811fab33"
+      },
+      {
+        "ui": true,
+        "path": "cars/camaro70_ui/mesh/camaro70_decal_fandf_vs1.d8m",
+        "sha256": "289e803faaf22153aea0f6866d0bf158b671d4f5ff4b42c86ba113adc097b18e"
+      }
+    ]
+  },
+  {
+    "car": "civicR",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/civicr/mesh/civicr_decal_fandf_vs1.d8m",
+        "sha256": "62e10b089e447ffc474b419c839a7e1b7b1f4793ad48d92c3a622ae45ef16a8a"
+      },
+      {
+        "ui": true,
+        "path": "cars/civicr_ui/mesh/civicr_decal_fandf_vs1.d8m",
+        "sha256": "74d50e4d6e1f97878ae871dcab172bbe0a3e5e90cd7b890a655461fcc0517a04"
+      }
+    ]
+  },
+  {
+    "car": "dodge_srt",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/dodge_srt/mesh/dodge_srt_decal_fandf_vs1.d8m",
+        "sha256": "cdee77aa418d11bb472f27f67d0d53c68152bae4ec5b7a275185ac02478eb554"
+      },
+      {
+        "ui": true,
+        "path": "cars/dodge_srt_ui/mesh/dodge_srt_decal_fandf_vs1.d8m",
+        "sha256": "0ad55dddc82005f70d6debd9dac34f59e329bab4f943b511745b5101ddc98304"
+      }
+    ]
+  },
+  {
+    "car": "focus",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/focus/mesh/focus_decal_fandf_vs1.d8m",
+        "sha256": "a7de0eb4ac9c485a24c29270792ec260d388006186359f9d5c9e53a23a48ed87"
+      },
+      {
+        "ui": true,
+        "path": "cars/focus_ui/mesh/focus_decal_fandf_vs1.d8m",
+        "sha256": "ea6bffcd2df123c55f867d24dd4efd28f72f95e6d794d240abd2067af0af4946"
+      }
+    ]
+  },
+  {
+    "car": "focus_2",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/focus_2/mesh/focus_2_decal_fandf_vs1.d8m",
+        "sha256": "d5da2b37afda4f8fcb148efc81341f8ad8fc5de92b8f53c89b5ea7cd72936e56"
+      },
+      {
+        "ui": true,
+        "path": "cars/focus_2_ui/mesh/focus_2_decal_fandf_vs1.d8m",
+        "sha256": "e10e104805be3eb02a63453a2aea88fedca8059722dbf8db11b43b25661aeaab"
+      }
+    ]
+  },
+  {
+    "car": "mrs",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/mrs/mesh/mrs_decal_fandf_vs1.d8m",
+        "sha256": "e59c9e400295a7d36ed7643b8ac8ae5cec1f6acbd4ea87f20f77a029d1a7ba4e"
+      },
+      {
+        "ui": true,
+        "path": "cars/mrs_ui/mesh/mrs_decal_fandf_vs1.d8m",
+        "sha256": "2112892065bea1df71b7224b2c8231b9ebcdb88944f6a83a11dd40db4bfb0a4d"
+      }
+    ]
+  },
+  {
+    "car": "prelude",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/prelude/mesh/prelude_decal_fandf_vs1.d8m",
+        "sha256": "bfe3d0efad30658dccca9d10131f0e1385caa9f56172f01c1a2b18d700ee5676"
+      },
+      {
+        "ui": true,
+        "path": "cars/prelude_ui/mesh/prelude_decal_fandf_vs1.d8m",
+        "sha256": "0a9a0ba09c9e4e51c43bd4647820df5ffa8282a4b0834b787500ae2207347d3f"
+      }
+    ]
+  },
+  {
+    "car": "vette_2",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/vette_2/mesh/vette_2_decal_fandf_vs1.d8m",
+        "sha256": "0e6492071c2afa2ac686fa3ae030854821eaa648123fbcacdf0fa90bb2cef431"
+      },
+      {
+        "ui": true,
+        "path": "cars/vette_2_ui/mesh/vette_2_decal_fandf_vs1.d8m",
+        "sha256": "4bdb4aa9df4dd7d10cfd9e820f4c3785894c3c94d876e26c5c8da87ebb55a294"
+      }
+    ]
+  },
+  {
+    "car": "vette_zo6",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/vette_zo6/mesh/vette_zo6_decal_fandf_vs1.d8m",
+        "sha256": "f95efb996b4a671ade8a2193b0fc4ba975dfaebeb2accd48f376b7e72b5697e9"
+      },
+      {
+        "ui": true,
+        "path": "cars/vette_zo6_ui/mesh/vette_zo6_decal_fandf_vs1.d8m",
+        "sha256": "93c50d82c4843cb5dad875b96e2c1ba39b5efad8c3606986b678493a604016b7"
+      }
+    ]
+  },
+  {
+    "car": "viper",
+    "mesh": "DECAL_NFS_AI_RACHEL",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Rachel Night Dragon",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/viper/mesh/viper_decal_fandf_vs1.d8m",
+        "sha256": "da13190a48f086a795f5ac595b9fe065440cb8667486ae9a4d3e29418fc87b1c"
+      },
+      {
+        "ui": true,
+        "path": "cars/viper_ui/mesh/viper_decal_fandf_vs1.d8m",
+        "sha256": "52465894292cd87acce43b0592c0395811ecd7da2cb043ad2f50e4abcdafc196"
+      }
+    ]
+  },
+  {
+    "car": "3000GT",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/3000gt/mesh/3000gt_decal_fandf_vs1.d8m",
+        "sha256": "ee8f00d944f0f86d7034b03dd8d619320e1876e5a65bf62dde1ffbe0c9c5a4af"
+      },
+      {
+        "ui": true,
+        "path": "cars/3000gt_ui/mesh/3000gt_decal_fandf_vs1.d8m",
+        "sha256": "5a299c7e22fca5feb85152ef506d57506042a0ab941f0602b7330d1524a6e2be"
+      }
+    ]
+  },
+  {
+    "car": "300ZX",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/300zx/mesh/300zx_decal_fandf_vs1.d8m",
+        "sha256": "f1ae14f620f176982adff44a2c9cef86d6f7eb9d242a59bd597a9f9e549f11f2"
+      },
+      {
+        "ui": true,
+        "path": "cars/300zx_ui/mesh/300zx_decal_fandf_vs1.d8m",
+        "sha256": "2a09299a844c4243ad62e095f8bc2a756c62f311af544a9db96c04b72ad392ef"
+      }
+    ]
+  },
+  {
+    "car": "350Z",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/350z/mesh/350z_decal_fandf_vs1.d8m",
+        "sha256": "8984e4695273290e7a47a13c4bedfff6e3b54778e970f3127f16054fa48ffacb"
+      },
+      {
+        "ui": true,
+        "path": "cars/350z_ui/mesh/350z_decal_fandf_vs1.d8m",
+        "sha256": "ac308e0ac5ef58872140eba6c08591df682b09e84ca21301e79c5b404e0a8e2c"
+      }
+    ]
+  },
+  {
+    "car": "AC_INTEGRA",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/ac_integra/mesh/ac_integra_decal_fandf_vs1.d8m",
+        "sha256": "29383a829702cd90d241dd5f3ef23703ce819bcc8c07c74139077b3e8f9a95e7"
+      },
+      {
+        "ui": true,
+        "path": "cars/ac_integra_ui/mesh/ac_integra_decal_fandf_vs1.d8m",
+        "sha256": "e8f986384df0890bca90a8f17e3ceb6ed057243eaaf99687ad5f5b7e2c34a08a"
+      }
+    ]
+  },
+  {
+    "car": "AC_NSX",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/ac_nsx/mesh/ac_nsx_decal_fandf_vs1.d8m",
+        "sha256": "28a43b49484870b847f2d186fca2957df1fed238dde157c8e560dc9f1f3d402d"
+      },
+      {
+        "ui": true,
+        "path": "cars/ac_nsx_ui/mesh/ac_nsx_decal_fandf_vs1.d8m",
+        "sha256": "c6d23a7768b4ae455bb5d6b9299d52071cdb6b30ec51f1f774813333763cb286"
+      }
+    ]
+  },
+  {
+    "car": "BEETLE",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/beetle/mesh/beetle_decal_fandf_vs1.d8m",
+        "sha256": "a8bc211003e340ce15ea2b687a00fbea823c9bc14cb4814d6a6ad3dbd7ba0b6c"
+      },
+      {
+        "ui": true,
+        "path": "cars/beetle_ui/mesh/beetle_decal_fandf_vs1.d8m",
+        "sha256": "fd06187be2f66404aaafdb56aeec1854095e05cc3e10b4225f498609d2b54ed2"
+      }
+    ]
+  },
+  {
+    "car": "BMW_E36",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": true,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/bmw_e36/mesh/e36_decal_fandf_vs1.d8m",
+        "sha256": "1edf27f88672672c2189465cf8962eed82075993dca712a76eccc1e417c5cef4"
+      },
+      {
+        "ui": true,
+        "path": "cars/bmw_e36_ui/mesh/e36_decal_fandf_vs1.d8m",
+        "sha256": "1edf27f88672672c2189465cf8962eed82075993dca712a76eccc1e417c5cef4"
+      }
+    ]
+  },
+  {
+    "car": "CAMARO",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/camaro/mesh/camaro_decal_fandf_vs1.d8m",
+        "sha256": "9ab2c650cfa4dcdba565348ed2769944b5d44398091591df5aff3aec82cd8472"
+      },
+      {
+        "ui": true,
+        "path": "cars/camaro_ui/mesh/camaro_decal_fandf_vs1.d8m",
+        "sha256": "9aa506c68912d1858a0e8c6fb1094a76e23d97ce6b79cfca40ef46ec03f59d87"
+      }
+    ]
+  },
+  {
+    "car": "CELICA",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/celica/mesh/celica_decal_fandf_vs1.d8m",
+        "sha256": "afdc9e12321d5e732fc61cbe138cf4701e6789bfaf073f1f9167566416d1b2b3"
+      },
+      {
+        "ui": true,
+        "path": "cars/celica_ui/mesh/celica_decal_fandf_vs1.d8m",
+        "sha256": "5d6431fbb867a7503a39050421a2d40342d56646095680d173b04af78df63b6c"
+      }
+    ]
+  },
+  {
+    "car": "CELICA_2",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/celica_2/mesh/celica_2_decal_fandf_vs1.d8m",
+        "sha256": "3edd2309ceb6880ffecdb79aa06fce07e23b62f3e53c31f304dc5791ee666af2"
+      },
+      {
+        "ui": true,
+        "path": "cars/celica_2_ui/mesh/celica_2_decal_fandf_vs1.d8m",
+        "sha256": "b93da2d610430e00d7981f9b00789991782bc9cbb88c63d75c9d8841c244fe39"
+      }
+    ]
+  },
+  {
+    "car": "CIVIC_97",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/civic_97/mesh/civic_97_decal_fandf_vs1.d8m",
+        "sha256": "3a28204eaa8618c980591cd361eb975595e577a9eecc6d7f8d8bd6fd1d802eb3"
+      },
+      {
+        "ui": true,
+        "path": "cars/civic_97_ui/mesh/civic_97_decal_fandf_vs1.d8m",
+        "sha256": "03caed4ea435ae976f378d3ae599847d1fadfd7d02823627909e21d31bd5e365"
+      }
+    ]
+  },
+  {
+    "car": "CLIO",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/clio/mesh/clio_decal_fandf_vs1.d8m",
+        "sha256": "a90d4abeeda4c03f49a9b691e0b0a5648d7b6071b772e1f4f146d6cb9615530e"
+      },
+      {
+        "ui": true,
+        "path": "cars/clio_ui/mesh/clio_decal_fandf_vs1.d8m",
+        "sha256": "dad6489d8303e3830c86f8831dda986a9f8a372cde29d6e49f355f44906af580"
+      }
+    ]
+  },
+  {
+    "car": "COROLLA",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/corolla/mesh/corolla_decal_fandf_vs1.d8m",
+        "sha256": "f04bc1260720ed2a29f8678dbdbd3f940b46c1eadf4cfe599cb168039c2f7278"
+      },
+      {
+        "ui": true,
+        "path": "cars/corolla_ui/mesh/corolla_decal_fandf_vs1.d8m",
+        "sha256": "a5f21eef673835aa37a2b2a18dacd950f263cd44cb26295995e332020d27d724"
+      }
+    ]
+  },
+  {
+    "car": "CORSA",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/corsa/mesh/corsa_decal_fandf_vs1.d8m",
+        "sha256": "f67924a0e610c0e00c515aca3b7ca710e883854ad16fddb9203832333a3d9d28"
+      },
+      {
+        "ui": true,
+        "path": "cars/corsa_ui/mesh/corsa_decal_fandf_vs1.d8m",
+        "sha256": "580574905979a78823394b75b27a9de0fdbb2a077a5a61c1b2c132b03ec0070f"
+      }
+    ]
+  },
+  {
+    "car": "CRX",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/crx/mesh/crx_decal_fandf_vs1.d8m",
+        "sha256": "c0212ccd4786b96dd0824a37046d2fa1fd3a805bb19dc31edc0261b6d6797226"
+      },
+      {
+        "ui": true,
+        "path": "cars/crx_ui/mesh/crx_decal_fandf_vs1.d8m",
+        "sha256": "6dbb31d9f0ceb392bd7b58eebe89c3ec5322c3fb610355580c6e563fe5d33d9a"
+      }
+    ]
+  },
+  {
+    "car": "Charger",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/charger/mesh/charger_decal_fandf_vs1.d8m",
+        "sha256": "2e06392bcfae14cad8f0954c90f07737847ff9395ec7e798cbbb8114ce65c941"
+      },
+      {
+        "ui": true,
+        "path": "cars/charger_ui/mesh/charger_decal_fandf_vs1.d8m",
+        "sha256": "619e6f53da1c99134c1ad8d245688e12c5555cfb02c88408a32f7d58bf68a1e8"
+      }
+    ]
+  },
+  {
+    "car": "ECLIPSE",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/eclipse/mesh/eclipse_decal_fandf_vs1.d8m",
+        "sha256": "58b0366242ebaf9431ab20cbfcc9fff09d4a200862cb66b89d15bf7341a283cc"
+      },
+      {
+        "ui": true,
+        "path": "cars/eclipse_ui/mesh/eclipse_decal_fandf_vs1.d8m",
+        "sha256": "01d3f99c5351be55fac3f396948d122d7517a3d4fcdb33a965bf560e120a1cea"
+      }
+    ]
+  },
+  {
+    "car": "EVO6",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/evo6/mesh/evo6_decal_fandf_vs1.d8m",
+        "sha256": "0babba464db06160c2153148b2c5941c0180cc429b404246f0452800cff897d4"
+      },
+      {
+        "ui": true,
+        "path": "cars/evo6_ui/mesh/evo6_decal_fandf_vs1.d8m",
+        "sha256": "d97bdcfa43005d1072426a1af4012b2c014723581a96e4d846e132241676956b"
+      }
+    ]
+  },
+  {
+    "car": "EVO8",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/evo8/mesh/evo8_decal_fandf_vs1.d8m",
+        "sha256": "a5a614375d7683eed8eeb2caaf1f3a19e3c1a047073136684d8ac17d09063b5c"
+      },
+      {
+        "ui": true,
+        "path": "cars/evo8_ui/mesh/evo8_decal_fandf_vs1.d8m",
+        "sha256": "37ba70fdd30f1a1fc220cd9eee2d675bb8f1fba6e355e438e2ee7ed52c252a9b"
+      }
+    ]
+  },
+  {
+    "car": "FALCON",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/falcon/mesh/falcon_decal_fandf_vs1.d8m",
+        "sha256": "b0da6e80ac12665bcb7e10beaac9312c09ff2074f84082931c4c06c8d60be8d5"
+      },
+      {
+        "ui": true,
+        "path": "cars/falcon_ui/mesh/falcon_decal_fandf_vs1.d8m",
+        "sha256": "2a510a647012730daa31ae568645efbafa1962393cf4b5dd43cc16192896d460"
+      }
+    ]
+  },
+  {
+    "car": "FERRARI_458",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": true,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/ferrari_458/mesh/f458_decal_fandf_vs1.d8m",
+        "sha256": "9cfdf2425a252155aa1acabca32ffd35480d70c4bb0abd555e45341a38027620"
+      },
+      {
+        "ui": true,
+        "path": "cars/ferrari_458_ui/mesh/f458_decal_fandf_vs1.d8m",
+        "sha256": "9cfdf2425a252155aa1acabca32ffd35480d70c4bb0abd555e45341a38027620"
+      }
+    ]
+  },
+  {
+    "car": "FTO",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/fto/mesh/fto_decal_fandf_vs1.d8m",
+        "sha256": "73cf26430e1602bfbbe09539e26c2291d6b930df822517f0a886eda85c5892e5"
+      },
+      {
+        "ui": true,
+        "path": "cars/fto_ui/mesh/fto_decal_fandf_vs1.d8m",
+        "sha256": "6671ae97ad5276a66944f6210aaae119bf94cf0f35b1056ba69c167a91160604"
+      }
+    ]
+  },
+  {
+    "car": "GOLF",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/golf/mesh/golf_decal_fandf_vs1.d8m",
+        "sha256": "c63a85bd4e11220a4f02b7175ec3c7c284a7a24e670e1f2e41ec7d3bea90f279"
+      },
+      {
+        "ui": true,
+        "path": "cars/golf_ui/mesh/golf_decal_fandf_vs1.d8m",
+        "sha256": "0d921f0f5f6ce05bcf6b7568f9854c5a191a298c9661abb9975c8984d6bd3b43"
+      }
+    ]
+  },
+  {
+    "car": "GOLF_MK5_R32",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": true,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/golf_mk5_r32/mesh/w259_decal_fandf_vs1.d8m",
+        "sha256": "f29983f49a123d8ed4b1c16b2e6793c33b12ee33530977fd101fc4f3657b6f21"
+      },
+      {
+        "ui": true,
+        "path": "cars/golf_mk5_r32_ui/mesh/w259_decal_fandf_vs1.d8m",
+        "sha256": "f29983f49a123d8ed4b1c16b2e6793c33b12ee33530977fd101fc4f3657b6f21"
+      }
+    ]
+  },
+  {
+    "car": "GTR",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/gtr/mesh/gtr_decal_fandf_vs1.d8m",
+        "sha256": "04153a872827369ce3edf58f81683afd72d5d1f165ab78e832bd2afd12732066"
+      },
+      {
+        "ui": true,
+        "path": "cars/gtr_ui/mesh/gtr_decal_fandf_vs1.d8m",
+        "sha256": "c065c73a3769b4d9cc7fa02fb5c6c6e474b0f12b73a98dace4697ea1da1b3f83"
+      }
+    ]
+  },
+  {
+    "car": "IMP",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/imp/mesh/imp_decal_fandf_vs1.d8m",
+        "sha256": "0f73870bedcd9f26f817d301e373332eeb256bb5547c8f048878bd2176738012"
+      },
+      {
+        "ui": true,
+        "path": "cars/imp_ui/mesh/imp_decal_fandf_vs1.d8m",
+        "sha256": "689340ebd7e8303dbccf4ddcab336ac3f454c1e7ed12cce150c8bcd025ec8705"
+      }
+    ]
+  },
+  {
+    "car": "INTEGRA",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/integra/mesh/integra_decal_fandf_vs1.d8m",
+        "sha256": "29383a829702cd90d241dd5f3ef23703ce819bcc8c07c74139077b3e8f9a95e7"
+      },
+      {
+        "ui": true,
+        "path": "cars/integra_ui/mesh/integra_decal_fandf_vs1.d8m",
+        "sha256": "e8f986384df0890bca90a8f17e3ceb6ed057243eaaf99687ad5f5b7e2c34a08a"
+      }
+    ]
+  },
+  {
+    "car": "INTEGRA2",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/integra2/mesh/integra2_decal_fandf_vs1.d8m",
+        "sha256": "785f0550ae040d8cac4e1e3f166623057dfaf289d5535d07fe56328829ab515a"
+      },
+      {
+        "ui": true,
+        "path": "cars/integra2_ui/mesh/integra2_decal_fandf_vs1.d8m",
+        "sha256": "9745b143157536da50840a9ad2ea33071314ab5b4b6e8e7d4a4439448348b6b2"
+      }
+    ]
+  },
+  {
+    "car": "INTEGRA_DB8",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": true,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/integra_db8/mesh/db8_decal_fandf_vs1.d8m",
+        "sha256": "950e1cf34bd8442b3c9f828da0bd2e1cd4193b9d57dacf587d5bd64741830d93"
+      },
+      {
+        "ui": true,
+        "path": "cars/integra_db8_ui/mesh/db8_decal_fandf_vs1.d8m",
+        "sha256": "950e1cf34bd8442b3c9f828da0bd2e1cd4193b9d57dacf587d5bd64741830d93"
+      }
+    ]
+  },
+  {
+    "car": "JETTA_MK5_FSI",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": true,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/jetta_mk5_fsi/mesh/w260_decal_fandf_vs1.d8m",
+        "sha256": "ed57679307e955d55e412223781cb115034fe62b8a4266592646b274d8df2ca8"
+      },
+      {
+        "ui": true,
+        "path": "cars/jetta_mk5_fsi_ui/mesh/w260_decal_fandf_vs1.d8m",
+        "sha256": "ed57679307e955d55e412223781cb115034fe62b8a4266592646b274d8df2ca8"
+      }
+    ]
+  },
+  {
+    "car": "LEVIN_AE92",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": true,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/levin_ae92/mesh/ae92_decal_fandf_vs1.d8m",
+        "sha256": "cbcad980061e68a52a2bc5e85f3954078a6535de8752f7499021201f30ba07c7"
+      },
+      {
+        "ui": true,
+        "path": "cars/levin_ae92_ui/mesh/ae92_decal_fandf_vs1.d8m",
+        "sha256": "cbcad980061e68a52a2bc5e85f3954078a6535de8752f7499021201f30ba07c7"
+      }
+    ]
+  },
+  {
+    "car": "MONARO",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/monaro/mesh/monaro_decal_fandf_vs1.d8m",
+        "sha256": "a179a82c1df6fd4e664226b727e5f7beccc315a1d305e55d464dd7900a5036f2"
+      },
+      {
+        "ui": true,
+        "path": "cars/monaro_ui/mesh/monaro_decal_fandf_vs1.d8m",
+        "sha256": "bcc714aaf18db00ba6c19b335a3e99a1509f8ec2e45ee1b94d6fd016153fae0b"
+      }
+    ]
+  },
+  {
+    "car": "MR2",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/mr2/mesh/mr2_decal_fandf_vs1.d8m",
+        "sha256": "81d70293a8b8903161a6b40500811a31f359ab7e5a1ff8912f3e9a42fdd85c54"
+      },
+      {
+        "ui": true,
+        "path": "cars/mr2_ui/mesh/mr2_decal_fandf_vs1.d8m",
+        "sha256": "0790359b5724d99a8538f12f8761e57253fa8ce05d5281ca97edf455cdf95b2e"
+      }
+    ]
+  },
+  {
+    "car": "MUSTANG2",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/mustang2/mesh/mustang2_decal_fandf_vs1.d8m",
+        "sha256": "ef5476c8c6017b61736823d166c41f2558baca41463b8dd8bbdabf98dbd54e82"
+      },
+      {
+        "ui": true,
+        "path": "cars/mustang2_ui/mesh/mustang2_decal_fandf_vs1.d8m",
+        "sha256": "17a6386b070904061910503ecf08652deea7778d7290969866f89b621e634d51"
+      }
+    ]
+  },
+  {
+    "car": "MUSTANG68",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/mustang68/mesh/mustang68_decal_fandf_vs1.d8m",
+        "sha256": "404c31e0e34bf74c9d3569ac74f64e1acd9c17c5ff011acac22dd0a33283074a"
+      },
+      {
+        "ui": true,
+        "path": "cars/mustang68_ui/mesh/mustang68_decal_fandf_vs1.d8m",
+        "sha256": "cf2c96af42439f7c0dc9bbc2cd4348d4ca0c102ad436dba5fa7c6a2ce602643d"
+      }
+    ]
+  },
+  {
+    "car": "MX5",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/mx5/mesh/mx5_decal_fandf_vs1.d8m",
+        "sha256": "ec73c65b0a4f6c45744ef9033b20c99a4e85351123ee2c1a8203ede7f03a4956"
+      },
+      {
+        "ui": true,
+        "path": "cars/mx5_ui/mesh/mx5_decal_fandf_vs1.d8m",
+        "sha256": "a858c344883b6b9fbafb843b11169d993400bdeaf028e3dda1607d13e5408d15"
+      }
+    ]
+  },
+  {
+    "car": "NEON",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/neon/mesh/neon_decal_fandf_vs1.d8m",
+        "sha256": "ab3b71c8070ba6b9a25d54973576db1206cce08c135183077e7a8f767812503b"
+      },
+      {
+        "ui": true,
+        "path": "cars/neon_ui/mesh/neon_decal_fandf_vs1.d8m",
+        "sha256": "d813b56cd7f66cb21cc065b1762a789c58fb139635eea1544442d73306d708bb"
+      }
+    ]
+  },
+  {
+    "car": "NSX",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/nsx/mesh/nsx_decal_fandf_vs1.d8m",
+        "sha256": "28a43b49484870b847f2d186fca2957df1fed238dde157c8e560dc9f1f3d402d"
+      },
+      {
+        "ui": true,
+        "path": "cars/nsx_ui/mesh/nsx_decal_fandf_vs1.d8m",
+        "sha256": "c6d23a7768b4ae455bb5d6b9299d52071cdb6b30ec51f1f774813333763cb286"
+      }
+    ]
+  },
+  {
+    "car": "OUTBACK_2002",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": true,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/outback_2002/mesh/w261_decal_fandf_vs1.d8m",
+        "sha256": "fd580de3dc660124647604c07080f6c116424f9a02c11ff5e05eb45e805ead75"
+      },
+      {
+        "ui": true,
+        "path": "cars/outback_2002_ui/mesh/w261_decal_fandf_vs1.d8m",
+        "sha256": "fd580de3dc660124647604c07080f6c116424f9a02c11ff5e05eb45e805ead75"
+      }
+    ]
+  },
+  {
+    "car": "PEUGEOT_206",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/peugeot_206/mesh/peugeot_206_decal_fandf_vs1.d8m",
+        "sha256": "e16f92dad2eefd9e306fb952c13be6d4fb44f1427cca224f5a2183f3e85a222b"
+      },
+      {
+        "ui": true,
+        "path": "cars/peugeot_206_ui/mesh/peugeot_206_decal_fandf_vs1.d8m",
+        "sha256": "bfe1204e579e46fd1a6b5da67df6a86b841aba26fa96c9a1d85b8deb7e69d469"
+      }
+    ]
+  },
+  {
+    "car": "PEUGEOT_405_GLX",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": true,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/peugeot_405_glx/mesh/w257_decal_fandf_vs1.d8m",
+        "sha256": "c689a18f967960cf6304740c75aff88f6c3110a2f5aae4bfb4c44d8013982735"
+      },
+      {
+        "ui": true,
+        "path": "cars/peugeot_405_glx_ui/mesh/w257_decal_fandf_vs1.d8m",
+        "sha256": "c689a18f967960cf6304740c75aff88f6c3110a2f5aae4bfb4c44d8013982735"
+      }
+    ]
+  },
+  {
+    "car": "PEUGEOT_406_COUPE",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": true,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/peugeot_406_coupe/mesh/w258_decal_fandf_vs1.d8m",
+        "sha256": "8c9b9e0a0bb759a28f0c75f362350ec70476427ae96ef6a8a1c4ecd9738510eb"
+      },
+      {
+        "ui": true,
+        "path": "cars/peugeot_406_coupe_ui/mesh/w258_decal_fandf_vs1.d8m",
+        "sha256": "8c9b9e0a0bb759a28f0c75f362350ec70476427ae96ef6a8a1c4ecd9738510eb"
+      }
+    ]
+  },
+  {
+    "car": "PUNTO",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/punto/mesh/punto_decal_fandf_vs1.d8m",
+        "sha256": "f50c9fd83c00bd8573353459a0b9fd14ebe2b61107482c4dd2d648d78d0dcc6a"
+      },
+      {
+        "ui": true,
+        "path": "cars/punto_ui/mesh/punto_decal_fandf_vs1.d8m",
+        "sha256": "347e9ba7976e805806de22702956e203f89ac9fd18b267950655c0225790531f"
+      }
+    ]
+  },
+  {
+    "car": "RSX",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/rsx/mesh/rsx_decal_fandf_vs1.d8m",
+        "sha256": "785f0550ae040d8cac4e1e3f166623057dfaf289d5535d07fe56328829ab515a"
+      },
+      {
+        "ui": true,
+        "path": "cars/rsx_ui/mesh/rsx_decal_fandf_vs1.d8m",
+        "sha256": "9745b143157536da50840a9ad2ea33071314ab5b4b6e8e7d4a4439448348b6b2"
+      }
+    ]
+  },
+  {
+    "car": "RX7",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/rx7/mesh/rx7_decal_fandf_vs1.d8m",
+        "sha256": "dd7bcb3b33dfd6dd2a5b7bb92da7ebff0a649fee9f3d0d6a218d9c5142bc8ee5"
+      },
+      {
+        "ui": true,
+        "path": "cars/rx7_ui/mesh/rx7_decal_fandf_vs1.d8m",
+        "sha256": "63d7d324dfa416a8f64a4f323c61f20a3934636f42969f6cde96f3dc3a7795b9"
+      }
+    ]
+  },
+  {
+    "car": "RX8",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/rx8/mesh/rx8_decal_fandf_vs1.d8m",
+        "sha256": "191cda18c89a93ecd1f338cbc90dddc4c651eda3d54ea4c5639161c467e8cb96"
+      },
+      {
+        "ui": true,
+        "path": "cars/rx8_ui/mesh/rx8_decal_fandf_vs1.d8m",
+        "sha256": "c2128c3075b660b4d39439fa552363bbee735bb5719bb08c84cb94d64d07a254"
+      }
+    ]
+  },
+  {
+    "car": "S2000",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/s2000/mesh/s2000_decal_fandf_vs1.d8m",
+        "sha256": "0fa43f960904044e0d13e96b4a9b50aaeec3379a30fcdcdbd518334fd8ce6f63"
+      },
+      {
+        "ui": true,
+        "path": "cars/s2000_ui/mesh/s2000_decal_fandf_vs1.d8m",
+        "sha256": "0466dac5250284977e0700ec5dead7b1e6ab36d61c3ac9ba546d19185d7397fe"
+      }
+    ]
+  },
+  {
+    "car": "SUPRA",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/supra/mesh/supra_decal_fandf_vs1.d8m",
+        "sha256": "1d2db50acdb506ca4e26f6b11309d1254980d6171a3ee775c546571eada7f11a"
+      },
+      {
+        "ui": true,
+        "path": "cars/supra_ui/mesh/supra_decal_fandf_vs1.d8m",
+        "sha256": "e09f0f362e81cd04ef39c28b1415718d4361055598d2bc97d15e09df80dbb9f2"
+      }
+    ]
+  },
+  {
+    "car": "TRANS",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/trans/mesh/trans_decal_fandf_vs1.d8m",
+        "sha256": "5b6e82cd66315e3bba21a00cdf0e22ae49c5e914ae6e7a9eb4200395b66e1950"
+      },
+      {
+        "ui": true,
+        "path": "cars/trans_ui/mesh/trans_decal_fandf_vs1.d8m",
+        "sha256": "93328bad59a5b13370068480376e1e51220a1f308b0c2cc10d3fbcd7051c1a42"
+      }
+    ]
+  },
+  {
+    "car": "VOLVO_240_TURBO",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": true,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/volvo_240_turbo/mesh/w262_decal_fandf_vs1.d8m",
+        "sha256": "113505e5b9e0e067d4d5ac554ef39f1d99ccd09b7fce8deee71e81c300264449"
+      },
+      {
+        "ui": true,
+        "path": "cars/volvo_240_turbo_ui/mesh/w262_decal_fandf_vs1.d8m",
+        "sha256": "113505e5b9e0e067d4d5ac554ef39f1d99ccd09b7fce8deee71e81c300264449"
+      }
+    ]
+  },
+  {
+    "car": "VOLVO_V70_24",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": true,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/volvo_v70_24/mesh/w263_decal_fandf_vs1.d8m",
+        "sha256": "32bd6fb004d67bab39005b36c1cacbf93e2b6e48e23cc578ee3100a90f50dd29"
+      },
+      {
+        "ui": true,
+        "path": "cars/volvo_v70_24_ui/mesh/w263_decal_fandf_vs1.d8m",
+        "sha256": "32bd6fb004d67bab39005b36c1cacbf93e2b6e48e23cc578ee3100a90f50dd29"
+      }
+    ]
+  },
+  {
+    "car": "VW_CORRADO",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/vw_corrado/mesh/vw_corrado_decal_fandf_vs1.d8m",
+        "sha256": "05d9db28bbd74141aa24c25b2086bd24a5d77cf507bf2bf75157ee20ad4e5f66"
+      },
+      {
+        "ui": true,
+        "path": "cars/vw_corrado_ui/mesh/vw_corrado_decal_fandf_vs1.d8m",
+        "sha256": "401e4ff0aee02fc95be45aff4118bb27239a501b2d8c62ec43f2955375188c30"
+      }
+    ]
+  },
+  {
+    "car": "WRX2",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/wrx2/mesh/wrx2_decal_fandf_vs1.d8m",
+        "sha256": "9cd85f3a48efb7815b2fdf8e49150882e7da6e051a960106bf29a8ffee163dfc"
+      },
+      {
+        "ui": true,
+        "path": "cars/wrx2_ui/mesh/wrx2_decal_fandf_vs1.d8m",
+        "sha256": "01a5e348adc21063c285ed19860ddda8fd866897058516790db1e4ceb2a21b9f"
+      }
+    ]
+  },
+  {
+    "car": "camaro70",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/camaro70/mesh/camaro70_decal_fandf_vs1.d8m",
+        "sha256": "95e868409a0d3c792d5746aa3775280738595d6f0c3f21aabc2a4180811fab33"
+      },
+      {
+        "ui": true,
+        "path": "cars/camaro70_ui/mesh/camaro70_decal_fandf_vs1.d8m",
+        "sha256": "289e803faaf22153aea0f6866d0bf158b671d4f5ff4b42c86ba113adc097b18e"
+      }
+    ]
+  },
+  {
+    "car": "civicR",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/civicr/mesh/civicr_decal_fandf_vs1.d8m",
+        "sha256": "62e10b089e447ffc474b419c839a7e1b7b1f4793ad48d92c3a622ae45ef16a8a"
+      },
+      {
+        "ui": true,
+        "path": "cars/civicr_ui/mesh/civicr_decal_fandf_vs1.d8m",
+        "sha256": "74d50e4d6e1f97878ae871dcab172bbe0a3e5e90cd7b890a655461fcc0517a04"
+      }
+    ]
+  },
+  {
+    "car": "dodge_srt",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/dodge_srt/mesh/dodge_srt_decal_fandf_vs1.d8m",
+        "sha256": "cdee77aa418d11bb472f27f67d0d53c68152bae4ec5b7a275185ac02478eb554"
+      },
+      {
+        "ui": true,
+        "path": "cars/dodge_srt_ui/mesh/dodge_srt_decal_fandf_vs1.d8m",
+        "sha256": "0ad55dddc82005f70d6debd9dac34f59e329bab4f943b511745b5101ddc98304"
+      }
+    ]
+  },
+  {
+    "car": "focus",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/focus/mesh/focus_decal_fandf_vs1.d8m",
+        "sha256": "a7de0eb4ac9c485a24c29270792ec260d388006186359f9d5c9e53a23a48ed87"
+      },
+      {
+        "ui": true,
+        "path": "cars/focus_ui/mesh/focus_decal_fandf_vs1.d8m",
+        "sha256": "ea6bffcd2df123c55f867d24dd4efd28f72f95e6d794d240abd2067af0af4946"
+      }
+    ]
+  },
+  {
+    "car": "focus_2",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/focus_2/mesh/focus_2_decal_fandf_vs1.d8m",
+        "sha256": "d5da2b37afda4f8fcb148efc81341f8ad8fc5de92b8f53c89b5ea7cd72936e56"
+      },
+      {
+        "ui": true,
+        "path": "cars/focus_2_ui/mesh/focus_2_decal_fandf_vs1.d8m",
+        "sha256": "e10e104805be3eb02a63453a2aea88fedca8059722dbf8db11b43b25661aeaab"
+      }
+    ]
+  },
+  {
+    "car": "mrs",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/mrs/mesh/mrs_decal_fandf_vs1.d8m",
+        "sha256": "e59c9e400295a7d36ed7643b8ac8ae5cec1f6acbd4ea87f20f77a029d1a7ba4e"
+      },
+      {
+        "ui": true,
+        "path": "cars/mrs_ui/mesh/mrs_decal_fandf_vs1.d8m",
+        "sha256": "2112892065bea1df71b7224b2c8231b9ebcdb88944f6a83a11dd40db4bfb0a4d"
+      }
+    ]
+  },
+  {
+    "car": "prelude",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/prelude/mesh/prelude_decal_fandf_vs1.d8m",
+        "sha256": "bfe3d0efad30658dccca9d10131f0e1385caa9f56172f01c1a2b18d700ee5676"
+      },
+      {
+        "ui": true,
+        "path": "cars/prelude_ui/mesh/prelude_decal_fandf_vs1.d8m",
+        "sha256": "0a9a0ba09c9e4e51c43bd4647820df5ffa8282a4b0834b787500ae2207347d3f"
+      }
+    ]
+  },
+  {
+    "car": "vette_2",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/vette_2/mesh/vette_2_decal_fandf_vs1.d8m",
+        "sha256": "0e6492071c2afa2ac686fa3ae030854821eaa648123fbcacdf0fa90bb2cef431"
+      },
+      {
+        "ui": true,
+        "path": "cars/vette_2_ui/mesh/vette_2_decal_fandf_vs1.d8m",
+        "sha256": "4bdb4aa9df4dd7d10cfd9e820f4c3785894c3c94d876e26c5c8da87ebb55a294"
+      }
+    ]
+  },
+  {
+    "car": "vette_zo6",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/vette_zo6/mesh/vette_zo6_decal_fandf_vs1.d8m",
+        "sha256": "f95efb996b4a671ade8a2193b0fc4ba975dfaebeb2accd48f376b7e72b5697e9"
+      },
+      {
+        "ui": true,
+        "path": "cars/vette_zo6_ui/mesh/vette_zo6_decal_fandf_vs1.d8m",
+        "sha256": "93c50d82c4843cb5dad875b96e2c1ba39b5efad8c3606986b678493a604016b7"
+      }
+    ]
+  },
+  {
+    "car": "viper",
+    "mesh": "DECAL_NFS_AI_ECLIPSE",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Silver Current",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/viper/mesh/viper_decal_fandf_vs1.d8m",
+        "sha256": "da13190a48f086a795f5ac595b9fe065440cb8667486ae9a4d3e29418fc87b1c"
+      },
+      {
+        "ui": true,
+        "path": "cars/viper_ui/mesh/viper_decal_fandf_vs1.d8m",
+        "sha256": "52465894292cd87acce43b0592c0395811ecd7da2cb043ad2f50e4abcdafc196"
+      }
+    ]
+  },
+  {
+    "car": "3000GT",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/3000gt/mesh/3000gt_decal_fandf_vs1.d8m",
+        "sha256": "ee8f00d944f0f86d7034b03dd8d619320e1876e5a65bf62dde1ffbe0c9c5a4af"
+      },
+      {
+        "ui": true,
+        "path": "cars/3000gt_ui/mesh/3000gt_decal_fandf_vs1.d8m",
+        "sha256": "5a299c7e22fca5feb85152ef506d57506042a0ab941f0602b7330d1524a6e2be"
+      }
+    ]
+  },
+  {
+    "car": "300ZX",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/300zx/mesh/300zx_decal_fandf_vs1.d8m",
+        "sha256": "f1ae14f620f176982adff44a2c9cef86d6f7eb9d242a59bd597a9f9e549f11f2"
+      },
+      {
+        "ui": true,
+        "path": "cars/300zx_ui/mesh/300zx_decal_fandf_vs1.d8m",
+        "sha256": "2a09299a844c4243ad62e095f8bc2a756c62f311af544a9db96c04b72ad392ef"
+      }
+    ]
+  },
+  {
+    "car": "350Z",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/350z/mesh/350z_decal_fandf_vs1.d8m",
+        "sha256": "8984e4695273290e7a47a13c4bedfff6e3b54778e970f3127f16054fa48ffacb"
+      },
+      {
+        "ui": true,
+        "path": "cars/350z_ui/mesh/350z_decal_fandf_vs1.d8m",
+        "sha256": "ac308e0ac5ef58872140eba6c08591df682b09e84ca21301e79c5b404e0a8e2c"
+      }
+    ]
+  },
+  {
+    "car": "AC_INTEGRA",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/ac_integra/mesh/ac_integra_decal_fandf_vs1.d8m",
+        "sha256": "29383a829702cd90d241dd5f3ef23703ce819bcc8c07c74139077b3e8f9a95e7"
+      },
+      {
+        "ui": true,
+        "path": "cars/ac_integra_ui/mesh/ac_integra_decal_fandf_vs1.d8m",
+        "sha256": "e8f986384df0890bca90a8f17e3ceb6ed057243eaaf99687ad5f5b7e2c34a08a"
+      }
+    ]
+  },
+  {
+    "car": "AC_NSX",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/ac_nsx/mesh/ac_nsx_decal_fandf_vs1.d8m",
+        "sha256": "28a43b49484870b847f2d186fca2957df1fed238dde157c8e560dc9f1f3d402d"
+      },
+      {
+        "ui": true,
+        "path": "cars/ac_nsx_ui/mesh/ac_nsx_decal_fandf_vs1.d8m",
+        "sha256": "c6d23a7768b4ae455bb5d6b9299d52071cdb6b30ec51f1f774813333763cb286"
+      }
+    ]
+  },
+  {
+    "car": "BEETLE",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/beetle/mesh/beetle_decal_fandf_vs1.d8m",
+        "sha256": "a8bc211003e340ce15ea2b687a00fbea823c9bc14cb4814d6a6ad3dbd7ba0b6c"
+      },
+      {
+        "ui": true,
+        "path": "cars/beetle_ui/mesh/beetle_decal_fandf_vs1.d8m",
+        "sha256": "fd06187be2f66404aaafdb56aeec1854095e05cc3e10b4225f498609d2b54ed2"
+      }
+    ]
+  },
+  {
+    "car": "BMW_E36",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": true,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/bmw_e36/mesh/e36_decal_fandf_vs1.d8m",
+        "sha256": "1edf27f88672672c2189465cf8962eed82075993dca712a76eccc1e417c5cef4"
+      },
+      {
+        "ui": true,
+        "path": "cars/bmw_e36_ui/mesh/e36_decal_fandf_vs1.d8m",
+        "sha256": "1edf27f88672672c2189465cf8962eed82075993dca712a76eccc1e417c5cef4"
+      }
+    ]
+  },
+  {
+    "car": "CAMARO",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/camaro/mesh/camaro_decal_fandf_vs1.d8m",
+        "sha256": "9ab2c650cfa4dcdba565348ed2769944b5d44398091591df5aff3aec82cd8472"
+      },
+      {
+        "ui": true,
+        "path": "cars/camaro_ui/mesh/camaro_decal_fandf_vs1.d8m",
+        "sha256": "9aa506c68912d1858a0e8c6fb1094a76e23d97ce6b79cfca40ef46ec03f59d87"
+      }
+    ]
+  },
+  {
+    "car": "CELICA",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/celica/mesh/celica_decal_fandf_vs1.d8m",
+        "sha256": "afdc9e12321d5e732fc61cbe138cf4701e6789bfaf073f1f9167566416d1b2b3"
+      },
+      {
+        "ui": true,
+        "path": "cars/celica_ui/mesh/celica_decal_fandf_vs1.d8m",
+        "sha256": "5d6431fbb867a7503a39050421a2d40342d56646095680d173b04af78df63b6c"
+      }
+    ]
+  },
+  {
+    "car": "CELICA_2",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/celica_2/mesh/celica_2_decal_fandf_vs1.d8m",
+        "sha256": "3edd2309ceb6880ffecdb79aa06fce07e23b62f3e53c31f304dc5791ee666af2"
+      },
+      {
+        "ui": true,
+        "path": "cars/celica_2_ui/mesh/celica_2_decal_fandf_vs1.d8m",
+        "sha256": "b93da2d610430e00d7981f9b00789991782bc9cbb88c63d75c9d8841c244fe39"
+      }
+    ]
+  },
+  {
+    "car": "CIVIC_97",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/civic_97/mesh/civic_97_decal_fandf_vs1.d8m",
+        "sha256": "3a28204eaa8618c980591cd361eb975595e577a9eecc6d7f8d8bd6fd1d802eb3"
+      },
+      {
+        "ui": true,
+        "path": "cars/civic_97_ui/mesh/civic_97_decal_fandf_vs1.d8m",
+        "sha256": "03caed4ea435ae976f378d3ae599847d1fadfd7d02823627909e21d31bd5e365"
+      }
+    ]
+  },
+  {
+    "car": "CLIO",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/clio/mesh/clio_decal_fandf_vs1.d8m",
+        "sha256": "a90d4abeeda4c03f49a9b691e0b0a5648d7b6071b772e1f4f146d6cb9615530e"
+      },
+      {
+        "ui": true,
+        "path": "cars/clio_ui/mesh/clio_decal_fandf_vs1.d8m",
+        "sha256": "dad6489d8303e3830c86f8831dda986a9f8a372cde29d6e49f355f44906af580"
+      }
+    ]
+  },
+  {
+    "car": "COROLLA",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/corolla/mesh/corolla_decal_fandf_vs1.d8m",
+        "sha256": "f04bc1260720ed2a29f8678dbdbd3f940b46c1eadf4cfe599cb168039c2f7278"
+      },
+      {
+        "ui": true,
+        "path": "cars/corolla_ui/mesh/corolla_decal_fandf_vs1.d8m",
+        "sha256": "a5f21eef673835aa37a2b2a18dacd950f263cd44cb26295995e332020d27d724"
+      }
+    ]
+  },
+  {
+    "car": "CORSA",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/corsa/mesh/corsa_decal_fandf_vs1.d8m",
+        "sha256": "f67924a0e610c0e00c515aca3b7ca710e883854ad16fddb9203832333a3d9d28"
+      },
+      {
+        "ui": true,
+        "path": "cars/corsa_ui/mesh/corsa_decal_fandf_vs1.d8m",
+        "sha256": "580574905979a78823394b75b27a9de0fdbb2a077a5a61c1b2c132b03ec0070f"
+      }
+    ]
+  },
+  {
+    "car": "CRX",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/crx/mesh/crx_decal_fandf_vs1.d8m",
+        "sha256": "c0212ccd4786b96dd0824a37046d2fa1fd3a805bb19dc31edc0261b6d6797226"
+      },
+      {
+        "ui": true,
+        "path": "cars/crx_ui/mesh/crx_decal_fandf_vs1.d8m",
+        "sha256": "6dbb31d9f0ceb392bd7b58eebe89c3ec5322c3fb610355580c6e563fe5d33d9a"
+      }
+    ]
+  },
+  {
+    "car": "Charger",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/charger/mesh/charger_decal_fandf_vs1.d8m",
+        "sha256": "2e06392bcfae14cad8f0954c90f07737847ff9395ec7e798cbbb8114ce65c941"
+      },
+      {
+        "ui": true,
+        "path": "cars/charger_ui/mesh/charger_decal_fandf_vs1.d8m",
+        "sha256": "619e6f53da1c99134c1ad8d245688e12c5555cfb02c88408a32f7d58bf68a1e8"
+      }
+    ]
+  },
+  {
+    "car": "ECLIPSE",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/eclipse/mesh/eclipse_decal_fandf_vs1.d8m",
+        "sha256": "58b0366242ebaf9431ab20cbfcc9fff09d4a200862cb66b89d15bf7341a283cc"
+      },
+      {
+        "ui": true,
+        "path": "cars/eclipse_ui/mesh/eclipse_decal_fandf_vs1.d8m",
+        "sha256": "01d3f99c5351be55fac3f396948d122d7517a3d4fcdb33a965bf560e120a1cea"
+      }
+    ]
+  },
+  {
+    "car": "EVO6",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/evo6/mesh/evo6_decal_fandf_vs1.d8m",
+        "sha256": "0babba464db06160c2153148b2c5941c0180cc429b404246f0452800cff897d4"
+      },
+      {
+        "ui": true,
+        "path": "cars/evo6_ui/mesh/evo6_decal_fandf_vs1.d8m",
+        "sha256": "d97bdcfa43005d1072426a1af4012b2c014723581a96e4d846e132241676956b"
+      }
+    ]
+  },
+  {
+    "car": "EVO8",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/evo8/mesh/evo8_decal_fandf_vs1.d8m",
+        "sha256": "a5a614375d7683eed8eeb2caaf1f3a19e3c1a047073136684d8ac17d09063b5c"
+      },
+      {
+        "ui": true,
+        "path": "cars/evo8_ui/mesh/evo8_decal_fandf_vs1.d8m",
+        "sha256": "37ba70fdd30f1a1fc220cd9eee2d675bb8f1fba6e355e438e2ee7ed52c252a9b"
+      }
+    ]
+  },
+  {
+    "car": "FALCON",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/falcon/mesh/falcon_decal_fandf_vs1.d8m",
+        "sha256": "b0da6e80ac12665bcb7e10beaac9312c09ff2074f84082931c4c06c8d60be8d5"
+      },
+      {
+        "ui": true,
+        "path": "cars/falcon_ui/mesh/falcon_decal_fandf_vs1.d8m",
+        "sha256": "2a510a647012730daa31ae568645efbafa1962393cf4b5dd43cc16192896d460"
+      }
+    ]
+  },
+  {
+    "car": "FERRARI_458",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": true,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/ferrari_458/mesh/f458_decal_fandf_vs1.d8m",
+        "sha256": "9cfdf2425a252155aa1acabca32ffd35480d70c4bb0abd555e45341a38027620"
+      },
+      {
+        "ui": true,
+        "path": "cars/ferrari_458_ui/mesh/f458_decal_fandf_vs1.d8m",
+        "sha256": "9cfdf2425a252155aa1acabca32ffd35480d70c4bb0abd555e45341a38027620"
+      }
+    ]
+  },
+  {
+    "car": "FTO",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/fto/mesh/fto_decal_fandf_vs1.d8m",
+        "sha256": "73cf26430e1602bfbbe09539e26c2291d6b930df822517f0a886eda85c5892e5"
+      },
+      {
+        "ui": true,
+        "path": "cars/fto_ui/mesh/fto_decal_fandf_vs1.d8m",
+        "sha256": "6671ae97ad5276a66944f6210aaae119bf94cf0f35b1056ba69c167a91160604"
+      }
+    ]
+  },
+  {
+    "car": "GOLF",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/golf/mesh/golf_decal_fandf_vs1.d8m",
+        "sha256": "c63a85bd4e11220a4f02b7175ec3c7c284a7a24e670e1f2e41ec7d3bea90f279"
+      },
+      {
+        "ui": true,
+        "path": "cars/golf_ui/mesh/golf_decal_fandf_vs1.d8m",
+        "sha256": "0d921f0f5f6ce05bcf6b7568f9854c5a191a298c9661abb9975c8984d6bd3b43"
+      }
+    ]
+  },
+  {
+    "car": "GOLF_MK5_R32",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": true,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/golf_mk5_r32/mesh/w259_decal_fandf_vs1.d8m",
+        "sha256": "f29983f49a123d8ed4b1c16b2e6793c33b12ee33530977fd101fc4f3657b6f21"
+      },
+      {
+        "ui": true,
+        "path": "cars/golf_mk5_r32_ui/mesh/w259_decal_fandf_vs1.d8m",
+        "sha256": "f29983f49a123d8ed4b1c16b2e6793c33b12ee33530977fd101fc4f3657b6f21"
+      }
+    ]
+  },
+  {
+    "car": "GTR",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/gtr/mesh/gtr_decal_fandf_vs1.d8m",
+        "sha256": "04153a872827369ce3edf58f81683afd72d5d1f165ab78e832bd2afd12732066"
+      },
+      {
+        "ui": true,
+        "path": "cars/gtr_ui/mesh/gtr_decal_fandf_vs1.d8m",
+        "sha256": "c065c73a3769b4d9cc7fa02fb5c6c6e474b0f12b73a98dace4697ea1da1b3f83"
+      }
+    ]
+  },
+  {
+    "car": "IMP",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/imp/mesh/imp_decal_fandf_vs1.d8m",
+        "sha256": "0f73870bedcd9f26f817d301e373332eeb256bb5547c8f048878bd2176738012"
+      },
+      {
+        "ui": true,
+        "path": "cars/imp_ui/mesh/imp_decal_fandf_vs1.d8m",
+        "sha256": "689340ebd7e8303dbccf4ddcab336ac3f454c1e7ed12cce150c8bcd025ec8705"
+      }
+    ]
+  },
+  {
+    "car": "INTEGRA",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/integra/mesh/integra_decal_fandf_vs1.d8m",
+        "sha256": "29383a829702cd90d241dd5f3ef23703ce819bcc8c07c74139077b3e8f9a95e7"
+      },
+      {
+        "ui": true,
+        "path": "cars/integra_ui/mesh/integra_decal_fandf_vs1.d8m",
+        "sha256": "e8f986384df0890bca90a8f17e3ceb6ed057243eaaf99687ad5f5b7e2c34a08a"
+      }
+    ]
+  },
+  {
+    "car": "INTEGRA2",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/integra2/mesh/integra2_decal_fandf_vs1.d8m",
+        "sha256": "785f0550ae040d8cac4e1e3f166623057dfaf289d5535d07fe56328829ab515a"
+      },
+      {
+        "ui": true,
+        "path": "cars/integra2_ui/mesh/integra2_decal_fandf_vs1.d8m",
+        "sha256": "9745b143157536da50840a9ad2ea33071314ab5b4b6e8e7d4a4439448348b6b2"
+      }
+    ]
+  },
+  {
+    "car": "INTEGRA_DB8",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": true,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/integra_db8/mesh/db8_decal_fandf_vs1.d8m",
+        "sha256": "950e1cf34bd8442b3c9f828da0bd2e1cd4193b9d57dacf587d5bd64741830d93"
+      },
+      {
+        "ui": true,
+        "path": "cars/integra_db8_ui/mesh/db8_decal_fandf_vs1.d8m",
+        "sha256": "950e1cf34bd8442b3c9f828da0bd2e1cd4193b9d57dacf587d5bd64741830d93"
+      }
+    ]
+  },
+  {
+    "car": "JETTA_MK5_FSI",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": true,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/jetta_mk5_fsi/mesh/w260_decal_fandf_vs1.d8m",
+        "sha256": "ed57679307e955d55e412223781cb115034fe62b8a4266592646b274d8df2ca8"
+      },
+      {
+        "ui": true,
+        "path": "cars/jetta_mk5_fsi_ui/mesh/w260_decal_fandf_vs1.d8m",
+        "sha256": "ed57679307e955d55e412223781cb115034fe62b8a4266592646b274d8df2ca8"
+      }
+    ]
+  },
+  {
+    "car": "LEVIN_AE92",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": true,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/levin_ae92/mesh/ae92_decal_fandf_vs1.d8m",
+        "sha256": "cbcad980061e68a52a2bc5e85f3954078a6535de8752f7499021201f30ba07c7"
+      },
+      {
+        "ui": true,
+        "path": "cars/levin_ae92_ui/mesh/ae92_decal_fandf_vs1.d8m",
+        "sha256": "cbcad980061e68a52a2bc5e85f3954078a6535de8752f7499021201f30ba07c7"
+      }
+    ]
+  },
+  {
+    "car": "MONARO",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/monaro/mesh/monaro_decal_fandf_vs1.d8m",
+        "sha256": "a179a82c1df6fd4e664226b727e5f7beccc315a1d305e55d464dd7900a5036f2"
+      },
+      {
+        "ui": true,
+        "path": "cars/monaro_ui/mesh/monaro_decal_fandf_vs1.d8m",
+        "sha256": "bcc714aaf18db00ba6c19b335a3e99a1509f8ec2e45ee1b94d6fd016153fae0b"
+      }
+    ]
+  },
+  {
+    "car": "MR2",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/mr2/mesh/mr2_decal_fandf_vs1.d8m",
+        "sha256": "81d70293a8b8903161a6b40500811a31f359ab7e5a1ff8912f3e9a42fdd85c54"
+      },
+      {
+        "ui": true,
+        "path": "cars/mr2_ui/mesh/mr2_decal_fandf_vs1.d8m",
+        "sha256": "0790359b5724d99a8538f12f8761e57253fa8ce05d5281ca97edf455cdf95b2e"
+      }
+    ]
+  },
+  {
+    "car": "MUSTANG2",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/mustang2/mesh/mustang2_decal_fandf_vs1.d8m",
+        "sha256": "ef5476c8c6017b61736823d166c41f2558baca41463b8dd8bbdabf98dbd54e82"
+      },
+      {
+        "ui": true,
+        "path": "cars/mustang2_ui/mesh/mustang2_decal_fandf_vs1.d8m",
+        "sha256": "17a6386b070904061910503ecf08652deea7778d7290969866f89b621e634d51"
+      }
+    ]
+  },
+  {
+    "car": "MUSTANG68",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/mustang68/mesh/mustang68_decal_fandf_vs1.d8m",
+        "sha256": "404c31e0e34bf74c9d3569ac74f64e1acd9c17c5ff011acac22dd0a33283074a"
+      },
+      {
+        "ui": true,
+        "path": "cars/mustang68_ui/mesh/mustang68_decal_fandf_vs1.d8m",
+        "sha256": "cf2c96af42439f7c0dc9bbc2cd4348d4ca0c102ad436dba5fa7c6a2ce602643d"
+      }
+    ]
+  },
+  {
+    "car": "MX5",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/mx5/mesh/mx5_decal_fandf_vs1.d8m",
+        "sha256": "ec73c65b0a4f6c45744ef9033b20c99a4e85351123ee2c1a8203ede7f03a4956"
+      },
+      {
+        "ui": true,
+        "path": "cars/mx5_ui/mesh/mx5_decal_fandf_vs1.d8m",
+        "sha256": "a858c344883b6b9fbafb843b11169d993400bdeaf028e3dda1607d13e5408d15"
+      }
+    ]
+  },
+  {
+    "car": "NEON",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/neon/mesh/neon_decal_fandf_vs1.d8m",
+        "sha256": "ab3b71c8070ba6b9a25d54973576db1206cce08c135183077e7a8f767812503b"
+      },
+      {
+        "ui": true,
+        "path": "cars/neon_ui/mesh/neon_decal_fandf_vs1.d8m",
+        "sha256": "d813b56cd7f66cb21cc065b1762a789c58fb139635eea1544442d73306d708bb"
+      }
+    ]
+  },
+  {
+    "car": "NSX",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/nsx/mesh/nsx_decal_fandf_vs1.d8m",
+        "sha256": "28a43b49484870b847f2d186fca2957df1fed238dde157c8e560dc9f1f3d402d"
+      },
+      {
+        "ui": true,
+        "path": "cars/nsx_ui/mesh/nsx_decal_fandf_vs1.d8m",
+        "sha256": "c6d23a7768b4ae455bb5d6b9299d52071cdb6b30ec51f1f774813333763cb286"
+      }
+    ]
+  },
+  {
+    "car": "OUTBACK_2002",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": true,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/outback_2002/mesh/w261_decal_fandf_vs1.d8m",
+        "sha256": "fd580de3dc660124647604c07080f6c116424f9a02c11ff5e05eb45e805ead75"
+      },
+      {
+        "ui": true,
+        "path": "cars/outback_2002_ui/mesh/w261_decal_fandf_vs1.d8m",
+        "sha256": "fd580de3dc660124647604c07080f6c116424f9a02c11ff5e05eb45e805ead75"
+      }
+    ]
+  },
+  {
+    "car": "PEUGEOT_206",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/peugeot_206/mesh/peugeot_206_decal_fandf_vs1.d8m",
+        "sha256": "e16f92dad2eefd9e306fb952c13be6d4fb44f1427cca224f5a2183f3e85a222b"
+      },
+      {
+        "ui": true,
+        "path": "cars/peugeot_206_ui/mesh/peugeot_206_decal_fandf_vs1.d8m",
+        "sha256": "bfe1204e579e46fd1a6b5da67df6a86b841aba26fa96c9a1d85b8deb7e69d469"
+      }
+    ]
+  },
+  {
+    "car": "PEUGEOT_405_GLX",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": true,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/peugeot_405_glx/mesh/w257_decal_fandf_vs1.d8m",
+        "sha256": "c689a18f967960cf6304740c75aff88f6c3110a2f5aae4bfb4c44d8013982735"
+      },
+      {
+        "ui": true,
+        "path": "cars/peugeot_405_glx_ui/mesh/w257_decal_fandf_vs1.d8m",
+        "sha256": "c689a18f967960cf6304740c75aff88f6c3110a2f5aae4bfb4c44d8013982735"
+      }
+    ]
+  },
+  {
+    "car": "PEUGEOT_406_COUPE",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": true,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/peugeot_406_coupe/mesh/w258_decal_fandf_vs1.d8m",
+        "sha256": "8c9b9e0a0bb759a28f0c75f362350ec70476427ae96ef6a8a1c4ecd9738510eb"
+      },
+      {
+        "ui": true,
+        "path": "cars/peugeot_406_coupe_ui/mesh/w258_decal_fandf_vs1.d8m",
+        "sha256": "8c9b9e0a0bb759a28f0c75f362350ec70476427ae96ef6a8a1c4ecd9738510eb"
+      }
+    ]
+  },
+  {
+    "car": "PUNTO",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/punto/mesh/punto_decal_fandf_vs1.d8m",
+        "sha256": "f50c9fd83c00bd8573353459a0b9fd14ebe2b61107482c4dd2d648d78d0dcc6a"
+      },
+      {
+        "ui": true,
+        "path": "cars/punto_ui/mesh/punto_decal_fandf_vs1.d8m",
+        "sha256": "347e9ba7976e805806de22702956e203f89ac9fd18b267950655c0225790531f"
+      }
+    ]
+  },
+  {
+    "car": "RSX",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/rsx/mesh/rsx_decal_fandf_vs1.d8m",
+        "sha256": "785f0550ae040d8cac4e1e3f166623057dfaf289d5535d07fe56328829ab515a"
+      },
+      {
+        "ui": true,
+        "path": "cars/rsx_ui/mesh/rsx_decal_fandf_vs1.d8m",
+        "sha256": "9745b143157536da50840a9ad2ea33071314ab5b4b6e8e7d4a4439448348b6b2"
+      }
+    ]
+  },
+  {
+    "car": "RX7",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/rx7/mesh/rx7_decal_fandf_vs1.d8m",
+        "sha256": "dd7bcb3b33dfd6dd2a5b7bb92da7ebff0a649fee9f3d0d6a218d9c5142bc8ee5"
+      },
+      {
+        "ui": true,
+        "path": "cars/rx7_ui/mesh/rx7_decal_fandf_vs1.d8m",
+        "sha256": "63d7d324dfa416a8f64a4f323c61f20a3934636f42969f6cde96f3dc3a7795b9"
+      }
+    ]
+  },
+  {
+    "car": "RX8",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/rx8/mesh/rx8_decal_fandf_vs1.d8m",
+        "sha256": "191cda18c89a93ecd1f338cbc90dddc4c651eda3d54ea4c5639161c467e8cb96"
+      },
+      {
+        "ui": true,
+        "path": "cars/rx8_ui/mesh/rx8_decal_fandf_vs1.d8m",
+        "sha256": "c2128c3075b660b4d39439fa552363bbee735bb5719bb08c84cb94d64d07a254"
+      }
+    ]
+  },
+  {
+    "car": "S2000",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/s2000/mesh/s2000_decal_fandf_vs1.d8m",
+        "sha256": "0fa43f960904044e0d13e96b4a9b50aaeec3379a30fcdcdbd518334fd8ce6f63"
+      },
+      {
+        "ui": true,
+        "path": "cars/s2000_ui/mesh/s2000_decal_fandf_vs1.d8m",
+        "sha256": "0466dac5250284977e0700ec5dead7b1e6ab36d61c3ac9ba546d19185d7397fe"
+      }
+    ]
+  },
+  {
+    "car": "SUPRA",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/supra/mesh/supra_decal_fandf_vs1.d8m",
+        "sha256": "1d2db50acdb506ca4e26f6b11309d1254980d6171a3ee775c546571eada7f11a"
+      },
+      {
+        "ui": true,
+        "path": "cars/supra_ui/mesh/supra_decal_fandf_vs1.d8m",
+        "sha256": "e09f0f362e81cd04ef39c28b1415718d4361055598d2bc97d15e09df80dbb9f2"
+      }
+    ]
+  },
+  {
+    "car": "TRANS",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/trans/mesh/trans_decal_fandf_vs1.d8m",
+        "sha256": "5b6e82cd66315e3bba21a00cdf0e22ae49c5e914ae6e7a9eb4200395b66e1950"
+      },
+      {
+        "ui": true,
+        "path": "cars/trans_ui/mesh/trans_decal_fandf_vs1.d8m",
+        "sha256": "93328bad59a5b13370068480376e1e51220a1f308b0c2cc10d3fbcd7051c1a42"
+      }
+    ]
+  },
+  {
+    "car": "VOLVO_240_TURBO",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": true,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/volvo_240_turbo/mesh/w262_decal_fandf_vs1.d8m",
+        "sha256": "113505e5b9e0e067d4d5ac554ef39f1d99ccd09b7fce8deee71e81c300264449"
+      },
+      {
+        "ui": true,
+        "path": "cars/volvo_240_turbo_ui/mesh/w262_decal_fandf_vs1.d8m",
+        "sha256": "113505e5b9e0e067d4d5ac554ef39f1d99ccd09b7fce8deee71e81c300264449"
+      }
+    ]
+  },
+  {
+    "car": "VOLVO_V70_24",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": true,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/volvo_v70_24/mesh/w263_decal_fandf_vs1.d8m",
+        "sha256": "32bd6fb004d67bab39005b36c1cacbf93e2b6e48e23cc578ee3100a90f50dd29"
+      },
+      {
+        "ui": true,
+        "path": "cars/volvo_v70_24_ui/mesh/w263_decal_fandf_vs1.d8m",
+        "sha256": "32bd6fb004d67bab39005b36c1cacbf93e2b6e48e23cc578ee3100a90f50dd29"
+      }
+    ]
+  },
+  {
+    "car": "VW_CORRADO",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/vw_corrado/mesh/vw_corrado_decal_fandf_vs1.d8m",
+        "sha256": "05d9db28bbd74141aa24c25b2086bd24a5d77cf507bf2bf75157ee20ad4e5f66"
+      },
+      {
+        "ui": true,
+        "path": "cars/vw_corrado_ui/mesh/vw_corrado_decal_fandf_vs1.d8m",
+        "sha256": "401e4ff0aee02fc95be45aff4118bb27239a501b2d8c62ec43f2955375188c30"
+      }
+    ]
+  },
+  {
+    "car": "WRX2",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/wrx2/mesh/wrx2_decal_fandf_vs1.d8m",
+        "sha256": "9cd85f3a48efb7815b2fdf8e49150882e7da6e051a960106bf29a8ffee163dfc"
+      },
+      {
+        "ui": true,
+        "path": "cars/wrx2_ui/mesh/wrx2_decal_fandf_vs1.d8m",
+        "sha256": "01a5e348adc21063c285ed19860ddda8fd866897058516790db1e4ceb2a21b9f"
+      }
+    ]
+  },
+  {
+    "car": "camaro70",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/camaro70/mesh/camaro70_decal_fandf_vs1.d8m",
+        "sha256": "95e868409a0d3c792d5746aa3775280738595d6f0c3f21aabc2a4180811fab33"
+      },
+      {
+        "ui": true,
+        "path": "cars/camaro70_ui/mesh/camaro70_decal_fandf_vs1.d8m",
+        "sha256": "289e803faaf22153aea0f6866d0bf158b671d4f5ff4b42c86ba113adc097b18e"
+      }
+    ]
+  },
+  {
+    "car": "civicR",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/civicr/mesh/civicr_decal_fandf_vs1.d8m",
+        "sha256": "62e10b089e447ffc474b419c839a7e1b7b1f4793ad48d92c3a622ae45ef16a8a"
+      },
+      {
+        "ui": true,
+        "path": "cars/civicr_ui/mesh/civicr_decal_fandf_vs1.d8m",
+        "sha256": "74d50e4d6e1f97878ae871dcab172bbe0a3e5e90cd7b890a655461fcc0517a04"
+      }
+    ]
+  },
+  {
+    "car": "dodge_srt",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/dodge_srt/mesh/dodge_srt_decal_fandf_vs1.d8m",
+        "sha256": "cdee77aa418d11bb472f27f67d0d53c68152bae4ec5b7a275185ac02478eb554"
+      },
+      {
+        "ui": true,
+        "path": "cars/dodge_srt_ui/mesh/dodge_srt_decal_fandf_vs1.d8m",
+        "sha256": "0ad55dddc82005f70d6debd9dac34f59e329bab4f943b511745b5101ddc98304"
+      }
+    ]
+  },
+  {
+    "car": "focus",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/focus/mesh/focus_decal_fandf_vs1.d8m",
+        "sha256": "a7de0eb4ac9c485a24c29270792ec260d388006186359f9d5c9e53a23a48ed87"
+      },
+      {
+        "ui": true,
+        "path": "cars/focus_ui/mesh/focus_decal_fandf_vs1.d8m",
+        "sha256": "ea6bffcd2df123c55f867d24dd4efd28f72f95e6d794d240abd2067af0af4946"
+      }
+    ]
+  },
+  {
+    "car": "focus_2",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/focus_2/mesh/focus_2_decal_fandf_vs1.d8m",
+        "sha256": "d5da2b37afda4f8fcb148efc81341f8ad8fc5de92b8f53c89b5ea7cd72936e56"
+      },
+      {
+        "ui": true,
+        "path": "cars/focus_2_ui/mesh/focus_2_decal_fandf_vs1.d8m",
+        "sha256": "e10e104805be3eb02a63453a2aea88fedca8059722dbf8db11b43b25661aeaab"
+      }
+    ]
+  },
+  {
+    "car": "mrs",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/mrs/mesh/mrs_decal_fandf_vs1.d8m",
+        "sha256": "e59c9e400295a7d36ed7643b8ac8ae5cec1f6acbd4ea87f20f77a029d1a7ba4e"
+      },
+      {
+        "ui": true,
+        "path": "cars/mrs_ui/mesh/mrs_decal_fandf_vs1.d8m",
+        "sha256": "2112892065bea1df71b7224b2c8231b9ebcdb88944f6a83a11dd40db4bfb0a4d"
+      }
+    ]
+  },
+  {
+    "car": "prelude",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/prelude/mesh/prelude_decal_fandf_vs1.d8m",
+        "sha256": "bfe3d0efad30658dccca9d10131f0e1385caa9f56172f01c1a2b18d700ee5676"
+      },
+      {
+        "ui": true,
+        "path": "cars/prelude_ui/mesh/prelude_decal_fandf_vs1.d8m",
+        "sha256": "0a9a0ba09c9e4e51c43bd4647820df5ffa8282a4b0834b787500ae2207347d3f"
+      }
+    ]
+  },
+  {
+    "car": "vette_2",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/vette_2/mesh/vette_2_decal_fandf_vs1.d8m",
+        "sha256": "0e6492071c2afa2ac686fa3ae030854821eaa648123fbcacdf0fa90bb2cef431"
+      },
+      {
+        "ui": true,
+        "path": "cars/vette_2_ui/mesh/vette_2_decal_fandf_vs1.d8m",
+        "sha256": "4bdb4aa9df4dd7d10cfd9e820f4c3785894c3c94d876e26c5c8da87ebb55a294"
+      }
+    ]
+  },
+  {
+    "car": "vette_zo6",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/vette_zo6/mesh/vette_zo6_decal_fandf_vs1.d8m",
+        "sha256": "f95efb996b4a671ade8a2193b0fc4ba975dfaebeb2accd48f376b7e72b5697e9"
+      },
+      {
+        "ui": true,
+        "path": "cars/vette_zo6_ui/mesh/vette_zo6_decal_fandf_vs1.d8m",
+        "sha256": "93c50d82c4843cb5dad875b96e2c1ba39b5efad8c3606986b678493a604016b7"
+      }
+    ]
+  },
+  {
+    "car": "viper",
+    "mesh": "DECAL_NFS_AI_SUPRA",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Brian Steel Warrior",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/viper/mesh/viper_decal_fandf_vs1.d8m",
+        "sha256": "da13190a48f086a795f5ac595b9fe065440cb8667486ae9a4d3e29418fc87b1c"
+      },
+      {
+        "ui": true,
+        "path": "cars/viper_ui/mesh/viper_decal_fandf_vs1.d8m",
+        "sha256": "52465894292cd87acce43b0592c0395811ecd7da2cb043ad2f50e4abcdafc196"
+      }
+    ]
+  },
+  {
+    "car": "3000GT",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/3000gt/mesh/3000gt_decal_fandf_vs1.d8m",
+        "sha256": "ee8f00d944f0f86d7034b03dd8d619320e1876e5a65bf62dde1ffbe0c9c5a4af"
+      },
+      {
+        "ui": true,
+        "path": "cars/3000gt_ui/mesh/3000gt_decal_fandf_vs1.d8m",
+        "sha256": "5a299c7e22fca5feb85152ef506d57506042a0ab941f0602b7330d1524a6e2be"
+      }
+    ]
+  },
+  {
+    "car": "300ZX",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/300zx/mesh/300zx_decal_fandf_vs1.d8m",
+        "sha256": "f1ae14f620f176982adff44a2c9cef86d6f7eb9d242a59bd597a9f9e549f11f2"
+      },
+      {
+        "ui": true,
+        "path": "cars/300zx_ui/mesh/300zx_decal_fandf_vs1.d8m",
+        "sha256": "2a09299a844c4243ad62e095f8bc2a756c62f311af544a9db96c04b72ad392ef"
+      }
+    ]
+  },
+  {
+    "car": "350Z",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/350z/mesh/350z_decal_fandf_vs1.d8m",
+        "sha256": "8984e4695273290e7a47a13c4bedfff6e3b54778e970f3127f16054fa48ffacb"
+      },
+      {
+        "ui": true,
+        "path": "cars/350z_ui/mesh/350z_decal_fandf_vs1.d8m",
+        "sha256": "ac308e0ac5ef58872140eba6c08591df682b09e84ca21301e79c5b404e0a8e2c"
+      }
+    ]
+  },
+  {
+    "car": "AC_INTEGRA",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/ac_integra/mesh/ac_integra_decal_fandf_vs1.d8m",
+        "sha256": "29383a829702cd90d241dd5f3ef23703ce819bcc8c07c74139077b3e8f9a95e7"
+      },
+      {
+        "ui": true,
+        "path": "cars/ac_integra_ui/mesh/ac_integra_decal_fandf_vs1.d8m",
+        "sha256": "e8f986384df0890bca90a8f17e3ceb6ed057243eaaf99687ad5f5b7e2c34a08a"
+      }
+    ]
+  },
+  {
+    "car": "AC_NSX",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/ac_nsx/mesh/ac_nsx_decal_fandf_vs1.d8m",
+        "sha256": "28a43b49484870b847f2d186fca2957df1fed238dde157c8e560dc9f1f3d402d"
+      },
+      {
+        "ui": true,
+        "path": "cars/ac_nsx_ui/mesh/ac_nsx_decal_fandf_vs1.d8m",
+        "sha256": "c6d23a7768b4ae455bb5d6b9299d52071cdb6b30ec51f1f774813333763cb286"
+      }
+    ]
+  },
+  {
+    "car": "BEETLE",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/beetle/mesh/beetle_decal_fandf_vs1.d8m",
+        "sha256": "a8bc211003e340ce15ea2b687a00fbea823c9bc14cb4814d6a6ad3dbd7ba0b6c"
+      },
+      {
+        "ui": true,
+        "path": "cars/beetle_ui/mesh/beetle_decal_fandf_vs1.d8m",
+        "sha256": "fd06187be2f66404aaafdb56aeec1854095e05cc3e10b4225f498609d2b54ed2"
+      }
+    ]
+  },
+  {
+    "car": "BMW_E36",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": true,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/bmw_e36/mesh/e36_decal_fandf_vs1.d8m",
+        "sha256": "1edf27f88672672c2189465cf8962eed82075993dca712a76eccc1e417c5cef4"
+      },
+      {
+        "ui": true,
+        "path": "cars/bmw_e36_ui/mesh/e36_decal_fandf_vs1.d8m",
+        "sha256": "1edf27f88672672c2189465cf8962eed82075993dca712a76eccc1e417c5cef4"
+      }
+    ]
+  },
+  {
+    "car": "CAMARO",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/camaro/mesh/camaro_decal_fandf_vs1.d8m",
+        "sha256": "9ab2c650cfa4dcdba565348ed2769944b5d44398091591df5aff3aec82cd8472"
+      },
+      {
+        "ui": true,
+        "path": "cars/camaro_ui/mesh/camaro_decal_fandf_vs1.d8m",
+        "sha256": "9aa506c68912d1858a0e8c6fb1094a76e23d97ce6b79cfca40ef46ec03f59d87"
+      }
+    ]
+  },
+  {
+    "car": "CELICA",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/celica/mesh/celica_decal_fandf_vs1.d8m",
+        "sha256": "afdc9e12321d5e732fc61cbe138cf4701e6789bfaf073f1f9167566416d1b2b3"
+      },
+      {
+        "ui": true,
+        "path": "cars/celica_ui/mesh/celica_decal_fandf_vs1.d8m",
+        "sha256": "5d6431fbb867a7503a39050421a2d40342d56646095680d173b04af78df63b6c"
+      }
+    ]
+  },
+  {
+    "car": "CELICA_2",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/celica_2/mesh/celica_2_decal_fandf_vs1.d8m",
+        "sha256": "3edd2309ceb6880ffecdb79aa06fce07e23b62f3e53c31f304dc5791ee666af2"
+      },
+      {
+        "ui": true,
+        "path": "cars/celica_2_ui/mesh/celica_2_decal_fandf_vs1.d8m",
+        "sha256": "b93da2d610430e00d7981f9b00789991782bc9cbb88c63d75c9d8841c244fe39"
+      }
+    ]
+  },
+  {
+    "car": "CIVIC_97",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/civic_97/mesh/civic_97_decal_fandf_vs1.d8m",
+        "sha256": "3a28204eaa8618c980591cd361eb975595e577a9eecc6d7f8d8bd6fd1d802eb3"
+      },
+      {
+        "ui": true,
+        "path": "cars/civic_97_ui/mesh/civic_97_decal_fandf_vs1.d8m",
+        "sha256": "03caed4ea435ae976f378d3ae599847d1fadfd7d02823627909e21d31bd5e365"
+      }
+    ]
+  },
+  {
+    "car": "CLIO",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/clio/mesh/clio_decal_fandf_vs1.d8m",
+        "sha256": "a90d4abeeda4c03f49a9b691e0b0a5648d7b6071b772e1f4f146d6cb9615530e"
+      },
+      {
+        "ui": true,
+        "path": "cars/clio_ui/mesh/clio_decal_fandf_vs1.d8m",
+        "sha256": "dad6489d8303e3830c86f8831dda986a9f8a372cde29d6e49f355f44906af580"
+      }
+    ]
+  },
+  {
+    "car": "COROLLA",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/corolla/mesh/corolla_decal_fandf_vs1.d8m",
+        "sha256": "f04bc1260720ed2a29f8678dbdbd3f940b46c1eadf4cfe599cb168039c2f7278"
+      },
+      {
+        "ui": true,
+        "path": "cars/corolla_ui/mesh/corolla_decal_fandf_vs1.d8m",
+        "sha256": "a5f21eef673835aa37a2b2a18dacd950f263cd44cb26295995e332020d27d724"
+      }
+    ]
+  },
+  {
+    "car": "CORSA",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/corsa/mesh/corsa_decal_fandf_vs1.d8m",
+        "sha256": "f67924a0e610c0e00c515aca3b7ca710e883854ad16fddb9203832333a3d9d28"
+      },
+      {
+        "ui": true,
+        "path": "cars/corsa_ui/mesh/corsa_decal_fandf_vs1.d8m",
+        "sha256": "580574905979a78823394b75b27a9de0fdbb2a077a5a61c1b2c132b03ec0070f"
+      }
+    ]
+  },
+  {
+    "car": "CRX",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/crx/mesh/crx_decal_fandf_vs1.d8m",
+        "sha256": "c0212ccd4786b96dd0824a37046d2fa1fd3a805bb19dc31edc0261b6d6797226"
+      },
+      {
+        "ui": true,
+        "path": "cars/crx_ui/mesh/crx_decal_fandf_vs1.d8m",
+        "sha256": "6dbb31d9f0ceb392bd7b58eebe89c3ec5322c3fb610355580c6e563fe5d33d9a"
+      }
+    ]
+  },
+  {
+    "car": "Charger",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/charger/mesh/charger_decal_fandf_vs1.d8m",
+        "sha256": "2e06392bcfae14cad8f0954c90f07737847ff9395ec7e798cbbb8114ce65c941"
+      },
+      {
+        "ui": true,
+        "path": "cars/charger_ui/mesh/charger_decal_fandf_vs1.d8m",
+        "sha256": "619e6f53da1c99134c1ad8d245688e12c5555cfb02c88408a32f7d58bf68a1e8"
+      }
+    ]
+  },
+  {
+    "car": "ECLIPSE",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/eclipse/mesh/eclipse_decal_fandf_vs1.d8m",
+        "sha256": "58b0366242ebaf9431ab20cbfcc9fff09d4a200862cb66b89d15bf7341a283cc"
+      },
+      {
+        "ui": true,
+        "path": "cars/eclipse_ui/mesh/eclipse_decal_fandf_vs1.d8m",
+        "sha256": "01d3f99c5351be55fac3f396948d122d7517a3d4fcdb33a965bf560e120a1cea"
+      }
+    ]
+  },
+  {
+    "car": "EVO6",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/evo6/mesh/evo6_decal_fandf_vs1.d8m",
+        "sha256": "0babba464db06160c2153148b2c5941c0180cc429b404246f0452800cff897d4"
+      },
+      {
+        "ui": true,
+        "path": "cars/evo6_ui/mesh/evo6_decal_fandf_vs1.d8m",
+        "sha256": "d97bdcfa43005d1072426a1af4012b2c014723581a96e4d846e132241676956b"
+      }
+    ]
+  },
+  {
+    "car": "EVO8",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/evo8/mesh/evo8_decal_fandf_vs1.d8m",
+        "sha256": "a5a614375d7683eed8eeb2caaf1f3a19e3c1a047073136684d8ac17d09063b5c"
+      },
+      {
+        "ui": true,
+        "path": "cars/evo8_ui/mesh/evo8_decal_fandf_vs1.d8m",
+        "sha256": "37ba70fdd30f1a1fc220cd9eee2d675bb8f1fba6e355e438e2ee7ed52c252a9b"
+      }
+    ]
+  },
+  {
+    "car": "FALCON",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/falcon/mesh/falcon_decal_fandf_vs1.d8m",
+        "sha256": "b0da6e80ac12665bcb7e10beaac9312c09ff2074f84082931c4c06c8d60be8d5"
+      },
+      {
+        "ui": true,
+        "path": "cars/falcon_ui/mesh/falcon_decal_fandf_vs1.d8m",
+        "sha256": "2a510a647012730daa31ae568645efbafa1962393cf4b5dd43cc16192896d460"
+      }
+    ]
+  },
+  {
+    "car": "FERRARI_458",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": true,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/ferrari_458/mesh/f458_decal_fandf_vs1.d8m",
+        "sha256": "9cfdf2425a252155aa1acabca32ffd35480d70c4bb0abd555e45341a38027620"
+      },
+      {
+        "ui": true,
+        "path": "cars/ferrari_458_ui/mesh/f458_decal_fandf_vs1.d8m",
+        "sha256": "9cfdf2425a252155aa1acabca32ffd35480d70c4bb0abd555e45341a38027620"
+      }
+    ]
+  },
+  {
+    "car": "FTO",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/fto/mesh/fto_decal_fandf_vs1.d8m",
+        "sha256": "73cf26430e1602bfbbe09539e26c2291d6b930df822517f0a886eda85c5892e5"
+      },
+      {
+        "ui": true,
+        "path": "cars/fto_ui/mesh/fto_decal_fandf_vs1.d8m",
+        "sha256": "6671ae97ad5276a66944f6210aaae119bf94cf0f35b1056ba69c167a91160604"
+      }
+    ]
+  },
+  {
+    "car": "GOLF",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/golf/mesh/golf_decal_fandf_vs1.d8m",
+        "sha256": "c63a85bd4e11220a4f02b7175ec3c7c284a7a24e670e1f2e41ec7d3bea90f279"
+      },
+      {
+        "ui": true,
+        "path": "cars/golf_ui/mesh/golf_decal_fandf_vs1.d8m",
+        "sha256": "0d921f0f5f6ce05bcf6b7568f9854c5a191a298c9661abb9975c8984d6bd3b43"
+      }
+    ]
+  },
+  {
+    "car": "GOLF_MK5_R32",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": true,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/golf_mk5_r32/mesh/w259_decal_fandf_vs1.d8m",
+        "sha256": "f29983f49a123d8ed4b1c16b2e6793c33b12ee33530977fd101fc4f3657b6f21"
+      },
+      {
+        "ui": true,
+        "path": "cars/golf_mk5_r32_ui/mesh/w259_decal_fandf_vs1.d8m",
+        "sha256": "f29983f49a123d8ed4b1c16b2e6793c33b12ee33530977fd101fc4f3657b6f21"
+      }
+    ]
+  },
+  {
+    "car": "GTR",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/gtr/mesh/gtr_decal_fandf_vs1.d8m",
+        "sha256": "04153a872827369ce3edf58f81683afd72d5d1f165ab78e832bd2afd12732066"
+      },
+      {
+        "ui": true,
+        "path": "cars/gtr_ui/mesh/gtr_decal_fandf_vs1.d8m",
+        "sha256": "c065c73a3769b4d9cc7fa02fb5c6c6e474b0f12b73a98dace4697ea1da1b3f83"
+      }
+    ]
+  },
+  {
+    "car": "IMP",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/imp/mesh/imp_decal_fandf_vs1.d8m",
+        "sha256": "0f73870bedcd9f26f817d301e373332eeb256bb5547c8f048878bd2176738012"
+      },
+      {
+        "ui": true,
+        "path": "cars/imp_ui/mesh/imp_decal_fandf_vs1.d8m",
+        "sha256": "689340ebd7e8303dbccf4ddcab336ac3f454c1e7ed12cce150c8bcd025ec8705"
+      }
+    ]
+  },
+  {
+    "car": "INTEGRA",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/integra/mesh/integra_decal_fandf_vs1.d8m",
+        "sha256": "29383a829702cd90d241dd5f3ef23703ce819bcc8c07c74139077b3e8f9a95e7"
+      },
+      {
+        "ui": true,
+        "path": "cars/integra_ui/mesh/integra_decal_fandf_vs1.d8m",
+        "sha256": "e8f986384df0890bca90a8f17e3ceb6ed057243eaaf99687ad5f5b7e2c34a08a"
+      }
+    ]
+  },
+  {
+    "car": "INTEGRA2",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/integra2/mesh/integra2_decal_fandf_vs1.d8m",
+        "sha256": "785f0550ae040d8cac4e1e3f166623057dfaf289d5535d07fe56328829ab515a"
+      },
+      {
+        "ui": true,
+        "path": "cars/integra2_ui/mesh/integra2_decal_fandf_vs1.d8m",
+        "sha256": "9745b143157536da50840a9ad2ea33071314ab5b4b6e8e7d4a4439448348b6b2"
+      }
+    ]
+  },
+  {
+    "car": "INTEGRA_DB8",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": true,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/integra_db8/mesh/db8_decal_fandf_vs1.d8m",
+        "sha256": "950e1cf34bd8442b3c9f828da0bd2e1cd4193b9d57dacf587d5bd64741830d93"
+      },
+      {
+        "ui": true,
+        "path": "cars/integra_db8_ui/mesh/db8_decal_fandf_vs1.d8m",
+        "sha256": "950e1cf34bd8442b3c9f828da0bd2e1cd4193b9d57dacf587d5bd64741830d93"
+      }
+    ]
+  },
+  {
+    "car": "JETTA_MK5_FSI",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": true,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/jetta_mk5_fsi/mesh/w260_decal_fandf_vs1.d8m",
+        "sha256": "ed57679307e955d55e412223781cb115034fe62b8a4266592646b274d8df2ca8"
+      },
+      {
+        "ui": true,
+        "path": "cars/jetta_mk5_fsi_ui/mesh/w260_decal_fandf_vs1.d8m",
+        "sha256": "ed57679307e955d55e412223781cb115034fe62b8a4266592646b274d8df2ca8"
+      }
+    ]
+  },
+  {
+    "car": "LEVIN_AE92",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": true,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/levin_ae92/mesh/ae92_decal_fandf_vs1.d8m",
+        "sha256": "cbcad980061e68a52a2bc5e85f3954078a6535de8752f7499021201f30ba07c7"
+      },
+      {
+        "ui": true,
+        "path": "cars/levin_ae92_ui/mesh/ae92_decal_fandf_vs1.d8m",
+        "sha256": "cbcad980061e68a52a2bc5e85f3954078a6535de8752f7499021201f30ba07c7"
+      }
+    ]
+  },
+  {
+    "car": "MONARO",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/monaro/mesh/monaro_decal_fandf_vs1.d8m",
+        "sha256": "a179a82c1df6fd4e664226b727e5f7beccc315a1d305e55d464dd7900a5036f2"
+      },
+      {
+        "ui": true,
+        "path": "cars/monaro_ui/mesh/monaro_decal_fandf_vs1.d8m",
+        "sha256": "bcc714aaf18db00ba6c19b335a3e99a1509f8ec2e45ee1b94d6fd016153fae0b"
+      }
+    ]
+  },
+  {
+    "car": "MR2",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/mr2/mesh/mr2_decal_fandf_vs1.d8m",
+        "sha256": "81d70293a8b8903161a6b40500811a31f359ab7e5a1ff8912f3e9a42fdd85c54"
+      },
+      {
+        "ui": true,
+        "path": "cars/mr2_ui/mesh/mr2_decal_fandf_vs1.d8m",
+        "sha256": "0790359b5724d99a8538f12f8761e57253fa8ce05d5281ca97edf455cdf95b2e"
+      }
+    ]
+  },
+  {
+    "car": "MUSTANG2",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/mustang2/mesh/mustang2_decal_fandf_vs1.d8m",
+        "sha256": "ef5476c8c6017b61736823d166c41f2558baca41463b8dd8bbdabf98dbd54e82"
+      },
+      {
+        "ui": true,
+        "path": "cars/mustang2_ui/mesh/mustang2_decal_fandf_vs1.d8m",
+        "sha256": "17a6386b070904061910503ecf08652deea7778d7290969866f89b621e634d51"
+      }
+    ]
+  },
+  {
+    "car": "MUSTANG68",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/mustang68/mesh/mustang68_decal_fandf_vs1.d8m",
+        "sha256": "404c31e0e34bf74c9d3569ac74f64e1acd9c17c5ff011acac22dd0a33283074a"
+      },
+      {
+        "ui": true,
+        "path": "cars/mustang68_ui/mesh/mustang68_decal_fandf_vs1.d8m",
+        "sha256": "cf2c96af42439f7c0dc9bbc2cd4348d4ca0c102ad436dba5fa7c6a2ce602643d"
+      }
+    ]
+  },
+  {
+    "car": "MX5",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/mx5/mesh/mx5_decal_fandf_vs1.d8m",
+        "sha256": "ec73c65b0a4f6c45744ef9033b20c99a4e85351123ee2c1a8203ede7f03a4956"
+      },
+      {
+        "ui": true,
+        "path": "cars/mx5_ui/mesh/mx5_decal_fandf_vs1.d8m",
+        "sha256": "a858c344883b6b9fbafb843b11169d993400bdeaf028e3dda1607d13e5408d15"
+      }
+    ]
+  },
+  {
+    "car": "NEON",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/neon/mesh/neon_decal_fandf_vs1.d8m",
+        "sha256": "ab3b71c8070ba6b9a25d54973576db1206cce08c135183077e7a8f767812503b"
+      },
+      {
+        "ui": true,
+        "path": "cars/neon_ui/mesh/neon_decal_fandf_vs1.d8m",
+        "sha256": "d813b56cd7f66cb21cc065b1762a789c58fb139635eea1544442d73306d708bb"
+      }
+    ]
+  },
+  {
+    "car": "NSX",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/nsx/mesh/nsx_decal_fandf_vs1.d8m",
+        "sha256": "28a43b49484870b847f2d186fca2957df1fed238dde157c8e560dc9f1f3d402d"
+      },
+      {
+        "ui": true,
+        "path": "cars/nsx_ui/mesh/nsx_decal_fandf_vs1.d8m",
+        "sha256": "c6d23a7768b4ae455bb5d6b9299d52071cdb6b30ec51f1f774813333763cb286"
+      }
+    ]
+  },
+  {
+    "car": "OUTBACK_2002",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": true,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/outback_2002/mesh/w261_decal_fandf_vs1.d8m",
+        "sha256": "fd580de3dc660124647604c07080f6c116424f9a02c11ff5e05eb45e805ead75"
+      },
+      {
+        "ui": true,
+        "path": "cars/outback_2002_ui/mesh/w261_decal_fandf_vs1.d8m",
+        "sha256": "fd580de3dc660124647604c07080f6c116424f9a02c11ff5e05eb45e805ead75"
+      }
+    ]
+  },
+  {
+    "car": "PEUGEOT_206",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/peugeot_206/mesh/peugeot_206_decal_fandf_vs1.d8m",
+        "sha256": "e16f92dad2eefd9e306fb952c13be6d4fb44f1427cca224f5a2183f3e85a222b"
+      },
+      {
+        "ui": true,
+        "path": "cars/peugeot_206_ui/mesh/peugeot_206_decal_fandf_vs1.d8m",
+        "sha256": "bfe1204e579e46fd1a6b5da67df6a86b841aba26fa96c9a1d85b8deb7e69d469"
+      }
+    ]
+  },
+  {
+    "car": "PEUGEOT_405_GLX",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": true,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/peugeot_405_glx/mesh/w257_decal_fandf_vs1.d8m",
+        "sha256": "c689a18f967960cf6304740c75aff88f6c3110a2f5aae4bfb4c44d8013982735"
+      },
+      {
+        "ui": true,
+        "path": "cars/peugeot_405_glx_ui/mesh/w257_decal_fandf_vs1.d8m",
+        "sha256": "c689a18f967960cf6304740c75aff88f6c3110a2f5aae4bfb4c44d8013982735"
+      }
+    ]
+  },
+  {
+    "car": "PEUGEOT_406_COUPE",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": true,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/peugeot_406_coupe/mesh/w258_decal_fandf_vs1.d8m",
+        "sha256": "8c9b9e0a0bb759a28f0c75f362350ec70476427ae96ef6a8a1c4ecd9738510eb"
+      },
+      {
+        "ui": true,
+        "path": "cars/peugeot_406_coupe_ui/mesh/w258_decal_fandf_vs1.d8m",
+        "sha256": "8c9b9e0a0bb759a28f0c75f362350ec70476427ae96ef6a8a1c4ecd9738510eb"
+      }
+    ]
+  },
+  {
+    "car": "PUNTO",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/punto/mesh/punto_decal_fandf_vs1.d8m",
+        "sha256": "f50c9fd83c00bd8573353459a0b9fd14ebe2b61107482c4dd2d648d78d0dcc6a"
+      },
+      {
+        "ui": true,
+        "path": "cars/punto_ui/mesh/punto_decal_fandf_vs1.d8m",
+        "sha256": "347e9ba7976e805806de22702956e203f89ac9fd18b267950655c0225790531f"
+      }
+    ]
+  },
+  {
+    "car": "RSX",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/rsx/mesh/rsx_decal_fandf_vs1.d8m",
+        "sha256": "785f0550ae040d8cac4e1e3f166623057dfaf289d5535d07fe56328829ab515a"
+      },
+      {
+        "ui": true,
+        "path": "cars/rsx_ui/mesh/rsx_decal_fandf_vs1.d8m",
+        "sha256": "9745b143157536da50840a9ad2ea33071314ab5b4b6e8e7d4a4439448348b6b2"
+      }
+    ]
+  },
+  {
+    "car": "RX7",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/rx7/mesh/rx7_decal_fandf_vs1.d8m",
+        "sha256": "dd7bcb3b33dfd6dd2a5b7bb92da7ebff0a649fee9f3d0d6a218d9c5142bc8ee5"
+      },
+      {
+        "ui": true,
+        "path": "cars/rx7_ui/mesh/rx7_decal_fandf_vs1.d8m",
+        "sha256": "63d7d324dfa416a8f64a4f323c61f20a3934636f42969f6cde96f3dc3a7795b9"
+      }
+    ]
+  },
+  {
+    "car": "RX8",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/rx8/mesh/rx8_decal_fandf_vs1.d8m",
+        "sha256": "191cda18c89a93ecd1f338cbc90dddc4c651eda3d54ea4c5639161c467e8cb96"
+      },
+      {
+        "ui": true,
+        "path": "cars/rx8_ui/mesh/rx8_decal_fandf_vs1.d8m",
+        "sha256": "c2128c3075b660b4d39439fa552363bbee735bb5719bb08c84cb94d64d07a254"
+      }
+    ]
+  },
+  {
+    "car": "S2000",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/s2000/mesh/s2000_decal_fandf_vs1.d8m",
+        "sha256": "0fa43f960904044e0d13e96b4a9b50aaeec3379a30fcdcdbd518334fd8ce6f63"
+      },
+      {
+        "ui": true,
+        "path": "cars/s2000_ui/mesh/s2000_decal_fandf_vs1.d8m",
+        "sha256": "0466dac5250284977e0700ec5dead7b1e6ab36d61c3ac9ba546d19185d7397fe"
+      }
+    ]
+  },
+  {
+    "car": "SUPRA",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/supra/mesh/supra_decal_fandf_vs1.d8m",
+        "sha256": "1d2db50acdb506ca4e26f6b11309d1254980d6171a3ee775c546571eada7f11a"
+      },
+      {
+        "ui": true,
+        "path": "cars/supra_ui/mesh/supra_decal_fandf_vs1.d8m",
+        "sha256": "e09f0f362e81cd04ef39c28b1415718d4361055598d2bc97d15e09df80dbb9f2"
+      }
+    ]
+  },
+  {
+    "car": "TRANS",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/trans/mesh/trans_decal_fandf_vs1.d8m",
+        "sha256": "5b6e82cd66315e3bba21a00cdf0e22ae49c5e914ae6e7a9eb4200395b66e1950"
+      },
+      {
+        "ui": true,
+        "path": "cars/trans_ui/mesh/trans_decal_fandf_vs1.d8m",
+        "sha256": "93328bad59a5b13370068480376e1e51220a1f308b0c2cc10d3fbcd7051c1a42"
+      }
+    ]
+  },
+  {
+    "car": "VOLVO_240_TURBO",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": true,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/volvo_240_turbo/mesh/w262_decal_fandf_vs1.d8m",
+        "sha256": "113505e5b9e0e067d4d5ac554ef39f1d99ccd09b7fce8deee71e81c300264449"
+      },
+      {
+        "ui": true,
+        "path": "cars/volvo_240_turbo_ui/mesh/w262_decal_fandf_vs1.d8m",
+        "sha256": "113505e5b9e0e067d4d5ac554ef39f1d99ccd09b7fce8deee71e81c300264449"
+      }
+    ]
+  },
+  {
+    "car": "VOLVO_V70_24",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": true,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/volvo_v70_24/mesh/w263_decal_fandf_vs1.d8m",
+        "sha256": "32bd6fb004d67bab39005b36c1cacbf93e2b6e48e23cc578ee3100a90f50dd29"
+      },
+      {
+        "ui": true,
+        "path": "cars/volvo_v70_24_ui/mesh/w263_decal_fandf_vs1.d8m",
+        "sha256": "32bd6fb004d67bab39005b36c1cacbf93e2b6e48e23cc578ee3100a90f50dd29"
+      }
+    ]
+  },
+  {
+    "car": "VW_CORRADO",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/vw_corrado/mesh/vw_corrado_decal_fandf_vs1.d8m",
+        "sha256": "05d9db28bbd74141aa24c25b2086bd24a5d77cf507bf2bf75157ee20ad4e5f66"
+      },
+      {
+        "ui": true,
+        "path": "cars/vw_corrado_ui/mesh/vw_corrado_decal_fandf_vs1.d8m",
+        "sha256": "401e4ff0aee02fc95be45aff4118bb27239a501b2d8c62ec43f2955375188c30"
+      }
+    ]
+  },
+  {
+    "car": "WRX2",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/wrx2/mesh/wrx2_decal_fandf_vs1.d8m",
+        "sha256": "9cd85f3a48efb7815b2fdf8e49150882e7da6e051a960106bf29a8ffee163dfc"
+      },
+      {
+        "ui": true,
+        "path": "cars/wrx2_ui/mesh/wrx2_decal_fandf_vs1.d8m",
+        "sha256": "01a5e348adc21063c285ed19860ddda8fd866897058516790db1e4ceb2a21b9f"
+      }
+    ]
+  },
+  {
+    "car": "camaro70",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/camaro70/mesh/camaro70_decal_fandf_vs1.d8m",
+        "sha256": "95e868409a0d3c792d5746aa3775280738595d6f0c3f21aabc2a4180811fab33"
+      },
+      {
+        "ui": true,
+        "path": "cars/camaro70_ui/mesh/camaro70_decal_fandf_vs1.d8m",
+        "sha256": "289e803faaf22153aea0f6866d0bf158b671d4f5ff4b42c86ba113adc097b18e"
+      }
+    ]
+  },
+  {
+    "car": "civicR",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/civicr/mesh/civicr_decal_fandf_vs1.d8m",
+        "sha256": "62e10b089e447ffc474b419c839a7e1b7b1f4793ad48d92c3a622ae45ef16a8a"
+      },
+      {
+        "ui": true,
+        "path": "cars/civicr_ui/mesh/civicr_decal_fandf_vs1.d8m",
+        "sha256": "74d50e4d6e1f97878ae871dcab172bbe0a3e5e90cd7b890a655461fcc0517a04"
+      }
+    ]
+  },
+  {
+    "car": "dodge_srt",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/dodge_srt/mesh/dodge_srt_decal_fandf_vs1.d8m",
+        "sha256": "cdee77aa418d11bb472f27f67d0d53c68152bae4ec5b7a275185ac02478eb554"
+      },
+      {
+        "ui": true,
+        "path": "cars/dodge_srt_ui/mesh/dodge_srt_decal_fandf_vs1.d8m",
+        "sha256": "0ad55dddc82005f70d6debd9dac34f59e329bab4f943b511745b5101ddc98304"
+      }
+    ]
+  },
+  {
+    "car": "focus",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/focus/mesh/focus_decal_fandf_vs1.d8m",
+        "sha256": "a7de0eb4ac9c485a24c29270792ec260d388006186359f9d5c9e53a23a48ed87"
+      },
+      {
+        "ui": true,
+        "path": "cars/focus_ui/mesh/focus_decal_fandf_vs1.d8m",
+        "sha256": "ea6bffcd2df123c55f867d24dd4efd28f72f95e6d794d240abd2067af0af4946"
+      }
+    ]
+  },
+  {
+    "car": "focus_2",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/focus_2/mesh/focus_2_decal_fandf_vs1.d8m",
+        "sha256": "d5da2b37afda4f8fcb148efc81341f8ad8fc5de92b8f53c89b5ea7cd72936e56"
+      },
+      {
+        "ui": true,
+        "path": "cars/focus_2_ui/mesh/focus_2_decal_fandf_vs1.d8m",
+        "sha256": "e10e104805be3eb02a63453a2aea88fedca8059722dbf8db11b43b25661aeaab"
+      }
+    ]
+  },
+  {
+    "car": "mrs",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/mrs/mesh/mrs_decal_fandf_vs1.d8m",
+        "sha256": "e59c9e400295a7d36ed7643b8ac8ae5cec1f6acbd4ea87f20f77a029d1a7ba4e"
+      },
+      {
+        "ui": true,
+        "path": "cars/mrs_ui/mesh/mrs_decal_fandf_vs1.d8m",
+        "sha256": "2112892065bea1df71b7224b2c8231b9ebcdb88944f6a83a11dd40db4bfb0a4d"
+      }
+    ]
+  },
+  {
+    "car": "prelude",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/prelude/mesh/prelude_decal_fandf_vs1.d8m",
+        "sha256": "bfe3d0efad30658dccca9d10131f0e1385caa9f56172f01c1a2b18d700ee5676"
+      },
+      {
+        "ui": true,
+        "path": "cars/prelude_ui/mesh/prelude_decal_fandf_vs1.d8m",
+        "sha256": "0a9a0ba09c9e4e51c43bd4647820df5ffa8282a4b0834b787500ae2207347d3f"
+      }
+    ]
+  },
+  {
+    "car": "vette_2",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/vette_2/mesh/vette_2_decal_fandf_vs1.d8m",
+        "sha256": "0e6492071c2afa2ac686fa3ae030854821eaa648123fbcacdf0fa90bb2cef431"
+      },
+      {
+        "ui": true,
+        "path": "cars/vette_2_ui/mesh/vette_2_decal_fandf_vs1.d8m",
+        "sha256": "4bdb4aa9df4dd7d10cfd9e820f4c3785894c3c94d876e26c5c8da87ebb55a294"
+      }
+    ]
+  },
+  {
+    "car": "vette_zo6",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/vette_zo6/mesh/vette_zo6_decal_fandf_vs1.d8m",
+        "sha256": "f95efb996b4a671ade8a2193b0fc4ba975dfaebeb2accd48f376b7e72b5697e9"
+      },
+      {
+        "ui": true,
+        "path": "cars/vette_zo6_ui/mesh/vette_zo6_decal_fandf_vs1.d8m",
+        "sha256": "93c50d82c4843cb5dad875b96e2c1ba39b5efad8c3606986b678493a604016b7"
+      }
+    ]
+  },
+  {
+    "car": "viper",
+    "mesh": "DECAL_NFS_AI_RX7",
+    "donor": "decal_fandf_vs1",
+    "reference": false,
+    "label": "AI: Dom Black Sweep",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/viper/mesh/viper_decal_fandf_vs1.d8m",
+        "sha256": "da13190a48f086a795f5ac595b9fe065440cb8667486ae9a4d3e29418fc87b1c"
+      },
+      {
+        "ui": true,
+        "path": "cars/viper_ui/mesh/viper_decal_fandf_vs1.d8m",
+        "sha256": "52465894292cd87acce43b0592c0395811ecd7da2cb043ad2f50e4abcdafc196"
+      }
+    ]
+  },
+  {
+    "car": "3000GT",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/3000gt/mesh/3000gt_decal_tribal_vs4.d8m",
+        "sha256": "a3de52917f2829e2cfda9912ae45ea2f90af4215849be7776f58be71d4bc6d09"
+      },
+      {
+        "ui": true,
+        "path": "cars/3000gt_ui/mesh/3000gt_decal_tribal_vs4.d8m",
+        "sha256": "6d1b95d2cd1f317935b947f5968b2323ad8965a206c2d962e11d4f4e56fc16b3"
+      }
+    ]
+  },
+  {
+    "car": "300ZX",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/300zx/mesh/300zx_decal_tribal_vs4.d8m",
+        "sha256": "28a67ad61823a99736ebfcbfac5e2b6e7c95191fbbfe0a1092ac43c01d63d0a0"
+      },
+      {
+        "ui": true,
+        "path": "cars/300zx_ui/mesh/300zx_decal_tribal_vs4.d8m",
+        "sha256": "e11ee4118e8569004257de130ef353ad19eac562a1fe71b4eeb7a0b1bbca03f3"
+      }
+    ]
+  },
+  {
+    "car": "350Z",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/350z/mesh/350z_decal_tribal_vs4.d8m",
+        "sha256": "a437b2108f7d0f55b49949b2ec6a01da13c213994f6d2cf22a074c3cd7224ad9"
+      },
+      {
+        "ui": true,
+        "path": "cars/350z_ui/mesh/350z_decal_tribal_vs4.d8m",
+        "sha256": "7b208e48dc5021b6d6e047968b2a19474c2f5a309d457a2c23ab23e05993f237"
+      }
+    ]
+  },
+  {
+    "car": "AC_INTEGRA",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/ac_integra/mesh/ac_integra_decal_tribal_vs4.d8m",
+        "sha256": "d46c175b128a97a9e7074e9dbd440bb8dc65d16a73c9f10d9f61e2067f3e7db5"
+      },
+      {
+        "ui": true,
+        "path": "cars/ac_integra_ui/mesh/ac_integra_decal_tribal_vs4.d8m",
+        "sha256": "3eb0287ffca24a4e713dd7cd4cc570f7ed7631d7ce62d1b260af199ea33ca34e"
+      }
+    ]
+  },
+  {
+    "car": "AC_NSX",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/ac_nsx/mesh/ac_nsx_decal_tribal_vs4.d8m",
+        "sha256": "7d5f54c5796d1a4c1e7fec37b4978de592ead1fb9093712dcd26af65fbb65c9f"
+      },
+      {
+        "ui": true,
+        "path": "cars/ac_nsx_ui/mesh/ac_nsx_decal_tribal_vs4.d8m",
+        "sha256": "7423ad8e1aedf574a990a1b6101c9e4f7c3e9cd01c5521b32d93f95cde070f8c"
+      }
+    ]
+  },
+  {
+    "car": "BEETLE",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/beetle/mesh/beetle_decal_tribal_vs4.d8m",
+        "sha256": "29ec33f8bde711358b534dcae1d63644e232b0278140e4b6f3d530a8539d71e9"
+      },
+      {
+        "ui": true,
+        "path": "cars/beetle_ui/mesh/beetle_decal_tribal_vs4.d8m",
+        "sha256": "03f6b8b394e037c3bf674830e5914af497614d3179c4828270cf31809450ecb4"
+      }
+    ]
+  },
+  {
+    "car": "BMW_E36",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": true,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/bmw_e36/mesh/e36_decal_tribal_vs4.d8m",
+        "sha256": "9935e184cb0bdc1fdac5bd8ecc13b5bdb9ab48a43ec6925110814a3691fd0858"
+      },
+      {
+        "ui": true,
+        "path": "cars/bmw_e36_ui/mesh/e36_decal_tribal_vs4.d8m",
+        "sha256": "9935e184cb0bdc1fdac5bd8ecc13b5bdb9ab48a43ec6925110814a3691fd0858"
+      }
+    ]
+  },
+  {
+    "car": "CAMARO",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/camaro/mesh/camaro_decal_tribal_vs4.d8m",
+        "sha256": "e0350661a2951040aec8ea7820b0c4b785d0bd352b6654abfcf8c113ab85feb5"
+      },
+      {
+        "ui": true,
+        "path": "cars/camaro_ui/mesh/camaro_decal_tribal_vs4.d8m",
+        "sha256": "40237ef6ab87c7f2e33fded2e3fdf06ca8fd80465af3a0cc7611b3913572cb4a"
+      }
+    ]
+  },
+  {
+    "car": "CELICA",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/celica/mesh/celica_decal_tribal_vs4.d8m",
+        "sha256": "f62c756e56f0efa1fce158d0c7a70f63e22df8e61cb96429721bae21b229dc9d"
+      },
+      {
+        "ui": true,
+        "path": "cars/celica_ui/mesh/celica_decal_tribal_vs4.d8m",
+        "sha256": "57a2ad4debda4ad2db285aa69722d3fd43c73cdafc9c4b644fbc0cfe299c38a8"
+      }
+    ]
+  },
+  {
+    "car": "CELICA_2",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/celica_2/mesh/celica_2_decal_tribal_vs4.d8m",
+        "sha256": "d018d275ad14aa34a2cfbdc6658623ab0d0d38d786fdc7bc3677ba322d1533eb"
+      },
+      {
+        "ui": true,
+        "path": "cars/celica_2_ui/mesh/celica_2_decal_tribal_vs4.d8m",
+        "sha256": "3799dd7dc386ecf3c63dc9ff2b21e85b8aedad261a708c019afc7675c644bdd9"
+      }
+    ]
+  },
+  {
+    "car": "CIVIC_97",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/civic_97/mesh/civic_97_decal_tribal_vs4.d8m",
+        "sha256": "84b550a8acac5b83992f2055773d081bbc5ee7e2d26da7468ba9110290e68074"
+      },
+      {
+        "ui": true,
+        "path": "cars/civic_97_ui/mesh/civic_97_decal_tribal_vs4.d8m",
+        "sha256": "15f83ef9c0b2809bf37ffe6dab60f4e0d673cc321f5c7e49f2771a319e37c3d6"
+      }
+    ]
+  },
+  {
+    "car": "CLIO",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/clio/mesh/clio_decal_tribal_vs4.d8m",
+        "sha256": "1e45f6c4b5563ab91842619cfbb53c462fe0cda7bcf7c4d6d0f724c5869107ff"
+      },
+      {
+        "ui": true,
+        "path": "cars/clio_ui/mesh/clio_decal_tribal_vs4.d8m",
+        "sha256": "05c30bac2c5ff407293b9b070b4c40d05a4a07c4385d62536dc60429e5526961"
+      }
+    ]
+  },
+  {
+    "car": "COROLLA",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/corolla/mesh/corolla_decal_tribal_vs4.d8m",
+        "sha256": "81bd372295e1304ce94f0e6cca2bebce6433c65de288f9da27e002b6c3cc0eb3"
+      },
+      {
+        "ui": true,
+        "path": "cars/corolla_ui/mesh/corolla_decal_tribal_vs4.d8m",
+        "sha256": "047a9606abc0290846f2ba7aefed97fc40478a274609786c4e3ec4f8490b7f19"
+      }
+    ]
+  },
+  {
+    "car": "CORSA",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/corsa/mesh/corsa_decal_tribal_vs4.d8m",
+        "sha256": "081b07cadc8182660a64e1d2efcff8abdf2a9dcac010e2047dc9df2d173d1983"
+      },
+      {
+        "ui": true,
+        "path": "cars/corsa_ui/mesh/corsa_decal_tribal_vs4.d8m",
+        "sha256": "85bc4a934d597df45413ef0ca2f908c866dd4ed5b9d60f336d292afc3fc050c7"
+      }
+    ]
+  },
+  {
+    "car": "CRX",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/crx/mesh/crx_decal_tribal_vs4.d8m",
+        "sha256": "ad8f3c1034237c28c6fef45e9be21a5c1a3cd838763401bb58ed1887f57640ac"
+      },
+      {
+        "ui": true,
+        "path": "cars/crx_ui/mesh/crx_decal_tribal_vs4.d8m",
+        "sha256": "8ede00d3891a8f8efe42c7deb6632e7d6ac66dec21b54174e331cc71a816d5e0"
+      }
+    ]
+  },
+  {
+    "car": "Charger",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/charger/mesh/charger_decal_tribal_vs4.d8m",
+        "sha256": "b9423d17d8aac8d8f4c3a7866ad48589b5c6ed8d6f9dfcedf36b784b80ed570c"
+      },
+      {
+        "ui": true,
+        "path": "cars/charger_ui/mesh/charger_decal_tribal_vs4.d8m",
+        "sha256": "8b5dcd38cd6a5ae46ff1eb49c4146f9977e1841fe1ffda1b319df9f2bed019eb"
+      }
+    ]
+  },
+  {
+    "car": "ECLIPSE",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/eclipse/mesh/eclipse_decal_tribal_vs4.d8m",
+        "sha256": "d2f44877af409ee958cf6368ff7cbff1d0801ed86ec2fcbbb172372d3b62d90d"
+      },
+      {
+        "ui": true,
+        "path": "cars/eclipse_ui/mesh/eclipse_decal_tribal_vs4.d8m",
+        "sha256": "dcac13efd477fd140ed786ef232c58c6662a4203da3000fe4110fee2f703ce14"
+      }
+    ]
+  },
+  {
+    "car": "EVO6",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/evo6/mesh/evo6_decal_tribal_vs4.d8m",
+        "sha256": "d1ccd687451dab5c3c76eb225e9170cae30a8de53bc8823efd263a6b95d18a3d"
+      },
+      {
+        "ui": true,
+        "path": "cars/evo6_ui/mesh/evo6_decal_tribal_vs4.d8m",
+        "sha256": "114d527eac0c884b2c3de59b1a304807669cfc7b6b498883f0e0ad715bf8fc64"
+      }
+    ]
+  },
+  {
+    "car": "EVO8",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/evo8/mesh/evo8_decal_tribal_vs4.d8m",
+        "sha256": "cf2f72e9cf1a248dbdeec79250c05ca45e09859b888bbeea3903c78f4b7a2e53"
+      },
+      {
+        "ui": true,
+        "path": "cars/evo8_ui/mesh/evo8_decal_tribal_vs4.d8m",
+        "sha256": "406564a2aee66cf6057f6052294b301ae490a12224c97ef2aa533aabb417ad64"
+      }
+    ]
+  },
+  {
+    "car": "FALCON",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/falcon/mesh/falcon_decal_tribal_vs4.d8m",
+        "sha256": "3bf2aae5bdffe03b6891df737e7432ab7a43330019d076b8e1811022dc95c3e3"
+      },
+      {
+        "ui": true,
+        "path": "cars/falcon_ui/mesh/falcon_decal_tribal_vs4.d8m",
+        "sha256": "b5cc10c61c3260fc02ce6594e3eea70cf036af593a4c613f9792eb45f1e420cf"
+      }
+    ]
+  },
+  {
+    "car": "FERRARI_458",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": true,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/ferrari_458/mesh/f458_decal_tribal_vs4.d8m",
+        "sha256": "184f8b765415e333e66421d8b0062fdaf6b97d619e3850052eeb696da8d565a2"
+      },
+      {
+        "ui": true,
+        "path": "cars/ferrari_458_ui/mesh/f458_decal_tribal_vs4.d8m",
+        "sha256": "184f8b765415e333e66421d8b0062fdaf6b97d619e3850052eeb696da8d565a2"
+      }
+    ]
+  },
+  {
+    "car": "FTO",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/fto/mesh/fto_decal_tribal_vs4.d8m",
+        "sha256": "ccb734e26268acf5df0c455ad24b5cd6909472a793f375b695f7439f00583b44"
+      },
+      {
+        "ui": true,
+        "path": "cars/fto_ui/mesh/fto_decal_tribal_vs4.d8m",
+        "sha256": "7e911219ea0b2e9c6ac782844e147e8256f40ddf1726f56107ef6cd9a2b27146"
+      }
+    ]
+  },
+  {
+    "car": "GOLF",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/golf/mesh/golf_decal_tribal_vs4.d8m",
+        "sha256": "a9ab1869d0ea50702e598d19142e5daef2c8fb65c23c1d963f54e58881873e8f"
+      },
+      {
+        "ui": true,
+        "path": "cars/golf_ui/mesh/golf_decal_tribal_vs4.d8m",
+        "sha256": "6ac67f2ac2e03d70cc3f1a89b237e7a5a0941b43322587d827b08ed09b2511d5"
+      }
+    ]
+  },
+  {
+    "car": "GOLF_MK5_R32",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": true,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/golf_mk5_r32/mesh/w259_decal_tribal_vs4.d8m",
+        "sha256": "a177b4f0c0c1b9b26e4ae2e336c33a94d8ce2ef039b4786a3cb8ac350ca2c1f8"
+      },
+      {
+        "ui": true,
+        "path": "cars/golf_mk5_r32_ui/mesh/w259_decal_tribal_vs4.d8m",
+        "sha256": "a177b4f0c0c1b9b26e4ae2e336c33a94d8ce2ef039b4786a3cb8ac350ca2c1f8"
+      }
+    ]
+  },
+  {
+    "car": "GTR",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/gtr/mesh/gtr_decal_tribal_vs4.d8m",
+        "sha256": "c34d45f6c34a897dbfe5c96b77cd2d0e16cfbcfbc8022aa08b3a79a47180b579"
+      },
+      {
+        "ui": true,
+        "path": "cars/gtr_ui/mesh/gtr_decal_tribal_vs4.d8m",
+        "sha256": "7c76c96a5f4496baa62c59585c3e562c4c79fdc4f7741e2f7302213fb9487bc1"
+      }
+    ]
+  },
+  {
+    "car": "IMP",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/imp/mesh/imp_decal_tribal_vs4.d8m",
+        "sha256": "dc0cb2b0169c35aee20aeedf2ba500bc04e17cb3c45b81752901b76120f52a6a"
+      },
+      {
+        "ui": true,
+        "path": "cars/imp_ui/mesh/imp_decal_tribal_vs4.d8m",
+        "sha256": "93b434cf90b886a589657e7a2309a20993499f67476ad320b27531eedee9edc5"
+      }
+    ]
+  },
+  {
+    "car": "INTEGRA",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/integra/mesh/integra_decal_tribal_vs4.d8m",
+        "sha256": "d46c175b128a97a9e7074e9dbd440bb8dc65d16a73c9f10d9f61e2067f3e7db5"
+      },
+      {
+        "ui": true,
+        "path": "cars/integra_ui/mesh/integra_decal_tribal_vs4.d8m",
+        "sha256": "3eb0287ffca24a4e713dd7cd4cc570f7ed7631d7ce62d1b260af199ea33ca34e"
+      }
+    ]
+  },
+  {
+    "car": "INTEGRA2",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/integra2/mesh/integra2_decal_tribal_vs4.d8m",
+        "sha256": "3168b1cd09c9a70e26b8a8bc30347b3be7689efabf2a0922bbba4ccbd0e8c34f"
+      },
+      {
+        "ui": true,
+        "path": "cars/integra2_ui/mesh/integra2_decal_tribal_vs4.d8m",
+        "sha256": "caa52443c259f0a93d3e594d6a8c78b753b05f3e3c479c8ea4afd82eb172bfd0"
+      }
+    ]
+  },
+  {
+    "car": "INTEGRA_DB8",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": true,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/integra_db8/mesh/db8_decal_tribal_vs4.d8m",
+        "sha256": "d255f7772c52d8abea743cfe4dce88c7d2ed467e9a4ad5dba06411f5f4b297b2"
+      },
+      {
+        "ui": true,
+        "path": "cars/integra_db8_ui/mesh/db8_decal_tribal_vs4.d8m",
+        "sha256": "d255f7772c52d8abea743cfe4dce88c7d2ed467e9a4ad5dba06411f5f4b297b2"
+      }
+    ]
+  },
+  {
+    "car": "JETTA_MK5_FSI",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": true,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/jetta_mk5_fsi/mesh/w260_decal_tribal_vs4.d8m",
+        "sha256": "f55b00cc91fc1c8764060ee29cd8c6411f0fb788a45b2a292d52c3595a56bce5"
+      },
+      {
+        "ui": true,
+        "path": "cars/jetta_mk5_fsi_ui/mesh/w260_decal_tribal_vs4.d8m",
+        "sha256": "f55b00cc91fc1c8764060ee29cd8c6411f0fb788a45b2a292d52c3595a56bce5"
+      }
+    ]
+  },
+  {
+    "car": "LEVIN_AE92",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": true,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/levin_ae92/mesh/ae92_decal_tribal_vs4.d8m",
+        "sha256": "f473cb33ab0185f30edc834fb5b9855d3c639746a442f1b3f230b5b8a776b7cd"
+      },
+      {
+        "ui": true,
+        "path": "cars/levin_ae92_ui/mesh/ae92_decal_tribal_vs4.d8m",
+        "sha256": "f473cb33ab0185f30edc834fb5b9855d3c639746a442f1b3f230b5b8a776b7cd"
+      }
+    ]
+  },
+  {
+    "car": "MONARO",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/monaro/mesh/monaro_decal_tribal_vs4.d8m",
+        "sha256": "7a1dfc3bd8da91b0f8b11e0cc080d9fef23edef96ea6840780140c5c47c52b64"
+      },
+      {
+        "ui": true,
+        "path": "cars/monaro_ui/mesh/monaro_decal_tribal_vs4.d8m",
+        "sha256": "197c1d2174e76b5e930aaf66c39fb28042579b263e8c078869122521862db5df"
+      }
+    ]
+  },
+  {
+    "car": "MR2",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/mr2/mesh/mr2_decal_tribal_vs4.d8m",
+        "sha256": "40e816b19a92c62089fc393339599909fcfdfd303c56358535ab0164329002cb"
+      },
+      {
+        "ui": true,
+        "path": "cars/mr2_ui/mesh/mr2_decal_tribal_vs4.d8m",
+        "sha256": "e994247cad0990d73727f3e977d6e1a12ee06ff92072a757623d08f139bd0be6"
+      }
+    ]
+  },
+  {
+    "car": "MUSTANG2",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/mustang2/mesh/mustang2_decal_tribal_vs4.d8m",
+        "sha256": "8523076eba2b2139b453f8275518a772fb734b3b72dc98e0bf2a500db8b561b5"
+      },
+      {
+        "ui": true,
+        "path": "cars/mustang2_ui/mesh/mustang2_decal_tribal_vs4.d8m",
+        "sha256": "86bfc5798e398609612726750628937226d8d3e3da416300056fc0cde90e451a"
+      }
+    ]
+  },
+  {
+    "car": "MUSTANG68",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/mustang68/mesh/mustang68_decal_tribal_vs4.d8m",
+        "sha256": "62d22c2635160c0d54732dcca2c6ec93de373852c13c14680c09366d4c6fee03"
+      },
+      {
+        "ui": true,
+        "path": "cars/mustang68_ui/mesh/mustang68_decal_tribal_vs4.d8m",
+        "sha256": "4209f21ffb7c19116ea84b2794fa5bc0681a2ad13c7e67519cb1877fba4b9e5e"
+      }
+    ]
+  },
+  {
+    "car": "MX5",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/mx5/mesh/mx5_decal_tribal_vs4.d8m",
+        "sha256": "a3fe81d885a52631464bfeedc3e1405ad065cfd17aa1b8370abe949d31386040"
+      },
+      {
+        "ui": true,
+        "path": "cars/mx5_ui/mesh/mx5_decal_tribal_vs4.d8m",
+        "sha256": "e5ce9e909a3613cbd542481f977eb1322d840381d32c81d830cbe9a47c556a49"
+      }
+    ]
+  },
+  {
+    "car": "NEON",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/neon/mesh/neon_decal_tribal_vs4.d8m",
+        "sha256": "6f7124c035a1fa609f0475d7fd32120bd2ee42084328b769bd7473ac9c20d7f8"
+      },
+      {
+        "ui": true,
+        "path": "cars/neon_ui/mesh/neon_decal_tribal_vs4.d8m",
+        "sha256": "e242fd78fed081c3818390617ca0a51cc183d68316a48af1d41e310b3044f084"
+      }
+    ]
+  },
+  {
+    "car": "NSX",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/nsx/mesh/nsx_decal_tribal_vs4.d8m",
+        "sha256": "7d5f54c5796d1a4c1e7fec37b4978de592ead1fb9093712dcd26af65fbb65c9f"
+      },
+      {
+        "ui": true,
+        "path": "cars/nsx_ui/mesh/nsx_decal_tribal_vs4.d8m",
+        "sha256": "7423ad8e1aedf574a990a1b6101c9e4f7c3e9cd01c5521b32d93f95cde070f8c"
+      }
+    ]
+  },
+  {
+    "car": "OUTBACK_2002",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": true,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/outback_2002/mesh/w261_decal_tribal_vs4.d8m",
+        "sha256": "c54c206c63fd4ecad992d325ac4f66c3a2bc70bc8c468c255431129f677f41b2"
+      },
+      {
+        "ui": true,
+        "path": "cars/outback_2002_ui/mesh/w261_decal_tribal_vs4.d8m",
+        "sha256": "c54c206c63fd4ecad992d325ac4f66c3a2bc70bc8c468c255431129f677f41b2"
+      }
+    ]
+  },
+  {
+    "car": "PEUGEOT_206",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/peugeot_206/mesh/peugeot_206_decal_tribal_vs4.d8m",
+        "sha256": "ed80b3130118a474fd23235d93d25823a5d9a44744ce00c3c1fcfe6f816d038a"
+      },
+      {
+        "ui": true,
+        "path": "cars/peugeot_206_ui/mesh/peugeot_206_decal_tribal_vs4.d8m",
+        "sha256": "07f51312ca342cbced8e671cfb4d98bd5ceb0ed0db8ca87a796e47a695f7d295"
+      }
+    ]
+  },
+  {
+    "car": "PEUGEOT_405_GLX",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": true,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/peugeot_405_glx/mesh/w257_decal_tribal_vs4.d8m",
+        "sha256": "dd92251993c46bf077c71b764f76519b6c6104c15b7b28ee7e91a791f7a9635c"
+      },
+      {
+        "ui": true,
+        "path": "cars/peugeot_405_glx_ui/mesh/w257_decal_tribal_vs4.d8m",
+        "sha256": "dd92251993c46bf077c71b764f76519b6c6104c15b7b28ee7e91a791f7a9635c"
+      }
+    ]
+  },
+  {
+    "car": "PEUGEOT_406_COUPE",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": true,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/peugeot_406_coupe/mesh/w258_decal_tribal_vs4.d8m",
+        "sha256": "b12872e010177f0912509c8c5508a5302936f9b2adcc08a56e3eca1a3e818234"
+      },
+      {
+        "ui": true,
+        "path": "cars/peugeot_406_coupe_ui/mesh/w258_decal_tribal_vs4.d8m",
+        "sha256": "b12872e010177f0912509c8c5508a5302936f9b2adcc08a56e3eca1a3e818234"
+      }
+    ]
+  },
+  {
+    "car": "PUNTO",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/punto/mesh/punto_decal_tribal_vs4.d8m",
+        "sha256": "b7a1ce56233336a22dd7a2098be909bf6c0076a539e9b95965097a85d13d99d9"
+      },
+      {
+        "ui": true,
+        "path": "cars/punto_ui/mesh/punto_decal_tribal_vs4.d8m",
+        "sha256": "93676eb88f41072d4e388fa2ead0e9a8caff0ece569302b59400e3fe12dfc6ad"
+      }
+    ]
+  },
+  {
+    "car": "RSX",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/rsx/mesh/rsx_decal_tribal_vs4.d8m",
+        "sha256": "3168b1cd09c9a70e26b8a8bc30347b3be7689efabf2a0922bbba4ccbd0e8c34f"
+      },
+      {
+        "ui": true,
+        "path": "cars/rsx_ui/mesh/rsx_decal_tribal_vs4.d8m",
+        "sha256": "caa52443c259f0a93d3e594d6a8c78b753b05f3e3c479c8ea4afd82eb172bfd0"
+      }
+    ]
+  },
+  {
+    "car": "RX7",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/rx7/mesh/rx7_decal_tribal_vs4.d8m",
+        "sha256": "a8c83b0f5a2ada4e3b691a7fc7516506133b684b9999ed806652ecfd8b636067"
+      },
+      {
+        "ui": true,
+        "path": "cars/rx7_ui/mesh/rx7_decal_tribal_vs4.d8m",
+        "sha256": "d073842af49f8611d13260db6241aa37b43f09e4e38096eb77f23c50841f02db"
+      }
+    ]
+  },
+  {
+    "car": "RX8",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/rx8/mesh/rx8_decal_tribal_vs4.d8m",
+        "sha256": "afd4ef0cceb946905d859a8ba8775db4c1d05ee05ad8f4e40462f1562033bbb3"
+      },
+      {
+        "ui": true,
+        "path": "cars/rx8_ui/mesh/rx8_decal_tribal_vs4.d8m",
+        "sha256": "99742b8b68c88fa852c060ce5783e42a663a1fced157f8c80c852ee79509c629"
+      }
+    ]
+  },
+  {
+    "car": "S2000",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/s2000/mesh/s2000_decal_tribal_vs4.d8m",
+        "sha256": "f3d8a8a8b08a6e3927e86e8f2b06bfeb0990f6af63223eb3cfea333526b09207"
+      },
+      {
+        "ui": true,
+        "path": "cars/s2000_ui/mesh/s2000_decal_tribal_vs4.d8m",
+        "sha256": "83dcd1d425203d16aca0b2755f18ee7a7e062c9c393a6aaef8a32220d4c72b6a"
+      }
+    ]
+  },
+  {
+    "car": "SUPRA",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/supra/mesh/supra_decal_tribal_vs4.d8m",
+        "sha256": "1c2c91a3f48ddad078af87e9974d33119bb74a6cfd8287ff37e2cf4ad9db49d6"
+      },
+      {
+        "ui": true,
+        "path": "cars/supra_ui/mesh/supra_decal_tribal_vs4.d8m",
+        "sha256": "7c40e6e771e9d3810d1fc6e3fe8a468ca8ace3bdfbaac825e7a43062039fa937"
+      }
+    ]
+  },
+  {
+    "car": "TRANS",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/trans/mesh/trans_decal_tribal_vs4.d8m",
+        "sha256": "c887f896fef71f06b58206ce1416bcef6dc7641eda844b85d036a35887c5dbeb"
+      },
+      {
+        "ui": true,
+        "path": "cars/trans_ui/mesh/trans_decal_tribal_vs4.d8m",
+        "sha256": "d661894f045ea87fee21b56d04a71ac9e6c8ba08c597c331499c1af909a94d7e"
+      }
+    ]
+  },
+  {
+    "car": "VOLVO_240_TURBO",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": true,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/volvo_240_turbo/mesh/w262_decal_tribal_vs4.d8m",
+        "sha256": "fca16672c87da3bf8b10ff190c86f6adb93a28aea80cdb4b50ede9b417ee37e9"
+      },
+      {
+        "ui": true,
+        "path": "cars/volvo_240_turbo_ui/mesh/w262_decal_tribal_vs4.d8m",
+        "sha256": "fca16672c87da3bf8b10ff190c86f6adb93a28aea80cdb4b50ede9b417ee37e9"
+      }
+    ]
+  },
+  {
+    "car": "VOLVO_V70_24",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": true,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/volvo_v70_24/mesh/w263_decal_tribal_vs4.d8m",
+        "sha256": "e625b754664357bf0c5c92d1eb18d612f8899d7e1801081cbede94a00ead1ad0"
+      },
+      {
+        "ui": true,
+        "path": "cars/volvo_v70_24_ui/mesh/w263_decal_tribal_vs4.d8m",
+        "sha256": "e625b754664357bf0c5c92d1eb18d612f8899d7e1801081cbede94a00ead1ad0"
+      }
+    ]
+  },
+  {
+    "car": "VW_CORRADO",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/vw_corrado/mesh/vw_corrado_decal_tribal_vs4.d8m",
+        "sha256": "d7e1331b6ba327fb8156c0243d50d8b4bde3d097309c7a6a09b35c9608ffa7b1"
+      },
+      {
+        "ui": true,
+        "path": "cars/vw_corrado_ui/mesh/vw_corrado_decal_tribal_vs4.d8m",
+        "sha256": "5d33f44016db263fee97574f7eedaea326b2b40938ee5ec9173ffa9e0b449ef2"
+      }
+    ]
+  },
+  {
+    "car": "WRX2",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/wrx2/mesh/wrx2_decal_tribal_vs4.d8m",
+        "sha256": "65ef0b9fd6901e04501344220d3f0ce4811fd514f069ed32a2febc10142fec0b"
+      },
+      {
+        "ui": true,
+        "path": "cars/wrx2_ui/mesh/wrx2_decal_tribal_vs4.d8m",
+        "sha256": "5e8ec9fe67103f183b49dfdf04cad508bdf0c2cff4190d7a6bfebe4624fe994c"
+      }
+    ]
+  },
+  {
+    "car": "camaro70",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/camaro70/mesh/camaro70_decal_tribal_vs4.d8m",
+        "sha256": "b0e9c6e2bd5a38d8f22672b989c71b47ea731641daa1966dff054590c5b085f5"
+      },
+      {
+        "ui": true,
+        "path": "cars/camaro70_ui/mesh/camaro70_decal_tribal_vs4.d8m",
+        "sha256": "a9162e03826608c0f5c8f35f8b7942b98422ddfc97aa4fed81cbf374bd8a0f39"
+      }
+    ]
+  },
+  {
+    "car": "civicR",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/civicr/mesh/civicr_decal_tribal_vs4.d8m",
+        "sha256": "b38638806e02121b226b6120330d2f59864103f14d98a68db0df6c91e5aee3aa"
+      },
+      {
+        "ui": true,
+        "path": "cars/civicr_ui/mesh/civicr_decal_tribal_vs4.d8m",
+        "sha256": "8df2aa19189e68d204884cb3af2cc9c66a3793e2607d25af3f5d4e0db623d801"
+      }
+    ]
+  },
+  {
+    "car": "dodge_srt",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/dodge_srt/mesh/dodge_srt_decal_tribal_vs4.d8m",
+        "sha256": "0950dbe1888d20a96c23d5f925a679320a52fba131e28294aebfaa20c59f3d7e"
+      },
+      {
+        "ui": true,
+        "path": "cars/dodge_srt_ui/mesh/dodge_srt_decal_tribal_vs4.d8m",
+        "sha256": "b4973edfeada8664582e92b1e74bf1095e92171f506c5e76a6846c5df855561c"
+      }
+    ]
+  },
+  {
+    "car": "focus",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/focus/mesh/focus_decal_tribal_vs4.d8m",
+        "sha256": "a91a95f6affc92c7af02ba3b623c3a0847c7a4dee053f98000e292ae9d167c45"
+      },
+      {
+        "ui": true,
+        "path": "cars/focus_ui/mesh/focus_decal_tribal_vs4.d8m",
+        "sha256": "2c1656d16d7338cdcdcc446416ef6a3425ad3334eb3f7ed01fa9f4cad9eb5d9b"
+      }
+    ]
+  },
+  {
+    "car": "focus_2",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/focus_2/mesh/focus_2_decal_tribal_vs4.d8m",
+        "sha256": "6d777cd63d9bdcac7feb3b3f521fc707993d266abcea800237061a22dc6584b0"
+      },
+      {
+        "ui": true,
+        "path": "cars/focus_2_ui/mesh/focus_2_decal_tribal_vs4.d8m",
+        "sha256": "1a9018c78c2fc66333ac4311ce7bf57d709c7a6dc04ab24d059505c80c8bfbc5"
+      }
+    ]
+  },
+  {
+    "car": "mrs",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/mrs/mesh/mrs_decal_tribal_vs4.d8m",
+        "sha256": "40a8325404f9bd22ec6cd0b033875f0310bb6a51d7e2ca3bcbd3ed22051a9131"
+      },
+      {
+        "ui": true,
+        "path": "cars/mrs_ui/mesh/mrs_decal_tribal_vs4.d8m",
+        "sha256": "9dd055faad3b49835557ea31f1ce0c7d739ce88f416b2d31eaaf820cc3e47d7c"
+      }
+    ]
+  },
+  {
+    "car": "prelude",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/prelude/mesh/prelude_decal_tribal_vs4.d8m",
+        "sha256": "d5bea32276fbf6a3729d7f3338f73d209ec0ca6c02eea05159d52563c3ce7786"
+      },
+      {
+        "ui": true,
+        "path": "cars/prelude_ui/mesh/prelude_decal_tribal_vs4.d8m",
+        "sha256": "3af9a5d2bf7ead8e87bf1e7306d085571ff79cc0a28eea355b1db8b110b10163"
+      }
+    ]
+  },
+  {
+    "car": "vette_2",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/vette_2/mesh/vette_2_decal_tribal_vs4.d8m",
+        "sha256": "db4d9104ff5cd87095b9e2d013e536936abf9f74fafbf98088aa6d2625ae6d2b"
+      },
+      {
+        "ui": true,
+        "path": "cars/vette_2_ui/mesh/vette_2_decal_tribal_vs4.d8m",
+        "sha256": "b15f248eb32c802848d3f82c9ca457d8cac6fd0c0d3d777bfea5ed3b1dea8232"
+      }
+    ]
+  },
+  {
+    "car": "vette_zo6",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/vette_zo6/mesh/vette_zo6_decal_tribal_vs4.d8m",
+        "sha256": "11e08308322c00c83aa52061ff945c0858f64e0f2bb1d6486ad3545c3c91ea6e"
+      },
+      {
+        "ui": true,
+        "path": "cars/vette_zo6_ui/mesh/vette_zo6_decal_tribal_vs4.d8m",
+        "sha256": "64a168573b2f58098bb72029842d182df97742704cfe239afce205e485e2abfd"
+      }
+    ]
+  },
+  {
+    "car": "viper",
+    "mesh": "DECAL_NFS_AI_JETTA",
+    "donor": "decal_tribal_vs4",
+    "reference": false,
+    "label": "AI: Jesse Blue Circuit",
+    "optional_car": false,
+    "sources": [
+      {
+        "ui": false,
+        "path": "cars/viper/mesh/viper_decal_tribal_vs4.d8m",
+        "sha256": "042e85e78bac84e00e25f19a8b75ca803cf02f0890872a63ffa56a0ab917cefb"
+      },
+      {
+        "ui": true,
+        "path": "cars/viper_ui/mesh/viper_decal_tribal_vs4.d8m",
+        "sha256": "6fd67de2467580321b621960b21e43f7cddee9feedfc5270274b212aafbcf1be"
+      }
+    ]
+  }
+]
