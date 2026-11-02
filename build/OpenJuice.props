@@ -16,7 +16,8 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(OpenJuiceRoot)src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <!-- The fixed build: JuicedConfigExt's core of the controls (Core/Input/PadControls). -->
+      <AdditionalIncludeDirectories>$(OpenJuiceRoot)src;$(OpenJuiceRoot)external\JuicedConfigExt\src\Shared;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32_LEAN_AND_MEAN;NOMINMAX;_WIN32_WINNT=0x0601;WINVER=0x0601;UNICODE;_UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -24,8 +25,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug'">
+    <Link>
+      <!-- A debug build fast enough to play: every function a call of its own as the release's (no /OPT:NOICF of the
+           debug linker, an exe of 21 MB) -->
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
     <ClCompile>
-      <Optimization>Disabled</Optimization>
+      <!-- A debug build fast enough to play: the code optimized, the C++ library's debug checks kept (below). -->
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <StringPooling>true</StringPooling>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>

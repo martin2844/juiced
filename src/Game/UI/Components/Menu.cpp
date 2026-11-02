@@ -92,7 +92,7 @@ void Screen::widenMenu(size_t index, const MenuItem& item, bool textured) {
     } else if (f != nullptr && !item.text.empty()) {
         s.menu.widest = std::max(s.menu.widest, textWidth(*f, item.text));
     } else {
-        s.menu.widest = static_cast<float>(m_device.height()) * number(e.find("ItemHeight"), 0, 0.5f);
+        s.menu.widest = placement(index).sy * number(e.find("ItemHeight"), 0, 0.5f);
     }
 }
 
@@ -335,16 +335,18 @@ std::string Screen::menuItemCommand(const std::string& menu, size_t index) const
 }
 
 // 0x005B11A0 for every menu of the window: no wrap at the ends; a vertical list skips disabled items and scrolls so
-// the selection stays among the items that fit.
+// the selection stays among the items that fit. Stock problem: a window's highlight bars (BACKMENU) take the arrows
+// too and its code puts them on its menu's item after; with more bars than items an arrow past the last item moves
+// only the bars and plays SELECT, again at each repeat of a held arrow (docs/spec/stock-problems.md).
 bool Screen::menuEvent(uint32_t firstEvent, uint32_t secondEvent) {
     bool moved = false;
-    const float sh = static_cast<float>(m_device.height());
     for (size_t i = 0; i < m_window.elements.size(); ++i) {
         const Element& e = m_window.elements[i];
         State& s = m_states[i];
         if (e.kind != ElementKind::Menu || !s.menu.active || s.hidden || s.menu.items.empty()) {
             continue;
         }
+        const float sh = placement(i).sy;
         const float itemHeight = number(e.find("ItemHeight"), 0, 0.5f);
         const int fit = std::max(1, x87::chop(e.h * sh / (itemHeight * sh + 3.0f) - 1.0f));
         // 0x005B1207: the first player's event, or with none the second's for a menu of +0x1A0.
@@ -401,8 +403,10 @@ void Screen::refreshMenuHelp(const std::string& menu) {
 // item uses HighFont and its highlight texture and goes through the menu's text modifier; the others their texture
 // inset by 15% at no more than half alpha. AutoArrows after the items.
 void Screen::drawMenu(const Element& e, State& s) {
-    const float sw = static_cast<float>(m_device.width());
-    const float sh = static_cast<float>(m_device.height());
+    // The items' sizes by the menu's placement (the fixed build's wide screens: the 4:3 frame's).
+    const Placement placed = placementOf(s);
+    const float sw = placed.sx;
+    const float sh = placed.sy;
     float x0, y0, x1, y1;
     elementRect(e, s, x0, y0, x1, y1);
     const bool vertical = !horizontal(e);
@@ -494,7 +498,10 @@ void Screen::drawMenu(const Element& e, State& s) {
         if (own != 0 || high != 0) {
             float ix0, iy0, ix1, iy1;
             if (vertical) {
-                ix0 = x0, ix1 = x1;
+                // The fixed build's wide screens: across a menu at the window's edges out to the screen's.
+                const Placement edges = edgePlacement(static_cast<size_t>(&s - m_states.data()));
+                ix0 = s.x * edges.sx + edges.ox;
+                ix1 = (s.x + s.w) * edges.sx + edges.ox;
                 iy0 = y - itemHeight * 0.5f * sh;
                 iy1 = y + itemHeight * 0.5f * sh;
             } else {

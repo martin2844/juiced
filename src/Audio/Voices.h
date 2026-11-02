@@ -7,6 +7,7 @@
 // listener (0x88 bytes, vtable 0x006FEFB0, [0x0075F8AC]); DirectSound's own 3D (distance and rolloff factors 0.001)
 // only places it.
 
+#include "Audio/Output.h"
 #include "Audio/Player.h"
 
 #include <array>
@@ -15,8 +16,6 @@
 #include <memory>
 #include <string>
 #include <vector>
-
-struct IDirectSound3DListener;
 
 namespace oj {
 class CrtRandom;
@@ -52,7 +51,7 @@ public:
     Vec4 frontRow;         // +0x08
     Vec4 upRow;            // +0x18
 private:
-    IDirectSound3DListener* m_ds = nullptr;  // +0x84
+    std::unique_ptr<OutputListener> m_ds;  // +0x84: the primary buffer's 3D listener
 };
 
 // The emitter's state of a frame (0x4C bytes, 0x005C2650, one an instance): worked out once a frame.
@@ -209,7 +208,8 @@ public:
     bool paused() const { return m_paused; }
     // +0x28 (0x005BC8E0): the clock (0x005BC3C0), the ends (0x005BC650), the emitters and the culling below 0.01
     // (0x005BCAF0), the loudest (priority x volume) given buffers, the listener committed, the stopping stopped.
-    void update(const Listener& listener, uint32_t flags);
+    // dt: the frame time the world's update passes on; the stock keeps it (+0x48), nothing reads it.
+    void update(const Listener& listener, float dt);
     // +0x2C (0x005BBFC0): every instance's emitter starts its frame anew (+0x30).
     void resetEmitters() {
         for (Emitter& e : m_emitters) e.resetFrame();
@@ -295,7 +295,9 @@ public:
     // 0x005B9A80: the same by the set (bank, set): allocate (flag 1, owner), set, position, volume 1, rolloff 1, not
     // looping, played.
     Instance* playOnceRef(const SetRef& ref, const Vec4& place, Instance** owner);
-    // 0x005B96C0: the volume to its target, the player's master, then the manager's update.
+    // 0x005B96C0: the volume to its target, the player's master, then the manager's update. Stock problem: the step is
+    // the difference / dt / the rate, so above 60 frames a second it passes the target and swings between the limits
+    // every frame (a crackle); the fixed build's frame limit above 60 (setHighFrameRate) moves it by the time instead.
     void update(float dt);
     Manager& manager() { return *m_manager; }
     Player& player() { return *m_player; }
@@ -308,5 +310,13 @@ private:
     std::unique_ptr<Player> m_player;
     std::unique_ptr<Manager> m_manager;
 };
+
+// The fixed build (Render/FrameOptions' limit above the stock's 60): the worlds' volumes move to their targets by the
+// time (fadeByTime).
+void setHighFrameRate(bool on);
+// JuicedConfigExt's HighFPSAudioFix: every 1/30 s leaves the same share of the difference (|1 - 30 / rate|, at most
+// 0.99; the rate down below the volume, up above) at any frame rate, with no overshoot; within 0.0001 the target, at
+// most 1, at or under 0.001 silence.
+float fadeByTime(float volume, float target, float down, float up, float dt);
 
 }  // namespace oj::audio

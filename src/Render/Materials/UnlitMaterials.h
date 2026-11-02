@@ -55,6 +55,7 @@ public:
         return true;
     }
     void setup(uint32_t) override { m_r.device().setRenderState(RenderState::FogEnable, 1); }
+    const GameTexture* cutout() const override { return m_texture; }
     Program* program() override { return m_program; }
     void bind(uint32_t pass) override {
         m_r.bindTexture(m_texture, 0);
@@ -125,6 +126,7 @@ public:
         if (m_blend) m_r.device().setRenderState(RenderState::CullMode, m_r.defaultCull);
         m_r.device().setRenderState(RenderState::FogEnable, 1);
     }
+    const GameTexture* cutout() const override { return m_blend ? nullptr : m_texture; }
     Program* program() override { return m_program; }
     void bind(uint32_t pass) override {
         if (m_program != nullptr) m_program->beginPass(pass);

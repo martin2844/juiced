@@ -171,7 +171,7 @@ bool System::startRad3d() {
     if (!alpha) return false;
     const uint32_t caps = m_device.textureCaps();
     r->anySize = !((caps & kPow2) != 0 && (caps & kNonPow2Conditional) == 0);
-    m_library->setSoundSystem(reinterpret_cast<uintptr_t>(audio::system().device()));
+    m_library->setSoundSystem(audio::system().output().soundSystem());
     m_rad3d = std::move(r);
     return true;
 }

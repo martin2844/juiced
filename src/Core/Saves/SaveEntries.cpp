@@ -1,5 +1,7 @@
 #include "Core/Saves/SaveEntries.h"
 
+#include "Core/Data/Language.h"
+
 #include <cstring>
 #include <initializer_list>
 
@@ -123,7 +125,7 @@ void Settings::reset(int languageIndex) {
     // The scheme's values from the sixth (the first five are the constructor's alone).
     for (uint32_t i : {5u, 6u, 9u, 10u, 11u, 12u, 14u, 15u, 16u}) setU32(kScheme + 4 * i, kNone);
     for (uint32_t i : {7u, 8u, 13u}) setU32(kScheme + 4 * i, 0);
-    setU32(kMph, languageIndex == 0 ? 1 : 0);
+    setU32(kMph, languageIndex == kEnglish ? 1 : 0);
     for (uint32_t i = 0; i < 4; ++i) setU32(kDriverMap + 4 * i, 0);
     for (uint32_t o : Offsets{kWheelForce, kWheelForce + 4, 0x68, 0x6C}) setU32(o, 1);
     for (uint32_t o : Offsets{kWheelSpeed, kWheelSpeed + 4}) setU32(o, 0);

@@ -26,6 +26,8 @@ using oj::test::check;
 // CONNECT acknowledged, the pings both ways, the success with the peer's address; a second one told the
 // partner never came (a dead beat).
 OJ_INTEGRATION_TEST(NatNegotiation, Negotiator) {
+    // Winsock for the test's own sockets, made before the transport starts it (alone, --suite, they failed).
+    oj::net::startWinsock();
     auto swap16 = [](uint16_t v) { return static_cast<uint16_t>((v >> 8) | (v << 8)); };
     const uint32_t loop = 0x0100007Fu;
     oj::net::ServiceHosts& hosts = oj::net::serviceHosts();

@@ -1,6 +1,7 @@
 // Integration tests: Presence.
 
 #include "Framework/Test.h"
+#include "Framework/Fakes/FakeAvailable.h"
 #include "Framework/Fakes/FakeGpcm.h"
 
 #include "Core/Network/GameSpy/GameSpy.h"
@@ -27,6 +28,7 @@
 namespace {
 
 using oj::test::check;
+using oj::test::FakeAvailable;
 using oj::test::FakeGpcm;
 
 }  // namespace
@@ -206,11 +208,11 @@ OJ_INTEGRATION_TEST(Presence, ConnectionManager) {
     std::filesystem::remove(info);
     check(proofOk && newOk, "GameSpy Presence: a proof not the server's (0x0108), a new user, the logout");
 }
-// The game's user object against the stand-in: the account set, the available check (its name does not
-// resolve off GameSpy: available at once), the login, the own record's nick (asked blocking inside the
-// login's callback), the local player, the logged-on hook (the friends made), invitable to 10362, the presence
-// within a second of a change; a buddy's status, a game invitation and a request into the friends, our answer;
-// an error's code into the state; the sign-out.
+// The game's user object against the stand-in: the account set, the available check (FakeAvailable answering
+// "available"), the login, the own record's nick (asked blocking inside the login's callback), the
+// local player, the logged-on hook (the friends made), invitable to 10362, the presence within a second of a change;
+// a buddy's status, a game invitation and a request into the friends, our answer; an error's code into the state;
+// the sign-out.
 OJ_INTEGRATION_TEST(Presence, UserObject) {
     namespace gp = oj::net::gp;
     oj::net::startWinsock();
@@ -220,12 +222,14 @@ OJ_INTEGRATION_TEST(Presence, UserObject) {
     fake.nicks[1234] = "Tester";
     fake.nicks[777] = "Buddy";
     fake.nicks[888] = "Asker";
-    bool ok = fake.start();
+    FakeAvailable available;
+    bool ok = fake.start() && available.open();
     oj::net::makeOnlineUser();
     oj::net::OnlineUser* user = oj::net::onlineUser();
     bool hook = false;
     auto pump = [&](float dt, const std::function<bool()>& done) {
         for (int i = 0; i < 3000 && !done(); ++i) {
+            available.answer();
             user->update(dt);
             Sleep(1);
         }
@@ -301,11 +305,16 @@ OJ_INTEGRATION_TEST(Presence, UserObject) {
         // After the login a non-fatal error changes nothing (the fixed build; the stock's state 10 and logged off), a
         // fatal one ends it.
         fake.queue("\\error\\\\err\\1537\\errmsg\\Request refused\\final\\");
-        for (int i = 0; i < 200; ++i) {
-            user->update(0.01f);
-            Sleep(1);
-        }
-        const bool kept = user->state == oj::net::UserState::None && user->loggedOn == 1;
+        // A buddy's status after it (the connection keeps their order): once its session 11 shows, the error has
+        // been read.
+        fake.queue("\\bm\\100\\f\\777\\msg\\|s|2|ss|Playing|ls|juicedpc://1.2.3.4:8667/?session=11|ip|16909060"
+                   "|p|0\\final\\");
+        oj::net::OnlineFriends* const later = oj::net::onlineFriends();
+        const bool errorRead = pump(0.01f, [&] {
+            const int32_t b = later != nullptr ? later->find(777) : -1;
+            return b != -1 && later->entries()[static_cast<size_t>(b)].session == 11;
+        });
+        const bool kept = errorRead && user->state == oj::net::UserState::None && user->loggedOn == 1;
         fake.queue("\\error\\\\err\\6\\fatal\\\\errmsg\\Forced disconnect\\final\\");
         errorOk = kept && pump(0.01f, [&] { return user->state != oj::net::UserState::None; }) &&
                   user->state == oj::net::UserState::ForcedDisconnect && user->loggedOn == 0;
@@ -315,8 +324,9 @@ OJ_INTEGRATION_TEST(Presence, UserObject) {
     const bool signedOut = oj::net::onlineUser() == nullptr && !oj::net::gpConnection();
     fake.stop();
     std::filesystem::remove(info);
-    check(ok && loggedOn && presence && friendsOk && answerOk && errorOk && signedOut,
-          "online user: login, own nick, hook, presence, buddy status, invitation, request answered, error state");
+    check(ok && available.asked() && loggedOn && presence && friendsOk && answerOk && errorOk && signedOut,
+          "online user: the available check asked, login, own nick, hook, presence, buddy status, invitation, request "
+          "answered, error state");
     // The players met lately (0x004E7D30, 0x004E7C90): the latest first, each referenced, a profile there before
     // moved to the front, ten at most (the oldest let go), taken off by profile.
     {
@@ -371,7 +381,8 @@ OJ_INTEGRATION_TEST(Presence, EarlierUserLeavesTheNewConnection) {
     FakeGpcm secondServer;
     firstServer.nicks[1234] = "Tester";
     secondServer.nicks[1234] = "Tester";
-    const bool ok = firstServer.start() && secondServer.start();
+    FakeAvailable available;
+    const bool ok = firstServer.start() && secondServer.start() && available.open();
     auto login = [&](FakeGpcm& server) {
         oj::net::makeOnlineUser();
         oj::net::OnlineUser* user = oj::net::onlineUser();
@@ -379,6 +390,7 @@ OJ_INTEGRATION_TEST(Presence, EarlierUserLeavesTheNewConnection) {
         user->loggedOnHook = [] { oj::net::remakeOnlineFriends(); };
         user->setCredentials(u"Tester", u"tester@example.com", u"secret", false);
         for (int i = 0; i < 3000 && user->loggedOn == 0 && user->state == oj::net::UserState::None; ++i) {
+            available.answer();
             user->update(0.01f);
             Sleep(1);
         }
@@ -438,7 +450,8 @@ OJ_INTEGRATION_TEST(Presence, SearchManager) {
             } else if (in.rfind("\\others\\", 0) == 0) {
                 c.send(std::string("\\others\\\\o\\9\\nick\\Jkl\\first\\Jay\\last\\Kay\\odone\\\\final\\"));
             }
-            for (int i = 0; i < 200; ++i) {
+            // The answer kept open until the client has read it and closed its side (at most 200 polls).
+            for (int i = 0; i < 200 && !c.lost(); ++i) {
                 c.poll();
                 Sleep(1);
             }

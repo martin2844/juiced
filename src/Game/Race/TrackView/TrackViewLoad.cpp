@@ -1,6 +1,7 @@
 // The race's load: the track's scene, the players, the world, the cars, the sounds' banks and the start of the race.
 
 #include "Game/Race/TrackView/TrackView.h"
+#include "Core/Saves/GraphicsConfig.h"
 
 #include "Core/Base/GameFiles.h"
 #include "Core/Base/Log.h"
@@ -8,6 +9,7 @@
 #include "Core/Cars/CarCollection.h"
 #include "Core/Cars/CarPhysics.h"
 #include "Core/Race/StartingGrid.h"
+#include "Core/Network/Matchmaking.h"
 #include "Core/Network/OnlineRecords.h"
 
 #include <windows.h>
@@ -72,10 +74,20 @@ bool TrackView::start(oj::scene::Engine& engine, const oj::scene::TrackSetup& se
     ownCars.clear();
     world.reset();
     scene = std::make_unique<oj::scene::TrackScene>(engine);
+    // The fixed build: with REFLECTIONS ULTRA the night's silhouettes take the street lamps nearest the car
+    // (TrackScene::nearestLamps, 20 m; the stock's grid of the world's lights is never filled, its night silhouettes
+    // never cast).
+    // With SHADOWS HI and ULTRA the cars' shadows from the lamps by night the cars cast real ones: no silhouette from a
+    // lamp (the row's own, the user 2026-10-29; it hung off WORLD LIGHT ULTRA before).
+    nearestLights = [this](const oj::Vec4& place, oj::render::Node*& first, oj::render::Node*& second) {
+        if (oj::shadowLevel(oj::graphicsConfig()) < 2 || lampShadowsDrawn) return;
+        const auto lamps = scene->nearestLamps(place, oj::scene::TrackScene::kLampRadius);
+        first = lamps[0];
+        second = lamps[1];
+    };
     scene->barrelCrash = [this](float frameTime) {
         if (rules.career != nullptr) rules.career->cruise.crash(2000.0f, nullptr, frameTime);
     };
-    loading = oj::CrtRandom{};
     // 0x00461390: the 3D sounds' world first, then the effects of the race (the common ones, then those of its
     // weather) before the track. Two of the platform's timers (0x005A23E0) time the load and its parts, which go
     // to the debugger's output as it ends (beginRace).
@@ -255,6 +267,17 @@ void TrackView::addCar(const oj::CarDynamics& dynamics, const oj::Car& source, o
     auto slot = std::make_unique<RaceSlot>();
     slot->body = std::make_unique<oj::CarBody>(fitted, oj::Vec4{});
     world->add(*slot->body);
+    // 0x00485F86: with the matchmaking a session hosted without collisions makes the car touching no other body
+    // (the body's +0x78 0): an arcade one ([0x0075EF88] 0, its +0x34 0) in a network game, a career one (1, its
+    // +0x44 0) with or without.
+    if (oj::net::matchmaking() != nullptr) {
+        const oj::net::OnlineHosted& hosted = oj::net::onlineHosted();
+        if ((oj::net::netGame() != nullptr && hosted.mode == oj::net::OnlineKind::Arcade &&
+             hosted.arcade.collision == 0) ||
+            (hosted.mode == oj::net::OnlineKind::Career && hosted.career.collision == 0)) {
+            slot->body->collides = false;
+        }
+    }
     slot->car.kind = kind;
     slot->car.body = slot->body.get();
     // 0x00486411: the car's tracker on the race's centre line (0x00419E10).
@@ -321,7 +344,8 @@ void TrackView::addCar(const oj::CarDynamics& dynamics, const oj::Car& source, o
     for (oj::scene::CarFlare* f : slot->headFlares) {
         if (f != nullptr) f->on = lightsOn;
     }
-    if (oj::render::ModelNode* lit = model->meshNode("LIGHTSON"); lit != nullptr) {
+    slot->litLamps = model->meshNode("LIGHTSON");
+    if (oj::render::ModelNode* lit = slot->litLamps; lit != nullptr) {
         if (lightsOn) {
             lit->flags &= ~4u;
         } else {

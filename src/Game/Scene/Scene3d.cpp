@@ -7,12 +7,14 @@
 #include "Core/Formats/Ddt.h"
 #include "Core/Formats/Effect.h"
 #include "Core/Base/GameFiles.h"
+#include "Core/Base/LoadingThread.h"
 #include "Core/Saves/GraphicsConfig.h"
 #include "Core/Base/Log.h"
 #include "Core/Formats/Model.h"
 #include "Core/Input/Input.h"
 #include "Game/Scene/PostEffects.h"
 #include "Render/HlslCompiler.h"
+#include "Render/ShaderReplacements.h"
 
 #include <algorithm>
 #include <bit>
@@ -42,6 +44,8 @@ const float kTwoPi = std::bit_cast<float>(0x40C90FDBu);
 const float kFovPi = std::bit_cast<float>(0x40490FD0u);   // 0x006FFDF8
 const float kRandomScale = std::bit_cast<float>(0x38000100u);  // 1 / 32767 (0x006FF7EC)
 const float kNoLimit = 9999.0f;  // a rig limit that is not set
+// The effects' texture of the world's cloud shadows (their cloudCastTexture's name annotation).
+constexpr const char* kCloudCastFile = "cloudcast.dds";
 
 // 0x00407910
 float wrapAngle(float a) {
@@ -94,7 +98,8 @@ uint32_t levelsOf(uint32_t requested, uint32_t width, uint32_t height, uint32_t 
 // A texel of a texture shader (the TX callbacks 0x005DB6E4 / 0x005DB74F into the shader's machine 0x005F69FF): the
 // texel's position and size in its input registers 0 and 1 (Stock problem: a flat texture's z and w are values of
 // the stock code's stack; 0 here), the shader's constants; the colour (x, y, z, w) as r, g, b, a held to 0 .. 1,
-// x 255 and rounded (the converter of D3DX's fill, 0x005F6073, not followed further).
+// x 255 plus 0.5 and cut toward zero: the fill's converter (0x005F6073: A8R8G8B8's, its writer 0x005ED66D) asks for no
+// dithering, so its table is all 0.5 (0x00705AD0; the Bayer table 0x00705B50 and the error's diffusion not used).
 void shadeTexel(const fx::Program& shader, const std::vector<float>& constants, const float position[3],
                 const float size[3], uint8_t* out) {
     fx::Registers r;
@@ -345,7 +350,7 @@ std::string writeMaterialText(const ExeTables::MaterialClass& info, const std::v
 }
 
 Engine::Engine(render::IRenderDevice& device, const ExeTables& tables, uint32_t shadersSetting, bool wideScreen,
-               bool localEffects, bool debugEffects)
+               bool localEffects, bool debugEffects, render::ReplacedEffects replaced)
     : m_device(device),
       m_tables(tables),
       m_wideScreen(wideScreen),
@@ -354,6 +359,7 @@ Engine::Engine(render::IRenderDevice& device, const ExeTables& tables, uint32_t 
       m_renderer(device, m_programs) {
     m_localEffects = localEffects;
     m_debugEffects = debugEffects;
+    m_replaced = replaced;
     log::info("3d: shader classes 0x{:X}", m_programs.classes());
     m_renderer.reset();
     // The edge is the settings' +0x10: 64 << [0x0071E5DC] (1).
@@ -423,6 +429,18 @@ Engine::ReflectionTargets& Engine::reflectionTargets() {
     return *m_reflections;
 }
 
+const render::GameTexture* Engine::carsCube() {
+    ReflectionTargets& t = reflectionTargets();
+    if (t.carsCube.id == 0 && !t.carsCubeTried) {
+        t.carsCubeTried = true;
+        t.carsCube.id = m_device.createRenderTarget(kCarsCubeSize, kCarsCubeSize, true);
+        t.carsCube.sampler = t.carCube.sampler;
+        log::info("3d: the cars' cube of REFLECTIONS ULTRA {} ({})", kCarsCubeSize,
+                  t.carsCube.id != 0 ? "made" : "none");
+    }
+    return t.carsCube.id != 0 ? &t.carsCube : nullptr;
+}
+
 GameFiles Engine::effectFiles() const {
     return GameFiles(m_localEffects ? std::filesystem::path(kSourceRoot) : std::filesystem::current_path());
 }
@@ -435,17 +453,7 @@ std::filesystem::path Engine::effectFile(const std::string& file) const {
 // with the flags 0x100 (D3DXSHADER_NO_PRESHADER; 0x141 with -debugfx: D3DXSHADER_DEBUG and FORCE_VS_SOFTWARE_NOOPT
 // as well), the programs' pool and the include object; a source is compiled (fx_2_0) here by d3dcompiler_47.dll.
 void Engine::makeProgram(const std::string& name) {
-    const auto data = effectFiles().read(effectFile(name + (m_localEffects ? ".fx" : ".fxo")));
-    std::optional<fx::Effect> effect;
-    if (data && m_localEffects) {
-        const uint32_t flags = 0x100u | (m_debugEffects ? 0x41u : 0u);
-        if (const auto code = render::hlsl::compile(*data, nullptr, "fx_2_0", flags, readSourceInclude)) {
-            effect = fx::parseEffect(*code);
-        }
-    } else if (data) {
-        effect = fx::parseEffect(bytesOf(*data));
-    }
-    if (!effect) log::warning("3d: effect {} not read", name);
+    std::optional<fx::Effect> effect = readEffect(name);
     auto program = std::make_unique<render::Program>(
         m_programs, name, effect ? std::move(*effect) : fx::Effect{},
         [this](const render::Program& p, const render::Program::TextureRequest& r) { return effectTexture(p, r); });
@@ -454,13 +462,73 @@ void Engine::makeProgram(const std::string& name) {
     m_programList.push_back(std::move(program));
 }
 
+void Engine::remakePrograms(const render::ReplacedEffects& replaced) {
+    const LoadLock lock(*this);
+    m_replaced = replaced;
+    m_renderer.endMaterial();
+    m_device.setVertexShader(0);
+    m_device.setPixelShader(0);
+    for (const std::unique_ptr<render::Program>& program : m_programList) {
+        std::optional<fx::Effect> effect = readEffect(program->name());
+        if (!program->rebuild(effect ? std::move(*effect) : fx::Effect{}) && effect) {
+            log::warning("3d: effect {} has no usable technique", program->name());
+        }
+    }
+    log::info("3d: {} programs made again (car effects {}, trees {})", m_programList.size(),
+              static_cast<int>(replaced.car), replaced.trees ? "on" : "off");
+}
+
+std::optional<fx::Effect> Engine::readEffect(const std::string& name) {
+    const auto data = effectFiles().read(effectFile(name + (m_localEffects ? ".fx" : ".fxo")));
+    std::optional<fx::Effect> effect;
+    if (data && m_localEffects) {
+        const uint32_t flags = 0x100u | (m_debugEffects ? 0x41u : 0u);
+        if (const auto code = render::hlsl::compile(*data, nullptr, "fx_2_0", flags, readSourceInclude)) {
+            effect = fx::parseEffect(*code);
+        }
+    } else if (data) {
+        // The fixed build's car paint, glass and chrome (JuicedConfigExt's CarPaint) and trees (Trees): a known
+        // edition of their file read from its replacement (with REFLECTIONS ULTRA alone, the paint's; the trees' with
+        // WORLD LIGHT ULTRA), the game's when that cannot be read.
+        const std::vector<uint8_t> bytes = bytesOf(*data);
+        if (m_replaced != render::ReplacedEffects{}) {
+            const render::EffectReplacement r = render::replaceEffect(bytes.data(), bytes.size());
+            if (render::takesReplacement(m_replaced, r)) {
+                effect = fx::parseEffect(std::vector<uint8_t>(r.bytes, r.bytes + r.size));
+                if (effect) {
+                    log::info("3d: effect {}: the {} per pixel", name, r.name);
+                } else {
+                    log::warning("3d: effect {}: the per-pixel {} not read, the game's", name, r.name);
+                }
+            }
+        }
+        if (!effect) effect = fx::parseEffect(bytes);
+    }
+    if (!effect) log::warning("3d: effect {} not read", name);
+    return effect;
+}
+
 // The end of 0x0051AAC0: the file of the name annotation; else with -localfx the texture made from the function
 // (0x0051B400), else the saved one, proc_<program>_<function>.dds (0x0051B2C0).
 render::TextureId Engine::effectTexture(const render::Program& program,
                                         const render::Program::TextureRequest& request) {
+    if (m_cloudCast != 0 && _stricmp(request.file.c_str(), kCloudCastFile) == 0) return m_cloudCast;
     if (!request.file.empty()) return loadEffectTexture(request.file);
     if (m_localEffects) return makeProceduralTexture(program, request);
     return loadEffectTexture(proceduralName(program, request));
+}
+
+void Engine::setCloudCast(render::TextureId map) {
+    if (map == m_cloudCast) return;
+    render::TextureId own = 0;
+    for (const auto& [file, id] : m_effectTextures) {
+        if (_stricmp(file.c_str(), kCloudCastFile) == 0) own = id;
+    }
+    const render::TextureId from = m_cloudCast != 0 ? m_cloudCast : own;
+    const render::TextureId to = map != 0 ? map : own;
+    m_renderer.endMaterial();
+    if (from != 0 && to != 0) m_effects.replaceTexture(from, to);
+    m_cloudCast = map;
 }
 
 render::TextureId Engine::loadEffectTexture(const std::string& file) {
@@ -569,6 +637,9 @@ void Engine::restoreFolders() {
 }
 
 Engine::LoadLock::LoadLock(Engine& engine) : m_engine(engine) {
+    // A load is a wait of the loading job's: a frame waiting for the turn takes it (FrameTurns); a frame waiting for
+    // the lock gives the job the device and its turn meanwhile.
+    frameTurns().yield();
     while (!engine.m_loadLock.try_lock()) {
         engine.m_device.letLoadingRun();
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
@@ -576,6 +647,14 @@ Engine::LoadLock::LoadLock(Engine& engine) : m_engine(engine) {
 }
 
 Engine::LoadLock::~LoadLock() { m_engine.m_loadLock.unlock(); }
+
+std::optional<Ddt> Engine::textureImage(const std::string& name) {
+    const LoadLock lock(*this);
+    const auto bytes = GameFiles(std::filesystem::current_path()).read(m_folders.textures / (name + ".ddt"));
+    Ddt ddt;
+    if (!bytes || !ddt.parse(*bytes)) return std::nullopt;
+    return ddt;
+}
 
 const render::GameTexture* Engine::texture(const std::string& name) {
     const LoadLock lock(*this);
@@ -859,15 +938,15 @@ void Engine::frameParameters() {
     }
     m_effects.endAll();
     m_effects.frame(classes, detail);
-    auto set = [this](const char* name, const float (&v)[4]) {
-        const auto it = m_programs.shared.find(name);
-        if (it == m_programs.shared.end()) return;
-        std::memcpy(it->second.data(), v, std::min(it->second.size(), sizeof v));
-    };
     const Vec4& a = m_renderer.ambient;
     const float k = 0.003921569f;
-    set("vAmbUnit", {a[0] * k, a[1] * k, a[2] * k, a[3]});
-    set("vOne", {1.0f, 1.0f, 1.0f, 1.0f});
+    const float ambient[4] = {a[0] * k, a[1] * k, a[2] * k, a[3]};
+    const float one[4] = {1.0f, 1.0f, 1.0f, 1.0f};
+    m_programs.setShared("vAmbUnit", ambient, sizeof ambient);
+    m_programs.setShared("vOne", one, sizeof one);
+    // The fixed build's paint with REFLECTIONS ULTRA alone: drawn as the game's (JuicedConfigExt's CarPaint.fx).
+    const float stockPaint = m_replaced.car == render::CarEffects::LitPaint ? 1.0f : 0.0f;
+    m_programs.setShared("StockPaint", &stockPaint, sizeof stockPaint);
 }
 
 void setViewConstants(render::Renderer3d& r, render::Camera& camera) {

@@ -1,5 +1,5 @@
 #pragma once
-// A collision mesh of a car or a physics object (.ocd; the layout is the Blender add-on's docs/technical/OCD): the
+// A collision mesh of a car or a physics object (.ocd; the layout: docs/spec/31-file-layouts.md): the
 // vertices, the triangles with their normals, and a tree of spheres over them (loader 0x00535840).
 
 #include "Core/Base/Matrix.h"

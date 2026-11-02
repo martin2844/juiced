@@ -12,6 +12,7 @@
 #include "Render/Model.h"
 #include "Render/Program.h"
 #include "Render/Renderer3d.h"
+#include "Render/ShaderReplacements.h"
 #include "Render/Sky.h"
 
 #include <filesystem>
@@ -19,6 +20,7 @@
 #include <map>
 #include <memory>
 #include <mutex>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -50,8 +52,9 @@ class Engine {
 public:
     // localEffects / debugEffects: -localfx / -debugfx ([0x0075F134], [0x0075F138]): the programs from the
     // developers' .fx sources (docs/spec/11-effects.md).
+    // replaced: the fixed build's effects of the car and of the trees (Render/ShaderReplacements replaceEffect).
     Engine(render::IRenderDevice& device, const ExeTables& tables, uint32_t shadersSetting, bool wideScreen,
-           bool localEffects = false, bool debugEffects = false);
+           bool localEffects = false, bool debugEffects = false, render::ReplacedEffects replaced = {});
     ~Engine();
     // The post effects of the race's view (the renderer's +0x1F8 .. +0x224, made at its start; here at first use).
     PostEffects& postEffects();
@@ -67,8 +70,15 @@ public:
         render::GameTexture worldCube;
         bool worldCubeDue = true;
         uint32_t resets = 0;
+        // The fixed build's REFLECTIONS ULTRA: the cube of the car the camera looks at, with the other cars in it.
+        render::GameTexture carsCube;
+        bool carsCubeTried = false;
     };
     ReflectionTargets& reflectionTargets();
+    // The fixed build's REFLECTIONS ULTRA (TrackScene::drawCarCube): the cars' cube of kCarsCubeSize a side made at
+    // first use, its texture as the cars' cube's; none when it cannot be made.
+    static constexpr uint32_t kCarsCubeSize = 256;
+    const render::GameTexture* carsCube();
 
     render::IRenderDevice& device() { return m_device; }
     render::Renderer3d& renderer() { return m_renderer; }
@@ -77,6 +87,9 @@ public:
     // detail (0x00514C61 → 0x00519E80); then (0x00514C88 → 0x00519DD0) the effects' shared vAmbUnit the renderer's
     // ambient (+0x28) with r, g and b over 255, and vOne (1, 1, 1, 1).
     void frameParameters();
+    // The fixed build's effects changed in the game (the graphics options' ADVANCED page): every program made again
+    // from its file (Program::rebuild) with the effects `replaced` and the device's shader replacements of now.
+    void remakePrograms(const render::ReplacedEffects& replaced);
     bool wideScreen() const { return m_wideScreen; }
     // The device's shader classes (the renderer's +0x684).
     uint32_t shaderClasses() const { return m_programs.classes(); }
@@ -84,6 +97,12 @@ public:
     // A program made at the start (0x00519CB0, the name case aside); nullptr when it is not among them, its effect
     // did not load or it has no usable technique.
     render::Program* program(const std::string& name);
+    // The fixed build's procedural clouds' map (Game/Scene/Clouds) in the programs in place of the effects' cloudcast
+    // texture (the world's cloud shadows); 0 the texture's own again.
+    void setCloudCast(render::TextureId map);
+    // <textures>\<name>.ddt of the folders in use read and parsed again (its pixels: a flare's colour); none when it
+    // does not read.
+    std::optional<Ddt> textureImage(const std::string& name);
     // <textures>\<name>.ddt of the folders in use, loaded once.
     const render::GameTexture* texture(const std::string& name);
     // <folder>\<name>.ddt when there is one (a car's textures\), else <shared>\<name>.ddt when there is one (the
@@ -141,6 +160,9 @@ private:
     // 0x00519BC0: a program of effects\<name>.fxo added to the effects' manager (one without a usable technique,
     // or whose file does not load, as well).
     void makeProgram(const std::string& name);
+    // effects\<name>.fxo read (the fixed build's car paint in place of a known edition when on); none when it does
+    // not read.
+    std::optional<fx::Effect> readEffect(const std::string& name);
     // 0x00519660: the effects' folder and a file's path in it.
     GameFiles effectFiles() const;
     std::filesystem::path effectFile(const std::string& file) const;
@@ -169,7 +191,9 @@ private:
     uint32_t m_effectsResets = 0;      // the device's resets the programs were made again for
     bool m_localEffects = false;       // [0x0075F134]
     bool m_debugEffects = false;       // [0x0075F138]
+    render::ReplacedEffects m_replaced;  // the fixed build's effects of the car and of the trees
     std::map<std::string, render::TextureId> m_effectTextures;
+    render::TextureId m_cloudCast = 0;  // the procedural clouds' map in the cloudcast texture's place
     struct Folders {
         std::filesystem::path models{"models"};
         std::filesystem::path mesh{"mesh"};
@@ -254,6 +278,7 @@ public:
 
     void draw(float x0, float y0, float x1, float y1, float seconds, float dt) override;
     void setRound(bool round) override { m_round = round; }
+    void setWiden(float across, float down) override { m_camera.setWiden(across, down); }
 
     render::Camera& camera() { return m_camera; }
     Engine& engine() { return m_engine; }

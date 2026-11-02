@@ -180,8 +180,11 @@
     <ClInclude Include="Media\Music.h" />
     <ClInclude Include="Platform\CommandLine.h" />
     <ClInclude Include="Platform\InputDevices.h" />
+    <ClInclude Include="Platform\Pads.h" />
+    <ClInclude Include="Platform\WheelInput.h" />
     <ClInclude Include="Platform\Platform.h" />
     <ClInclude Include="Platform\Settings.h" />
+    <ClInclude Include="Platform\Screen.h" />
     <ClInclude Include="Platform\SystemKeys.h" />
     <ClInclude Include="Platform\Windows7.h" />
     <ClInclude Include="Race\FrontEnd\RaceFrontEnd.h" />
@@ -207,6 +210,19 @@
     <ClInclude Include="Race\ReplaySaves.h" />
     <ClInclude Include="Race\TrackView\TrackView.h" />
     <ClInclude Include="Scene\LensFlares.h" />
+    <ClInclude Include="Scene\Headlights.h" />
+    <ClInclude Include="Scene\HeadlightShadows.h" />
+    <ClInclude Include="Scene\LampShadows.h" />
+    <ClInclude Include="Scene\LightSets.h" />
+    <ClInclude Include="Scene\Clouds.h" />
+    <ClInclude Include="Scene\FlameLights.h" />
+    <ClInclude Include="Scene\NearestFade.h" />
+    <ClInclude Include="Scene\VolumetricLight.h" />
+    <ClInclude Include="Scene\AmbientOcclusion.h" />
+    <ClInclude Include="Scene\DepthShaders.h" />
+    <ClInclude Include="Scene\SunShadows.h" />
+    <ClInclude Include="Scene\TunnelLights.h" />
+    <ClInclude Include="Scene\HeatHaze.h" />
     <ClInclude Include="Scene\Particles.h" />
     <ClInclude Include="Scene\Particles\CameraEmitter.h" />
     <ClInclude Include="Scene\Particles\Emitter.h" />
@@ -243,6 +259,7 @@
     <ClInclude Include="UI\UiSound.h" />
     <ClInclude Include="UI\WindowManager.h" />
     <ClInclude Include="UI\WindowFixes.h" />
+    <ClInclude Include="UI\WideScreen.h" />
     <ClCompile Include="App\CrashLog.cpp" />
     <ClCompile Include="App\DebugPages.cpp" />
     <ClCompile Include="App\GameLoop.cpp" />
@@ -359,8 +376,14 @@
     <ClCompile Include="Media\Music.cpp" />
     <ClCompile Include="Platform\CommandLine.cpp" />
     <ClCompile Include="Platform\InputDevices.cpp" />
+    <!-- The fixed build's controller: SDL's headers (third_party/sdl3-3.4.16). -->
+    <ClCompile Include="Platform\Pads.cpp">
+      <AdditionalIncludeDirectories>$(OpenJuiceRoot)third_party\sdl3-3.4.16\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Include="Platform\WheelInput.cpp" />
     <ClCompile Include="Platform\Platform.cpp" />
     <ClCompile Include="Platform\Settings.cpp" />
+    <ClCompile Include="Platform\Screen.cpp" />
     <ClCompile Include="Platform\SystemKeys.cpp" />
     <ClCompile Include="Platform\Windows7.cpp" />
     <ClCompile Include="Race\FrontEnd\RaceFrontEnd.cpp" />
@@ -396,6 +419,19 @@
     <ClCompile Include="Race\TrackView\TrackViewSounds.cpp" />
     <ClCompile Include="Race\TrackView\TrackViewWindows.cpp" />
     <ClCompile Include="Scene\LensFlares.cpp" />
+    <ClCompile Include="Scene\Headlights.cpp" />
+    <ClCompile Include="Scene\HeadlightShadows.cpp" />
+    <ClCompile Include="Scene\LampShadows.cpp" />
+    <ClCompile Include="Scene\LightSets.cpp" />
+    <ClCompile Include="Scene\Clouds.cpp" />
+    <ClCompile Include="Scene\FlameLights.cpp" />
+    <ClCompile Include="Scene\NearestFade.cpp" />
+    <ClCompile Include="Scene\VolumetricLight.cpp" />
+    <ClCompile Include="Scene\AmbientOcclusion.cpp" />
+    <ClCompile Include="Scene\DepthShaders.cpp" />
+    <ClCompile Include="Scene\SunShadows.cpp" />
+    <ClCompile Include="Scene\TunnelLights.cpp" />
+    <ClCompile Include="Scene\HeatHaze.cpp" />
     <ClCompile Include="Scene\Particles\CameraEmitter.cpp" />
     <ClCompile Include="Scene\Particles\Emitter.cpp" />
     <ClCompile Include="Scene\Particles\LeavesEmitter.cpp" />
@@ -429,6 +465,7 @@
     <ClCompile Include="UI\UiSound.cpp" />
     <ClCompile Include="UI\WindowManager.cpp" />
     <ClCompile Include="UI\WindowFixes.cpp" />
+    <ClCompile Include="UI\WideScreen.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <!-- The objects OpenJuice.vcxproj links in place of this library (UseLibraryDependencyInputs): the game's own,

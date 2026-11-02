@@ -1,3 +1,4 @@
+#include "Game/Platform/NativeSettings.h"
 #include "Game/Platform/Platform.h"
 #include "Android/Gamepad.h"
 #include "Android/TouchControls.h"
@@ -146,7 +147,7 @@ std::wstring startupText(int) {
 void errorBox(const std::wstring &text, const std::wstring &caption, bool) {
     MessageBoxW(nullptr, text.c_str(), caption.c_str(), 0);
 }
-bool runConfigurationTool() {
+bool runConfigurationTool(bool) {
     log::info("Android settings are stored in the app data directory");
     return true;
 }
@@ -159,6 +160,7 @@ Settings Settings::defaults(const LaunchOptions &options) {
     s.shaders = 3;
     s.audioFlags = 4 | 32;
     readSettings(s);
+    readNativeSettings(s);
     s.audioFlags |= options.audioFlagsOr;
     if (options.audioFlagsOne)
         s.audioFlags = 1;
@@ -279,6 +281,11 @@ bool Platform::pumpMessages() {
                     events.push_back({touchKeys[action], e.user.data2 != nullptr && focused});
             }
             break;
+        case SDL_EVENT_TEXT_INPUT:
+            if (focused && e.text.text)
+                for (const unsigned char c : std::string_view(e.text.text))
+                    if(c>=0x20 && c<=0x7e && m_typed.size()<64) m_typed.push_back(char(c));
+            break;
         case SDL_EVENT_KEY_DOWN:
         case SDL_EVENT_KEY_UP: {
             if (e.key.repeat)
@@ -329,6 +336,7 @@ bool Platform::pumpMessages() {
 bool Platform::active() const { return focused; }
 bool Platform::closedFromSystemMenu() const { return m_quit; }
 bool Platform::takeScreenshotRequest() { return std::exchange(screenshot, false); }
+std::string Platform::takeTypedText() { return std::exchange(m_typed, {}); }
 std::vector<input::KeyEvent> Platform::takeKeyEvents() {
     android::connectGamepad(overlayPad);
     std::array<bool, 6> held{};
@@ -495,7 +503,7 @@ bool InputDevices::configure(const input::MapFormat &) {
 }
 void Platform::beginControlsWindow() {}
 void Platform::endControlsWindow() {}
-void InputDevices::startWheels(HWND) {}
+void InputDevices::startWheels(HWND, WheelInput*) {}
 void InputDevices::stopWheels() {}
 } // namespace oj
 

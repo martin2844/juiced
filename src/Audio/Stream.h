@@ -1,22 +1,21 @@
 #pragma once
 // A stream of the stock game's sound library (0x138 bytes, vtable 0x006FEA04, made by 0x005BB1F0 for a stream bank):
-// DirectShow plays <bank>.dsb (one Windows Media Audio file; the bank's sets are pieces of it, their start and length
-// in its .dat). Every stream is kept in a list ([0x0079E714]) paused while the game is not the active application.
+// the output's stream (Audio/Output.h; the stock's DirectShow) plays <bank>.dsb (one Windows Media Audio file; the
+// bank's sets are pieces of it, their start and length in its .dat). Every stream is kept in a list ([0x0079E714])
+// paused while the game is not the active application.
+
+#include "Audio/Output.h"
 
 #include <cstdint>
 #include <filesystem>
-
-struct IGraphBuilder;
-struct IMediaControl;
-struct IMediaSeeking;
-struct IBasicAudio;
+#include <memory>
 
 namespace oj::audio {
 
 class Stream {
 public:
-    // 0x005BB290 → 0x005BB300: the filter graph (COM apartment threaded), its control, seeking and audio; the file
-    // added as a source (0x005BB380), its pin "Output" (or "Raw Audio 0") rendered, media time, at 0. State 1.
+    // 0x005BB290 → 0x005BB300: the output's stream of the file (the filter graph, its control, seeking and audio; the
+    // file added as a source, 0x005BB380, its pin rendered, media time, at 0). State 1.
     explicit Stream(const std::filesystem::path& file);
     ~Stream();
     Stream(const Stream&) = delete;
@@ -37,10 +36,7 @@ public:
     static void focus(bool active);
 
 private:
-    IGraphBuilder* m_graph = nullptr;     // +0x04
-    IBasicAudio* m_audio = nullptr;       // +0x08
-    IMediaControl* m_control = nullptr;   // +0x0C
-    IMediaSeeking* m_seeking = nullptr;   // +0x10
+    std::unique_ptr<OutputStream> m_out;  // +0x04 .. +0x10: the graph, its audio, control and seeking
     int64_t m_stop = 0;                   // +0x120
     bool m_stopAsked = false;             // +0x124
     int m_state = 1;                      // +0x128: 1 stopped, 2 paused, 3 playing

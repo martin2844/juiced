@@ -14,7 +14,7 @@ void VidTutorial::enter(WindowHost& host, ui::Screen& s) {
     s.showContaining("COVER", false);
     const int movie = s.find("MOVIE");
     if (movie >= 0) {
-        s.playMovie(movie, host.language().index == 4 ? "whatis_spanish" : "whatis", true);
+        s.playMovie(movie, host.language().index == kSpanish ? "whatis_spanish" : "whatis", true);
         s.setMovieVolume(movie, std::bit_cast<float>(host.settingsValue(save::Settings::kEffectsVolume)));
     }
     s.hideContaining("COVER", true);
@@ -37,7 +37,7 @@ void VidTutorial::update(WindowHost& host, ui::Screen& s, uint32_t event) {
         for (const auto& [name, file] : kMovies) {
             if (_stricmp(item.c_str(), name) == 0) movie = file;
         }
-        if (_stricmp(item.c_str(), "what") == 0) movie = host.language().index == 4 ? "whatis_spanish" : "whatis";
+        if (_stricmp(item.c_str(), "what") == 0) movie = host.language().index == kSpanish ? "whatis_spanish" : "whatis";
         if (movie != nullptr) {
             s.playMovie(movieElement, movie, true);
             s.hideContaining("COVER", true);

@@ -89,7 +89,8 @@ void Respect::territories(CareerHost& host, ui::Screen& s) {
     if (view == nullptr) return;
     const Career& career = *data->career;
     for (size_t k = 0; k < 9; ++k) {
-        const int added = view->addModel(kTerritories[k], {0.0f, 0.0f, 0.0f, 0.0f}, host.viewLoading());
+        // The window's code: the main thread's rand().
+        const int added = view->addModel(kTerritories[k], {0.0f, 0.0f, 0.0f, 0.0f}, gameRandom());
         m_territories[k] = added;
         if (added < 0) continue;
         view->listedModel(added)->setHidden(true);

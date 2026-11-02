@@ -228,9 +228,13 @@ void OnlineUser::setPlaying(int32_t player, int32_t playing, int32_t /*isPublic:
 }
 
 void OnlineUser::setAddress(int32_t player, std::optional<Address> address) {
-    OnlinePlayer& p = m_players[static_cast<size_t>(player)];
-    p.address = address;
-    p.session = matchmaking() != nullptr ? static_cast<int32_t>(matchmaking()->sessionId()) : 0;
+    // Stock problem: a player of none (-1, 0x0055BA00's with no local player: the matchmaking's presence cleared at
+    // its end once signed out) wrote its address entry and the session before the players' table; nothing here.
+    if (player >= 0 && static_cast<size_t>(player) < m_players.size()) {
+        OnlinePlayer& p = m_players[static_cast<size_t>(player)];
+        p.address = address;
+        p.session = matchmaking() != nullptr ? static_cast<int32_t>(matchmaking()->sessionId()) : 0;
+    }
     if (presenceTimer < 59.0f) presenceTimer = 59.0f;
 }
 

@@ -2,7 +2,12 @@ Required Notice: Copyright 2026 Sidewinder (https://gitlab.com/sidecr3w/openjuic
 
 OpenJuice is licensed under the PolyForm Noncommercial License 1.0.0 below: free for any noncommercial use,
 change and fork, with no commercial use. Whoever passes a copy on keeps the Required Notice line above with it.
-The files under third_party/ keep their own licenses (third_party/speex-1.0.3/COPYING).
+The files under third_party/ keep their own licenses (third_party/speex-1.0.3/COPYING; OpenAL Soft, linked
+into the fixed build, the GNU LGPL: third_party/openal-soft-1.25.2/COPYING and README.OpenJuice.md). The WMA
+decoder of JuicedConfigExt (the submodule external/JuicedConfigExt), linked into the fixed build, keeps the GNU
+LGPL: external/JuicedConfigExt/src/WmaDecoder/COPYING.LGPL and third_party/wmadec/README.OpenJuice.md. SMAA (its
+shaders and lookup textures, built into the fixed build) keeps the MIT license of its authors:
+external/JuicedConfigExt/src/Shared/Shaders/Smaa/LICENSE.txt.
 
 ---
 

@@ -261,9 +261,8 @@ void RaceCamera::take(int mode, bool reset, const CameraTarget& target, const Ca
 void RaceCamera::update(const CameraTarget& target, const CameraRace& race, float dt, render::Camera& camera) {
     // 0x00406319: the camera's time (+0xD0), 0 while the race is paused.
     m_dt = race.paused ? 0.0f : dt;
-    // 0x0040632D: the scene camera's post effects cleared before the view sets its own.
-    camera.depthOfField = false;
-    camera.depthOfFieldMode = 0;
+    // 0x0040632D: the scene camera's post effects cleared before the view sets its own (the depth of field's +0x22C
+    // and +0x230 too: the fixed build keeps none).
     camera.blurMiddle = 0.0f;
     camera.blurEdge = 0.0f;
     // 0x0040635E: the depth of field's point 1 m over the car's origin (0x00407B20; the w of the body's place, read
@@ -987,8 +986,7 @@ void RaceCamera::easeShake(render::Camera& camera) {
 // quarter turn of a sine over pi / 2 s), 250 cm for the whole range above the height, which rises as cars come near;
 // the first frame looks at the point above the car, the next ones follow it.
 void RaceCamera::trackside(const CameraTarget& target, const CameraRace& race, render::Camera& camera) {
-    camera.depthOfField = true;
-    camera.depthOfFieldMode = 2;
+    // The stock's depth of field on (+0x22C 1, +0x230 2); the fixed build draws none.
     camera.blurMiddle = 0.5f;
     camera.blurEdge = 0.5f;
     const Mat34& m = target.matrix;
@@ -1166,8 +1164,7 @@ void RaceCamera::tvZoom(const CameraTarget& target, int kind) {
 // the kind +0x1C (0x00405DB0; never set, kind 0 here), the turn (0x00403B00), far 2 000 000, the field the factor
 // (+0xB8) x 1.1623551; the reset off.
 void RaceCamera::nextCarView(const CameraTarget& target, const CameraRace& race, render::Camera& camera) {
-    camera.depthOfField = true;
-    camera.depthOfFieldMode = 2;
+    // The stock's depth of field on (+0x22C 1, +0x230 2); the fixed build draws none.
     camera.blurMiddle = 0.5f;
     camera.blurEdge = 0.5f;
     if (m_reset) {
@@ -1243,8 +1240,7 @@ void RaceCamera::follow(render::Camera& camera) {
 // as cars come near (on all three axes; the fixed build's in height alone), looks at the point above the car with the
 // reset and follows it after, with a fixed zoom of 0.7.
 void RaceCamera::passing(const CameraTarget& target, const CameraRace& race, render::Camera& camera) {
-    // 0x004047F9: +0x230 2, the motion blur 0.5 and 0.5.
-    camera.depthOfFieldMode = 2;
+    // 0x004047F9: +0x230 2 (the depth of field's mode; none in the fixed build), the motion blur 0.5 and 0.5.
     camera.blurMiddle = 0.5f;
     camera.blurEdge = 0.5f;
     const Mat34& m = target.matrix;
@@ -1325,8 +1321,7 @@ void RaceCamera::passing(const CameraTarget& target, const CameraRace& race, ren
 // down; the roll is sin(phase) and the pitch 0.3 + sin(0.7 x phase) / 4, both x 0.05 x the shake x the fade. A
 // fixed zoom of 1.2.
 void RaceCamera::onGround(const CameraTarget& target, const CameraRace& race, render::Camera& camera) {
-    // 0x00404E5A: +0x230 2, the motion blur 0.5 and 0.5.
-    camera.depthOfFieldMode = 2;
+    // 0x00404E5A: +0x230 2 (the depth of field's mode; none in the fixed build), the motion blur 0.5 and 0.5.
     camera.blurMiddle = 0.5f;
     camera.blurEdge = 0.5f;
     const Mat34& m = target.matrix;
@@ -1387,6 +1382,21 @@ void RaceCamera::onGround(const CameraTarget& target, const CameraRace& race, re
     camera.setFov(std::bit_cast<float>(0x3FB289AAu), 0.0f, race.wideScreen);  // 1.2 x 1.1623551
 }
 
+void RaceCamera::flyByFrame(const CameraTarget& target, const CameraRace& race, float dt, render::Camera& camera) {
+    m_dt = race.paused ? 0.0f : dt;
+    // The point the camera looks at 1 m over the player's car, as the views' (the cars' cube round it).
+    const Mat34& m = target.matrix;
+    camera.setFocus({m[3], m[7] + 100.0f, m[11], 0.0f});
+    camera.blurMiddle = 0.0f;
+    camera.blurEdge = 0.0f;
+    const Vec4& v = target.localVelocity;
+    m_speed = std::sqrt((v[2] * v[2] + v[1] * v[1]) + v[0] * v[0]);
+    m_blurAim = std::clamp(target.nitro ? target.nitroAmount : m_speed * 0.0125f, 0.0f, 1.0f);
+    m_blur = (m_blurAim - m_blur) * 0.03f + m_blur;
+    timerBlur = 0.0f;
+    timerBlurOn = false;
+}
+
 void RaceCamera::speedBlur(const CameraTarget& target, const CameraRace& race, render::Camera& camera) {
     m_blurAim = target.nitro ? target.nitroAmount : m_speed * 0.0125f;
     m_blurAim = std::clamp(m_blurAim, 0.0f, 1.0f);
@@ -1416,16 +1426,21 @@ void RaceCamera::easeFov(float rate) {
 }
 
 void RaceCamera::updateFov(const CameraTarget& target, render::Camera& camera, bool wideScreen) {
-    // The field of view widens with the nitro, or with the car's acceleration and forward speed.
+    // The field of view widens with the nitro, or with the car's acceleration and forward speed. Stock problem: the
+    // acceleration's part whatever the way the car moves, so braking while reversing (the car slowed, accelerating
+    // forward) widened the view as a launch does. The fixed build takes it only while the car moves forward, as the
+    // speed's part.
     float rate = 0.01f;
     if (target.nitro) {
         m_fovTarget = target.nitroAmount * 0.8f + 1.0f;
         rate = 0.02f;
     } else {
         m_fovTarget = 1.0f;
-        if (target.forwardAcceleration > 10.0f) m_fovTarget = target.forwardAcceleration * 0.8f + 1.0f;
-        if (m_fovTarget > 1.35f) m_fovTarget = 1.35f;
         const float forward = target.localVelocity[2];
+        if (target.forwardAcceleration > 10.0f && forward > 0.0f) {
+            m_fovTarget = target.forwardAcceleration * 0.8f + 1.0f;
+        }
+        if (m_fovTarget > 1.35f) m_fovTarget = 1.35f;
         if (forward > 0.0f) m_fovTarget = (forward * kSpeedFov) * 0.5f + m_fovTarget;
         if (m_fovTarget > 1.5f) m_fovTarget = 1.5f;
     }

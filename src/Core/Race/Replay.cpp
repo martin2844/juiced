@@ -613,7 +613,8 @@ void Replay::write(const uint8_t* bytes) {
         const float v = f32At(b + 8) + interest;
         std::memcpy(b + 8, &v, 4);
         g_blockInterest = v;
-        // The marks' lines are made into texts and dropped (their debug output not followed).
+        // The marks' lines are made into texts and dropped (0x004290F7 .. 0x00429176: copied, their weight converted,
+        // freed; their print is not in the PC's code).
         interest = 0.0f;
         interestLines = 0;
         sequence = sequence + 1;
@@ -727,6 +728,90 @@ void Replay::sortBlocks() {
     last = lastNumber == last ? lastNumber : 0x2F;
 }
 
+namespace {
+
+constexpr size_t kXboxFrame = 32;
+constexpr size_t kXboxBlockSize = 0x0C + Replay::kFrames * kXboxFrame;  // 0x1E0C
+constexpr size_t kXboxMayCar = 196;
+constexpr size_t kXboxAugustCar = 464;
+
+// An Xbox build's car record: the model (64 bytes), ten colours (base, metallic and its amount, pearl and its amount,
+// neon, the dials' back and digits, the decal's, then a word 0 in every record found: the sponsors' colour stays
+// the PC's), the body's and the mods' 10 bytes, lowering, gearing; then the August build's spent, winnings, horn, the
+// brakes' wear, brake, the tyres' wear, grip, nitro, rating, the dyno's three runs, the damage grid's flag and its
+// 256 bytes, torqueFactor, steeringPulls, turboLost, neonFlickers, nitroLeaks and sponsorDecals (464 bytes); the May
+// build's spent .. rating as August's, two words not known, torqueFactor .. nitroLeaks (196 bytes; no grid, no
+// dyno). What the PC's record has besides (the wheels' colour, the tint, the paints bought, the races' counts) is the
+// PC's new car's.
+Car xboxCar(const uint8_t* p, bool august) {
+    Car c;
+    std::memcpy(c.model.data(), p, c.model.size());
+    uint32_t* const colours[9] = {&c.base, &c.metallic, &c.metallicAmount, &c.pearl, &c.pearlAmount,
+                                  &c.neon, &c.dialColour, &c.dialTextColour, &c.decalColour};
+    for (size_t i = 0; i < 9; ++i) *colours[i] = u32At(p + 0x40 + i * 4);
+    std::memcpy(c.body.data(), p + 0x68, c.body.size());
+    std::memcpy(c.mods.data(), p + 0x72, c.mods.size());
+    c.lowering = u32At(p + 0x7C);
+    c.gearing = u32At(p + 0x80);
+    uint32_t* const race[9] = {&c.spent, &c.winnings, &c.horn,  &c.brakeWear, &c.brake,
+                               &c.tyreWear, &c.grip,  &c.nitro, &c.rating};
+    for (size_t i = 0; i < 9; ++i) *race[i] = u32At(p + 0x84 + i * 4);
+    size_t at = 0xA8;
+    if (august) {
+        for (uint32_t& v : c.dynoRun) {
+            v = u32At(p + at);
+            at += 4;
+        }
+        const uint32_t hasGrid = u32At(p + at);
+        at += 4;
+        if (hasGrid != 0) {
+            std::array<uint8_t, 256> g{};
+            std::memcpy(g.data(), p + at, g.size());
+            c.grid = DamageGrid::readBytes(g);
+        }
+        at += 256;
+    } else {
+        at += 8;
+    }
+    for (uint32_t* v : {&c.torqueFactor, &c.steeringPulls, &c.turboLost, &c.neonFlickers, &c.nitroLeaks}) {
+        *v = u32At(p + at);
+        at += 4;
+    }
+    if (august) c.sponsorDecals = u32At(p + at);
+    return c;
+}
+
+}  // namespace
+
+bool Replay::fromXbox(ReplayHeader& header, std::vector<uint8_t>& carsStream, std::vector<uint8_t>& dat) {
+    const size_t blocks = header.bytes / kXboxBlockSize;
+    if (header.bytes == 0 || header.bytes % kXboxBlockSize != 0 || header.bytes % kBlockSize == 0 ||
+        blocks > kBlocks || dat.size() < header.bytes || header.cars == 0 || carsStream.size() % header.cars != 0) {
+        return false;
+    }
+    const size_t record = carsStream.size() / header.cars;
+    if (record != kXboxMayCar && record != kXboxAugustCar) return false;
+    std::vector<uint8_t> stream;
+    for (uint32_t i = 0; i < header.cars; ++i) {
+        xboxCar(carsStream.data() + i * record, record == kXboxAugustCar).write(stream);
+    }
+    std::vector<uint8_t> pc(blocks * kBlockSize, 0);
+    for (size_t b = 0; b < blocks; ++b) {
+        const uint8_t* from = dat.data() + b * kXboxBlockSize;
+        uint8_t* to = pc.data() + b * kBlockSize;
+        std::memcpy(to, from, 0x0C);
+        for (size_t f = 0; f < kFrames; ++f) {
+            std::memcpy(to + 0x0C + f * sizeof(PackedFrame), from + 0x0C + f * kXboxFrame, kXboxFrame);
+            to[0x0C + f * sizeof(PackedFrame) + kXboxFrame] = 0x3F;  // no horn, the engine sound 0.5 (x 127, cut)
+        }
+    }
+    carsStream = std::move(stream);
+    dat = std::move(pc);
+    header.carsBytes = static_cast<uint32_t>(carsStream.size());
+    header.bytes = static_cast<uint32_t>(dat.size());
+    return true;
+}
+
 bool Replay::readCars(size_t* used) {
     savedCars.clear();
     size_t at = 0;
@@ -748,9 +833,11 @@ bool Replay::load(const std::vector<uint8_t>& hdr, const std::vector<uint8_t>& d
     if (hdr.size() < ReplayHeader::kSize) return false;
     header = ReplayHeader::read(hdr.data());
     carsStream.assign(hdr.begin() + ReplayHeader::kSize, hdr.end());
+    std::vector<uint8_t> blocks = dat;
+    fromXbox(header, carsStream, blocks);
     if (!readCars()) return false;
-    if (dat.size() < header.bytes || header.bytes > buffer.size()) return false;
-    std::copy(dat.begin(), dat.begin() + header.bytes, buffer.begin());
+    if (blocks.size() < header.bytes || header.bytes > buffer.size()) return false;
+    std::copy(blocks.begin(), blocks.begin() + header.bytes, buffer.begin());
     // 0x004269A0: the race's type, laps, track, route, time of day and weather from the header (to the caller); its
     // cars, end, last block.
     cars = header.cars;
@@ -785,14 +872,16 @@ bool Replay::loadFrom(const save::SaveSource& source) {
     std::memcpy(head.data(), file.data(), got);
     header = ReplayHeader::read(head.data());
     carsStream.assign(file.begin() + static_cast<std::ptrdiff_t>(got), file.end());
+    const auto dat = source.files.find("replay.dat");
+    std::vector<uint8_t> blocks = dat != source.files.end() ? dat->second : std::vector<uint8_t>{};
+    fromXbox(header, carsStream, blocks);
     size_t used = 0;
     readCars(&used);
     carsStream.resize(used);
-    const auto dat = source.files.find("replay.dat");
     if (dat == source.files.end()) return false;
     // The header's bytes read into the buffer (Stock problem: more than its 48 blocks run past it; cut to it here).
-    const size_t n = std::min({static_cast<size_t>(header.bytes), dat->second.size(), buffer.size()});
-    std::copy_n(dat->second.begin(), n, buffer.begin());
+    const size_t n = std::min({static_cast<size_t>(header.bytes), blocks.size(), buffer.size()});
+    std::copy_n(blocks.begin(), n, buffer.begin());
     // 0x004269A0: the replay's part of the header.
     cars = header.cars;
     length = header.length;

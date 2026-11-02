@@ -3,6 +3,7 @@
 #include "Game/Frontend/Career/Stats.h"
 
 #include "Game/Frontend/WindowTools.h"
+#include "Render/Display.h"
 
 #include <algorithm>
 
@@ -106,7 +107,7 @@ void Stats::showTexts(CareerHost& host, ui::Screen& s) {
     }
     const auto money = [&](float share) {
         const std::string n = groupThousands(x87::chop(static_cast<float>(scale(host)) * share), host.language().index);
-        return toWide((host.language().index == 1 ? n + " $" : "$" + n) + "k");
+        return toWide((host.language().index == kFrench ? n + " $" : "$" + n) + "k");
     };
     s.setText("CashTop", money(0.001f));
     s.setHidden("CashTop", false);
@@ -118,12 +119,15 @@ void Stats::showTexts(CareerHost& host, ui::Screen& s) {
 // (130 + 260 y) (of 480) of the screen; drawn at y, y + 1 and y + 2 in the colour and at x + 1, y + 3 in black.
 void Stats::line(CareerHost& host, float x0, float y0, float x1, float y1, uint32_t argb) {
     const auto unit = [](float v) { return std::clamp(v, 0.0f, 1.0f); };
-    const auto w = static_cast<float>(host.device().width());
-    const auto h = static_cast<float>(host.device().height());
-    const float ax = (unit(x0) * 530.0f + 56.0f) * w * 0.0015625f;
-    const float ay = (480.0f - (unit(y0) * 260.0f + 130.0f)) * h * 0.0020833334f;
-    const float bx = (unit(x1) * 530.0f + 56.0f) * w * 0.0015625f;
-    const float by = (480.0f - (unit(y1) * 260.0f + 130.0f)) * h * 0.0020833334f;
+    // The fixed build's wide screens: across the menus' zone, down the 4:3 frame, as the window's graph
+    // (Render/Display, Game/UI/WideScreen; the screen's on the stock's).
+    const render::Display d = render::display(host.device().width(), host.device().height());
+    const float w = d.menuW;
+    const float h = d.frameH;
+    const float ax = (unit(x0) * 530.0f + 56.0f) * w * 0.0015625f + d.menuX;
+    const float ay = (480.0f - (unit(y0) * 260.0f + 130.0f)) * h * 0.0020833334f + d.frameY;
+    const float bx = (unit(x1) * 530.0f + 56.0f) * w * 0.0015625f + d.menuX;
+    const float by = (480.0f - (unit(y1) * 260.0f + 130.0f)) * h * 0.0020833334f + d.frameY;
     host.device().drawLine(ax, ay, bx, by, argb);
     host.device().drawLine(ax, ay + 1.0f, bx, by + 1.0f, argb);
     host.device().drawLine(ax, ay + 2.0f, bx, by + 2.0f, argb);

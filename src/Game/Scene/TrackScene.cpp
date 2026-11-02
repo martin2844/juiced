@@ -5,6 +5,8 @@
 #include "Core/Saves/GraphicsConfig.h"
 #include "Core/Base/Log.h"
 #include "Core/Physics/TrackCollision.h"
+#include "Game/Scene/AmbientOcclusion.h"
+#include "Game/Scene/NearestFade.h"
 #include "Game/Scene/PostEffects.h"
 
 #include <algorithm>
@@ -28,6 +30,42 @@ namespace {
 const float kRandomScale = std::bit_cast<float>(0x38000100u);  // 1 / 32767 (0x006FF7EC)
 const float kEpsilon = std::bit_cast<float>(0x34000000u);      // 2^-23 (0x006FF99C)
 constexpr size_t kClasses = 53;  // the region lists hold the classes 0 .. 52 (0x00543610)
+// The fixed build's street lamps on the cars' paint with WORLD LIGHT HI and ULTRA (setCarLamps; the user, 2026-10-29:
+// this is light, not reflections): a warm white at 2.
+constexpr float kLampIntensity = 2.0f;
+constexpr std::array<float, 3> kLampColour = {1.0f, 0.82f, 0.55f};
+
+// The view's depth's stencil (TrackScene::markGround): `bit` set where the draws pass (no colour), only where the
+// bits of `mask` are `ref`; the stencil off and the colour written again.
+void stencilWrite(render::IRenderDevice& device, uint32_t bit) {
+    device.setRenderState(RenderState::ColourWriteEnable, render::ColourWrite::None);
+    device.setRenderState(RenderState::StencilEnable, 1);
+    device.setRenderState(RenderState::StencilFunc, render::CompareFunc::Always);
+    device.setRenderState(RenderState::StencilPass, render::StencilOp::Replace);
+    device.setRenderState(RenderState::StencilFail, render::StencilOp::Keep);
+    device.setRenderState(RenderState::StencilZFail, render::StencilOp::Keep);
+    device.setRenderState(RenderState::StencilRef, bit);
+    device.setRenderState(RenderState::StencilWriteMask, bit);
+    device.setRenderState(RenderState::StencilMask, bit);
+}
+
+void stencilEqual(render::IRenderDevice& device, uint32_t ref, uint32_t mask) {
+    device.setRenderState(RenderState::ColourWriteEnable, render::ColourWrite::All);
+    device.setRenderState(RenderState::StencilEnable, 1);
+    device.setRenderState(RenderState::StencilFunc, render::CompareFunc::Equal);
+    device.setRenderState(RenderState::StencilRef, ref);
+    device.setRenderState(RenderState::StencilMask, mask);
+    device.setRenderState(RenderState::StencilPass, render::StencilOp::Keep);
+    device.setRenderState(RenderState::StencilFail, render::StencilOp::Keep);
+    device.setRenderState(RenderState::StencilZFail, render::StencilOp::Keep);
+}
+
+void stencilOff(render::IRenderDevice& device) {
+    device.setRenderState(RenderState::StencilEnable, 0);
+    device.setRenderState(RenderState::StencilWriteMask, 0xFFFFFFFFu);
+    device.setRenderState(RenderState::StencilMask, 0xFFFFFFFFu);
+    device.setRenderState(RenderState::ColourWriteEnable, render::ColourWrite::All);
+}
 
 std::optional<std::vector<uint8_t>> readBytes(const GameFiles& files, const std::filesystem::path& path) {
     const auto bytes = files.read(path);
@@ -69,6 +107,8 @@ TrackScene::TrackScene(Engine& engine) : m_engine(engine), m_lens(engine) {
 }
 
 TrackScene::~TrackScene() {
+    // The effects' cloudcast texture and the renderer's cloud constants their own again before the map goes.
+    setClouds(nullptr, false);
     render::IRenderDevice& device = m_engine.device();
     for (const auto& m : m_meshes) {
         if (m->vertices != 0) device.destroyBuffer(m->vertices);
@@ -185,6 +225,7 @@ bool TrackScene::load(const TrackSetup& setup, CrtRandom& random, std::string* w
     objectsLoad.effects = setup.effects;
     objectsLoad.sound = setup.sound;
     objectsLoad.timeOfDay = setup.timeOfDay;
+    m_cloudWind = cloudWind(setup.timeOfDay, setup.weather == 2);
     objectsLoad.files = &files;
     objectsLoad.wet = atmosphere.wet != 0;
     const EffectLibrary noEffects;
@@ -229,6 +270,7 @@ bool TrackScene::load(const TrackSetup& setup, CrtRandom& random, std::string* w
                 m_objectMeshes.push_back(
                     std::make_unique<render::Mesh>(m_engine.device(), data, partMaterials));
                 meshes[o] = m_objectMeshes.back().get();
+                if (skyCloud(e.name, object.name)) m_skyClouds.push_back(meshes[o]);
                 spheres[o] = object.mesh.sphere;
             }
             m_meshOf.push_back(std::move(meshes));
@@ -394,6 +436,18 @@ bool TrackScene::load(const TrackSetup& setup, CrtRandom& random, std::string* w
             }
         }
     }
+    // The fixed build's sun casters (drawSunCasters): every instance a list holds, once, in the lists' order of classes.
+    m_casters.clear();
+    for (uint32_t c = 0; c < kClasses; ++c) {
+        for (const auto& m : m_meshes) {
+            if (m->material == nullptr || m->vertices == 0 || m->classId != c) continue;
+            for (Instance& in : m->instances) {
+                if (std::any_of(in.regions.begin(), in.regions.end(), [](uint32_t w) { return w != 0; })) {
+                    m_casters.push_back({m.get(), &in});
+                }
+            }
+        }
+    }
 
     // The render tree (0x00548790): each leaf's records the instances of their numbers (0x00543230); those of the
     // meshes without a material are left out, as from the lists.
@@ -468,7 +522,7 @@ bool TrackScene::load(const TrackSetup& setup, CrtRandom& random, std::string* w
 
 void TrackScene::startObjectLights() {
     m_objectLights.clear();
-    const bool night = m_atmosphere && m_atmosphere->current != nullptr && m_atmosphere->current->night != 0;
+    const bool atNight = night();
     for (const SceneObject& o : m_sceneObjects.objects()) {
         const bool lit = o.kind == SceneObject::Kind::Barrel || o.kind == SceneObject::Kind::Bin ||
                          o.kind == SceneObject::Kind::Wheel;
@@ -498,7 +552,7 @@ void TrackScene::startObjectLights() {
             l.shadow = addProjector(*node, {a[0] * 1.4f, a[1], a[2], 0.0f}, {b[0] * 1.4f, b[1], b[2], 0.0f},
                                     m_engine.texture("gen_shadow01"), nullptr);
         }
-        l.start(sunMap(), m_sceneObjects, night);
+        l.start(sunMap(), m_sceneObjects, atNight);
     }
 }
 
@@ -574,6 +628,7 @@ void TrackScene::setLightTile(const render::GameTexture* tile) {
 
 void TrackScene::drawInstance(render::Camera& camera, const Mesh& mesh, const Instance& in) {
     render::Renderer3d& r = m_engine.renderer();
+    if (r.shadowPass() && !r.shadowPassDraws(mesh.material->classId())) return;
     render::IRenderDevice& device = r.device();
     device.setStream(mesh.vertices, mesh.stride);
     if (mesh.primitive == 1 || mesh.primitive == 2) device.setIndices(mesh.indices);
@@ -586,9 +641,13 @@ void TrackScene::drawInstance(render::Camera& camera, const Mesh& mesh, const In
 
     render::Material& material = *mesh.material;
     const render::Program* program = material.program();
-    if (program == nullptr || !program->usesFixedVertices()) {
+    if (r.shadowPass() || program == nullptr || !program->usesFixedVertices()) {
         r.setVertexConstants(0, in.block.data(), 7);
-        const oj::Mat44 toClip = oj::multiplyAffine(camera.worldToClip(), in.matrix());
+        const oj::Mat34& eye = camera.world();
+        const oj::Mat44 toClip = oj::multiplyAffine(
+            m_nearer > 0.0f ? nearerToClip(camera.worldToClip(), {eye[3], eye[7], eye[11], 0.0f}, m_nearer)
+                            : camera.worldToClip(),
+            in.matrix());
         r.setVertexConstants(18, toClip.data(), 4);
         if (program != nullptr && program->usesRandom()) r.setVertexConstants(40, in.random.data(), 1);
     } else {
@@ -596,7 +655,7 @@ void TrackScene::drawInstance(render::Camera& camera, const Mesh& mesh, const In
         if (!told) log::warning("track: a fixed-function technique's transforms are not set yet");
         told = true;
     }
-    const uint32_t passes = material.passes();
+    const uint32_t passes = r.shadowPass() ? 1 : material.passes();
     for (uint32_t pass = 0; pass < passes; ++pass) {
         r.beginMaterialPass(material, pass);
         if (mesh.primitive == 1) {
@@ -609,19 +668,230 @@ void TrackScene::drawInstance(render::Camera& camera, const Mesh& mesh, const In
     }
 }
 
+bool TrackScene::carInMap(CarModel& car, const render::Camera& camera) {
+    render::Node* root = car.root();
+    if (root == nullptr) return true;
+    const Mat34& w = root->world();
+    return camera.sphereVisible({w[3], w[7], w[11], 0.0f}, kCarShadowRadius);
+}
+
+void TrackScene::drawShadowCasters(render::Camera& camera, const CarModel* skip, const CasterMarks& marks) {
+    render::Renderer3d& r = m_engine.renderer();
+    camera.update();
+    setViewConstants(r, camera);
+    const oj::Mat34& c = camera.world();
+    m_cameraPlace = {c[3], c[7], c[11], 0.0f};
+    const float lodScale = camera.lodScale() / ((r.drawQuality + 1.0f) * 0.5f);
+    render::IRenderDevice& device = m_engine.device();
+    device.profileMark(marks.world);
+    if (!m_lists.empty()) drawRegion(camera, regionAt(c[3], c[7], c[11]).number, lodScale);
+    // The view's depth (the ground marked): the sea the stock draws after the cars too, marked as the water
+    // (Renderer3d::kWaterMark). The rain's water over the road is no surface of it (it floats over the road: its edges
+    // made steps the ambient occlusion outlined, the user 2026-10-29); its puddles mark the road under them
+    // (markGround).
+    if (r.shadowShaders.ground) {
+        for (auto it = m_deferred.rbegin(); it != m_deferred.rend(); ++it) {
+            if (it->mesh->material->classId() == oj::kSea) drawInstance(camera, *it->mesh, *it->instance);
+        }
+    }
+    m_deferred.clear();
+    identityObject(camera);
+    device.profileMark(marks.objects);
+    drawSceneObjects(camera);
+    device.profileMark(marks.cars);
+    r.drawingCars = true;
+    for (const auto& car : m_cars) {
+        if (!car->hidden && car.get() != skip && carInMap(*car, camera)) car->draw(r, camera, 1);
+    }
+    r.drawingCars = false;
+    r.endMaterial();
+    device.profileMark(marks.after);
+}
+
+void TrackScene::markGround(render::Camera& camera) {
+    using GroundPass = render::Renderer3d::GroundPass;
+    render::Renderer3d& r = m_engine.renderer();
+    render::IRenderDevice& device = m_engine.device();
+    if (m_lists.empty() || !device.hasStencilBuffer()) return;
+    device.profileMark("occlusion depth: puddles");
+    r.endMaterial();
+    device.clear(ClearFlags::Stencil, 0, 1.0f, 0);
+    const oj::Mat34& c = camera.world();
+    const uint32_t region = regionAt(c[3], c[7], c[11]).number;
+    const float lodScale = camera.lodScale() / ((r.drawQuality + 1.0f) * 0.5f);
+    // The rain's puddles: its sheets cut to them, each place a share kPuddleReach of its way nearer the camera (the
+    // sheet floats over the road, a little under it in places), into kPuddleBit.
+    r.groundPass = GroundPass::Puddles;
+    setViewConstants(r, camera);
+    drawRegion(camera, region, lodScale);
+    stencilWrite(device, kPuddleBit);
+    m_nearer = kPuddleReach;
+    for (auto it = m_deferred.rbegin(); it != m_deferred.rend(); ++it) {
+        const render::GameTexture* texture = nullptr;
+        const render::GameTexture* noise = nullptr;
+        float tile[2] = {};
+        render::Material& material = *it->mesh->material;
+        if (material.classId() == oj::kWater && material.puddles(texture, noise, tile)) {
+            drawInstance(camera, *it->mesh, *it->instance);
+        }
+    }
+    m_nearer = 0.0f;
+    m_deferred.clear();
+    stencilOff(device);
+    r.endMaterial();
+    // The road drawn again under them, marked as the water (the sheet itself is no surface of the depth: its edges
+    // made steps the occlusion outlined, the user 2026-10-29).
+    r.groundPass = GroundPass::Marked;
+    r.groundMark = render::Renderer3d::kWaterMark;
+    stencilEqual(device, kPuddleBit, kPuddleBit);
+    setViewConstants(r, camera);
+    drawRegion(camera, region, lodScale);
+    m_deferred.clear();
+    r.endMaterial();
+    r.groundPass = GroundPass::None;
+    r.groundMark = 0.0f;
+    stencilOff(device);
+}
+
+void TrackScene::drawCarCasters(render::Camera& camera) {
+    render::Renderer3d& r = m_engine.renderer();
+    // The frame's first 3D drawing: the vertex declaration the renderer last set may be gone (the last frame's 2D).
+    r.lastDeclaration = 0;
+    camera.update();
+    setViewConstants(r, camera);
+    const oj::Mat34& c = camera.world();
+    m_cameraPlace = {c[3], c[7], c[11], 0.0f};
+    for (const auto& car : m_cars) {
+        if (!car->hidden && carInMap(*car, camera)) car->draw(r, camera, 1);
+    }
+    r.endMaterial();
+}
+
+void TrackScene::drawSunCasters(render::Camera& camera, render::Camera& eye) {
+    render::Renderer3d& r = m_engine.renderer();
+    const oj::Mat34& e = eye.world();
+    const float lodScale = eye.lodScale() / ((r.drawQuality + 1.0f) * 0.5f);
+    camera.setLodEye({e[3], e[7], e[11], 0.0f}, eye.lodScale());
+    camera.update();
+    setViewConstants(r, camera);
+    m_cameraPlace = {e[3], e[7], e[11], 0.0f};
+    render::IRenderDevice& device = m_engine.device();
+    device.profileMark("sun maps: world");
+    if (!m_casters.empty()) {
+        m_engine.renderer().fixedFunctionLights();
+        drawEntries(camera, m_casters, lodScale);
+    }
+    m_deferred.clear();
+    identityObject(camera);
+    device.profileMark("sun maps: scene objects");
+    drawSceneObjects(camera);
+    // Every car, the one the view rides on too (hidden from the view, not from the sun).
+    device.profileMark("sun maps: cars");
+    for (const auto& car : m_cars) {
+        if (carInMap(*car, camera)) car->draw(r, camera, 1);
+    }
+    r.endMaterial();
+    device.profileMark("sun shadow maps");
+}
+
+std::array<render::Node*, 4> TrackScene::nearestLamps(const Vec4& place, float radius) {
+    std::array<render::Node*, 4> out{};
+    const std::vector<NearLamp> lamps = lampsWithin(place, radius, out.size());
+    for (size_t i = 0; i < lamps.size(); ++i) out[i] = lamps[i].node;
+    return out;
+}
+
+std::vector<TrackScene::NearLamp> TrackScene::lampsWithin(const Vec4& place, float radius, size_t most) {
+    std::vector<std::pair<float, render::Node*>> found;
+    const size_t count = std::min(m_worldFlares, m_lens.flares().size());
+    for (size_t i = 0; i < count; ++i) {
+        Flare& f = m_lens.flares()[i];
+        if (f.node == nullptr || f.def == nullptr || f.def->screen != 0.0f) continue;
+        const Mat34& w = f.node->world();
+        const float dx = w[3] - place[0], dy = w[7] - place[1], dz = w[11] - place[2];
+        const float d2 = dx * dx + dy * dy + dz * dz;
+        if (d2 < radius * radius) found.emplace_back(d2, f.node);
+    }
+    // Nearest first, the earlier of two as near.
+    std::stable_sort(found.begin(), found.end(), [](const auto& a, const auto& b) { return a.first < b.first; });
+    std::vector<NearLamp> out;
+    for (size_t i = 0; i < found.size() && i < most; ++i) out.push_back({found[i].second, std::sqrt(found[i].first)});
+    return out;
+}
+
+std::vector<float> TrackScene::distances(const std::vector<NearLamp>& lamps) {
+    std::vector<float> out;
+    for (const NearLamp& l : lamps) out.push_back(l.distance);
+    return out;
+}
+
+void TrackScene::setCarLamps(CarModel& car) {
+    render::Renderer3d& r = m_engine.renderer();
+    std::array<float, 32> c{};
+    render::Node* root = car.root();
+    if (r.night && root != nullptr && carLampsLit(graphicsConfig())) {
+        const Mat34& w = root->world();
+        const size_t keep = c.size() / 8;
+        const std::vector<NearLamp> lamps = lampsWithin({w[3], w[7], w[11], 0.0f}, kLampRadius, keep + 1);
+        const std::vector<float> weights = rankFade(distances(lamps), keep, kCarLampBand);
+        for (size_t i = 0; i < weights.size(); ++i) {
+            const Mat34& l = lamps[i].node->world();
+            float* lamp = c.data() + 8 * i;
+            lamp[0] = l[3];
+            lamp[1] = l[7];
+            lamp[2] = l[11];
+            lamp[3] = 1.0f / (kLampRadius * kLampRadius);
+            for (size_t k = 0; k < 3; ++k) lamp[4 + k] = kLampColour[k] * kLampIntensity * weights[i];
+        }
+    }
+    // A pass sets the shared values as it begins: the car's first material begins its own.
+    r.programs().setShared("CarLamp", c.data(), sizeof c);
+    r.endMaterial();
+}
+
+void TrackScene::setClouds(const LightSet* set, bool volume) {
+    if (set == m_cloudSet && volume == m_cloudVolume) return;
+    m_cloudSet = set;
+    m_cloudVolume = volume;
+    render::Renderer3d& r = m_engine.renderer();
+    if (set == nullptr) {
+        if (m_sky) m_sky->clouds = nullptr;
+        r.cloudScale = 0.0f;
+        m_engine.setCloudCast(0);
+        return;
+    }
+    if (!m_clouds) m_clouds = std::make_unique<Clouds>(m_engine.device());
+    // The layer's map a tile of its noise, the volume's a window about the view.
+    r.cloudScale = 1.0f / (volume ? kCloudWindow : kCloudTile);
+}
+
 void TrackScene::drawRegion(render::Camera& camera, uint32_t region, float lodScale) {
     // 0x00546A0F: the fixed-function lights (0x005463C0) before the region's instances.
     m_engine.renderer().fixedFunctionLights();
+    drawEntries(camera, m_lists[region], lodScale);
+}
+
+void TrackScene::drawEntries(render::Camera& camera, const std::vector<Entry>& entries, float lodScale) {
     const render::Renderer3d& r = m_engine.renderer();
-    const oj::Mat34& c = camera.world();
-    for (const Entry& e : m_lists[region]) {
+    const Vec4 c = camera.lodOrigin();
+    // A shadow map's: the instances under the view's pixels across left out (setCasterView), the squares compared.
+    const CasterView* view = r.shadowPass() ? m_casterView : nullptr;
+    const float across = view != nullptr ? 2.0f * view->pixelsPerUnit / view->pixels : 0.0f;
+    for (const Entry& e : entries) {
         const Instance& in = *e.instance;
         const Mesh& m = *e.mesh;
-        const float dx = c[3] - in.centre[0];
-        const float dy = c[7] - in.centre[1];
-        const float dz = c[11] - in.centre[2];
+        const float dx = c[0] - in.centre[0];
+        const float dy = c[1] - in.centre[1];
+        const float dz = c[2] - in.centre[2];
         const float d = ((dz * dz + dy * dy) + dx * dx) * lodScale;
         if (!(r.lodBias * m.range[0] < d) || !(d <= r.lodBias * m.range[1])) continue;
+        if (view != nullptr) {
+            const float ex = view->eye[0] - in.centre[0];
+            const float ey = view->eye[1] - in.centre[1];
+            const float ez = view->eye[2] - in.centre[2];
+            const float size = in.radius * across;
+            if (size * size < ex * ex + ey * ey + ez * ez) continue;
+        }
         if (in.radius == 0.0f || !camera.sphereVisible(in.matrix(), m.centre, in.radius)) continue;
         if (m.deferred) {
             m_deferred.push_back(e);
@@ -698,8 +968,14 @@ void TrackScene::drawSceneObjects(render::Camera& camera) {
         m_sceneNodes[p.node]->local = p.body->node;
         m_sceneNodes[p.node]->invalidate();
     }
+    // The sky's own clouds are left out under the procedural ones.
+    const auto cloudMesh = [&](const render::Mesh* mesh) {
+        return std::find(m_skyClouds.begin(), m_skyClouds.end(), mesh) != m_skyClouds.end();
+    };
     std::function<void(size_t, uint32_t)> drawTree = [&](size_t i, uint32_t mode) {
-        if (nodes[i].mesh) m_sceneNodes[i]->draw(r, camera, mode);
+        if (nodes[i].mesh && !(m_cloudSet != nullptr && cloudMesh(m_sceneNodes[i]->mesh))) {
+            m_sceneNodes[i]->draw(r, camera, mode);
+        }
         for (size_t c : nodes[i].children) drawTree(c, mode);
     };
     for (const SceneRoot& root : m_sceneRoots) {
@@ -728,6 +1004,7 @@ void TrackScene::makeFlares() {
         m_lens.makeReflectionBatches(f);
         m_lens.flares().push_back(f);
     }
+    m_worldFlares = m_lens.flares().size();
     m_sun.reset();
     if (m_atmosphere && m_atmosphere->current != nullptr && !m_atmosphere->current->sunFlare.empty() &&
         m_engine.texture(m_atmosphere->current->sunFlare) != nullptr) {
@@ -762,9 +1039,15 @@ void TrackScene::makeFlares() {
               m_lens.flares().size(), m_lens.batchCount(), missing, m_lens.queries() ? "on" : "off");
 }
 
+const render::GameTexture* carsEnvironment(int32_t reflections, float drawQuality, const render::GameTexture* carCube,
+                                           const render::GameTexture* environment) {
+    return reflections == 3 && carCube != nullptr && !(drawQuality < 0.8f) ? carCube : environment;
+}
+
 void TrackScene::draw(render::Camera& camera, float clock) {
     render::Renderer3d& r = m_engine.renderer();
     render::IRenderDevice& device = m_engine.device();
+    device.profileMark("world: setup");
     camera.update();
     setViewConstants(r, camera);
     device.setRenderState(RenderState::FogEnable, 1);
@@ -774,14 +1057,25 @@ void TrackScene::draw(render::Camera& camera, float clock) {
     // drawn with the last face's c7, c10, c14, c33, c41, c42). The fixed build sets the view's constants again.
     Engine::ReflectionTargets& targets = m_engine.reflectionTargets();
     if (targets.worldCubeDue) {
+        device.profileMark("world reflections cube");
         drawWorldCube(clock);
         setViewConstants(r, camera);
+        device.profileMark("world: setup");
     }
     if (m_atmosphere) render::applyAtmosphere(r, *m_atmosphere, camera);
     const oj::Mat34& c = camera.world();
     const Region region = regionAt(c[3], c[7], c[11]);
     r.time = m_clock.read(clock);
     r.endMaterial();
+    // The fixed build's procedural clouds: the view's map (the world's cloud shadows) and sky.
+    if (m_cloudSet != nullptr && m_clouds) {
+        device.profileMark("clouds' map");
+        const bool drawn = m_clouds->update(r, camera, *m_cloudSet, m_cloudVolume, m_cloudWind);
+        m_engine.setCloudCast(drawn ? m_clouds->map() : 0);
+        // The reflections' view (the cubes', the wet road's), the main view's below.
+        if (m_sky) m_sky->clouds = drawn ? &m_clouds->reflectedView() : nullptr;
+        device.profileMark("world: setup");
+    }
     // The cars' environment (the renderer's +0x118): the cars' cube with the reflections on and the renderer's +0x188
     // of 0.8 or more, else the world's cube.
     const GraphicsConfig& settings = graphicsConfig();
@@ -794,6 +1088,7 @@ void TrackScene::draw(render::Camera& camera, float clock) {
     // the instances drawn after the cars.
     PostEffects& post = m_engine.postEffects();
     if (targets.road.id != 0) {
+        device.profileMark("wet road reflection");
         r.environment = worldCube;
         r.reflection = &targets.road;
         post.takeTarget(targets.road.id);
@@ -833,10 +1128,18 @@ void TrackScene::draw(render::Camera& camera, float clock) {
 
     // The scale of the main view's distances, the region the camera is in; the world's +0xA8 (the sky dome) after the
     // region's opaque instances; the instances of classes drawn after the cars go last, the last found first.
+    device.profileMark("world");
     m_cameraPlace = {c[3], c[7], c[11], 0.0f};
     m_lodScale = camera.lodScale() / ((r.drawQuality + 1.0f) * 0.5f);
     if (!m_lists.empty()) drawRegion(camera, region.number, m_lodScale);
-    if (m_sky) m_sky->draw(camera);
+    if (m_sky) {
+        device.profileMark("sky");
+        const render::CloudView* reflected = m_sky->clouds;
+        if (reflected != nullptr) m_sky->clouds = &m_clouds->view();
+        m_sky->draw(camera);
+        m_sky->clouds = reflected;
+        device.profileMark("world: after the sky");
+    }
     r.endMaterial();
     for (auto it = m_deferred.rbegin(); it != m_deferred.rend(); ++it) drawInstance(camera, *it->mesh, *it->instance);
     m_deferred.clear();
@@ -845,24 +1148,85 @@ void TrackScene::draw(render::Camera& camera, float clock) {
     // its [5]), the trees below the world's node +0xD8 (0x00550500): the scene objects' roots, then the cars' (made
     // after the track), each tree's parts of materials not drawn late (0x24) first and those after (a car's glass over
     // its driver); then again after them the lens flares (+0x120, 0x0054FC60).
+    device.profileMark("scene objects");
     identityObject(camera);
     for (const auto& p : m_projectors) p->draw(camera);
     drawSceneObjects(camera);
     // The fixed build: every car's opaque parts, then every car's late ones (its glass writes its depth, Model.cpp:
-    // a car behind another's window is drawn before that window).
+    // a car behind another's window is drawn before that window); with the reflections HI their headlights' glass
+    // reflects the cars' cube (carsEnvironment).
+    const render::GameTexture* environment = r.environment;
+    r.environment = carsEnvironment(settings.reflections, r.drawQuality, carCube, environment);
+    // REFLECTIONS ULTRA: the car of the cars' cube reflects that cube (its paint, its windows, its headlights' glass).
+    const render::GameTexture* carsCube = m_cubeCar != nullptr ? m_engine.carsCube() : nullptr;
+    const auto drawCar = [&](CarModel& car, uint32_t mode) {
+        setCarLamps(car);
+        if (carsCube == nullptr || &car != m_cubeCar) {
+            car.draw(r, camera, mode);
+            return;
+        }
+        const render::GameTexture* dynamic = r.dynamicEnvironment;
+        const render::GameTexture* glass = r.environment;
+        r.endMaterial();
+        r.dynamicEnvironment = carsCube;
+        r.environment = carsCube;
+        car.draw(r, camera, mode);
+        r.endMaterial();
+        r.dynamicEnvironment = dynamic;
+        r.environment = glass;
+    };
+    device.profileMark("cars");
     for (const auto& car : m_cars) {
-        if (!car->hidden) car->draw(r, camera, 1);
+        if (!car->hidden) drawCar(*car, 1);
     }
+    // WORLD LIGHT HI and ULTRA: the view's opaque parts times their ambient occlusion (before the cars' glass, the
+    // flares and the particles).
+    if (m_occlusionDepth != 0) {
+        r.endMaterial();
+        if (m_occlusionOn) {
+            device.profileMark("ambient occlusion");
+            device.ambientOcclusion(m_occlusionDepth, m_occlusionView);
+        }
+        // WORLD LIGHT ULTRA by night: the cars' shadows from the street lamps over the same parts.
+        device.profileMark("lamp shadows");
+        if (m_lampShadowsOn) device.lampShadows(m_occlusionDepth, m_lampShadowMaps, m_lampShadowView);
+        // The cars' flames' light on the same parts (the road, the cars).
+        device.profileMark("flames' light");
+        if (m_pointLightsOn) device.pointLights(m_occlusionDepth, m_pointLightView);
+        r.endMaterial();
+    }
+    device.profileMark("cars' glass");
     for (const auto& car : m_cars) {
-        if (!car->hidden) car->draw(r, camera, 2);
+        if (!car->hidden) drawCar(*car, 2);
     }
     r.endMaterial();
+    r.environment = environment;
+    device.profileMark("lens flares");
     identityObject(camera);
+    m_lens.calmCrowds = graphicsConfig().effects.worldLight >= 2;
     m_lens.draw(camera);
+    // WORLD LIGHT ULTRA by night: the lights reflected in the road (their lens flares drawn, the particles not yet).
+    if (m_reflectionsOn && m_occlusionDepth != 0) {
+        device.profileMark("lights in the road");
+        r.endMaterial();
+        lampStreaks(camera, m_reflectionView);
+        device.lightReflections(m_occlusionDepth, m_reflectionView);
+        r.endMaterial();
+    }
+    // WORLD LIGHT ULTRA by night: the light in the haze (the street lamps' cones, the headlights' beams).
+    if (m_volumetricOn && m_occlusionDepth != 0) {
+        device.profileMark("light in the haze");
+        r.endMaterial();
+        device.volumetricLight(m_occlusionDepth, m_volumetricView);
+        r.endMaterial();
+    }
     // The particles (the effects manager's +0x10, 0x00505030), after the object constants of no object.
     if (m_particles) {
+        device.profileMark("particles");
         identityObject(camera);
         m_particles->frame(camera, m_clock.read(clock));
+        // The fixed build's heat haze after the view's particles (JuicedConfigExt's HeatHaze).
+        m_particles->drawHeatHaze(camera);
     }
     // The environments and the reflection let go.
     r.dynamicEnvironment = nullptr;
@@ -872,6 +1236,7 @@ void TrackScene::draw(render::Camera& camera, float clock) {
     r.endMaterial();
     device.setRenderState(RenderState::ZEnable, 0);
     device.setRenderState(RenderState::FogEnable, 0);
+    device.profileMark("race: view");
 }
 
 void drawSplineDebug(const SceneSpline& spline, const Mat34& node, const render::Camera& camera,

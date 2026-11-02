@@ -1006,7 +1006,11 @@ void GlesDevice::letLoadingRun() {
     // Service follow-up work within a bounded slice instead of delaying each upload
     // to the next frame. Empty ordinary frames return immediately; GL stays on owner.
     std::unique_lock lock(workMutex);
-    if (work.empty()) return;
+    if (work.empty()) {
+        lock.unlock();
+        IRenderDevice::letLoadingRun();
+        return;
+    }
     const auto deadline = std::chrono::steady_clock::now() + std::chrono::milliseconds(4);
     do {
         auto task = std::move(work.front());
@@ -1016,6 +1020,8 @@ void GlesDevice::letLoadingRun() {
         lock.lock();
         if (std::chrono::steady_clock::now() >= deadline) break;
     } while (workReady.wait_until(lock, deadline, [this] { return !work.empty(); }));
+    lock.unlock();
+    IRenderDevice::letLoadingRun();
 }
 void GlesDevice::waitForService() {
     if (std::this_thread::get_id() != owner) onOwner([] {});

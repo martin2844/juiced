@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>18.0</VCProjectVersion>
+    <ProjectGuid>{B2A071BC-3BAA-4A3A-8CAA-0DD3789B68A4}</ProjectGuid>
+    <RootNamespace>OpenJuiceConfig</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v145</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseDebugLibraries Condition="'$(Configuration)'=='Debug'">true</UseDebugLibraries>
+    <UseDebugLibraries Condition="'$(Configuration)'=='Release'">false</UseDebugLibraries>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\build\OpenJuice.props" />
+  </ImportGroup>
+  <!-- The fixed build's OpenJuiceConfig: JuicedConfigExt's settings program (external/JuicedConfigExt/src/Config, its
+       sources as they are, its warnings not errors) with OpenJuice as its host (OpenJuiceConfigHost.cpp in place of its
+       Core/Host.cpp; SDL3 linked in, OpenJuiceConfigSdl.cpp), 32-bit as the stock's JuicedConfig.exe: the release
+       build OpenJuiceConfig.exe, the debug build OpenJuiceConfig_d.exe, for both bitnesses of the game (the settings
+       it writes, HKEY_CURRENT_USER's and controller.ini, are the same for both). -->
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <TargetName>OpenJuiceConfig</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <TargetName>OpenJuiceConfig_d</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <DisableSpecificWarnings>4005;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <PreprocessorDefinitions>NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <!-- GDI+ needs the whole of windows.h. -->
+      <UndefinePreprocessorDefinitions>WIN32_LEAN_AND_MEAN;%(UndefinePreprocessorDefinitions)</UndefinePreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\external\JuicedConfigExt\src\Config;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ResourceCompile>
+      <AdditionalIncludeDirectories>..\..\external\JuicedConfigExt\src\Config;..\..\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <AdditionalDependencies>comctl32.lib;gdiplus.lib;d3d9.lib;dxguid.lib;dinput8.lib;dsound.lib;uxtheme.lib;version.lib;hid.lib;setupapi.lib;cfgmgr32.lib;imm32.lib;winmm.lib;ole32.lib;oleaut32.lib;shell32.lib;user32.lib;gdi32.lib;advapi32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug'">
+    <ResourceCompile>
+      <PreprocessorDefinitions>OJ_RC_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\external\JuicedConfigExt\src\Config\main.cpp" />
+    <ClCompile Include="..\..\external\JuicedConfigExt\src\Config\Compatibility\OldJ1Tools.cpp" />
+    <ClCompile Include="..\..\external\JuicedConfigExt\src\Config\Core\Controllers.cpp" />
+    <ClCompile Include="..\..\external\JuicedConfigExt\src\Config\Core\Display.cpp" />
+    <ClCompile Include="..\..\external\JuicedConfigExt\src\Config\Core\GameSettings.cpp" />
+    <ClCompile Include="..\..\external\JuicedConfigExt\src\Config\Core\IniFile.cpp" />
+    <ClCompile Include="..\..\external\JuicedConfigExt\src\Config\Core\Localization.cpp" />
+    <ClCompile Include="..\..\external\JuicedConfigExt\src\Config\Core\OpenJuiceOptions.cpp" />
+    <ClCompile Include="..\..\external\JuicedConfigExt\src\Config\Core\PluginOptions.cpp" />
+    <ClCompile Include="..\..\external\JuicedConfigExt\src\Config\Core\SoundLibraries.cpp" />
+    <ClCompile Include="..\..\external\JuicedConfigExt\src\Config\Core\Wheels.cpp" />
+    <ClCompile Include="..\..\external\JuicedConfigExt\src\Config\UI\Graphics.cpp" />
+    <ClCompile Include="..\..\external\JuicedConfigExt\src\Config\UI\MainWindow.cpp" />
+    <ClCompile Include="..\..\external\JuicedConfigExt\src\Config\UI\RemapWindow.cpp" />
+    <ClCompile Include="..\..\external\JuicedConfigExt\src\Config\UI\Theme.cpp" />
+    <ClCompile Include="..\..\external\JuicedConfigExt\src\Config\UI\WheelMapWindow.cpp" />
+    <ClCompile Include="OpenJuiceConfigHost.cpp" />
+    <!-- SDL's headers (third_party/sdl3-3.4.16). -->
+    <ClCompile Include="OpenJuiceConfigSdl.cpp">
+      <AdditionalIncludeDirectories>$(OpenJuiceRoot)third_party\sdl3-3.4.16\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="OpenJuiceConfig.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="OpenJuice.JuicedConfigExt.vcxproj">
+      <Project>{2F7C4A93-6B15-4E08-9D3A-81C5E2B0F647}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\sdl3-3.4.16\OpenJuice.SDL3.vcxproj">
+      <Project>{3B9E5D27-8C41-4A6F-9E12-5D7C0A4B8F61}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+</Project>

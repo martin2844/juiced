@@ -2,6 +2,8 @@
 
 #include "Core/Base/X87.h"
 
+#include <SteeringCurve.h>
+
 #include <cmath>
 #include <cstring>
 #include <string>
@@ -28,6 +30,7 @@ DriverActions DriverKeys::update(const input::Input& device, int player) {
     a.handbrake = device.analogue(3, player);
     a.reverse = device.analogue(4, player);
     a.cameraPan = device.analogue(5, player);
+    a.steeringFromController = device.pads().steeringFromController();
     return a;
 }
 
@@ -61,7 +64,7 @@ float shaped(float s, float power) {
 
 }  // namespace
 
-float DriverControl::steerToward(float s, float speed, float dt) {
+float DriverControl::steerToward(float s, float speed, float dt, bool controller) {
     float target = 0.0f;
     bool lessened = true;
     float power = 0.0f;
@@ -71,13 +74,19 @@ float DriverControl::steerToward(float s, float speed, float dt) {
         lessened = false;
     } else if (wheel && notSpeedSensitive) {
         // 0x0041E470: 1.65 ([0x007252F0]) - 1.65 x the sensitivity + 0.8 ([0x007252EC]); no lessening at speed.
-        power = (1.65f - 1.65f * steeringSensitivity) + 0.8f;
+        power = wheelExponent > 0.0f ? wheelExponent : (1.65f - 1.65f * steeringSensitivity) + 0.8f;
         s = within1(shaped(s, power));
         target = within1(s);
         lessened = false;
     } else if (wheel) {
         // 0x0041E508: the same power ([0x007252E8], [0x007252E4]) with the lessening.
-        power = (1.65f - 1.65f * steeringSensitivity) + 0.8f;
+        power = wheelExponent > 0.0f ? wheelExponent : (1.65f - 1.65f * steeringSensitivity) + 0.8f;
+    } else if (consoleSteering && controller) {
+        // The fixed build: the controller as on the Xbox (its 0x000308A6): the stick as it is, divided by 1 + (0.004 -
+        // the speed dependant sensitivity) x (speed - 4)^2 above 4 m/s; the profile's sensitivity bends it by the power
+        // 1 + 1.1 x (0.5 - sensitivity). The input stays the stick's for the rate's side.
+        target = SteeringCurve::ConsoleTarget(s, speed, steeringSensitivity, speedSensitivity);
+        lessened = false;
     } else {
         // 0x0041E523: 1.1 - 1.1 x the sensitivity, + 0.05 in double; 1.01 (0x0041FF7E): + 0.07 as a float
         // ([0x007272E4]).
@@ -108,7 +117,7 @@ void DriverControl::apply(CarBody& car, const DriverActions& a, float dt, float 
     // car's sensitivity.
     const Vec4& v = car.localVelocity;
     const float speed = std::sqrt((v[0] * v[0] + v[1] * v[1]) + v[2] * v[2]);
-    steerToward(a.steering, speed, dt);
+    steerToward(a.steering, speed, dt, a.steeringFromController);
     float turn = car.dynamics().steeringFactor * sensitivity * steer;
     if (turn < -1.0f) {
         turn = -1.0f;

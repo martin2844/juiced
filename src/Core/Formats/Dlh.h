@@ -1,5 +1,5 @@
 #pragma once
-// A track's scene objects (<track>_<name>.dlh; the layout is the Blender add-on's docs/technical/DLH): the objects
+// A track's scene objects (<track>_<name>.dlh; the layout: docs/spec/31-file-layouts.md): the objects
 // (meshes, dummies, lights, effects, splines, helpers) with their physics hulls and 3ds Max properties, and the tree
 // of nodes placing them (world matrices). Read by 0x0054F520 (docs/spec/21-scene-objects.md).
 

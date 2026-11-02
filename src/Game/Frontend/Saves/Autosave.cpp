@@ -77,8 +77,9 @@ void Autosave::leave(SaveHost& host) {
 // made and turned off, else its time runs down by the frame time; then the device steps. A first step not writing: flag 3 or [0x00768084] under [0x00768080] (once each) write again; without
 // flag 2 the end (flag 4 turns the window's saving back). The end: "You will not be able to save your progress. Do
 // you want to continue without saving? ..." (type 4, on NO): yes turns the saving off, "Autosave is disabled. ..."
-// (type 1), done; no writes again and, with the saving turned on by the window, asks the PS2 question 1994 (Stock
-// problem: a console's text on the PC) whose yes writes again. The flags while writing: 4 the space (type 1), 9 TEXT
+// (type 1), done; no writes again and, with the saving turned on by the window, asks whether to save (the stock's
+// PS2 question 1994, a console's text on the PC; the fixed build's "Are you sure you want to save?", 1504) whose yes
+// writes again. The flags while writing: 4 the space (type 1), 9 TEXT
 // shown, busy; 10 its note once, busy; 12 written: the driver not changed, the saving on, the requests cleared, asked
 // by the driver "Save Successful" (type 1), TEXT hidden, +0x60 -1, done; 13 the note of 10 closed; 16 "Save failed!
 // Data write error" (type 2) once; 17 its note when 10's is up and write again; 19 the stock's debug text; 6 the
@@ -268,7 +269,8 @@ void Autosave::update(SaveHost& host, ui::Screen& s) {
     } else {
         again(host);
         if (m_turnedOn == 0 || r.skipCardQuestion != 0) return;
-        host.message(MessageType::YesNoModeless, texts.at(kTextPs2Save), false, &m_ps2Answer, true);
+        // Stock problem: the question about the PS2's memory card (1994); the fixed build asks to save (1504).
+        host.message(MessageType::YesNoModeless, texts.at(kTextSaveAsk), false, &m_ps2Answer, true);
         m_ps2Asked = host.lastMessageNumber();
         m_answer = -1;
     }

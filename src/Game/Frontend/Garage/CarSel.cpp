@@ -116,7 +116,7 @@ void CarSel::enter(GarageHost& host, ui::Screen& s) {
         damageShowroomCar(career, gameRandom());
         if (host.engine() != nullptr && car != nullptr) {
             garage.view = std::make_unique<scene::GarageView>(*host.engine(), s, "FRAME_CAR3D", data->catalogue);
-            garage.view->enterSel(*car, host.viewLoading());
+            garage.view->enterSel(*car, gameRandom());
         }
     }
     g_statsCar = car;

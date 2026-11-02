@@ -9,8 +9,10 @@
 #include "Game/Frontend/Frontend.h"
 #include "Game/Frontend/FrontendInternal.h"
 
+#include "Core/Base/GameFiles.h"
 #include "Core/Base/Log.h"
 #include "Core/Data/GameTexts.h"
+#include "Core/Data/Language.h"
 #include "Core/Network/Matchmaking.h"
 #include "Core/Data/JetTexts.h"
 
@@ -77,7 +79,11 @@ void Frontend::watchSecondController(bool connected, int32_t device, bool opens)
         return;
     }
     if (!m_noNote[1] || !opens) return;
-    m_noNote[1] = !openCritical(1, m_gameTexts.at(kTextReconnectController) + std::format(L"{}.", device + 1));
+    // Stock problem: the note has the console's text (1632, "To continue, please reconnect the DUALSHOCK 2 analog
+    // controller into controller port " and "<device + 1>."), not emptied as the first player's; the fixed build's is
+    // empty as the first player's.
+    (void)device;
+    m_noNote[1] = !openCritical(1, std::wstring());
 }
 
 // 0x004080D0 with 1 (then 0x00407FB0, the controller let go): the first player's controller made again with the
@@ -105,7 +111,7 @@ void Frontend::controlsSetUp() {
 // file for further assistance."), titled with 113 ("DirectInput problem detected").
 void Frontend::directInputProblem() {
     TextTable jet;
-    jet.load(std::filesystem::path("scripts") / (std::string("jettext") + m_language.controlsLetter + ".txt"));
+    jet.load(jetTextFile(GameFiles(std::filesystem::current_path()), m_language));
     const auto at = [&](size_t i) { return i < jet.size() ? jet.at(i) : std::wstring(); };
     errorBox(at(kJetDirectInputProblem) + L"\n" + at(kJetSeeReadMe), at(kJetDirectInputTitle), true);
 }

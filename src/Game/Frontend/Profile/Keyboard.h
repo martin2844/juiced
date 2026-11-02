@@ -39,8 +39,10 @@ public:
     KeyboardSetup& setup() { return m_setup; }
     // 0x00460960
     void enter(ProfileHost& host, ui::Screen& s);
-    // 0x00460B40; typed: the character typed this frame; shiftHeld: a shift key is down.
-    void update(ProfileHost& host, ui::Screen& s, uint32_t event, char typed, bool shiftHeld);
+    // 0x00460B40; typed: the character typed this frame; shiftHeld: a shift key is down; windowText: the fixed build's
+    // chat types the window's characters (WM_CHAR) in place of typed's.
+    void update(ProfileHost& host, ui::Screen& s, uint32_t event, char typed, bool shiftHeld,
+                const std::string& windowText = {});
     // 0x00460840: the state object cleared as the window closes.
     void clear() { *this = Keyboard{}; }
 

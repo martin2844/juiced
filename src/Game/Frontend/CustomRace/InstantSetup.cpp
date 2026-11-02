@@ -223,7 +223,7 @@ void InstantSetup::showRoutes(CustomRaceHost& host, ui::Screen& s) {
         m_shown = static_cast<int32_t>(item);
         std::string name = s.menuItemCommand("menu", item);
         if (const size_t at = name.find(".wld"); at != std::string::npos) name.resize(at);
-        m_map.route(host, s, name, true);
+        m_map.route(s, name, true);
         d.race.route = name.substr(0, 31);
         if (hosting()) network()->session.sendRoute(name);
     }

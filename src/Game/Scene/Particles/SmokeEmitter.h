@@ -4,6 +4,7 @@
 #include "Audio/Voices.h"
 #include "Core/Data/EffectDefs.h"
 #include "Core/Tracks/SunMap.h"
+#include "Game/Scene/HeatHaze.h"
 #include "Game/Scene/Particles/Emitter.h"
 #include "Game/Scene/Particles/ParticleSystem.h"
 #include "Render/Camera.h"
@@ -28,6 +29,13 @@ public:
     // +0x174 & 1: the frame's smoke when the simulation is done by then (no worker, or a quick one), the previous
     // frame's when not, as the threads' timing falls. Here the simulation is done at once: the frame's smoke.
     bool frame(render::Camera& camera) override;
+
+    // The fixed build's heat haze (Game/Scene/HeatHaze, ParticleSystem::drawHeatHaze): a frame of it with its quads
+    // as the haze draws them (put back, at its car's exhaust in the plume, faded by its motion) into the device's heat
+    // haze pass, its material's distortion map on stage 0; false when it is to be taken out of the list.
+    bool hazeFrame(render::Camera& camera, float viewWidth);
+    haze::Exhaust exhaust;  // its car's exhaust, set by the car's update each frame
+    haze::Motion motion;    // the node's motion as the haze follows it
 
 private:
     struct Vertex {

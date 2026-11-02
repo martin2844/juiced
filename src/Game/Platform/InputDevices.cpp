@@ -1,6 +1,7 @@
 #include "Game/Platform/InputDevices.h"
 
 #include "Core/Base/Log.h"
+#include "Game/Platform/WheelInput.h"
 
 #define DIRECTINPUT_VERSION 0x0800
 #include <windows.h>
@@ -181,6 +182,11 @@ private:
 class DiWheel final : public ff::WheelDevice {
 public:
     explicit DiWheel(IDirectInputDevice8A* device) : m_device(device) {}
+    // The fixed build: the wheels' reader shares the channel's states (its slot), ffb = scaled scales its forces.
+    DiWheel(IDirectInputDevice8A* device, WheelInput* wheels, int slot)
+        : m_device(device), m_wheels(wheels), m_slot(slot) {
+        m_scaled = wheels != nullptr && wheels->settings().ffb == WheelSettings::Ffb::Scaled;
+    }
 
     int32_t acquire() override { return m_device->Acquire(); }
     int32_t unacquire() override { return m_device->Unacquire(); }
@@ -188,7 +194,9 @@ public:
     int32_t actuatorsOn() override { return m_device->SendForceFeedbackCommand(DISFFC_SETACTUATORSON); }
     int32_t state(std::array<uint8_t, 0x110>& out) override {
         static_assert(sizeof(DIJOYSTATE2) == 0x110);
-        return m_device->GetDeviceState(sizeof(DIJOYSTATE2), out.data());
+        const HRESULT hr = m_device->GetDeviceState(sizeof(DIJOYSTATE2), out.data());
+        if (m_wheels != nullptr && m_slot >= 0) m_wheels->channelState(m_slot, SUCCEEDED(hr) ? out.data() : nullptr);
+        return hr;
     }
     // DIPROP_FFGAIN of the device (DIPH_DEVICE).
     int32_t gain(uint32_t& out) override {
@@ -205,19 +213,32 @@ public:
         p.diph.dwSize = sizeof(p);
         p.diph.dwHeaderSize = sizeof(DIPROPHEADER);
         p.diph.dwHow = DIPH_DEVICE;
-        p.dwData = value;
+        p.dwData = m_scaled ? ForceFeedbackScale::Gain(value, m_wheels->settings().scale) : value;
         return m_device->SetProperty(DIPROP_FFGAIN, &p.diph);
     }
     int32_t createEffect(const ff::EffectParams& p, uintptr_t& handle) override {
-        Effect e(p);
+        Effect e(scaled(p));
         IDirectInputEffect* effect = nullptr;
         const HRESULT hr = m_device->CreateEffect(typeOf(p.type), &e.effect, &effect, nullptr);
         handle = reinterpret_cast<uintptr_t>(effect);
+        // ffb = scaled: the strength at the device's first effect (the plugin's: once the wrapper has set it up).
+        if (m_scaled && SUCCEEDED(hr) && effect != nullptr && !m_gained) {
+            m_gained = true;
+            DIPROPDWORD g{};
+            g.diph.dwSize = sizeof(g);
+            g.diph.dwHeaderSize = sizeof(DIPROPHEADER);
+            g.diph.dwHow = DIPH_DEVICE;
+            g.dwData = ForceFeedbackScale::FirstGain(m_wheels->settings().scale);
+            const HRESULT set = m_device->SetProperty(DIPROP_FFGAIN, &g.diph);
+            const ForceFeedbackScale::Settings& s = m_wheels->settings().scale;
+            log::info("force feedback: scaled, gain {} (0x{:08X}), centering {}%, vibrations {}%{}", g.dwData,
+                      static_cast<uint32_t>(set), s.centering, s.effects, s.invert ? ", direction inverted" : "");
+        }
         return hr;
     }
     // DIEP_TYPESPECIFICPARAMS | DIEP_DIRECTION (0x140).
     int32_t setParameters(uintptr_t handle, const ff::EffectParams& p) override {
-        Effect e(p);
+        Effect e(scaled(p));
         return effectOf(handle)->SetParameters(&e.effect, DIEP_TYPESPECIFICPARAMS | DIEP_DIRECTION);
     }
     int32_t start(uintptr_t handle) override { return effectOf(handle)->Start(1, 0); }
@@ -305,7 +326,41 @@ private:
     }
     static IDirectInputEffect* effectOf(uintptr_t handle) { return reinterpret_cast<IDirectInputEffect*>(handle); }
 
+    // ffb = scaled (JuicedConfigExt's ForceFeedback Adjust): the constant force's direction, the periodic ones' and
+    // the conditions' strengths.
+    ff::EffectParams scaled(const ff::EffectParams& p) const {
+        if (!m_scaled) return p;
+        const ForceFeedbackScale::Settings& s = m_wheels->settings().scale;
+        ff::EffectParams q = p;
+        switch (p.type) {
+        case ff::EffectType::Constant: q.magnitude = ForceFeedbackScale::Constant(p.magnitude, s); break;
+        case ff::EffectType::Square:
+        case ff::EffectType::Sine:
+        case ff::EffectType::Triangle:
+        case ff::EffectType::SawtoothUp:
+        case ff::EffectType::SawtoothDown:
+            q.magnitude = static_cast<int32_t>(ForceFeedbackScale::Periodic(static_cast<uint32_t>(p.magnitude), s));
+            break;
+        case ff::EffectType::Spring:
+        case ff::EffectType::Damper:
+            for (size_t i = 0; i < p.axisCount && i < q.conditions.size(); ++i) {
+                ff::Condition& c = q.conditions[i];
+                c.positiveCoefficient = ForceFeedbackScale::ConditionCoefficient(c.positiveCoefficient, s);
+                c.negativeCoefficient = ForceFeedbackScale::ConditionCoefficient(c.negativeCoefficient, s);
+                c.positiveSaturation = ForceFeedbackScale::ConditionSaturation(c.positiveSaturation, s);
+                c.negativeSaturation = ForceFeedbackScale::ConditionSaturation(c.negativeSaturation, s);
+            }
+            break;
+        default: break;
+        }
+        return q;
+    }
+
     IDirectInputDevice8A* m_device = nullptr;
+    WheelInput* m_wheels = nullptr;
+    int m_slot = -1;
+    bool m_scaled = false;
+    bool m_gained = false;
 };
 
 }  // namespace
@@ -328,6 +383,9 @@ struct InputDevices::State {
     std::array<std::array<bool, 3>, 2> wheelKinds{};
     std::array<DWORD, 2> wheelAxes{};
     std::array<std::unique_ptr<DiWheel>, 2> wheels;
+    // The fixed build's wheels (startWheels' `wheels`) and the reader's slots of the channels.
+    WheelInput* wheelInputs = nullptr;
+    std::array<int, 2> wheelSlots{-1, -1};
 };
 
 namespace {
@@ -471,14 +529,24 @@ void wheelSay(const std::string& text) {
 // (DIPROP_AUTOCENTER, DIPROPAUTOCENTER_OFF).
 BOOL CALLBACK wheelFound(LPCDIDEVICEINSTANCEA instance, LPVOID context) {
     auto* s = static_cast<InputDevices::State*>(context);
+    // The fixed build: the controllers the wheels give it (JuicedConfigExt's way), each one's channel told them.
+    if (s->wheelInputs != nullptr && !s->wheelInputs->forceFeedbackTakes(*instance)) {
+        s->wheelInputs->channel(*instance, false);
+        return DIENUM_CONTINUE;
+    }
     size_t at = 0;
     while (at < 2 && s->wheelDevices[at] != nullptr) ++at;
-    if (at == 2) return DIENUM_CONTINUE;
+    if (at == 2) {
+        if (s->wheelInputs != nullptr) s->wheelInputs->channel(*instance, false);
+        return DIENUM_CONTINUE;
+    }
     if (FAILED(s->wheelInput->CreateDevice(instance->guidInstance, &s->wheelDevices[at], nullptr))) {
         s->wheelDevices[at] = nullptr;
         wheelSay(std::format("ERROR: Failed to obtain an interface for the enumerated FF device {}.\n", at));
+        if (s->wheelInputs != nullptr) s->wheelInputs->channel(*instance, false);
         return DIENUM_CONTINUE;
     }
+    if (s->wheelInputs != nullptr) s->wheelSlots[at] = s->wheelInputs->channel(*instance, true);
     switch (instance->dwDevType & 0xFF) {
     case DI8DEVTYPE_JOYSTICK: s->wheelKinds[at][0] = true; break;
     case DI8DEVTYPE_GAMEPAD: s->wheelKinds[at][1] = true; break;
@@ -527,21 +595,24 @@ BOOL CALLBACK wheelRange(LPCDIDEVICEOBJECTINSTANCEA object, LPVOID context) {
 
 }  // namespace
 
-void InputDevices::startWheels(HWND window) {
+void InputDevices::startWheels(HWND window, WheelInput* wheelInputs) {
     State& s = *m_state;
     ff::Wheels& wheels = m_wheels;
     m_wheelsStarted = true;
     s.wheelDevices = {};
     s.wheelKinds = {};
     s.wheelAxes = {};
+    s.wheelInputs = wheelInputs;
+    s.wheelSlots = {-1, -1};
     const auto opened = [&] {
         std::array<ff::WheelDevice*, 2> devices{};
         for (size_t i = 0; i < 2; ++i) {
             s.wheels[i].reset();
             if (s.wheelDevices[i] == nullptr) continue;
-            s.wheels[i] = std::make_unique<DiWheel>(s.wheelDevices[i]);
+            s.wheels[i] = std::make_unique<DiWheel>(s.wheelDevices[i], wheelInputs, s.wheelSlots[i]);
             devices[i] = s.wheels[i].get();
         }
+        if (wheelInputs != nullptr) wheelInputs->listed();
         wheels.open(devices, {s.wheelAxes[0], s.wheelAxes[1]});
     };
     if (window == nullptr) {

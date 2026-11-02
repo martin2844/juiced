@@ -29,6 +29,7 @@ private:
     uint32_t m_difficulty = 0;   // +0x50 (kDifficulty)
     float m_rumble = 0.0f;       // +0x54: the controller's rumble left (s)
     float m_sensitivity = 0.0f;  // +0x58, +0x5C (kSensitivity)
+    int32_t m_fov = 0;           // the fixed build's field of view at enter (GraphicsConfig::fov), for BACK
 };
 
 }  // namespace oj::frontend

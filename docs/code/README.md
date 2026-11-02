@@ -26,8 +26,6 @@ Render   the render device and the stock renderer       oj::render            ->
 Audio    the stock sound library                        oj::audio             -> Core
 Game     the game: its loop, interface, front end,      oj, oj::frontend,     -> Core, Render, Audio, Speex
          race, 3D scene, cars' models, movies           oj::scene, oj::ui, ..
-JuicedConfig  the settings tool's parts apart from      oj::config            -> Audio's Eax.h
-         its window (modes, flags, DxDiag, EAX)
 ```
 
 - Each is a static library (`src/<name>/OpenJuice.<name>.vcxproj`). `OpenJuice.exe` (`src/Game/OpenJuice.vcxproj`) is
@@ -37,12 +35,11 @@ JuicedConfig  the settings tool's parts apart from      oj::config            ->
   calls a hook the game fills in at start: `RaceSounds.h` (the race's sounds, the speech's stop), `onlineHooks()`
   (the online objects' ends), `audio::setNodeMatrix` (where a 3D sound's node is).
 - `third_party/speex-1.0.3` is the voice codec GameSpy Voice links (its own BSD licence).
-- `OpenJuiceConfig.exe` (`src/JuicedConfig/OpenJuiceConfig.vcxproj`) is the port of the game's `JuicedConfig.exe`
-  (`docs/spec/30-juiced-config.md`): its window (`ConfigDialog.cpp`) and `WinMain` over the JuicedConfig library,
-  with the stock's resources (`OpenJuiceConfig.rc`, `res\`). It shares no code with the game but the EAX
-  property sets' ids. Its DirectX 9.0c check takes any DirectX past 9 (the stock's, by DxDiag's letter alone,
-  never passes on Windows Vista and later); its debug builds take `--skip-directx-check` (the window whatever the
-  check finds).
+- The fixed build's `OpenJuiceConfig.exe` (`third_party/juicedconfigext/OpenJuiceConfig.vcxproj`) is JuicedConfigExt's
+  settings program (`external/JuicedConfigExt/src/Config`) with OpenJuice as its host (`OpenJuiceConfigHost.cpp`: its
+  name and version, the game's executables, the settings the game has; `OpenJuiceConfigSdl.cpp`: SDL3 linked in) and
+  its resources (`OpenJuiceConfig.rc`: the version, the game's icon, JuicedConfigExt's logo). It shares no code with
+  the game but JuicedConfigExt's core (`OpenJuice.JuicedConfigExt`) and the version header.
 
 ## From the start to a frame
 

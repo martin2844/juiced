@@ -1,0 +1,4 @@
+[submodule "external/JuicedConfigExt"]
+	path = external/JuicedConfigExt
+	url = https://gitlab.com/sidecr3w/juicedconfig-extended.git
+	branch = master

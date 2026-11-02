@@ -4,6 +4,13 @@ Native macOS, Linux/NixOS and Android ports of **[OpenJuice](https://gitlab.com/
 
 Required Notice: Copyright 2026 Sidewinder (https://gitlab.com/sidecr3w/openjuice)
 
+The local Linux source now integrates upstream **1.02.7** (`b23976cf`), with our
+car packs, liveries, career mods and SDL controls retained. See the
+[integration checkpoint](docs/upstream-sync-2026-11-02.md) for validation and
+remaining backend limits: the new Direct3D graphics passes are not yet ported
+to OpenGL. Published downloads below retain their existing versions; this
+source update does not replace the Android or macOS binaries.
+
 ## Downloads
 
 Development builds. Compatibility and performance vary by device; no frame-rate target is guaranteed. Supply your own Juiced game data; game data is not bundled.

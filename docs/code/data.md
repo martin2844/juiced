@@ -39,8 +39,8 @@ The text files (`scripts\*.txt`, the `.cfg`, `.atm`, `.ui`) are lines of a keywo
 | `.ui` | `Game/UI/UiFile.h` | a window of the interface (`ui.md`) |
 | `.cfg`, `.dat`, `.dsb` of `audio\` | `Audio/Bank.h` | a sound bank (`audio.md`) |
 
-The byte layouts the stock game's own tools never documented are described by the Blender add-on's technical
-documents, which the readers' comments name.
+The byte layouts of the binary files, as the readers take them, are in `docs/spec/31-file-layouts.md` (the models'
+in `docs/spec/10-models.md`).
 
 ## The data loaded at start
 

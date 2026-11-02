@@ -4,6 +4,7 @@
 #include "Game/Frontend/Frontend.h"
 #include "Game/Frontend/FrontendInternal.h"
 
+#include "Core/Base/LoadingThread.h"
 #include "Core/Base/Log.h"
 #if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
 #include "Mods/Runtime.h"
@@ -45,7 +46,8 @@ Frontend::Frontend(render::IRenderDevice& device, const Language& language, Text
       m_windows(device, m_language),
       m_data(data != nullptr && data->loaded() ? data : nullptr),
       m_saveFolder(std::move(saveFolder)),
-      m_scene(scene) {
+      m_scene(scene),
+      m_effectsScene(scene) {
     if (m_data != nullptr) m_data->saveDevice.setFolder(m_saveFolder / L"SAVE");
     m_names.load(fileText(std::filesystem::path("scripts") / "profanities.txt"),
                  fileText(std::filesystem::path("scripts") / "nonprofanities.txt"));
@@ -121,8 +123,10 @@ void Frontend::keepGameWindows() {
         // 0x004E1610
         "CMSStats", "CMSStatsMenu", "CMSStatsCarCollection",
         "CMSOnlineRaceSetup", "CMSOnlineCrewRaceSetup", "CMSOnlineGridWalk"};
+    const uint64_t drawn = threadRandom().draws();
     for (const char* name : kWindows) keepWindow(name);
-    log::info("frontend: {} windows kept", m_windows.keptCount());
+    log::info("frontend: {} windows kept ({} of {} rand())", m_windows.keptCount(), threadRandom().draws() - drawn,
+              loadingThread().onThread() ? "the loading thread's" : "the main thread's");
 }
 
 void Frontend::keepLoaderWindows() {
@@ -172,10 +176,13 @@ void Frontend::startRaceOnline() {
     enter("online_ingame_bg");
 }
 
-void Frontend::startLoader(const std::string& window, const std::string& animation) {
+void Frontend::startLoader(const std::string& window, bool tips) {
     m_loadingFrontEnd = true;
-    m_loader.askTips();
+    m_loader.setTips(tips);
     enter(window);
+}
+
+void Frontend::startLoaderAnimation(const std::string& animation) {
     std::shared_ptr<ui::Screen> screen = makeScreen(animation);
     // 0x004639BE: the arcade's animation's TEXT over several lines (the others' as their .ui has them).
     if (screen && is(animation, "arcade_loader_anim")) screen->setMultiline("TEXT", true);
@@ -187,13 +194,14 @@ std::shared_ptr<ui::Screen> Frontend::makeScreen(const std::string& name) {
 }
 
 // The windows' sounds go through the manager's (the race's in a race's pause); their 3d elements are views of the
-// front end's engine.
+// front end's engine, their models' draws the rand() of the thread that makes the window (the loading thread's for
+// the windows kept, 0x0046AF80).
 void Frontend::prepareWindow(ui::Screen& screen) {
     screen.sound = [this](const char* name) { m_sounds->play(name); };
     if (m_scene != nullptr) {
         screen.setView3dFactory([this](const ui::Element& e) -> std::unique_ptr<ui::View3d> {
             if (e.name == "POKER_TABLE") return makePokerView(m_device, m_gamble);
-            return std::make_unique<scene::View3d>(*m_scene, e, gameRandom());
+            return std::make_unique<scene::View3d>(*m_scene, e, threadRandom());
         });
     }
 }
@@ -782,7 +790,7 @@ void Frontend::updateState(const FrontendInput& in) {
     } else if (m_state == "driver") {
         m_driverWindow.update(*this, *m_screen, in.ui.event);
     } else if (m_state == "keyboard") {
-        m_keyboard.update(*this, *m_screen, in.ui.event, in.typed, in.shiftHeld);
+        m_keyboard.update(*this, *m_screen, in.ui.event, in.typed, in.shiftHeld, in.text);
     } else if (m_state == "cmschooselogo") {
         m_chooseLogo.update(*this, *m_screen, in.ui.event);
     } else if (m_state == "cmsmobilechoose") {

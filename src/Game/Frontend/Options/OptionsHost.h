@@ -2,7 +2,9 @@
 // What the options windows (opts_menu, opts_game_pc, opts_audio, opts_songlist, opts_graphics, opts_wheel_dx9 and
 // their in-race copies) ask of the front end besides what every window does.
 
+#include "Core/Saves/GraphicsConfig.h"
 #include "Game/Frontend/WindowHost.h"
+#include "Render/RenderDevice.h"
 
 #include <cstdint>
 
@@ -25,6 +27,22 @@ public:
     virtual void setDetailFactor(float lodBias) = 0;
     // opts_playlist's chosen playlist back to its own ([0x007688F8], [0x007688FC] from +0x24, +0x28).
     virtual void restorePlaylistChoice() = 0;
+    // The fixed build's effects (GraphicsConfig::effects) changed in the graphics options' ADVANCED page: kept as the
+    // registry's values for the next start.
+    virtual void keepEffects(const FixedEffects& effects) { (void)effects; }
+    // The same in effect now: the heat haze's strength, the anti-aliasing and the texture filter; with `programs` the
+    // programs made again for the car paint and the shaders the device replaces (the world light, the headlights).
+    virtual void applyEffects(const FixedEffects& effects, bool programs) {
+        (void)effects;
+        (void)programs;
+    }
+    // The anti-aliasing and texture filter the adapter offers (the device's).
+    virtual render::QualityCaps qualityCaps() const { return {}; }
+    // The fixed build's EAX (the audio options' row): on now (the sound system's flags), switched while the game runs
+    // (audio::System::enableEax), kept in the registry's audioflags (0x20 off).
+    virtual bool eax() const { return false; }
+    virtual void setEax(bool on) { (void)on; }
+    virtual void keepEax(bool on) { (void)on; }
 };
 
 }  // namespace oj::frontend

@@ -113,8 +113,9 @@ void CarBody::forces(float dt) {
         r.gravity = carDef.body.localGravity;
         r.gravityInverse = inverseOr0(r.gravity);
         // Stock problem: the drive is that of the wheel at the contact's place in the list, not of the contact's own
-        // wheel (and past the wheels the memory after them). The fixed build takes the contact's own wheel's.
-        const bool driven = w->def->drive != 0;
+        // wheel (and past the wheels the memory after them; not driven here). Kept in the fixed build: its testers
+        // preferred the stock's handling to the contact's own wheel's.
+        const bool driven = i < wheels.size() && wheels[i].def->drive != 0;
         r.throttle = driven ? throttle : 0.0f;
     }
 
@@ -491,9 +492,8 @@ void CarBody::step(float dt) {
     float slip = 0.0f;
     for (size_t i = 0; i < tyreCount; ++i) {
         // Stock problem: the wheel at the contact's place in the list decides, past the wheels a null pointer is
-        // read. The fixed build takes the contact's own wheel (none: not driven).
-        const CarWheel* own = wheelOf(tyre(i).def->id);
-        if (own == nullptr || own->def->drive == 0) continue;
+        // read; such contacts count as not driven here. Kept in the fixed build, as the drive above.
+        if (i >= carDef.wheels.size() || carDef.wheels[i].drive == 0) continue;
         if (slip < tyre(i).slip) slip = tyre(i).slip;
     }
     asrActive = false;

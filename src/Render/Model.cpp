@@ -52,8 +52,8 @@ bool Mesh::reloadVertices(IRenderDevice& device, const oj::Mesh& file) {
 }
 
 void Mesh::draw(Renderer3d& r, Camera& camera, ModelNode& node, uint32_t mode, bool knocked) {
-    const Mat34& c = camera.world();
-    const float cx = c[3], cy = c[7], cz = c[11];
+    const Vec4 c = camera.lodOrigin();
+    const float cx = c[0], cy = c[1], cz = c[2];
     const Mat34& n = node.world();
     const float dx = n[3] - cx;
     const float dy = n[7] - cy;
@@ -99,15 +99,15 @@ void Mesh::draw(Renderer3d& r, Camera& camera, ModelNode& node, uint32_t mode, b
                 r.lastDeclaration = part.declaration;
             }
             Material* material = r.override != nullptr ? r.override : part.material;
-            if (material == nullptr) continue;
+            if (material == nullptr || (r.shadowPass() && !r.shadowPassDraws(material->classId()))) continue;
             // 0x005594C6: a node with +0xC0 bit 0x10 (a car part knocked off; nothing sets it) draws a material of the
             // class 0 (Car Body) double-sided, its parameter 8 set to 1 for good.
             if ((node.flags & 0x10) != 0 && material->classId() == kCarBody) {
                 const uint32_t one = 1;
                 material->setParam(8, &one);
             }
-            const uint32_t passes = material->passes();
-            const bool glassDepth = rounds == 2 && material->classId() == kCarGlass;
+            const uint32_t passes = r.shadowPass() ? 1 : material->passes();
+            const bool glassDepth = rounds == 2 && material->classId() == kCarGlass && !r.shadowPass();
             for (uint32_t pass = 0; pass < passes; ++pass) {
                 r.beginMaterialPass(*material, pass);
                 if (glassDepth) device.setRenderState(RenderState::ZWriteEnable, 1);
@@ -160,11 +160,11 @@ void ModelNode::draw(Renderer3d& r, Camera& camera, uint32_t mode) {
 }
 
 void Mesh::drawPart(Renderer3d& r, Camera& camera, ModelNode& node, bool knocked, uint32_t index) {
-    const Mat34& c = camera.world();
+    const Vec4 c = camera.lodOrigin();
     const Mat34& n = node.world();
-    const float dx = n[3] - c[3];
-    const float dy = n[7] - c[7];
-    const float dz = n[11] - c[11];
+    const float dx = n[3] - c[0];
+    const float dy = n[7] - c[1];
+    const float dz = n[11] - c[2];
     const float scaled = camera.lodScale() * ((dz * dz + dy * dy) + dx * dx);
     IRenderDevice& device = r.device();
     device.setIndices(m_indices);
@@ -186,13 +186,13 @@ void Mesh::drawPart(Renderer3d& r, Camera& camera, ModelNode& node, bool knocked
         r.lastDeclaration = part.declaration;
     }
     Material* material = r.override != nullptr ? r.override : part.material;
-    if (material == nullptr) return;
+    if (material == nullptr || (r.shadowPass() && !r.shadowPassDraws(material->classId()))) return;
     // A node with flag 0x10 gives a material of class 0 its parameter 8 = 1 first.
     if ((node.flags & 0x10) != 0 && material->classId() == kCarBody) {
         const uint32_t one = 1;
         material->setParam(8, &one);
     }
-    const uint32_t passes = material->passes();
+    const uint32_t passes = r.shadowPass() ? 1 : material->passes();
     for (uint32_t pass = 0; pass < passes; ++pass) {
         r.beginMaterialPass(*material, pass);
         if (part.faceType == 0) {

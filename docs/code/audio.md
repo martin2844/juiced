@@ -8,15 +8,25 @@ How the game's sounds, music, speech and movies are played. What the stock sound
 The stock game links its own sound library (0x005B8000 .. 0x005C4400); `src/Audio` is that library, under
 `oj::audio`:
 
-- **`SoundSystem`** (`SoundSystem.h`, `audio::system()`): DirectSound 8, made through the game folder's `eax.dll`
-  when it is there (EAX 4.0, `Eax.h`), else by COM; switched off by the configuration's `audioflags` 8. `update`
-  steps it each frame: the streams follow the focus, the slots go to their volumes, the ended ones are freed.
+- **`SoundSystem`** (`SoundSystem.h`, `audio::system()`): the library's system over its output; switched off by the
+  configuration's `audioflags` 1. `update` steps it each frame: the streams follow the focus, the slots go to their
+  volumes, the ended ones are freed. `setSystem` puts another system in its place (the tests', of an output of
+  theirs).
+- **`Output`** (`Output.h`; `makeOutput` in `Output.cpp` picks the build's): what the library asks of the device, in
+  the stock's order and with DirectSound's answers: the start (the primary buffer, eax.dll's EAX probe), the voices'
+  buffers (their 3D and EAX properties), the primary buffer's listener, the streams of the stream banks, the movies'
+  buffers. The library's logic (`Bank`, `Voices`, `Stream`, the movies' sound) holds no DirectSound of its own.
+  **`DirectSoundOutput`** (`DirectSound/DirectSoundOutput.h`) is the stock's: DirectSound 8 made through the game
+  folder's `eax.dll` when it is there (EAX 4.0, `Eax.h`), else by COM; the streams by DirectShow. The fixed build
+  builds **`OpenAlOutput`** (`OpenAL/OpenAlOutput.h`) in its place: OpenAL Soft (`third_party/openal-soft-1.25.2`,
+  static) answering as DirectSound does, the game's EAX as EFX (an EAX reverb in FX slot 0), the streams' WMA decoded
+  by JuicedConfigExt's decoder (`third_party/wmadec`) into a streaming source (`docs/fixes.md`, Added).
 - **`Bank`** (`Bank.h`): a bank of `audio\...\<name>\`: its `.cfg` names the samples or streams and the sound sets
   that play them, its `.dat` holds the samples; a stream bank plays pieces of one `.dsb`.
 - **`Player`** (`Player.h`): the banks it loaded or was given, and slots ("channels") the game keeps by handle: a set
   is prepared into a slot and a voice, then played, its volume and pitch set by handle.
-- **`Stream`** (`Stream.h`): DirectShow playing a stream bank's `.dsb` (a Windows Media Audio file), a set a piece of
-  it.
+- **`Stream`** (`Stream.h`): the output's stream (DirectShow) playing a stream bank's `.dsb` (a Windows Media Audio
+  file), a set a piece of it.
 - **`Voices`** (`Voices.h`): the 3D sounds: a world with a manager of virtual voices, instances on scene nodes, the
   listener. Each frame the loudest instances get the buffers of the bank `audio\3d` (33 slots), the others go on by
   the clock. `setNodeMatrix` tells it where a node is (the game gives the scene's). A voice's place does not ask for

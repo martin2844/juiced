@@ -169,7 +169,9 @@ void graphicsStart(GraphicsConfig& c, const GraphicsStart& start) {
     }
 }
 
-// The adapter's texture limits (+0x34, +0x38 to powers of two and the largest texture) are not followed.
+// The scene's size (+0x34, +0x38) to powers of two on an adapter of D3DPTEXTURECAPS_POW2 without NONPOW2CONDITIONAL
+// and held to its largest texture (0x00512A40) is not followed: OpenJuice makes the scene's targets at the screen's
+// size (Game/Scene/PostEffects), as the stock's on today's adapters, which have neither limit.
 void graphicsAdapter(GraphicsConfig& c, uint32_t vendor, uint32_t device, bool shaders, bool fullScreenGamma) {
     c.vendor = vendor & 0xFFFF;
     c.device = device & 0xFFFF;
@@ -198,6 +200,7 @@ void graphicsFromRegCf1(GraphicsConfig& c, const save::RegCf1& file) {
     c.glow = static_cast<int32_t>(file.values[4]);
     c.depthOfField = static_cast<int32_t>(file.values[5]);
     c.brightness = std::bit_cast<float>(file.values[6]);
+    c.fov = static_cast<int32_t>(file.values[7]);
     if (c.noShaders != 0) noShaderLimits(c);
 }
 
@@ -210,6 +213,7 @@ save::RegCf1 graphicsRegCf1(const GraphicsConfig& c) {
     file.values[4] = static_cast<uint32_t>(c.glow);
     file.values[5] = static_cast<uint32_t>(c.depthOfField);
     file.values[6] = std::bit_cast<uint32_t>(c.brightness);
+    file.values[7] = static_cast<uint32_t>(c.fov);
     return file;
 }
 
@@ -217,15 +221,13 @@ float detailFactor(float detail) {
     return static_cast<float>(static_cast<double>(detail) * static_cast<double>(1.5f) + static_cast<double>(0.66f));
 }
 
-float glowStrength(int32_t glow) {
-    if (glow == 0) return 0.0f;
-    if (glow >= 2 && glow <= 100) return static_cast<float>(glow) / 100.0f;
-    return 0.5f;
+float fovScale(int32_t fov) {
+    if (fov <= 0) return 1.0f;
+    return std::clamp(static_cast<float>(fov) / 1000.0f, kFovLeast, kFovMost);
 }
 
-int32_t glowSetting(float strength) {
-    const auto percent = static_cast<int32_t>(std::lround(std::clamp(strength, 0.0f, 1.0f) * 100.0f));
-    return percent == 1 ? 2 : percent;
+int32_t fovSetting(float scale) {
+    return static_cast<int32_t>(std::lround(std::clamp(scale, kFovLeast, kFovMost) * 1000.0f));
 }
 
 }  // namespace oj

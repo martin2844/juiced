@@ -4,7 +4,9 @@
 
 #include "Audio/Voices.h"
 #include "Core/Input/Input.h"
+#include "Core/Data/GameTexts.h"
 #include "Game/Media/Music.h"
+#include "Game/UI/WindowFixes.h"
 
 #include <bit>
 #include <cmath>
@@ -33,6 +35,10 @@ void AudioOptions::enter(OptionsHost& host, ui::Screen& s) {
     }
     m_sfxHeard = m_sfx;
     m_speaker = m_speakerKept;
+    // The fixed build's EAX row (Game/UI/WindowFixes; opts_audio's alone).
+    m_eax = m_eaxKept = host.eax();
+    s.setText(ui::kEaxButton, L"EAX");
+    showEax(host, s);
     m_shownButton.clear();
     m_speechHeard = m_speech;
     m_musicHeard = m_music;
@@ -108,7 +114,7 @@ bool AudioOptions::updatePlayer(OptionsHost& host, ui::Screen& s, uint32_t event
             s.setMeterActive("SPEECH", (flags & 0x10) == 0);
             if (host.racePause()) pauseMusic(true);
         } else if (is1("DOLBYTITLE") || is1("STEREOTITLE") || is1("MONOTITLE") || is1("playlist") ||
-                   is1("DON_BUT")) {
+                   is1("DON_BUT") || is1(ui::kEaxButton)) {
             s.setMeterActive("MUSIC", false);
             s.setMeterActive("SFX", false);
             s.setMeterActive("SPEECH", false);
@@ -147,7 +153,15 @@ bool AudioOptions::updatePlayer(OptionsHost& host, ui::Screen& s, uint32_t event
         host.setEffectsVolume(sfx);
     }
     if (std::fabs(musicShown - m_musicHeard) > 0.07f) m_musicHeard = musicShown;
+    // The fixed build's EAX row: LEFT and RIGHT switch it at once (the banks made from then on take it).
+    if ((event == input::kLeft || event == input::kRight) && is1(ui::kEaxButton)) {
+        m_eax = !m_eax;
+        host.setEax(m_eax);
+        showEax(host, s);
+        host.sound("CLICK");
+    }
     if (event == input::kBack) {
+        if (m_eax != m_eaxKept) host.setEax(m_eaxKept);
         pauseMusic(host.racePause());
         set.setU32(save::Settings::kMusicVolume, std::bit_cast<uint32_t>(m_music));
         set.setU32(save::Settings::kEffectsVolume, std::bit_cast<uint32_t>(m_sfx));
@@ -166,6 +180,7 @@ bool AudioOptions::updatePlayer(OptionsHost& host, ui::Screen& s, uint32_t event
     }
     if (event != input::kSelect) return false;
     if (is1("DON_BUT")) {
+        if (m_eax != m_eaxKept) host.keepEax(m_eax);
         host.sound("CLICK");
         host.request(host.optionsMenu(), SwitchMode::Swap);
         return true;
@@ -179,6 +194,10 @@ bool AudioOptions::updatePlayer(OptionsHost& host, ui::Screen& s, uint32_t event
         host.sound("NO");
     }
     return false;
+}
+
+void AudioOptions::showEax(OptionsHost& host, ui::Screen& s) const {
+    s.setText(ui::kEaxValue, m_eax ? std::wstring(L"ON") : host.gameTexts().at(kTextOffLowMedHi));
 }
 
 }  // namespace oj::frontend

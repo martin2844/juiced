@@ -2,12 +2,20 @@
 // loadreplay: the replays of the save device listed, one read or deleted (no way leads to it on the PC: extras takes
 // its replay item out).
 
+#include "Core/Data/ExeTables.h"
 #include "Game/Frontend/Saves/SaveHost.h"
 #include "Game/UI/UiScreen.h"
 
 #include <cstdint>
+#include <string>
 
 namespace oj::frontend {
+
+// The fixed build's picture of a replay: the PC's of the district (ui_replay_<district>, 64 x 64, made for a replay
+// window the Xbox builds never use) of the city place named as its track (case aside), for the place's own
+// (ui_<district>, the Acclaim builds' INFO_TRACK_PIC's, which the PC does not have), loaded by the window and drawn
+// smoothed (64 texels stretched); empty for a track of no place or a picture not there.
+std::string districtPicture(ui::Screen& s, const ExeTables& t, const std::string& track);
 
 // The window of the record 0x007215D0.
 class LoadReplay {
@@ -43,6 +51,7 @@ private:
     int32_t m_shown = -1;         // +0x44: the replay shown
     float m_wait = 0.0f;          // +0x48: the checking's least time
     float m_afterFailure = 0.0f;  // +0x4C: 0.5 after a failure (read by nothing)
+    bool m_pictured = false;      // the fixed build's: the replay shown has its district's picture
 };
 
 }  // namespace oj::frontend

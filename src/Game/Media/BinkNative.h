@@ -3,7 +3,7 @@
 // ('BIKi') itself and answers binkw32's calls (BinkLibrary.h) as the library does. The pictures: each frame's planes
 // (Y, the two chroma planes at half size, the alpha plane when the file has one) from their bundles of 8x8 blocks,
 // turned into the surface type BinkCopyToBufferRect is asked for. The sound: the track BinkSetSoundTrack asked for
-// (Bink audio, DCT or RDFT) played through the game's DirectSound.
+// (Bink audio, DCT or RDFT) played through the sound library's output (Audio/Output.h: the game's DirectSound).
 
 #include "Game/Media/BinkLibrary.h"
 
@@ -76,8 +76,9 @@ private:
     std::unique_ptr<State> m;
 };
 
-// binkw32's calls answered by the decoders above. The movies' sound goes to secondary buffers of the DirectSound
-// given to setSoundSystem, fed by a thread of its own as binkw32's sound timer does.
+// binkw32's calls answered by the decoders above. The movies' sound goes to buffers of the sound library's output
+// once a sound system is given (setSoundSystem: the output's), fed by a thread of its own as binkw32's sound timer
+// does.
 class Native final : public Library {
 public:
     Native();

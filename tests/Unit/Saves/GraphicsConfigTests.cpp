@@ -33,21 +33,19 @@ OJ_UNIT_TEST(GraphicsConfig, Settings) {
               c.lodBias > 1.5f && back.detail == c.detail && back.shadows == 2,
           "graphics settings: defaults, start, adapter and reg.cf1");
 }
-// The fixed build's glow as a percent: 0 off, 2 .. 100 the percent, the stock's on (1) and other values 50 %; a
-// strength kept as its percent, 1 % as 2; reg.cf1 keeps it.
-OJ_UNIT_TEST(GraphicsConfig, GlowStrength) {
-    check(oj::glowStrength(0) == 0.0f && oj::glowStrength(1) == 0.5f && oj::glowStrength(2) == 0.02f &&
-              oj::glowStrength(70) == 0.7f && oj::glowStrength(100) == 1.0f && oj::glowStrength(101) == 0.5f &&
-              oj::glowStrength(-1) == 0.5f,
-          "glow strength of the kept glow");
-    check(oj::glowSetting(0.0f) == 0 && oj::glowSetting(0.004f) == 0 && oj::glowSetting(0.01f) == 2 &&
-              oj::glowSetting(0.5f) == 50 && oj::glowSetting(0.8f) == 80 && oj::glowSetting(1.0f) == 100 &&
-              oj::glowSetting(1.5f) == 100 && oj::glowSetting(-0.5f) == 0,
-          "kept glow of a strength");
+
+// The fixed build's field of view: reg.cf1's eighth value, 0 (a stock file's) the stock's view, else the permille held
+// within 600 .. 1800; reg.cf1 keeps it.
+OJ_UNIT_TEST(GraphicsConfig, FieldOfView) {
+    check(oj::fovScale(0) == 1.0f && oj::fovScale(1000) == 1.0f && oj::fovScale(1250) == 1.25f &&
+              oj::fovScale(100) == oj::kFovLeast && oj::fovScale(5000) == oj::kFovMost,
+          "the view's scale of the kept field of view");
+    check(oj::fovSetting(1.0f) == 1000 && oj::fovSetting(1.3333f) == 1333 && oj::fovSetting(9.0f) == 1800,
+          "the kept field of view of a scale");
     oj::GraphicsConfig c;
     oj::graphicsDefaults(c);
-    c.glow = 37;
+    c.fov = 1234;
     oj::GraphicsConfig back;
     oj::graphicsFromRegCf1(back, oj::graphicsRegCf1(c));
-    check(back.glow == 37, "the glow's percent through reg.cf1");
+    check(back.fov == 1234 && oj::graphicsRegCf1(c).values[7] == 1234u, "the field of view through reg.cf1");
 }

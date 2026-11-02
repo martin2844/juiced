@@ -199,68 +199,95 @@ HRESULT IDirectSound8::DuplicateSoundBuffer(IDirectSoundBuffer *src, IDirectSoun
     return S_OK;
 }
 namespace oj::audio {
+std::unique_ptr<OutputStream> openNativeStream(const std::filesystem::path& file);
 namespace {
-bool focused = true;
-}
-System &system() {
-    static System s;
-    return s;
-}
-void setActive(bool v) {
-    focused = v;
-}
-bool active() {
-    return focused;
-}
-bool System::start(HWND, uint32_t flags) {
-    m_flags = (flags & ~kHardware) | kSoftware | kNoEax;
-    if (flags & kNoSound)
-        return false;
-    SDL_AudioSpec spec{SDL_AUDIO_F32, 2, 48000};
-    output = SDL_OpenAudioDeviceStream(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &spec, mix, nullptr);
-    if (!output) {
-        log::warning("audio output: {}", SDL_GetError());
-        return false;
+Answer answer(HRESULT r) { return r == S_OK ? Answer::Ok : SUCCEEDED(r) ? Answer::Done : Answer::Failed; }
+class SdlBuffer final : public OutputBuffer {
+public:
+    IDirectSoundBuffer* buffer;
+    IDirectSound3DBuffer* spatial = nullptr;
+    explicit SdlBuffer(IDirectSoundBuffer* b) : buffer(b) {}
+    ~SdlBuffer() override {
+        buffer->Stop();
+        if (spatial) spatial->Release();
+        buffer->Release();
     }
-    SDL_ResumeAudioStreamDevice(output);
-    m_device = new IDirectSound8;
-    DSBUFFERDESC desc{};
-    m_device->CreateSoundBuffer(&desc, &m_primary, nullptr);
-    m_on = true;
-    return true;
-}
-void System::stop() {
-    if (output) {
-        SDL_DestroyAudioStream(output);
-        output = nullptr;
+    Answer write(uint32_t at, const void* data, uint32_t bytes) override {
+        if (!bytes) return Answer::Ok;
+        void *a=nullptr,*b=nullptr; DWORD na=0,nb=0;
+        const auto r=buffer->Lock(at,bytes,&a,&na,&b,&nb,0);
+        if (FAILED(r)) return answer(r);
+        if (data) {
+            memcpy(a,data,na);
+            if (nb) memcpy(b,static_cast<const uint8_t*>(data)+na,nb);
+        } else { memset(a,0,na); if(nb) memset(b,0,nb); }
+        return answer(buffer->Unlock(a,na,b,nb));
     }
-    if (m_primary) {
-        m_primary->Release();
-        m_primary = nullptr;
+    Answer restore() override { return answer(buffer->Restore()); }
+    Answer acquireHardware() override { return Answer::Failed; }
+    Answer play(uint32_t f) override { return answer(buffer->Play(0,0,f)); }
+    Answer stop() override { return answer(buffer->Stop()); }
+    Answer setPosition(uint32_t n) override { return answer(buffer->SetCurrentPosition(n)); }
+    Answer cursors(uint32_t& p,uint32_t& w) override { return answer(buffer->GetCurrentPosition(&p,&w)); }
+    Answer setVolume(int32_t v) override { return answer(buffer->SetVolume(v)); }
+    Answer setPan(int32_t v) override { return answer(buffer->SetPan(v)); }
+    Answer setFrequency(uint32_t v) override { return answer(buffer->SetFrequency(v)); }
+    Answer status(uint32_t& f) override { return answer(buffer->GetStatus(&f)); }
+    bool open3d() override {
+        if (!spatial) buffer->QueryInterface(IID_IDirectSound3DBuffer,reinterpret_cast<void**>(&spatial));
+        return spatial!=nullptr;
     }
-    if (m_device) {
-        m_device->Release();
-        m_device = nullptr;
+    void reset3d() override { if(spatial) { DS3DBUFFER p{};spatial->SetAllParameters(&p,DS3D_DEFERRED); } }
+    void place3d(float x,float y,float z) override { if(spatial) spatial->SetPosition(x,y,z,DS3D_DEFERRED); }
+    bool openEax() override { return false; }
+    bool hasEax() const override { return false; }
+    Answer setEax(const GUID&,uint32_t,const void*,uint32_t) override { return Answer::Failed; }
+};
+class SdlListener final : public OutputListener {
+    IDirectSound3DListener listener;
+public:
+    void setDistanceFactor(float f) override { listener.SetDistanceFactor(f,DS3D_DEFERRED); }
+    void setRolloffFactor(float f) override { listener.SetRolloffFactor(f,DS3D_DEFERRED); }
+    void setPosition(float x,float y,float z) override { listener.SetPosition(x,y,z,DS3D_DEFERRED); }
+    void setOrientation(float x,float y,float z,float ux,float uy,float uz) override { listener.SetOrientation(x,y,z,ux,uy,uz,DS3D_DEFERRED); }
+    void commit() override { listener.CommitDeferredSettings(); }
+};
+class SdlOutput final : public Output {
+    IDirectSound8 device;
+public:
+    ~SdlOutput() override { stop(); }
+    bool start(HWND,uint32_t flags,OutputStart& result) override {
+        result.flags=(flags & ~kHardware)|kSoftware|kNoEax;
+        result.minFrequency=100;result.hardware3dStreaming=0;
+        result.eaxDevice=false;result.eaxFlags=0;
+        if(flags & kNoSound) return false;
+        if(::output) return true;
+        SDL_AudioSpec spec{SDL_AUDIO_F32,2,48000};
+        ::output=SDL_OpenAudioDeviceStream(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK,&spec,mix,nullptr);
+        if(!::output) { log::warning("audio output: {}",SDL_GetError());return false; }
+        SDL_ResumeAudioStreamDevice(::output);return true;
     }
-    m_on = false;
+    void stop() override { if(::output) { SDL_DestroyAudioStream(::output);::output=nullptr; } }
+    bool hardwarePlays3d(uint32_t) override { return false; }
+    bool setEax(const GUID&,uint32_t,const void*,uint32_t) override { return false; }
+    bool getEax(const GUID&,uint32_t,void*,uint32_t) override { return false; }
+    std::unique_ptr<OutputBuffer> createBuffer(const SampleFormat& f,uint32_t bytes,uint32_t caps) override {
+        WAVEFORMATEX format{f.tag,f.channels,f.rate,f.bytesPerSecond,f.blockAlign,f.bits,0};
+        DSBUFFERDESC desc{};desc.lpwfxFormat=&format;desc.dwBufferBytes=bytes;desc.dwFlags=caps;
+        IDirectSoundBuffer* b=nullptr;
+        if(FAILED(device.CreateSoundBuffer(&desc,&b,nullptr))) return {};
+        return std::make_unique<SdlBuffer>(b);
+    }
+    std::unique_ptr<OutputBuffer> duplicate(OutputBuffer& original) override {
+        auto* src=dynamic_cast<SdlBuffer*>(&original);if(!src) return {};
+        IDirectSoundBuffer* b=nullptr;
+        if(FAILED(device.DuplicateSoundBuffer(src->buffer,&b))) return {};
+        return std::make_unique<SdlBuffer>(b);
+    }
+    std::unique_ptr<OutputListener> openListener() override { return std::make_unique<SdlListener>(); }
+    std::unique_ptr<OutputStream> openStream(const std::filesystem::path& f) override { return openNativeStream(f); }
+    uintptr_t soundSystem() const override { return reinterpret_cast<uintptr_t>(&device); }
+};
 }
-void System::update() {
-    Stream::focus(focused);
-    Player::updateAll();
-}
-bool System::hardwarePlays3d() {
-    return false;
-}
-bool System::setEax(const GUID &, uint32_t, const void *, uint32_t) {
-    return false;
-}
-bool System::getEax(const GUID &, uint32_t, void *, uint32_t) {
-    return false;
-}
-int32_t volumeMb(float v) {
-    return v > 0 ? std::max(-10000, (int)std::nearbyint(2000 * std::log10(std::min(v, 1.f)))) : -10000;
-}
-uint32_t clockSeconds() {
-    return (uint32_t)(SDL_GetTicks() / 1000);
-}
+std::unique_ptr<Output> makeOutput() { return std::make_unique<SdlOutput>(); }
 } // namespace oj::audio

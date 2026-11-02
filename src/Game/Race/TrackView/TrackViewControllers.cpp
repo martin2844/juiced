@@ -1,4 +1,4 @@
-// The players' controllers during the race: their notes and the wheels' rumble.
+// The players' controllers during the race: their notes and their motors.
 
 #include "Game/Race/TrackView/TrackView.h"
 
@@ -89,8 +89,11 @@ void TrackView::playerRumble(RacePlayer& player, float dt, bool wheel) {
     const oj::RaceCar& c = player.slot->car;
     if (c.wheelSmoke > 0.3f) r.smallAtLeast(c.wheelSmoke);
     if (c.wheelSkid > 0.3f) r.smallAtLeast(c.wheelSkid);
-    if (c.wheelSlide > 0.05f) r.smallAtLeast(c.wheelSlide + 0.2f);
-    const float forward = std::fabs(player.slot->body->localVelocity[2]);
+    // The fixed build's light motor of the slide starts gentler (oj::input::slideLight; the stock's the slide + 0.2
+    // above 0.05, the same from 0.08).
+    if (c.wheelSlide > 0.05f) r.smallAtLeast(oj::input::slideLight(c.wheelSlide));
+    const oj::Vec4& v = player.slot->body->localVelocity;
+    const float forward = std::fabs(v[2]);
     if (!wheel) {
         if (c.contactSide != 0) r.smallAtLeast(std::clamp(forward * 0.025f, 0.0f, 1.0f));
         r.largeAtLeast(c.impact);
@@ -114,7 +117,18 @@ void TrackView::playerRumble(RacePlayer& player, float dt, bool wheel) {
         if (c.rumbleShare > 0.0f) {
             r.smallAtLeast(c.rumbleShare);
             if (c.jolted) r.largeAtLeast(1.0f);
+            // The fixed build: at least the share of 60 frames a second (the game's is the speed / 5 x the frame's
+            // time: less at a higher frame rate).
+            const float speed = std::sqrt((v[0] * v[0] + v[2] * v[2]) + v[1] * v[1]);
+            r.smallAtLeast(std::clamp(speed / 5.0f / 60.0f, 0.0f, 1.0f));
         }
+    }
+    // The fixed build: the first player's motors to the controller (Core/Input/PadRumble), as the Xbox version sends
+    // them: none in the race's first quarter of a second (the competitor's +0xF0) or past the finish.
+    if (player.index == 0) {
+        const bool quiet = (c.competitor != nullptr && c.competitor->raceTime < 0.25f) || player.finished;
+        input->padRumble().frame(oj::input::PadRumble::now(),
+                                 quiet ? oj::input::Motors{} : oj::input::Motors{r.large, r.small});
     }
     r = {};
 }

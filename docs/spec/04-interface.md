@@ -170,9 +170,10 @@ are also found as 0x8C and 0x9C. Characters the font lacks use the default glyph
 Width of a text (`0x0051E690`): the space adds `spaceAdvance`, `_` adds nothing, other characters their glyph's
 advance, or the font's fixed advance (`+0x14`) while its `+0x10` is set (the font's vtable `+0x10`, `0x0051DB90`).
 
-Drawing a text (`0x005186C0`, `0x0051E740`): the pen position is cut to whole pixels (toward 0); each glyph is a
-quad at pen + offsets of its size; the space advances by `spaceAdvance`, a glyph by the fixed advance while it is
-set, else by its advance (the last character by its width).
+Drawing a text (`0x005186C0`, `0x0051E740`): the pen position is cut to whole pixels (toward 0); its y is the
+baseline (a glyph's offsets are from it, a capital's y offset its -height), so a text drawn at a place stands on it;
+each glyph is a quad at pen + offsets of its size; the space advances by `spaceAdvance`, a glyph by the fixed advance
+while it is set, else by its advance (the last character by its width).
 
 ## Text and Button
 

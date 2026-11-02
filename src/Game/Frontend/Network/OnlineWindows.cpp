@@ -228,11 +228,11 @@ void OnlineLogon::enter(WindowHost& host, ui::Screen& s) {
     s.hideContaining("EULA_");
     *this = OnlineLogon{};
     // The fixed build: a third item, the guest's, with BACKMENU's bar under it (the .ui's two items alternate
-    // ui_pan5_yel and ui_pan5_ora, drawn adding: the third yellow).
+    // ui_pan5_yel and ui_pan5_ora as their high pictures, drawn adding: the third yellow, shown highlighted only).
     if (s.find("MENU") >= 0 && !hasItem(s, "MENU", kGuest)) {
         s.addCommandItem("MENU", kGuestText, 0.0f, kGuest);
         if (s.find("BACKMENU") >= 0) {
-            s.addMenuItem("BACKMENU", L"", 0.0f, "ui_pan5_yel");
+            s.addMenuItem("BACKMENU", L"", 0.0f, {}, "ui_pan5_yel");
             const size_t bar = s.menuSize("BACKMENU") - 1;
             s.setMenuItemCommand("BACKMENU", bar, "none");
             s.setMenuItemAdditive("BACKMENU", bar, true);

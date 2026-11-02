@@ -1,6 +1,5 @@
 #include "Render/Camera.h"
 
-#include "Core/Base/X87.h"
 
 #include <algorithm>
 #include <bit>
@@ -87,31 +86,45 @@ void Camera::setFar(float value) {
     projectionChanged();
 }
 
+void Camera::setWiden(float across, float down) {
+    if (across == m_widen && down == m_widenY) return;
+    m_widen = across;
+    m_widenY = down;
+    projectionChanged();
+}
+
 void Camera::projectionChanged() {
+    // The fixed build's widening (1 and 1 the stock's angles).
+    if (m_orthographic) {
+        m_viewX = m_fov * m_widen;
+        m_viewY = m_fovY * m_widenY;
+    } else {
+        m_viewX = m_widen == 1.0f
+                      ? m_fov
+                      : static_cast<float>(std::atan(std::tan(static_cast<double>(m_fov) * 0.5) * m_widen) * 2.0);
+        m_viewY = m_widenY == 1.0f
+                      ? m_fovY
+                      : static_cast<float>(std::atan(std::tan(static_cast<double>(m_fovY) * 0.5) * m_widenY) * 2.0);
+    }
     m_projection.fill(0.0f);
     if (m_orthographic) {
         m_projection[15] = 1.0f;
-        m_projection[0] = 1.0f / m_fov;
-        m_projection[5] = 1.0f / m_fovY;
+        m_projection[0] = 1.0f / m_viewX;
+        m_projection[5] = 1.0f / m_viewY;
         m_projection[10] = 1.0f / m_far;
         m_projection[11] = -(m_projection[10] * m_near);
         return;
     }
     const float nearPlane = m_near < 15.0f ? 15.0f : m_near;
     m_projection[14] = 1.0f;
-    m_projection[0] = static_cast<float>(1.0 / std::tan(static_cast<double>(m_fov * 0.5f)));
-    m_projection[5] = static_cast<float>(1.0 / std::tan(static_cast<double>(m_fovY * 0.5f)));
+    m_projection[0] = static_cast<float>(1.0 / std::tan(static_cast<double>(m_viewX * 0.5f)));
+    m_projection[5] = static_cast<float>(1.0 / std::tan(static_cast<double>(m_viewY * 0.5f)));
     m_projection[10] = m_far / (m_far - nearPlane);
     m_projection[11] = -(m_projection[10] * nearPlane);
 }
 
 void Camera::setFocus(const Vec4& point) {
     focus = point;
-    const Mat44& m = m_worldToClip;
-    const float x = point[0], y = point[1], z = point[2];
-    const float clipZ = ((m[8] * x + m[9] * y) + m[10] * z) + m[11];
-    const float clipW = ((m[12] * x + m[13] * y) + m[14] * z) + m[15];
-    focusDepth = x87::chop(clipZ / clipW);
 }
 
 void Camera::update() {
@@ -133,17 +146,17 @@ void Camera::update() {
         m_bottom = mix(up, -1.0f, up, 0.0f);
         m_left = mix(right, -1.0f, right, 0.0f);
         m_right = right;
-        m_topD = dot(m_top) + m_fovY;
-        m_bottomD = dot(m_bottom) + m_fovY;
-        m_leftD = dot(m_left) + m_fov;
-        m_rightD = dot(m_right) + m_fov;
+        m_topD = dot(m_top) + m_viewY;
+        m_bottomD = dot(m_bottom) + m_viewY;
+        m_leftD = dot(m_left) + m_viewX;
+        m_rightD = dot(m_right) + m_viewX;
         return;
     }
     // The half angles' cosines and negative sines (the x87 rounds them to floats when they are stored).
-    const double a = static_cast<double>(m_fov) * 0.5;
+    const double a = static_cast<double>(m_viewX) * 0.5;
     const auto c1 = static_cast<float>(std::cos(a));
     const auto s1 = static_cast<float>(-std::sin(a));
-    const double b = static_cast<double>(m_fovY) * 0.5;
+    const double b = static_cast<double>(m_viewY) * 0.5;
     const auto c2 = static_cast<float>(std::cos(b));
     const auto s2 = static_cast<float>(-std::sin(b));
     m_top = mix(up, c2, m_forward, s2);

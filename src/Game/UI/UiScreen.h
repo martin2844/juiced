@@ -61,6 +61,9 @@ public:
     render::TextureId texture(const std::string& name);
     // The same loaded anew, the caller's to keep (none kept by the window).
     render::TextureId loadTexture(const std::string& name);
+    // The fixed build's: a picture of the window (loaded once, as texture) drawn with linear filters and clamped,
+    // whatever its file asks for (a small photo stretched: a replay's district).
+    void smoothPicture(const std::string& name);
 
     // ui\windows\<name>.ui and ui\windows\<language>\<name>.<ext>, relative to the current directory. fromDisk: the
     // window manager's +0x20 (0x005A9490's last argument, 0 in every request of the game): the window's file from the
@@ -87,6 +90,9 @@ public:
     // 0x005B3260: an element's width in pixels (its width x the screen's x the screen's scale 1, cut toward zero);
     // -1 without the element.
     int pixelWidth(const std::string& element) const;
+    // The fixed build's wide screens: the element's box in pixels as it is drawn (its placement, Game/UI/WideScreen;
+    // its transition's move left out); false without the element.
+    bool pixelRect(const std::string& element, float& x0, float& y0, float& x1, float& y1) const;
     // The same to the nearest (the code's own conversion on a CPU with SSE2, CVTSS2SI: 0x004791B0).
     int pixelWidthNearest(const std::string& element) const;
     // 0x005B52C0: a ticker's text measured, its move started again (see drawTicker).
@@ -227,7 +233,9 @@ public:
     float menuItemValue(const std::string& menu, size_t index) const;
     std::string menuItemCommand(const std::string& menu, size_t index) const;
     // The engine's 2D text (0x005186C0) as the race front end draws it on its own: a text in a font of ui\fonts (by
-    // the screen's resolution) at a place in pixels, its line's top left; and its width (0x0051E690).
+    // the screen's resolution) at a place in pixels, its line's left end on its baseline (the glyphs' offsets are
+    // from it, so a text at a projected place stands on it: the labels over the cars, 0x004BF320, 0x004BF8B0, and the
+    // network's overlay, 0x00456BA0); and its width (0x0051E690).
     void drawFreeText(const std::string& fontName, const std::wstring& text, float x, float y, uint32_t colour);
     // A picture of the windows' textures on a quad of one colour (0x00517EC0, the network overlay's voice icons).
     void drawFreePicture(const std::string& textureName, float x0, float y0, float x1, float y1, uint32_t colour);
@@ -253,6 +261,9 @@ public:
     int find(const std::string& name) const;
     int size() const { return static_cast<int>(m_window.elements.size()); }
     uint32_t width() const { return m_device.width(); }
+    // The fixed build's wide screens: the width of the 4:3 frame the window is laid out in (the screen's on the
+    // stock's; Render/Display).
+    uint32_t frameWidth() const;
     const std::string& nameOf(int element) const;
     // 0x005B19C0, 0x005B1980: the text (0x005B27B0), then the element's text modifier (+0x108, made by the text's
     // constructor, or by a FontModifier line 0x005B1B20) started again (0x005B14A0's: +0x08 = +0x04, +0x18 1, +0x1C and
@@ -388,6 +399,24 @@ private:
     void widenMenu(size_t index, const MenuItem& item, bool textured);
     float textWidth(const Font& f, const std::wstring& text) const;
     void elementRect(const Element& e, const State& s, float& x0, float& y0, float& x1, float& y1) const;
+    // The element's box as drawBox draws it (Game/UI/WideScreen: a text's or a menu's at the window's edges out to
+    // the screen's on a wide screen).
+    void boxRect(const Element& e, const State& s, float& x0, float& y0, float& x1, float& y1) const;
+    // The fixed build's wide screens (Game/UI/WideScreen): an element's fractions of the screen in pixels, its place
+    // x sx + ox and y sy + oy, its size x sx and sy (the stock's whole screen on the stock's screens).
+    struct Placement {
+        float sx = 0.0f, sy = 0.0f, ox = 0.0f, oy = 0.0f;
+    };
+    Placement placement(size_t element) const;
+    // The placement of the element as a picture reaching the screen's edges (a menu's item pictures across a menu at
+    // the window's edges; Game/UI/WideScreen).
+    Placement edgePlacement(size_t element) const;
+    // A movie of the whole window played once (the logos, the outro) on a wide screen: black over the whole screen
+    // under it, which it no longer covers beyond 16:9 (the stock's movie covered everything under it).
+    void movieUnderlay(size_t element);
+    Placement placementOf(const State& s) const {
+        return placement(static_cast<size_t>(&s - m_states.data()));
+    }
     void drawBox(const Element& e, const State& s, float seconds);
     void drawText(const Element& e, State& s, bool highlighted);
     Under m_under = Under::kAll;
@@ -424,6 +453,10 @@ private:
     render::IRenderDevice& m_device;
     Language m_language;
     std::string m_name;
+    bool m_hud = false;          // the fixed build's wide screens: a race HUD's window (Game/UI/WideScreen)
+    bool m_framed = false;       // the fixed build's wide screens: a menu's window laid out in the 4:3 frame
+    std::vector<int> m_holders;  // the fixed build's wide screens: per element the picture holding it, -1 none
+    std::vector<bool> m_heads;   // the fixed build's wide screens: per element whether it heads a menu's column
     Window m_window;
     TextTable m_texts;
     std::vector<State> m_states;  // per element of m_window

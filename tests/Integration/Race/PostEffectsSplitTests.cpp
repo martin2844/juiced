@@ -71,9 +71,9 @@ OJ_INTEGRATION_TEST(PostEffects, SplitViewsOwnTargets) {
                 oj::scene::PostEffects::View& view = v == 0 ? upper : lower;
                 const uint32_t y = v == 0 ? 0u : 240u;
                 device.backViewports.clear();
-                post.begin(camera, view, 0, y, 640, 240, false, false);
+                post.begin(camera, view, 0, y, 640, 240, false);
                 drawn.push_back(device.taken);
-                post.end(camera, view, 0.0f, false);
+                post.end(camera, view, 0.0f);
                 if (v == 1) {
                     bool placed = false;
                     for (const oj::render::Viewport& p : device.backViewports) {
@@ -101,22 +101,22 @@ OJ_INTEGRATION_TEST(PostEffects, SplitViewsOwnTargets) {
         oj::scene::PostEffects::View upperAgain;
         oj::scene::PostEffects::View lowerAgain;
         upperAgain.glow = lowerAgain.glow = false;
-        post.begin(camera, upperAgain, 0, 0, 640, 240, false, false);
+        post.begin(camera, upperAgain, 0, 0, 640, 240, false);
         const bool upperSame = device.taken == drawn[0] || device.taken == drawn[2];
-        post.end(camera, upperAgain, 0.0f, false);
-        post.begin(camera, lowerAgain, 0, 240, 640, 240, false, false);
+        post.end(camera, upperAgain, 0.0f);
+        post.begin(camera, lowerAgain, 0, 240, 640, 240, false);
         const bool lowerSame = device.taken == drawn[1] || device.taken == drawn[3];
-        post.end(camera, lowerAgain, 0.0f, false);
+        post.end(camera, lowerAgain, 0.0f);
         check(device.targets.size() == made && upperSame && lowerSame,
               "split screen (fixed): the next race's views take the pairs of their places, none made");
         // The whole screen's view goes back to the screen's pair and lets the views' go.
         oj::scene::PostEffects::View whole;
         whole.glow = false;
-        post.begin(camera, whole, 0, 0, 640, 480, false, false);
+        post.begin(camera, whole, 0, 0, 640, 480, false);
         const auto it = device.targets.find(device.taken);
         check(it != device.targets.end() && it->second.first == 640 && it->second.second == 480,
               "the whole screen's view: the screen's targets");
-        post.end(camera, whole, 0.0f, false);
+        post.end(camera, whole, 0.0f);
     }
     c = kept;
 }

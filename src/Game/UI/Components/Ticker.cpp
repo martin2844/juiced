@@ -22,7 +22,7 @@ void Screen::measureTicker(int element) {
             s.ticker.width = static_cast<float>(static_cast<uint32_t>(textWidth(*f, text)));
         }
     }
-    const float box = static_cast<float>(m_device.width()) * s.w;
+    const float box = placement(static_cast<size_t>(element)).sx * s.w;
     s.ticker.width = box + s.ticker.width;
     s.ticker.scroll = s.ticker.width * 0.5f;
     if (box * 0.95f < s.ticker.scroll) s.ticker.scroll = box * 0.95f;

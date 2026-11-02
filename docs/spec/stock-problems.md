@@ -284,6 +284,7 @@ build's branches fix some of them: `docs/fixes.md`.
 | the screenshot's name (`0x00513C60`) | a file of the name holding no bytes counts as free and is written over | the same |
 | hudcolourmenu's dials (`0x0043ED70`) | the highlighted dial asks for `ui_dial_choose`, a texture the game's files do not have (they have `ui_dials_choose`): the highlighted dial is drawn with `ui_dials_off` | the same |
 | the second player's lost controller in the front end (`0x0046C228`) | its note keeps the PS2's text "To continue, please reconnect the DUALSHOCK®2 analog controller into controller port " (1632) and the number; the first player's is emptied before it opens | the same |
+| a window's highlight bars (a menu of bars only, BACKMENU; the menus' update `0x005B11A0`) | every shown menu takes the arrows, and the window's code then puts the bars on its menu's item (`0x00480310`, `0x0046E880`, ..): where there are more bars than items (link_search: 8 bars for its one item, NEW GAME; opts_menu: two more bars at each visit, `0x00480090`), an arrow past the last item moves only the bars, plays SELECT and is undone, so a held arrow plays SELECT again at each repeat (0.075 s) | the same |
 
 ## Movies (`25-movies.md`)
 
@@ -307,6 +308,7 @@ build's branches fix some of them: `docs/fixes.md`.
 | `gpSetStatus` (`0x00569670`) | the strings sent are not kept, so the same status with its strings is sent again | the same |
 | the presence's timer (`0x0055BB42`), the friends' notes (`0x0055EA2C`, `0x0055EC6E`, `0x005603FD`), an invitation (`0x00560AAE`) | the first local player is referenced and never let go | the same |
 | the friends' refresh (`0x0056052C`) | a request gone after its 10 refreshes ends the refresh: the friends after it are not aged | the same |
+| the presence's address (`0x0055F6C0`, from `0x0055BA00`) | with no local player (the matchmaking's presence cleared at its end once signed out) the player is -1: its address entry and the session are written before the players' table | nothing written (the timer raised as the stock's) |
 | a new friend (`0x00560120`) | its session and same-game flag are what the stack held | 0 |
 | a user object made while an earlier one lives (`0x0055E15B`) | the connection global is cleared, the earlier connection left open; the earlier object's sign-out later destroys the new one's connection (within its own callback when the friends are made again) | the earlier connection kept, never destroyed; the new one goes once its processing returns |
 | a sign-out logged in (`0x0055FAC8`) | the connection is reset before `gpDestroy`, so gp.info is not written | the same |

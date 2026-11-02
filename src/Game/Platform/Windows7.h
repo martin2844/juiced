@@ -1,7 +1,8 @@
 #pragma once
 // What the functions of Windows 8 the toolset's C++ library calls directly do on Windows 7, with the functions it
 // has: the executable's import slots of CreateFile2, CopyFile2 and GetSystemTimePreciseAsFileTime (Win7Imports.cpp)
-// hold these on every Windows.
+// hold these on every Windows; the fixed build's WaitOnAddress and WakeByAddressAll too (C++20's atomic waits, which
+// OpenAL Soft makes).
 
 #include <cstdint>
 
@@ -42,5 +43,12 @@ int32_t copyFile2(const wchar_t* existing, const wchar_t* copy, const CopyFile2P
 // 1601 (a FILETIME). Only std::chrono::system_clock reads it, which the game does not (its log and saves take
 // GetLocalTime, its waits the steady clock).
 void systemTimePrecise(void* fileTime);
+
+// WaitOnAddress and WakeByAddressAll with Windows 7's slim lock and condition variable: a wait sleeps while the bytes
+// at the address are those compared with (1, 2, 4 or 8 of them), woken by any wake (each waiter looks at its own
+// bytes again, as WaitOnAddress lets a wait wake without a change) or after the milliseconds (INFINITE: none). True
+// once they differ; false with ERROR_TIMEOUT when the time ran out first.
+bool waitOnAddress(volatile void* address, const void* compare, size_t size, uint32_t milliseconds);
+void wakeByAddressAll(void* address);
 
 }  // namespace oj::win7

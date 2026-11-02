@@ -8,14 +8,20 @@
 EXTERN _oj_CreateFile2@20:PROC
 EXTERN _oj_CopyFile2@12:PROC
 EXTERN _oj_GetSystemTimePreciseAsFileTime@4:PROC
+EXTERN _oj_WaitOnAddress@16:PROC
+EXTERN _oj_WakeByAddressAll@4:PROC
 
 PUBLIC __imp__CreateFile2@20
 PUBLIC __imp__CopyFile2@12
 PUBLIC __imp__GetSystemTimePreciseAsFileTime@4
+PUBLIC __imp__WaitOnAddress@16
+PUBLIC __imp__WakeByAddressAll@4
 
 .const
 __imp__CreateFile2@20 DD _oj_CreateFile2@20
 __imp__CopyFile2@12 DD _oj_CopyFile2@12
 __imp__GetSystemTimePreciseAsFileTime@4 DD _oj_GetSystemTimePreciseAsFileTime@4
+__imp__WaitOnAddress@16 DD _oj_WaitOnAddress@16
+__imp__WakeByAddressAll@4 DD _oj_WakeByAddressAll@4
 
 END

@@ -61,9 +61,10 @@ void Screen::drawDial(const Element& e, State& s) {
     const float angle = s.dial.shown;
     const float sw = static_cast<float>(m_device.width());
     const float sh = static_cast<float>(m_device.height());
-    const float px = (s.dial.pivotX * s.w + s.x) * sw;
-    const float py = (s.dial.pivotY * s.h + s.y) * sh;
-    const float height = sh * s.h;
+    const Placement p = placementOf(s);
+    const float px = (s.dial.pivotX * s.w + s.x) * p.sx + p.ox;
+    const float py = (s.dial.pivotY * s.h + s.y) * p.sy + p.oy;
+    const float height = p.sy * s.h;
     const float half = height * s.dial.needleWidth;
     // The tip's corners, then the tail's (texture coordinates (0, 0), (1, 0), (0, 1), (1, 1)).
     float x[4] = {-half, half, -half, half};

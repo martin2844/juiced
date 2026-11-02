@@ -1,20 +1,20 @@
 #pragma once
 // GameSpy Voice 2 as the stock game links it (0x0057EBC0 .. 0x0057FC50, 0x005804C0 .. 0x00580A10; docs/spec/
-// 28-network.md, "Voice"): the sound devices of DirectSound and DirectSoundCapture, each capture device a looping
-// buffer of 16000 bytes read a frame at a time, each playback device a looping buffer of ten frames written behind
+// 28-network.md, "Voice"): the sound devices (VoiceSound.h: the stock's DirectSound and DirectSoundCapture), each
+// capture device a looping buffer of 16000 bytes read a frame at a time, each playback device a looping buffer of ten
+// frames written behind
 // its play cursor with the frames of up to eight sources (each a list of frames in order of their stamps, a little
 // jitter buffer of its own) mixed in; the frames of the codec the game gives (Speex 1.0.3's narrowband at quality 4,
 // the gviSpeex functions 0x00580230 .. 0x00580450; third_party/speex-1.0.3).
 
+#include "Core/Network/GameSpy/VoiceSound.h"
+
 #include <array>
 #include <cstdint>
+#include <memory>
 #include <vector>
 
 typedef struct HWND__* HWND;
-struct IDirectSound;
-struct IDirectSoundBuffer;
-struct IDirectSoundCapture;
-struct IDirectSoundCaptureBuffer;
 
 namespace oj::net::gv {
 
@@ -37,11 +37,11 @@ struct DeviceInfo {
     int32_t hardware = 0;          // +0x58
 };
 
-// gvListDevices (0x0057F190): with max above 0, DirectSoundCaptureEnumerateA for types & 1, then
-// DirectSoundEnumerateA for types & 2, each device through the callback 0x0057F0B0 (the NULL GUID of the primary
+// gvListDevices (0x0057F190): with max above 0, the capture devices enumerated for types & 1, then the playback
+// devices for types & 2 (VoiceSound::list), each device through the callback 0x0057F0B0 (the NULL GUID of the primary
 // driver passed over; a GUID already listed only takes the type of this enumeration, else a new entry at the end with
-// the description; the enumeration stops at max); then the devices of DSDEVID_DefaultVoiceCapture's and
-// DSDEVID_DefaultVoicePlayback's GUIDs marked 1 and 2. At most max entries.
+// the description; the enumeration stops at max); then the devices of the default voice capture and playback
+// devices' GUIDs (VoiceSound::defaultDevice) marked 1 and 2. At most max entries.
 std::vector<DeviceInfo> listDevices(int32_t max, int32_t types);
 
 // GVCustomCodecInfo (0x18 bytes).
@@ -92,8 +92,7 @@ struct Device {
     // +0x58: the hardware's data (GVIHardwareData, 0x58 bytes; the playback's part, then the capture's).
     struct Data {
         int32_t playing = 0;            // +0x00
-        IDirectSound* sound = nullptr;          // +0x04
-        IDirectSoundBuffer* buffer = nullptr;   // +0x08
+        std::unique_ptr<PlaybackBuffer> buffer;  // +0x04, +0x08: DirectSound's object and its buffer
         uint32_t bufferSize = 0;        // +0x0C: 3200 bytes rounded up to two frames' bytes
         uint32_t halfSize = 0;          // +0x10
         uint32_t writePos = 0;          // +0x14: the play cursor last seen, a frame's bytes down
@@ -101,8 +100,7 @@ struct Device {
         SourceList* sources = nullptr;  // +0x1C
         uint32_t tick = 0;              // +0x20: GetTickCount at the last mix
         int32_t capturing = 0;          // +0x24
-        IDirectSoundCapture* capture = nullptr;              // +0x28
-        IDirectSoundCaptureBuffer* captureBuffer = nullptr;  // +0x2C
+        std::unique_ptr<CaptureBuffer> captureBuffer;  // +0x28, +0x2C: DirectSoundCapture's object and its buffer
         uint32_t captureSize = 0;       // +0x30: 16000 bytes rounded up to a frame's bytes
         uint32_t readPos = 0;           // +0x34
         double volume = 0.0;            // +0x38: the capture's volume (1.0)
@@ -125,11 +123,10 @@ void think();
 // gvSetCustomCodec (0x0057EC10): the codec, its frame's samples, encoded bytes and samples' bytes; the free frames
 // made again (0x0057FBD0: those there freed, then 200 of the encoded size).
 void setCustomCodec(const CodecInfo& codec);
-// gvNewDevice (0x0057FA20): a capture (1) or playback (2) device of the GUID (any other type none): DirectSound's
-// object and its buffer (0x0057F8B0: the cooperative level DSSCL_NORMAL with the window, a buffer of 3200 bytes with
-// GETCURRENTPOSITION2, GLOBALFOCUS and CTRLVOLUME) and its eight sources, or DirectSoundCapture's and its looping
-// capture buffer of 16000 bytes started at once (0x0057F980; the volume 1, the last stamp at the threshold -21); put
-// on the list. Null when any of it fails.
+// gvNewDevice (0x0057FA20): a capture (1) or playback (2) device of the GUID (any other type none): its eight
+// sources and the playback buffer (VoiceSound::openPlayback; 0x0057F8B0: 3200 bytes with the window), or the looping
+// capture buffer of 16000 bytes started at once (VoiceSound::openCapture; 0x0057F980; the volume 1, the last stamp at
+// the threshold -21); put on the list. Null when any of it fails.
 Device* newDevice(const std::array<uint8_t, 16>& id, int32_t type);
 
 // The frame's samples, encoded bytes and samples' bytes ([0x007A4330], [0x007A432C], [0x007A4328]).

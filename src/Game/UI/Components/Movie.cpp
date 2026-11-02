@@ -73,6 +73,7 @@ void Screen::openMovie(size_t index, State& s) {
 void Screen::drawMovie(size_t index, State& s) {
     movie::System* m = movie::System::get();
     if (m == nullptr) return;
+    movieUnderlay(index);
     m->drawn = true;
     if (m->current == nullptr || _stricmp(s.movie.name.c_str(), m->currentName.c_str()) != 0) {
         if (m->hold) return;

@@ -11,12 +11,6 @@ extern "C" {
 }
 namespace oj::audio {
 namespace {
-struct NativeStream {
-    std::filesystem::path path;
-    IDirectSoundBuffer *buffer = nullptr;
-};
-// Process-lifetime registry: the upstream jukebox is itself a static object.
-auto &streams = *new std::map<Stream *, NativeStream>;
 std::vector<float> decodeSegment(const std::filesystem::path &path, double start, double duration) {
     std::vector<float> out;
     AVFormatContext *format = nullptr;
@@ -89,82 +83,38 @@ std::vector<float> decodeSegment(const std::filesystem::path &path, double start
     return out;
 }
 } // namespace
-Stream::Stream(const std::filesystem::path &p) {
-    streams[this].path = p;
-}
-Stream::~Stream() {
-    auto &s = streams.at(this);
-    if (s.buffer) {
-        s.buffer->Stop();
-        s.buffer->Release();
+namespace {
+class NativeFileStream final : public OutputStream {
+    std::filesystem::path file;
+    IDirectSoundBuffer* buffer=nullptr;
+    int64_t from=0,to=0;
+    int32_t volume=0;
+public:
+    explicit NativeFileStream(std::filesystem::path p):file(std::move(p)) {}
+    ~NativeFileStream() override { if(buffer) { buffer->Stop();buffer->Release(); } }
+    void stop() override { if(buffer) buffer->Stop(); }
+    void run() override { if(buffer) buffer->Play(0,0,0); }
+    bool setPositions(int64_t current,int64_t end) override {
+        if(current<0 || end<=current) return false;
+        stop();if(buffer) { buffer->Release();buffer=nullptr; }
+        auto pcm=decodeSegment(file,double(current)/1e7,double(end-current)/1e7);
+        if(pcm.empty()) { log::warning("audio stream could not decode {}",file.string());return false; }
+        WAVEFORMATEX fmt{1,2,48000,192000,4,16,0};DSBUFFERDESC d{};d.lpwfxFormat=&fmt;
+        IDirectSound8 device;
+        if(FAILED(device.CreateSoundBuffer(&d,&buffer,nullptr))) return false;
+        buffer->samples=std::make_shared<std::vector<float>>(std::move(pcm));
+        buffer->SetVolume(volume);from=current;to=end;return true;
     }
-    streams.erase(this);
-}
-void Stream::stop() {
-    if (auto b = streams.at(this).buffer)
-        b->Stop();
-    m_state = 1;
-}
-void Stream::play(float start, float length) {
-    auto &s = streams.at(this);
-    stop();
-    if (s.buffer) {
-        s.buffer->Release();
-        s.buffer = nullptr;
+    bool seekable() const override { return true; }
+    void positions(int64_t& current,int64_t& end) override {
+        DWORD play=0,write=0;if(buffer) buffer->GetCurrentPosition(&play,&write);
+        current=from+int64_t(play)*10000000/192000;end=to;
+        if(buffer && buffer->samples && play>=buffer->samples->size()*2) current=end;
     }
-    auto pcm = decodeSegment(s.path, start, length);
-    if (pcm.empty()) {
-        log::warning("audio stream could not decode {} at {}", s.path.string(), start);
-        return;
-    }
-    WAVEFORMATEX fmt{1, 2, 48000, 192000, 4, 16, 0};
-    DSBUFFERDESC desc{};
-    desc.lpwfxFormat = &fmt;
-    desc.dwBufferBytes = 0;
-    if (!system().device())
-        return;
-    system().device()->CreateSoundBuffer(&desc, &s.buffer, nullptr);
-    s.buffer->samples = std::make_shared<std::vector<float>>(std::move(pcm));
-    s.buffer->SetVolume(m_volume);
-    s.buffer->Play(0, 0, 0);
-    m_state = 3;
+    void setVolume(int32_t mb) override { volume=mb;if(buffer) buffer->SetVolume(mb); }
+};
 }
-void Stream::setVolume(int32_t mb) {
-    m_volume = mb;
-    if (auto b = streams.at(this).buffer)
-        b->SetVolume(mb);
-}
-void Stream::pause(int on) {
-    auto b = streams.at(this).buffer;
-    if (!b)
-        return;
-    if (on) {
-        b->Stop();
-        m_state = 2;
-    } else if (active()) {
-        b->Play(0, 0, 0);
-        m_state = 3;
-    }
-}
-int Stream::state() {
-    if (m_state == 3) {
-        DWORD status = 0;
-        if (auto b = streams.at(this).buffer)
-            b->GetStatus(&status);
-        if (!(status & DSBSTATUS_PLAYING))
-            m_state = 1;
-    }
-    return m_state;
-}
-void Stream::focus(bool on) {
-    for (auto &[s, _] : streams) {
-        if (!on && s->m_state == 3) {
-            s->m_focusPaused = true;
-            s->pause(1);
-        } else if (on && s->m_focusPaused) {
-            s->m_focusPaused = false;
-            s->pause(0);
-        }
-    }
+std::unique_ptr<OutputStream> openNativeStream(const std::filesystem::path& file) {
+    return std::make_unique<NativeFileStream>(file);
 }
 } // namespace oj::audio

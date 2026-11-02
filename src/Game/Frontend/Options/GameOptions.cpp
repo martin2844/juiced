@@ -4,12 +4,47 @@
 
 #include "Core/Data/GameTexts.h"
 #include "Core/Input/Input.h"
+#include "Core/Saves/GraphicsConfig.h"
+#include "Game/UI/WindowFixes.h"
+#include "Render/Display.h"
 
 #include <algorithm>
 #include <bit>
+#include <cmath>
 #include <cstring>
+#include <string>
 
 namespace oj::frontend {
+
+namespace {
+
+// The fixed build's field of view (GraphicsConfig::fov) on the FOV row (Game/UI/WindowFixes): its meter over the race
+// camera's angle across at rest on this picture from the least view to the most (Render/Display), the degrees shown.
+struct FovRange {
+    render::Display shape;
+    float least = 0.0f;
+    float most = 0.0f;
+};
+
+FovRange fovRange(OptionsHost& host) {
+    FovRange r;
+    r.shape = render::display(host.device().width(), host.device().height());
+    r.least = render::restFovDegrees(r.shape, kFovLeast);
+    r.most = render::restFovDegrees(r.shape, kFovMost);
+    return r;
+}
+
+float fovMeter(const FovRange& r, int32_t fov) {
+    return (render::restFovDegrees(r.shape, fovScale(fov)) - r.least) / (r.most - r.least);
+}
+
+void showFov(OptionsHost& host, ui::Screen& s, int32_t fov) {
+    const FovRange r = fovRange(host);
+    const auto degrees = std::lround(render::restFovDegrees(r.shape, fovScale(fov)));
+    s.setText(ui::kFovValue, std::to_wstring(degrees));
+}
+
+}  // namespace
 
 // 0x004813E0: +0x58 and +0x5C the sensitivity (+0xC4); VIB, VIB2, MAP, AUTO, AUTO2, UNITS, AIDS, DIFF (+0x0C ..) and
 // the meter STEERING (+0x30: its value and shown value the sensitivity, its +0xFC 1) found; +0x2C 0; the settings kept
@@ -35,6 +70,18 @@ void GameOptions::enter(OptionsHost& host, ui::Screen& s) {
     s.setNeighbour("AUTO_BUT", input::kUp, "DON_BUT");
     s.setNeighbour("DON_BUT", input::kDown, "AUTO_BUT");
     m_rumble = 0.0f;
+    // The fixed build's field of view: its row between SENSITIVITY's and DONE, its meter at the kept view.
+    m_fov = graphicsConfig().fov;
+    if (s.find(ui::kFovMeter) >= 0) {
+        s.setText(ui::kFovButton, L"FIELD OF VIEW");
+        s.setNeighbour("SENSITIVITY_BUT", input::kDown, ui::kFovButton);
+        s.setNeighbour(ui::kFovButton, input::kUp, "SENSITIVITY_BUT");
+        s.setNeighbour(ui::kFovButton, input::kDown, "DON_BUT");
+        s.setNeighbour("DON_BUT", input::kUp, ui::kFovButton);
+        s.setMeter(ui::kFovMeter, fovMeter(fovRange(host), m_fov), true);
+        s.setMeterSlider(ui::kFovMeter, true);
+        showFov(host, s, m_fov);
+    }
 }
 
 // 0x00481770 (the second player's pause of a race of more players: its event and its UP / DOWN moving the highlight):
@@ -61,6 +108,17 @@ void GameOptions::update(OptionsHost& host, ui::Screen& s, uint32_t event) {
     const auto is1 = [&](const char* name) { return _stricmp(current.c_str(), name) == 0; };
     const auto yesNo = [&](uint32_t v) { return texts.at(v != 0 ? kTextYes : kTextNo); };
     s.setMeterActive("STEERING", is1("SENSITIVITY_BUT"));
+    // The fixed build's field of view follows its meter's shown value while FOV_BUT is highlighted (the race's views
+    // take it at once).
+    if (s.find(ui::kFovMeter) >= 0) {
+        s.setMeterActive(ui::kFovMeter, is1(ui::kFovButton));
+        if (is1(ui::kFovButton)) {
+            const FovRange r = fovRange(host);
+            const float degrees = r.least + s.meterShown(ui::kFovMeter) * (r.most - r.least);
+            graphicsConfig().fov = fovSetting(render::fovScaleOf(r.shape, degrees));
+            showFov(host, s, graphicsConfig().fov);
+        }
+    }
     if (m_shownButton != current) {
         m_shownButton = current;
         if (const int e = s.find("VIB"); e >= 0) s.setText(e, yesNo(set.u32(save::Settings::kSteeringWheel)));
@@ -96,6 +154,7 @@ void GameOptions::update(OptionsHost& host, ui::Screen& s, uint32_t event) {
         set.setU32(save::Settings::kAids, m_aids);
         set.setU32(save::Settings::kDifficulty, m_difficulty);
         if (s.find("STEERING") >= 0) set.setU32(save::Settings::kSensitivity, std::bit_cast<uint32_t>(m_sensitivity));
+        graphicsConfig().fov = m_fov;
         host.sound("CLICK");
         host.request(host.optionsMenu(), SwitchMode::Swap);
     } else if (event == input::kSelect) {

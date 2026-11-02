@@ -77,7 +77,8 @@ public:
     virtual GameData* gameData() = 0;
     virtual const TextTable& gameTexts() const = 0;
     virtual const Language& language() const = 0;
-    // The interface's 3D engine (none without a device) and the loading thread's generator (the car views' models).
+    // The interface's 3D engine (none without a device) and the loading thread's generator (the car views' models;
+    // oj::loadingRandom, one for the whole game).
     virtual scene::Engine* engine() = 0;
     virtual CrtRandom& viewLoading() = 0;
     // The driver's settings (the save system's +0x54).

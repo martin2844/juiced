@@ -508,7 +508,7 @@ void GarageView::fitToChassis(Model& model, float xScale, float zScale) {
     model.root->invalidate();
 }
 
-void GarageView::enterBuy(const Car& car, const DealerOffer* offer, bool buying, CrtRandom& loading) {
+void GarageView::enterBuy(const Car& car, const DealerOffer* offer, bool buying, CrtRandom& random) {
     clear();
     View3d* v = view();
     if (v == nullptr) return;
@@ -517,18 +517,18 @@ void GarageView::enterBuy(const Car& car, const DealerOffer* offer, bool buying,
     m_plinthTurns = turning;
     if (buying) {
         if (used && offer->damage != 0) {
-            m_scene = m_engine.loadModel("scrapyard", loading);
+            m_scene = m_engine.loadModel("scrapyard", random);
             v->setAtmosphere("scrapyard");
             v->buildSky();
         } else if (used) {
-            m_scene = m_engine.loadModel("showroom3", loading);
+            m_scene = m_engine.loadModel("showroom3", random);
             v->setAtmosphere("dealer");
         } else {
-            m_scene = m_engine.loadModel("showroom2", loading);
+            m_scene = m_engine.loadModel("showroom2", random);
         }
         // The scene's mirror image under the floor, without the plinth, the floors and the trees.
         m_sceneMirror = m_scene ? m_engine.loadModel(used && offer->damage != 0 ? "scrapyard"
-                                                     : used ? "showroom3" : "showroom2", loading)
+                                                     : used ? "showroom3" : "showroom2", random)
                                 : nullptr;
         if (m_sceneMirror) {
             m_sceneMirror->mirror();
@@ -540,7 +540,7 @@ void GarageView::enterBuy(const Car& car, const DealerOffer* offer, bool buying,
             }
         }
     } else {
-        m_scene = m_engine.loadModel("don_garage1", loading);
+        m_scene = m_engine.loadModel("don_garage1", random);
     }
     if (m_scene) {
         m_plinth = m_scene->find("show_plinth");
@@ -552,10 +552,10 @@ void GarageView::enterBuy(const Car& car, const DealerOffer* offer, bool buying,
             m_sign->invalidate();
         }
     }
-    m_car = loadCar(car, loading, &m_carDamage);
+    m_car = loadCar(car, random, &m_carDamage);
     // 0x00438080 (buying): the car's mirror image listed, turning 0.35 a second about Y for a new car.
     if (buying && m_car) {
-        m_carMirror = loadCar(car, loading, &m_mirrorDamage);
+        m_carMirror = loadCar(car, random, &m_mirrorDamage);
         if (m_carMirror) {
             m_carMirror->mirror();
             const int at = listCar(*m_carMirror);
@@ -572,7 +572,7 @@ void GarageView::enterBuy(const Car& car, const DealerOffer* offer, bool buying,
     // 0x0043887A).
     {
         const CarFolders folders(m_engine);
-        m_shadow = m_engine.loadModel("gen_shadow", loading);
+        m_shadow = m_engine.loadModel("gen_shadow", random);
     }
     if (m_shadow) {
         const int at = listModel(*m_shadow, false);
@@ -660,13 +660,13 @@ void GarageView::dropChassis(const Car& car) {
     chassis->invalidate();
 }
 
-void GarageView::enterSel(const Car& car, CrtRandom& loading) {
+void GarageView::enterSel(const Car& car, CrtRandom& random) {
     clear();
     m_garage = true;
     View3d* v = view();
     if (v == nullptr) return;
-    m_scene = m_engine.loadModel("don_garage1", loading);
-    m_car = loadCar(car, loading, &m_carDamage);
+    m_scene = m_engine.loadModel("don_garage1", random);
+    m_car = loadCar(car, random, &m_carDamage);
     if (m_scene) listModel(*m_scene, false);
     if (m_car) listCar(*m_car);
     // 0x00436200: the camera at the car's place + 50 each way + (-233.37, 115.84, 493.664) at once, looking at the
@@ -683,13 +683,13 @@ void GarageView::enterSel(const Car& car, CrtRandom& loading) {
     // 0x00436720).
     {
         const CarFolders folders(m_engine);
-        m_shadow = m_engine.loadModel("gen_shadow", loading);
+        m_shadow = m_engine.loadModel("gen_shadow", random);
     }
     if (m_shadow) {
         listModel(*m_shadow, false);
         fitToChassis(*m_shadow, 1.25f, 1.0f);
     }
-    if (static_cast<int8_t>(car.body[9]) > -1) showNeon(car, loading);
+    if (static_cast<int8_t>(car.body[9]) > -1) showNeon(car, random);
 }
 
 void GarageView::listNeon() {
@@ -710,10 +710,10 @@ void GarageView::listNeon() {
     v->listNode(neon->root, false);
 }
 
-void GarageView::showNeon(const Car& car, CrtRandom& loading) {
+void GarageView::showNeon(const Car& car, CrtRandom& random) {
     if (!m_neon) {
         const CarFolders folders(m_engine);
-        m_neon = m_engine.loadModel("gen_neon", loading, true);
+        m_neon = m_engine.loadModel("gen_neon", random);
         if (!m_neon) return;
         listNeon();
     }

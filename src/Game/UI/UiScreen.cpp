@@ -3,9 +3,11 @@
 
 #include "Game/UI/UiScreen.h"
 #include "Game/UI/UiInternal.h"
+#include "Game/UI/WideScreen.h"
 #include "Game/UI/WindowFixes.h"
 
 #include "Core/Base/Log.h"
+#include "Render/Display.h"
 
 #include <filesystem>
 
@@ -73,6 +75,7 @@ Screen::~Screen() {
 bool Screen::load(const std::string& name, bool fromDisk) {
     m_loaded = false;
     m_name = name;
+    m_hud = hudWindow(name);
     m_current.clear();
     const std::filesystem::path windows = std::filesystem::path("ui") / "windows";
     if (!m_window.load(windows / (name + ".ui"))) {
@@ -88,6 +91,9 @@ bool Screen::load(const std::string& name, bool fromDisk) {
         log::warning("ui: no texts {}", texts.string());
     }
     m_states.assign(m_window.elements.size(), State{});
+    m_framed = framedWindow(name);
+    m_holders = pictureHolders(m_window);
+    m_heads = columnHeads(m_window);
     m_order.resize(m_window.elements.size());
     for (size_t i = 0; i < m_order.size(); ++i) m_order[i] = i;
     m_views.clear();
@@ -499,12 +505,11 @@ void Screen::update(float dt, uint32_t scroll) {
 // The element's box in pixels (the box draw 0x005B2BE0). Its place is +0xA4, +0xA8 as the element keeps it: the
 // draw eases from there to +0x9C, +0xA0 by a factor that never leaves 0, and InactivePos is read and dropped.
 void Screen::elementRect(const Element&, const State& s, float& x0, float& y0, float& x1, float& y1) const {
-    const float sw = static_cast<float>(m_device.width());
-    const float sh = static_cast<float>(m_device.height());
-    x0 = s.x * sw;
-    y0 = s.y * sh;
-    x1 = (s.x + s.w) * sw;
-    y1 = (s.y + s.h) * sh;
+    const Placement p = placementOf(s);
+    x0 = s.x * p.sx + p.ox;
+    y0 = s.y * p.sy + p.oy;
+    x1 = (s.x + s.w) * p.sx + p.ox;
+    y1 = (s.y + s.h) * p.sy + p.oy;
 }
 
 View3d* Screen::view(const std::string& element) {
@@ -530,6 +535,13 @@ void Screen::draw(float seconds, float dt) {
         if (i < m_views.size() && m_views[i]) {
             float x0 = 0.0f, y0 = 0.0f, x1 = 0.0f, y1 = 0.0f;
             elementRect(e, s, x0, y0, x1, y1);
+            // The fixed build's wide screens: the view widened by its box's shape over the shape the box has in the
+            // 4:3 frame (Hor+ across, Vert+ down; 1 and 1 in the frame and on the stock's screens).
+            const render::Display d = render::display(m_device.width(), m_device.height());
+            const float drawn = (x1 - x0) * (s.h * d.frameH);
+            const float framed = (y1 - y0) * (s.w * d.frameW);
+            const float wider = drawn > 0.0f && framed > 0.0f ? drawn / framed : 1.0f;
+            m_views[i]->setWiden(wider > 1.0f ? wider : 1.0f, wider < 1.0f ? 1.0f / wider : 1.0f);
             m_views[i]->draw(x0, y0, x1, y1, seconds, dt);
         }
         if (e.kind == ElementKind::Text) {

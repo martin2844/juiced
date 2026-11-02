@@ -8,6 +8,8 @@
 #include "Game/Scene/Scene3d.h"
 
 #include <cmath>
+#include <cstring>
+#include <vector>
 
 namespace oj::scene {
 
@@ -60,7 +62,7 @@ bool SmokeEmitter::step(size_t index, Vec4& place, float& size, Vec4& colour, fl
             const Vec4 pushed{air[0] * resist, -def.gravity + air[1] * resist, air[2] * resist, 0.0f};
             float follow = p.age / m_life * def.followFade;
             if (follow > 1.0f) follow = 1.0f;
-            const float k = (1.0f - follow) * def.followFrac;
+            const float k = (1.0f - follow) * (noFollow ? 0.0f : def.followFrac);
             const float drift = ((1.0f - def.minAmount) * p.level + def.minAmount) * def.randomDrift;
             const float driftX = r3 * drift, driftY = r2 * drift, driftZ = r1 * drift;
             const float keep = 1.0f - k;
@@ -121,6 +123,36 @@ void SmokeEmitter::simulate(const render::Camera& camera, float dt) {
         m_vertices.push_back({(cx - ax) - bx, (cy - ay) - by, (cz - az) - bz, argb, uv[0], uv[1]});
         m_vertices.push_back({(ax + cx) - bx, (ay + cy) - by, (az + cz) - bz, argb, uv[2], uv[3]});
     }
+}
+
+bool SmokeEmitter::hazeFrame(render::Camera& camera, float viewWidth) {
+    if (m_points == 0) return !dying;
+    simulate(camera, m_system.dt);
+    const size_t quads = m_vertices.size() / 4;
+    if (quads == 0 || m_material == nullptr) return true;
+    // The node's motion (JuicedConfigExt's Follow): the haze's strength by its car's speed, the throttle followed.
+    float strength = 1.0f, speed = 0.0f, throttle = 0.0f;
+    if (node != nullptr) {
+        const Mat34& w = node->world();
+        haze::follow(motion, {w[3], w[7], w[11]}, exhaust.valid ? exhaust.throttle : 0.0f, haze::clock());
+        strength = motion.strength;
+        speed = motion.speed;
+        throttle = motion.throttle;
+    }
+    static_assert(sizeof(Vertex) == sizeof(haze::Vertex));
+    std::vector<haze::Vertex> game(m_vertices.size());
+    std::memcpy(game.data(), m_vertices.data(), m_vertices.size() * sizeof(Vertex));
+    const haze::Axes axes{{m_system.billboard[0][0], m_system.billboard[0][1], m_system.billboard[0][2]},
+                          {m_system.billboard[1][0], m_system.billboard[1][1], m_system.billboard[1][2]},
+                          {m_system.billboard[2][0], m_system.billboard[2][1], m_system.billboard[2][2]}};
+    float toClip[16];
+    std::memcpy(toClip, camera.worldToClip().data(), sizeof(toClip));
+    std::vector<haze::Vertex> drawn = haze::hazeQuads(game, axes, exhaust, strength, speed, throttle, toClip, viewWidth);
+    if (drawn.empty()) drawn = std::move(game);  // more quads than the haze places: the game's
+    m_system.engine().renderer().beginMaterialPass(*m_material, 0);
+    m_system.engine().device().drawHeatHaze(drawn.data(), static_cast<uint32_t>(drawn.size() / 4),
+                                            exhaust.valid ? haze::boost(throttle, speed) : 1.0f);
+    return true;
 }
 
 bool SmokeEmitter::frame(render::Camera& camera) {

@@ -10,22 +10,39 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Display.cpp" />
     <ClCompile Include="D3D9\D3D9Device.cpp">
       <Filter>D3D9</Filter>
     </ClCompile>
+    <ClCompile Include="D3D9\D3D9HeatHaze.cpp">
+      <Filter>D3D9</Filter>
+    </ClCompile>
+    <ClCompile Include="D3D9\D3D9Profiler.cpp">
+      <Filter>D3D9</Filter>
+    </ClCompile>
+    <ClCompile Include="FrameOptions.cpp" />
     <ClCompile Include="HlslCompiler.cpp" />
     <ClCompile Include="Materials.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="Program.cpp" />
     <ClCompile Include="RenderDevice.cpp" />
     <ClCompile Include="Renderer3d.cpp" />
+    <ClCompile Include="ShaderReplacements.cpp" />
     <ClCompile Include="Sky.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Display.h" />
     <ClInclude Include="D3D9\D3D9Device.h">
       <Filter>D3D9</Filter>
     </ClInclude>
+    <ClInclude Include="D3D9\D3D9HeatHaze.h">
+      <Filter>D3D9</Filter>
+    </ClInclude>
+    <ClInclude Include="D3D9\D3D9Profiler.h">
+      <Filter>D3D9</Filter>
+    </ClInclude>
+    <ClInclude Include="FrameOptions.h" />
     <ClInclude Include="HlslCompiler.h" />
     <ClInclude Include="Materials.h" />
     <ClInclude Include="Materials\CarMaterials.h">
@@ -51,6 +68,8 @@
     <ClInclude Include="RenderDevice.h" />
     <ClInclude Include="Renderer3d.h" />
     <ClInclude Include="RenderStates.h" />
+    <ClInclude Include="LightCase.h" />
+    <ClInclude Include="ShaderReplacements.h" />
     <ClInclude Include="Sky.h" />
   </ItemGroup>
 </Project>

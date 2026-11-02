@@ -6,9 +6,9 @@
 #define OJ_GAME_VERSION_MINOR 1
 #define OJ_GAME_VERSION_TEXT "1.01"
 
-#define OJ_RELEASE 5
-#define OJ_RELEASE_TEXT "5"
-#define OJ_RELEASE_NAME "Bug fixes"
+#define OJ_RELEASE 7
+#define OJ_RELEASE_TEXT "7"
+#define OJ_RELEASE_NAME "Graphics"
 
 // The resource's version: the game's build, then the release ("1.01.5": Juiced 1.01, OpenJuice's release 5).
 #define OJ_VERSION_TEXT OJ_GAME_VERSION_TEXT "." OJ_RELEASE_TEXT
@@ -26,7 +26,7 @@
 #endif
 
 // The unofficial patch (the branch unofficial-patch/1.02/<API>: the retail build of Juiced 1.01 with the stock game's
-// problems fixed, docs/fixes.md): its version "1.02.<the release>" ("1.02.5"; the release the retail branches', the
+// problems fixed, docs/fixes.md): its version "1.02.<the release>" ("1.02.7"; the release the retail branches', the
 // patch made again with each), in the resource (its numbers 1.2.0.<the release>) and the log's first line; the game it
 // plays is still Juiced 1.01. Kept here, apart from the release's lines above, so that the retail branches' release
 // changes rebase cleanly.
@@ -36,7 +36,7 @@
 #undef OJ_VERSION_TEXT
 #define OJ_VERSION_TEXT OJ_PATCH_VERSION_TEXT "." OJ_RELEASE_TEXT
 // Its names: the resource's description "OpenJuice unofficial patch 1.02 for Juiced (64-bit)", its product version
-// "1.02.5 (based on Juiced 1.01, Bug fixes)", the log's first line "OpenJuice unofficial patch 1.02.5, based on Juiced
+// "1.02.7 (based on Juiced 1.01, Graphics)", the log's first line "OpenJuice unofficial patch 1.02.7, based on Juiced
 // 1.01 (64-bit, Bug fixes)".
 #define OJ_PRODUCT_TEXT "OpenJuice unofficial patch " OJ_PATCH_VERSION_TEXT
 #define OJ_BASED_ON_TEXT "based on Juiced " OJ_GAME_VERSION_TEXT

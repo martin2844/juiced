@@ -201,6 +201,6 @@ input::KeyboardPort *InputDevices::keyboard() const {
 bool InputDevices::configure(const input::MapFormat &) {
     return false;
 }
-void InputDevices::startWheels(HWND) {}
+void InputDevices::startWheels(HWND, WheelInput*) {}
 void InputDevices::stopWheels() {}
 } // namespace oj

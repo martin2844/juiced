@@ -1,8 +1,13 @@
 #include "Render/RenderDevice.h"
 
+#include "Core/Base/LoadingThread.h"
 #include "Render/D3D9/D3D9Device.h"
 
 namespace oj::render {
+
+void IRenderDevice::letLoadingRun() {
+    frameTurns().pause();
+}
 
 const char* backendName(Backend backend) {
     switch (backend) {

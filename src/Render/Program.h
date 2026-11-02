@@ -43,6 +43,9 @@ public:
     // block of more than 29 registers is dropped.
     void managerVertexConstants(uint32_t start, const float* data, uint32_t count);
 
+    // A shared parameter's value (its first `bytes`) when an effect has it; false when none has.
+    bool setShared(const std::string& name, const void* data, size_t bytes);
+
     Program* current = nullptr;
     std::map<std::string, std::vector<uint8_t>> shared;
     FixedMaterial material;
@@ -80,6 +83,12 @@ public:
     // A technique is in use (the stock game keeps a program without one, the materials then leave it out).
     bool usable() const { return m_technique >= 0; }
     const fx::Effect& effect() const { return m_effect; }
+    // Its texture parameters of `from` given `to`.
+    void replaceTexture(TextureId from, TextureId to) {
+        for (auto& [parameter, id] : m_textures) {
+            if (id == from) id = to;
+        }
+    }
     int technique() const { return m_technique; }
     bool useConstantMemory() const { return m_constantMemory; }
     // The chosen technique's USEFFV (the vertices go through the fixed-function transforms) and USERANDOM (c40 is
@@ -108,6 +117,10 @@ public:
     // effect's again (the shared ones stay in the pool), its techniques' records anew and the last usable one chosen
     // (0x0051A0B0). True when it has a usable technique.
     bool recreate();
+    // The fixed build's effects changed in the game (the car paint, the shaders the device replaces): the program made
+    // again from `effect` as the constructor makes it, its shaders made anew (the old ones freed) with the device's
+    // replacements of now. True when it has a usable technique.
+    bool rebuild(fx::Effect effect);
     // 0x00519FF0: the technique of a level (0 .. 3: the masks 0x10000, 0x20000, 0x40000, 0x80000 of 0x00719364):
     // the pass ended, then from the last technique back the first usable one whose CLASSIFICATION has the mask
     // (printed through the debug print, "(a)%s %s %x %x"), else the last usable one; false without one.
@@ -156,6 +169,9 @@ private:
 class ProgramManager {
 public:
     void add(Program* program) { m_programs.push_back(program); }
+    // Every program's texture parameters of `from` given `to` (the fixed build's procedural clouds' map in place of
+    // the cloudcast texture, and back).
+    void replaceTexture(TextureId from, TextureId to);
     const std::vector<Program*>& programs() const { return m_programs; }
     // 0x00519CB0: the program of a name, case aside; nullptr when it has none.
     Program* find(const std::string& name) const;

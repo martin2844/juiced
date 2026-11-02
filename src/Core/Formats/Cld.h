@@ -1,6 +1,6 @@
 #pragma once
-// A route's collision (tracks\<Track>\<track>_<route>.cld; the byte layout is the Blender add-on's docs/technical
-// CLD): the surface zones, the triangles the cars drive on, the invisible walls between markers, and the quadtree the
+// A route's collision (tracks\<Track>\<track>_<route>.cld; the byte layout: docs/spec/31-file-layouts.md): the
+// surface zones, the triangles the cars drive on, the invisible walls between markers, and the quadtree the
 // game searches (docs/spec/15-tracks.md, "The collision").
 
 #include <array>

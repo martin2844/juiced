@@ -9,7 +9,6 @@
 
 #include <windows.h>
 #include <mmreg.h>
-#include <dsound.h>
 
 #include <algorithm>
 #include <cstring>
@@ -167,83 +166,57 @@ VoiceSet::VoiceSet(SoundSet& set, const SampleEntry& entry) : m_set(set), m_entr
     }
     if (m_voices.empty()) return;
     System& sys = system();
-    IDirectSound8* device = sys.device();
-    if (device == nullptr) return;
+    Output& output = sys.output();
+    if (output.soundSystem() == 0) return;
     // 0x005C33C0: the first buffer (LOCDEFER, CTRLVOLUME, CTRLFREQUENCY, and CTRL3D for a 3D set else CTRLPAN) holds
     // the sample; the hardware that cannot play its 3D voices turns the software on (0x005C3150).
     if (!sys.hardwarePlays3d()) sys.setFlags((sys.flags() & ~kHardware) | kSoftware);
-    DSBUFFERDESC desc{};
-    desc.dwSize = sizeof(desc);
-    desc.dwFlags = 0x400A0 | (m_type == 3 ? DSBCAPS_CTRL3D : DSBCAPS_CTRLPAN);
-    desc.dwBufferBytes = entry.size;
-    desc.lpwfxFormat = const_cast<WAVEFORMATEX*>(&entry.wave());
-    IDirectSoundBuffer* first = nullptr;
-    if (FAILED(device->CreateSoundBuffer(&desc, &first, nullptr)) || first == nullptr) {
+    const WAVEFORMATEX& wave = entry.wave();
+    SampleFormat format;
+    format.tag = wave.wFormatTag;
+    format.channels = wave.nChannels;
+    format.rate = wave.nSamplesPerSec;
+    format.bytesPerSecond = wave.nAvgBytesPerSec;
+    format.blockAlign = wave.nBlockAlign;
+    format.bits = wave.wBitsPerSample;
+    m_voices[0].buffer = output.createBuffer(format, entry.size, 0x400A0 | (m_type == 3 ? kCapsCtrl3d : kCapsCtrlPan));
+    if (m_voices[0].buffer == nullptr) {
         log::warning("sound: no buffer for {} ({} bytes)", set.name(), entry.size);
         return;
     }
-    first->QueryInterface(IID_IDirectSoundBuffer8, reinterpret_cast<void**>(&m_voices[0].buffer));
-    first->Release();
-    if (m_voices[0].buffer == nullptr) return;
     refill(0);
     // 0x005C3582: a 3D set's voice, EAX not switched off (0x20), takes its buffer's property set (+0x28) and sends
     // its sound to FX slot 0 (EAXSOURCE_ACTIVEFXSLOTID: FX slot 0 and none); the answer is not looked at. The
     // duplicates likewise (0x005C36A1).
     const auto eaxSource = [this](HardwareVoice& v) {
         if (m_type != 3 || (system().flags() & kNoEax) != 0 || v.buffer == nullptr) return;
-        if (v.buffer->QueryInterface(IID_IKsPropertySet, reinterpret_cast<void**>(&v.properties)) < 0) return;
+        if (!v.buffer->openEax()) return;
         GUID slots[2] = {eax::kFxSlot0, eax::kNull};
-        v.properties->Set(eax::kSource, eax::kSourceActiveFxSlotId, nullptr, 0, slots, 0x20);
+        v.buffer->setEax(eax::kSource, eax::kSourceActiveFxSlotId, slots, 0x20);
     };
     eaxSource(m_voices[0]);
     for (uint32_t i = 1; i < m_voices.size(); ++i) {
-        IDirectSoundBuffer* copy = nullptr;
-        if (FAILED(device->DuplicateSoundBuffer(m_voices[0].buffer, &copy)) || copy == nullptr) continue;
-        copy->QueryInterface(IID_IDirectSoundBuffer8, reinterpret_cast<void**>(&m_voices[i].buffer));
+        m_voices[i].buffer = output.duplicate(*m_voices[0].buffer);
+        if (m_voices[i].buffer == nullptr) continue;
         eaxSource(m_voices[i]);
-        copy->Release();
     }
     if (m_type == 3) {
         // 0x005C1F40: every voice's 3D buffer, all its parameters deferred: at the listener, no cone, 1 .. 1e9.
         for (HardwareVoice& v : m_voices) {
             if (v.buffer == nullptr) continue;
-            v.buffer->QueryInterface(IID_IDirectSound3DBuffer, reinterpret_cast<void**>(&v.buffer3d));
-            if (v.buffer3d == nullptr) continue;
-            DS3DBUFFER p{};
-            p.dwSize = sizeof(p);
-            p.dwInsideConeAngle = 360;
-            p.dwOutsideConeAngle = 360;
-            p.vConeOrientation = {0.0f, 0.0f, 1.0f};
-            p.flMinDistance = 1.0f;
-            p.flMaxDistance = 1e9f;
-            p.dwMode = DS3DMODE_NORMAL;
-            v.buffer3d->SetAllParameters(&p, DS3D_DEFERRED);
+            v.has3d = v.buffer->open3d();
+            if (v.has3d) v.buffer->reset3d();
         }
     }
 }
 
-VoiceSet::~VoiceSet() {
-    for (HardwareVoice& v : m_voices) {
-        if (v.properties != nullptr) v.properties->Release();
-        if (v.buffer3d != nullptr) v.buffer3d->Release();
-        if (v.buffer != nullptr) {
-            v.buffer->Stop();
-            v.buffer->Release();
-        }
-    }
-}
+// The buffers let go: each its property set and 3D buffer released, stopped and released (OutputBuffer).
+VoiceSet::~VoiceSet() = default;
 
 void VoiceSet::refill(uint32_t i) {
-    IDirectSoundBuffer8* b = m_voices[i].buffer;
+    OutputBuffer* b = m_voices[i].buffer.get();
     if (b == nullptr || m_entry.data == nullptr) return;
-    void* a = nullptr;
-    void* a2 = nullptr;
-    DWORD n = 0;
-    DWORD n2 = 0;
-    if (b->Lock(0, m_entry.size, &a, &n, &a2, &n2, 0) == DS_OK) {
-        if (a != nullptr) std::memcpy(a, m_entry.data, std::min<DWORD>(n, m_entry.size));
-        b->Unlock(a, n, a2, n2);
-    }
+    b->write(0, m_entry.data, m_entry.size);
 }
 
 int VoiceSet::play(uint32_t i) {
@@ -253,68 +226,68 @@ int VoiceSet::play(uint32_t i) {
         return 0;
     }
     HardwareVoice& v = m_voices[i];
-    IDirectSoundBuffer8* b = v.buffer;
+    OutputBuffer* b = v.buffer.get();
     if (b == nullptr) return 1;
     const uint32_t flags = system().flags();
     uint32_t play = v.playFlags;
     if (m_type == 3) {
-        play |= (flags & kSoftware) == 0 ? DSBPLAY_LOCHARDWARE : DSBPLAY_LOCSOFTWARE;
+        play |= (flags & kSoftware) == 0 ? kPlayLocHardware : kPlayLocSoftware;
     } else {
-        b->SetPan(v.pan);
-        play |= DSBPLAY_LOCSOFTWARE;
+        b->setPan(v.pan);
+        play |= kPlayLocSoftware;
     }
     // Without a property set the voice asks for the hardware's resources; failing that, or with one and the hardware
     // off, it plays in the software.
-    if (v.properties == nullptr) {
-        if (FAILED(b->AcquireResources(DSBPLAY_LOCHARDWARE, 0, nullptr))) {
-            play = (play & ~DSBPLAY_LOCHARDWARE) | DSBPLAY_LOCSOFTWARE;
+    if (!b->hasEax()) {
+        if (failed(b->acquireHardware())) {
+            play = (play & ~kPlayLocHardware) | kPlayLocSoftware;
         }
     } else if ((flags & kHardware) == 0) {
-        play = (play & ~DSBPLAY_LOCHARDWARE) | DSBPLAY_LOCSOFTWARE;
+        play = (play & ~kPlayLocHardware) | kPlayLocSoftware;
     }
-    if (b->SetCurrentPosition(0) == DSERR_BUFFERLOST) {
+    if (b->setPosition(0) == Answer::Lost) {
         log::info("sound: buffer lost");
-        b->Restore();
+        b->restore();
         refill(i);
-        b->SetCurrentPosition(0);
+        b->setPosition(0);
     }
-    b->SetVolume(v.volume);
-    if (m_type != 3) b->SetFrequency(v.frequency);
-    HRESULT hr = b->Play(0, 0, play);
-    if (hr == DSERR_BUFFERLOST) {
-        b->Restore();
+    b->setVolume(v.volume);
+    if (m_type != 3) b->setFrequency(v.frequency);
+    Answer a = b->play(play);
+    if (a == Answer::Lost) {
+        b->restore();
         refill(i);
-        hr = b->Play(0, 0, play);
+        a = b->play(play);
     }
-    if (hr != DS_OK) {
-        play = (play & ~DSBPLAY_LOCHARDWARE) | DSBPLAY_LOCSOFTWARE;
-        hr = b->Play(0, 0, play);
-        if (hr == DSERR_BUFFERLOST) {
-            b->Restore();
+    if (a != Answer::Ok) {
+        play = (play & ~kPlayLocHardware) | kPlayLocSoftware;
+        a = b->play(play);
+        if (a == Answer::Lost) {
+            b->restore();
             refill(i);
-            hr = b->Play(0, 0, play);
+            a = b->play(play);
         }
-        if (hr != DS_OK) return 1;
+        if (a != Answer::Ok) return 1;
     }
     return 0;
 }
 
 int VoiceSet::replay(uint32_t i) {
     HardwareVoice& v = m_voices[i];
-    IDirectSoundBuffer8* b = v.buffer;
+    OutputBuffer* b = v.buffer.get();
     if (b == nullptr) return 0;
-    if (b->SetCurrentPosition(v.position) == DSERR_BUFFERLOST) {
-        b->Restore();
+    if (b->setPosition(v.position) == Answer::Lost) {
+        b->restore();
         refill(i);
-        b->SetCurrentPosition(v.position);
+        b->setPosition(v.position);
     }
-    b->SetVolume(v.volume);
-    if (m_type != 3) b->SetPan(v.pan);
-    b->SetFrequency(v.frequency);
-    if (b->Play(0, 0, v.playFlags) == DSERR_BUFFERLOST) {
-        b->Restore();
+    b->setVolume(v.volume);
+    if (m_type != 3) b->setPan(v.pan);
+    b->setFrequency(v.frequency);
+    if (b->play(v.playFlags) == Answer::Lost) {
+        b->restore();
         refill(i);
-        b->Play(0, 0, v.playFlags);
+        b->play(v.playFlags);
     }
     return 0;
 }
@@ -324,7 +297,7 @@ int VoiceSet::stop(uint32_t i) {
         if (m_stream != nullptr) m_stream->stop();  // 0x005C3FC0
         return 0;
     }
-    if (m_voices[i].buffer != nullptr) m_voices[i].buffer->Stop();
+    if (m_voices[i].buffer != nullptr) m_voices[i].buffer->stop();
     return 0;
 }
 
@@ -341,7 +314,7 @@ int VoiceSet::resume(uint32_t i) {
         if (m_stream != nullptr) m_stream->pause(0);  // 0x005C4000
         return 0;
     }
-    if (m_voices[i].buffer != nullptr) m_voices[i].buffer->Play(0, 0, m_voices[i].playFlags);
+    if (m_voices[i].buffer != nullptr) m_voices[i].buffer->play(m_voices[i].playFlags);
     return 0;
 }
 
@@ -356,7 +329,7 @@ int VoiceSet::setVolume(uint32_t i, float volume) {
     }
     if (v.volume != mb) {
         v.volume = mb;
-        if (v.buffer != nullptr) v.buffer->SetVolume(mb);
+        if (v.buffer != nullptr) v.buffer->setVolume(mb);
     }
     return 0;
 }
@@ -383,17 +356,17 @@ int VoiceSet::setFrequency(uint32_t i, uint32_t request) {
         f = f < lo ? lo : (f > 48000 ? 48000 : f);
     }
     v.frequency = f;
-    if (v.buffer != nullptr) v.buffer->SetFrequency(f);
+    if (v.buffer != nullptr) v.buffer->setFrequency(f);
     return 0;
 }
 
 int VoiceSet::status(uint32_t i) {
     if (isStream()) return m_stream != nullptr ? m_stream->state() : 0;  // 0x005C41B0
-    DWORD s = 0;
-    IDirectSoundBuffer8* b = m_voices[i].buffer;
-    if (b == nullptr || b->GetStatus(&s) != DS_OK) return 0;
-    if ((s & DSBSTATUS_LOOPING) != 0) return 4;
-    if ((s & DSBSTATUS_PLAYING) != 0) return 3;
+    uint32_t s = 0;
+    OutputBuffer* b = m_voices[i].buffer.get();
+    if (b == nullptr || b->status(s) != Answer::Ok) return 0;
+    if ((s & kStatusLooping) != 0) return 4;
+    if ((s & kStatusPlaying) != 0) return 3;
     return 0;
 }
 
@@ -405,14 +378,14 @@ int VoiceSet::setPan(uint32_t i, float pan) {
         mb = -volumeMb(1.0f - std::fabs(pan));
     }
     m_voices[i].pan = mb;
-    if (m_voices[i].buffer != nullptr) m_voices[i].buffer->SetPan(mb);
+    if (m_voices[i].buffer != nullptr) m_voices[i].buffer->setPan(mb);
     return 0;
 }
 
 int VoiceSet::place(uint32_t i, const float relative[3], const float change[3], float distance, float doppler) {
     HardwareVoice& v = m_voices[i];
-    if (v.buffer3d != nullptr) {
-        v.buffer3d->SetPosition(relative[0], relative[1], relative[2], DS3D_DEFERRED);
+    if (v.has3d) {
+        v.buffer->place3d(relative[0], relative[1], relative[2]);
         // The stock then asks for the min distance [0x0079E9C8] (0x005C211E), which nothing writes: 0. Windows'
         // DirectSound refuses it (DSERR_INVALIDPARAM) and the buffer keeps its 1; Wine's takes it, and its distance
         // attenuation divides by it: every 3D voice (the cars, the world) silent under Proton. Not asked for, the
@@ -431,14 +404,14 @@ int VoiceSet::place(uint32_t i, const float relative[3], const float change[3], 
     v.frequency = f;
     if (v.given != f) {
         v.given = f;
-        if (v.buffer != nullptr) v.buffer->SetFrequency(f);
+        if (v.buffer != nullptr) v.buffer->setFrequency(f);
     }
     return 0;
 }
 
 void VoiceSet::setPosition(uint32_t i, uint32_t position) {
     m_voices[i].position = position;
-    if (m_voices[i].buffer != nullptr) m_voices[i].buffer->SetCurrentPosition(position);
+    if (m_voices[i].buffer != nullptr) m_voices[i].buffer->setPosition(position);
 }
 
 int VoiceSet::setOcclusion(uint32_t i, float v) {
@@ -452,7 +425,7 @@ int VoiceSet::setOcclusion(uint32_t i, float v) {
     // x87: the product of two floats is exact in double as in the extended register.
     const double value = static_cast<double>(scale) * static_cast<double>(v);
     HardwareVoice& h = m_voices[i];
-    if (h.properties == nullptr) return 0;
+    if (h.buffer == nullptr || !h.buffer->hasEax()) return 0;
     // Steps of 0.25 toward the value (Stock problem: not held at it, so a value between two steps goes back and forth
     // by 0.25 each call; the fixed build holds it there); equal (or not a number) unchanged.
     if (value < static_cast<double>(h.occlusion)) {
@@ -464,10 +437,11 @@ int VoiceSet::setOcclusion(uint32_t i, float v) {
     }
     int32_t mb = volumeMb(h.occlusion);
     if ((sys.eaxFlags() & 0x10) != 0) {
-        h.properties->Set(eax::kSource, eax::kSourceRoom, nullptr, 0, &mb, 4);
-    } else if (IKsPropertySet* listener = sys.eaxProperties()) {
-        // 0x005C2392: the device without voices' own EAX: the reverb's room of FX slot 0 for every voice.
-        listener->Set(eax::kFxSlot0, eax::kReverbRoom, nullptr, 0, &mb, 4);
+        h.buffer->setEax(eax::kSource, eax::kSourceRoom, &mb, 4);
+    } else {
+        // 0x005C2392: the device without voices' own EAX: the reverb's room of FX slot 0 for every voice (through the
+        // probe's property set; nothing without it).
+        system().setEax(eax::kFxSlot0, eax::kReverbRoom, &mb, 4);
     }
     return 0;
 }
@@ -493,7 +467,7 @@ int Bank::findSample(const char* name) const {
 }
 
 std::unique_ptr<Bank> Bank::load(const GameFiles& files, const std::filesystem::path& folder, const std::string& name,
-                                 uint32_t* channels) {
+                                 uint32_t* channels, uint32_t instances) {
     const auto cfg = files.read(folder / (name + ".cfg"));
     if (!cfg) return nullptr;
     const std::string_view text(reinterpret_cast<const char*>(cfg->data()), cfg->size());
@@ -530,9 +504,8 @@ std::unique_ptr<Bank> Bank::load(const GameFiles& files, const std::filesystem::
             bank->m_sets.clear();
             for (int i = 0; i < bankSize; ++i) bank->m_sets.push_back(std::make_unique<SoundSet>());
             current = bank->set(0);
-            // The bank's arrays of instances (vt+0x08 = 0x005BA790: instance_count x the loader's +0x18 — 1 for a
-            // player's bank, cruise, wet and the dyno's, twice the cars of the bank in a race, 0x0049835D) are only a
-            // pool the sets take from without a check (0x005BA900 ..); each set keeps its own "instances".
+            // The bank's arrays of instances (vt+0x08 = 0x005BA790: instance_count x the loader's +0x18) are only a
+            // pool the sets take from without a check (0x005BA900 ..); each set has its own (below).
             (void)instanceCount;
         } else if (is("declare_sample") || is("declare_stream")) {
             // 0x005BAB40: a name declared once.
@@ -546,7 +519,9 @@ std::unique_ptr<Bank> Bank::load(const GameFiles& files, const std::filesystem::
         } else if (is("sample")) {
             if (current != nullptr && bank) current->setSample(bank->findSample(line.word(0).c_str()));
         } else if (is("instances")) {
-            if (current != nullptr) current->setInstances(static_cast<uint32_t>(line.integer(0)));
+            // 0x005BEBF0: the set's instances times the loader's +0x18 (`instances`): in a race a car's bank has
+            // as many of each sample as twice its cars, so the cars of one engine sound each have their own.
+            if (current != nullptr) current->setInstances(instances * static_cast<uint32_t>(line.integer(0)));
         } else if (is("type")) {
             if (current != nullptr) current->setType(line.integer(0));
         } else if (is("[EndSS]")) {

@@ -9,11 +9,17 @@
     <Project Path="src/Audio/OpenJuice.Audio.vcxproj" Id="7a3c2e51-6b0d-4f8e-9c1a-3d5e7f902b14" />
     <Project Path="src/Game/OpenJuice.Game.vcxproj" Id="8b2e4c71-3d5a-4f96-a1c8-6e0b9d7f2a43" />
     <Project Path="src/Game/OpenJuice.vcxproj" Id="4f993d45-2f52-4d97-a850-6e25859ccd7f" />
-    <Project Path="src/JuicedConfig/OpenJuice.JuicedConfig.vcxproj" Id="be571cd2-f93e-421b-9ffb-25fc8c7144a0" />
-    <Project Path="src/JuicedConfig/OpenJuiceConfig.vcxproj" Id="b2a071bc-3baa-4a3a-8caa-0dd3789b68a4" />
   </Folder>
   <Folder Name="/third_party/">
+    <Project Path="third_party/openal-soft-1.25.2/OpenJuice.OpenAL.vcxproj" Id="6e3a1b52-4c7d-4f28-9a61-0d2b8e5c7f34" />
     <Project Path="third_party/speex-1.0.3/OpenJuice.Speex.vcxproj" Id="5c2d8e14-7a31-4b6f-9e08-2f4a6b1c3d95" />
+    <Project Path="third_party/juicedconfigext/OpenJuice.JuicedConfigExt.vcxproj" Id="2f7c4a93-6b15-4e08-9d3a-81c5e2b0f647" />
+    <Project Path="third_party/juicedconfigext/OpenJuiceConfig.vcxproj" Id="b2a071bc-3baa-4a3a-8caa-0dd3789b68a4">
+      <Platform Solution="*|x64" Project="Win32" />
+      <Build Solution="*|x64" Project="false" />
+    </Project>
+    <Project Path="third_party/sdl3-3.4.16/OpenJuice.SDL3.vcxproj" Id="3b9e5d27-8c41-4a6f-9e12-5d7c0a4b8f61" />
+    <Project Path="third_party/wmadec/OpenJuice.WmaDecoder.vcxproj" Id="8d4f2c61-3b7a-4e95-a2d0-5c9e1f7b3a48" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/OpenJuice.Tests.vcxproj" Id="f7c81c20-92a1-4f57-ad9a-9bc1c0a33ac4" />

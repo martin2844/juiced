@@ -5,10 +5,9 @@
 #include "Core/Base/Random.h"
 
 #include <windows.h>
-#include <mmreg.h>
-#include <dsound.h>
 
 #include <algorithm>
+#include <cfloat>
 #include <cmath>
 
 namespace oj::audio {
@@ -38,22 +37,17 @@ void setNodeMatrix(NodeMatrix fn) { g_nodeMatrix = fn; }
 Listener::Listener() {
     frontRow = {0.0f, 0.0f, 1.0f, 0.0f};
     upRow = {0.0f, 1.0f, 0.0f, 0.0f};
-    IDirectSoundBuffer* primary = system().primary();
-    if (primary != nullptr) {
-        primary->QueryInterface(IID_IDirectSound3DListener, reinterpret_cast<void**>(&m_ds));
-        if (m_ds != nullptr) {
-            // 0x005C0870: the smallest distance factor, the largest rolloff, deferred. Windows' DirectSound refuses the
-            // rolloff (above DS3D_MAXROLLOFFFACTOR) and keeps its 1; Wine's takes it, but nothing is worked out with it:
-            // the voices' places are deferred, and the commit that applies them (each frame of the manager) gives 0.001.
-            m_ds->SetDistanceFactor(FLT_MIN, DS3D_DEFERRED);
-            m_ds->SetRolloffFactor(FLT_MAX, DS3D_DEFERRED);
-        }
+    m_ds = system().output().openListener();
+    if (m_ds != nullptr) {
+        // 0x005C0870: the smallest distance factor, the largest rolloff, deferred. Windows' DirectSound refuses the
+        // rolloff (above DS3D_MAXROLLOFFFACTOR) and keeps its 1; Wine's takes it, but nothing is worked out with it:
+        // the voices' places are deferred, and the commit that applies them (each frame of the manager) gives 0.001.
+        m_ds->setDistanceFactor(FLT_MIN);
+        m_ds->setRolloffFactor(FLT_MAX);
     }
 }
 
-Listener::~Listener() {
-    if (m_ds != nullptr) m_ds->Release();
-}
+Listener::~Listener() = default;
 
 void Listener::set(const float f[4], const float u[4]) {
     frontRow = {f[0], f[1], f[2], f[3]};
@@ -76,11 +70,11 @@ void Listener::set(const float f[4], const float u[4]) {
 
 void Listener::commit() {
     if (m_ds == nullptr) return;
-    m_ds->SetDistanceFactor(0.001f, DS3D_DEFERRED);  // [0x00725850]
-    m_ds->SetRolloffFactor(0.001f, DS3D_DEFERRED);   // [0x0072584C]
-    m_ds->SetPosition(position.x, position.y, position.z, DS3D_DEFERRED);
-    m_ds->SetOrientation(frontRow.x, frontRow.y, frontRow.z, upRow.x, upRow.y, upRow.z, DS3D_DEFERRED);
-    m_ds->CommitDeferredSettings();
+    m_ds->setDistanceFactor(0.001f);  // [0x00725850]
+    m_ds->setRolloffFactor(0.001f);   // [0x0072584C]
+    m_ds->setPosition(position.x, position.y, position.z);
+    m_ds->setOrientation(frontRow.x, frontRow.y, frontRow.z, upRow.x, upRow.y, upRow.z);
+    m_ds->commit();
 }
 
 // --- Emitter ---
@@ -678,8 +672,8 @@ void Manager::refresh(Instance* i) {
     hw.place3d(i->m_handle, *i->m_emitter, i->m_emitter->doppler());
 }
 
-void Manager::update(const Listener& l, uint32_t flags) {
-    (void)flags;
+void Manager::update(const Listener& l, float dt) {
+    (void)dt;
     if (m_paused) return;
     ticks();
     ends();
@@ -827,7 +821,38 @@ Instance* World::playOnceRef(const SetRef& ref, const Vec4& place, Instance** ow
     return i;
 }
 
+namespace {
+
+bool g_highFrameRate = false;
+
+}  // namespace
+
+void setHighFrameRate(bool on) {
+    g_highFrameRate = on;
+}
+
+float fadeByTime(float volume, float target, float down, float up, float dt) {
+    const float diff = target - volume;
+    if (diff == 0.0f) return volume;
+    const float rate = diff < 0.0f ? down : up;
+    const float left = rate > 0.0f ? std::min(std::fabs(1.0f - 30.0f / rate), 0.99f) : 0.0f;
+    const float step = dt > 0.0f ? 1.0f - std::pow(left, dt * 30.0f) : 0.0f;
+    float next = volume + diff * step;
+    if (std::fabs(target - next) < 1e-4f) next = target;
+    if (next > 1.0f) next = 1.0f;
+    if (next <= 0.001f) next = 0.0f;
+    return next;
+}
+
 void World::update(float dt) {
+    if (g_highFrameRate) {
+        if (target != volume) {
+            volume = fadeByTime(volume, target, down, up, dt);
+            m_player->setMasterVolume(volume);
+        }
+        m_manager->update(m_manager->listener(), dt);
+        return;
+    }
     // 0x005B96C0
     float d = target - volume;
     if (0.0f < std::fabs(d)) {
@@ -851,7 +876,7 @@ void World::update(float dt) {
         if (volume <= kLow) volume = 0.0f;
         m_player->setMasterVolume(volume);
     }
-    m_manager->update(m_manager->listener(), 0);
+    m_manager->update(m_manager->listener(), dt);
 }
 
 }  // namespace oj::audio

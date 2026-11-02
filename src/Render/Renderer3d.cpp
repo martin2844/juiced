@@ -257,7 +257,11 @@ void Renderer3d::setLightDirection(const Vec4& d) {
         default:
             break;
     }
-    const float scroll = t * 0.015f;
+    float scroll = t * 0.015f;
+    if (cloudScale > 0.0f) {
+        s = cloudScale;
+        scroll = 0.0f;
+    }
     const float rows[12] = {vx * s, vy * s, vz * s, scroll, wx * s, wy * s, wz * s, 0.0f,
                             d[0] * s, d[1] * s, d[2] * s, scroll};
     std::memcpy(m_cloud.data() + 4, rows, sizeof(rows));
@@ -360,6 +364,64 @@ void Renderer3d::applySampler(const SamplerParams& p, uint32_t stage) {
 
 void Renderer3d::beginMaterialPass(Material& material, uint32_t pass) {
     m_device.setMaterialClass(material.classId());
+    if (shadowPass()) {
+        if (m_current != nullptr) {
+            if (Program* p = m_current->program()) p->end();
+            m_current = nullptr;
+            m_lastClass = 0x10009;
+        }
+        // The cars' parts in the marked depth all marked, their cut out ones too (a decal lies on its body).
+        const bool carMarked = shadowShaders.groundPixel != 0 && drawingCars;
+        const GameTexture* cut = !carMarked && shadowShaders.cutoutPixel != 0 && cutsOut(material.classId())
+                                     ? material.cutout()
+                                     : nullptr;
+        const GameTexture* puddleTexture = nullptr;
+        const GameTexture* puddleNoise = nullptr;
+        float tile[2] = {};
+        const bool puddles = groundPass == GroundPass::Puddles && shadowShaders.puddlePixel != 0 &&
+                             shadowShaders.cutoutVertex != 0 && material.puddles(puddleTexture, puddleNoise, tile);
+        if (puddles) {
+            // The rain's water: its puddles alone, into the stencil (TrackScene::markGround).
+            m_device.setVertexShader(shadowShaders.cutoutVertex);
+            m_device.setPixelShader(shadowShaders.puddlePixel);
+            const float mask[4] = {tile[0], tile[1], kPuddleMask, 0.0f};
+            m_device.setPixelShaderConstantF(5, mask, 1);
+            bindTexture(puddleTexture, 0);
+            bindTexture(puddleNoise, 1);
+        } else if (cut != nullptr) {
+            float sway[16];
+            if (material.swayConstants(sway)) m_device.setVertexShaderConstantF(56, sway, 4);
+            m_device.setVertexShader(material.classId() == kTreeStandard ? shadowShaders.treeVertex
+                                     : material.classId() == kTreeSprite ? shadowShaders.treeSpriteVertex
+                                                                         : shadowShaders.cutoutVertex);
+            m_device.setPixelShader(shadowShaders.cutoutPixel);
+            const float mark[4] = {isFoliage(material.classId()) ? kFoliageMark : 0.0f, 0.0f, 0.0f, 0.0f};
+            m_device.setPixelShaderConstantF(4, mark, 1);
+            bindTexture(cut, 0);
+        } else if (shadowShaders.groundPixel != 0) {
+            // The marked depth's: the cars' and the ground's marked, the rest's + 0, each at most the range's end.
+            m_device.setVertexShader(shadowShaders.vertex);
+            m_device.setPixelShader(shadowShaders.groundPixel);
+            const uint32_t id = material.classId();
+            const float y = carMarked                          ? kCarMark
+                            : groundPass == GroundPass::Marked ? groundMark
+                            : id == kSea                       ? kWaterMark
+                            : isReflectingGround(id)           ? kGroundMark
+                                                               : 0.0f;
+            const float mark[4] = {0.0f, y, 0.0f, 0.0f};
+            m_device.setPixelShaderConstantF(4, mark, 1);
+        } else {
+            m_device.setVertexShader(shadowShaders.vertex);
+            m_device.setPixelShader(shadowShaders.pixel);
+        }
+        m_device.setRenderState(RenderState::ZEnable, 1);
+        m_device.setRenderState(RenderState::ZWriteEnable, groundPass == GroundPass::Puddles ? 0 : 1);
+        m_device.setRenderState(RenderState::AlphaBlendEnable, 0);
+        m_device.setRenderState(RenderState::AlphaTestEnable, 0);
+        m_device.setRenderState(RenderState::FogEnable, 0);
+        m_device.setRenderState(RenderState::CullMode, shadowShaders.cull);
+        return;
+    }
     if (m_current != nullptr && m_current != &material) {
         if (Program* p = m_current->program()) p->end();
     }
@@ -369,6 +431,77 @@ void Renderer3d::beginMaterialPass(Material& material, uint32_t pass) {
         material.bind(pass);
         m_lastClass = material.classId();
         m_current = &material;
+    }
+}
+
+bool Renderer3d::castsShadow(uint32_t classId) {
+    switch (classId) {
+    case kCarBody:
+    case kVertexColoured:
+    case kConstantColour:
+    case kStandardOpaque:
+    case kSpecularOpaque:
+    case kTwoTextureModulate:
+    case kTwoTextureModulateSpecular:
+    case kBuilding:
+    case kUnlitOpaque:
+    case kVertColOpaque:
+    case kVertColTwoTexture:
+    case kShinyOpaque:
+    case kVertexColouredUnlit:
+    case kChrome:
+    case kColouredSpecOpaque:
+    case kShinyUnlitOpaque:
+    case kBuildingOpaque:
+    case kSpecMapOpaque: return true;
+    default: return false;
+    }
+}
+
+bool Renderer3d::cutsOut(uint32_t classId) {
+    switch (classId) {
+    case kStandardAlphaTest:
+    case kVertColAlphaTest:
+    case kUnlitATest:
+    case kTreeStandard:
+    case kTreeSprite:
+    case kAmbientLit: return true;
+    default: return false;
+    }
+}
+
+bool Renderer3d::isReflectingGround(uint32_t classId) {
+    switch (classId) {
+    case kTarmac:
+    case kWater:
+    case kSea:
+    case kLineTexturedOpaque: return true;
+    default: return false;
+    }
+}
+
+bool Renderer3d::isWater(uint32_t classId) {
+    return classId == kWater || classId == kSea;
+}
+
+bool Renderer3d::isFoliage(uint32_t classId) {
+    return classId == kTreeStandard || classId == kTreeSprite || classId == kAmbientLit;
+}
+
+bool Renderer3d::shadowPassDraws(uint32_t classId) const {
+    if (groundPass == GroundPass::Puddles) return shadowShaders.ground && classId == kWater;
+    if (groundPass == GroundPass::Marked) {
+        return shadowShaders.ground && isReflectingGround(classId) && classId != kWater;
+    }
+    if (castsShadow(classId)) return true;
+    if (shadowShaders.cutoutPixel != 0 && cutsOut(classId)) return true;
+    if (!shadowShaders.ground) return false;
+    switch (classId) {
+    case kTarmac:
+    case kWater:
+    case kSea:
+    case kLineTexturedOpaque: return true;
+    default: return false;
     }
 }
 

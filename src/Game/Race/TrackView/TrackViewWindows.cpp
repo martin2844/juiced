@@ -39,8 +39,9 @@ void TrackView::hideFollowed(const RacePlayer& player) {
     for (std::unique_ptr<RaceSlot>& s : cars) {
         s->model->hidden = onCar && s.get() == followedSlot(player);
         if (s->shadow != nullptr) s->shadow->on = !s->model->hidden;
+        // With the sun's cascades the stock's silhouettes of the sun are not drawn (the cars cast real shadows).
         for (oj::scene::Silhouette* silhouette : s->silhouettes) {
-            if (silhouette != nullptr) silhouette->on = !s->model->hidden;
+            if (silhouette != nullptr) silhouette->on = !s->model->hidden && !sunShadowsDrawn;
         }
         if (!s->model->hidden) continue;
         for (size_t i = 0; i < 2; ++i) {

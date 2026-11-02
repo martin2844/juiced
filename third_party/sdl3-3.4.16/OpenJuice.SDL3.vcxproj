@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>18.0</VCProjectVersion>
+    <ProjectGuid>{3B9E5D27-8C41-4A6F-9E12-5D7C0A4B8F61}</ProjectGuid>
+    <RootNamespace>OpenJuiceSDL3</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v145</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseDebugLibraries Condition="'$(Configuration)'=='Debug'">true</UseDebugLibraries>
+    <UseDebugLibraries Condition="'$(Configuration)'=='Release'">false</UseDebugLibraries>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\build\OpenJuice.props" />
+  </ImportGroup>
+  <!-- SDL 3.4.16 as its VisualC project builds it (README.OpenJuice.md), a static library of the game controller support
+       alone: the joysticks, the gamepads, the haptics, the sensors, the events and what they stand on; no video, audio,
+       render, GPU, camera, dialogs, tray, storage or processes (openjuice-config/SDL_build_config.h). C, its warnings
+       (level 3) not errors; the objects by their folders (some sources share names). -->
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <SDLCheck>false</SDLCheck>
+      <ConformanceMode>false</ConformanceMode>
+      <LanguageStandard_C>stdc11</LanguageStandard_C>
+      <ExceptionHandling>false</ExceptionHandling>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <PreprocessorDefinitions>SDL_STATIC_LIB;SDL_OPENJUICE_STATIC;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)openjuice-config;$(MSBuildThisFileDirectory)include;$(MSBuildThisFileDirectory)include\build_config;$(MSBuildThisFileDirectory)src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
+    </ClCompile>
+    <Lib>
+      <AdditionalDependencies>setupapi.lib;winmm.lib;imm32.lib;version.lib;cfgmgr32.lib;hid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="src\core\windows\pch.c" />
+    <ClCompile Include="src\core\windows\pch_cpp.cpp" />
+    <ClCompile Include="src\filesystem\SDL_filesystem.c" />
+    <ClCompile Include="src\filesystem\windows\SDL_sysfsops.c" />
+    <ClCompile Include="src\io\windows\SDL_asyncio_windows_ioring.c" />
+    <ClCompile Include="src\io\generic\SDL_asyncio_generic.c" />
+    <ClCompile Include="src\io\SDL_asyncio.c" />
+    <ClCompile Include="src\main\generic\SDL_sysmain_callbacks.c" />
+    <ClCompile Include="src\main\SDL_main_callbacks.c" />
+    <ClCompile Include="src\SDL_guid.c" />
+    <ClCompile Include="src\atomic\SDL_atomic.c" />
+    <ClCompile Include="src\atomic\SDL_spinlock.c" />
+    <ClCompile Include="src\core\SDL_core_unsupported.c" />
+    <ClCompile Include="src\core\windows\SDL_gameinput.cpp" />
+    <ClCompile Include="src\core\windows\SDL_hid.c" />
+    <ClCompile Include="src\core\windows\SDL_immdevice.c" />
+    <ClCompile Include="src\core\windows\SDL_windows.c" />
+    <ClCompile Include="src\core\windows\SDL_xinput.c" />
+    <ClCompile Include="src\cpuinfo\SDL_cpuinfo.c" />
+    <ClCompile Include="src\dynapi\SDL_dynapi.c" />
+    <ClCompile Include="src\events\SDL_categories.c" />
+    <ClCompile Include="src\events\SDL_clipboardevents.c" />
+    <ClCompile Include="src\events\SDL_displayevents.c" />
+    <ClCompile Include="src\events\SDL_dropevents.c" />
+    <ClCompile Include="src\events\SDL_events.c" />
+    <ClCompile Include="src\events\SDL_eventwatch.c" />
+    <ClCompile Include="src\events\SDL_keyboard.c" />
+    <ClCompile Include="src\events\SDL_keymap.c" />
+    <ClCompile Include="src\events\SDL_mouse.c" />
+    <ClCompile Include="src\events\SDL_pen.c" />
+    <ClCompile Include="src\events\SDL_quit.c" />
+    <ClCompile Include="src\events\SDL_touch.c" />
+    <ClCompile Include="src\events\SDL_windowevents.c" />
+    <ClCompile Include="src\io\SDL_iostream.c" />
+    <ClCompile Include="src\filesystem\windows\SDL_sysfilesystem.c" />
+    <ClCompile Include="src\haptic\dummy\SDL_syshaptic.c" />
+    <ClCompile Include="src\haptic\SDL_haptic.c" />
+    <ClCompile Include="src\haptic\windows\SDL_dinputhaptic.c" />
+    <ClCompile Include="src\haptic\windows\SDL_windowshaptic.c" />
+    <ClCompile Include="src\haptic\hidapi\SDL_hidapihaptic.c" />
+    <ClCompile Include="src\haptic\hidapi\SDL_hidapihaptic_lg4ff.c" />
+    <ClCompile Include="src\hidapi\SDL_hidapi.c" />
+    <ClCompile Include="src\joystick\controller_type.c" />
+    <ClCompile Include="src\joystick\dummy\SDL_sysjoystick.c" />
+    <ClCompile Include="src\joystick\gdk\SDL_gameinputjoystick.cpp" />
+    <ClCompile Include="src\joystick\hidapi\SDL_hidapijoystick.c" />
+    <ClCompile Include="src\joystick\hidapi\SDL_hidapi_8bitdo.c" />
+    <ClCompile Include="src\joystick\hidapi\SDL_hidapi_flydigi.c" />
+    <ClCompile Include="src\joystick\hidapi\SDL_hidapi_combined.c" />
+    <ClCompile Include="src\joystick\hidapi\SDL_hidapi_gamecube.c" />
+    <ClCompile Include="src\joystick\hidapi\SDL_hidapi_gip.c" />
+    <ClCompile Include="src\joystick\hidapi\SDL_hidapi_luna.c" />
+    <ClCompile Include="src\joystick\hidapi\SDL_hidapi_ps3.c" />
+    <ClCompile Include="src\joystick\hidapi\SDL_hidapi_ps4.c" />
+    <ClCompile Include="src\joystick\hidapi\SDL_hidapi_ps5.c" />
+    <ClCompile Include="src\joystick\hidapi\SDL_hidapi_rumble.c" />
+    <ClCompile Include="src\joystick\hidapi\SDL_hidapi_shield.c" />
+    <ClCompile Include="src\joystick\hidapi\SDL_hidapi_sinput.c" />
+    <ClCompile Include="src\joystick\hidapi\SDL_hidapi_stadia.c" />
+    <ClCompile Include="src\joystick\hidapi\SDL_hidapi_steam.c" />
+    <ClCompile Include="src\joystick\hidapi\SDL_hidapi_steam_hori.c" />
+    <ClCompile Include="src\joystick\hidapi\SDL_hidapi_steam_triton.c" />
+    <ClCompile Include="src\joystick\hidapi\SDL_hidapi_steamdeck.c" />
+    <ClCompile Include="src\joystick\hidapi\SDL_hidapi_switch.c" />
+    <ClCompile Include="src\joystick\hidapi\SDL_hidapi_switch2.c" />
+    <ClCompile Include="src\joystick\hidapi\SDL_hidapi_wii.c" />
+    <ClCompile Include="src\joystick\hidapi\SDL_hidapi_xbox360.c" />
+    <ClCompile Include="src\joystick\hidapi\SDL_hidapi_xbox360w.c" />
+    <ClCompile Include="src\joystick\hidapi\SDL_hidapi_xboxone.c" />
+    <ClCompile Include="src\joystick\hidapi\SDL_hidapi_lg4ff.c" />
+    <ClCompile Include="src\joystick\hidapi\SDL_hidapi_zuiki.c" />
+    <ClCompile Include="src\joystick\hidapi\SDL_report_descriptor.c" />
+    <ClCompile Include="src\joystick\SDL_gamepad.c" />
+    <ClCompile Include="src\joystick\SDL_joystick.c" />
+    <ClCompile Include="src\joystick\SDL_steam_virtual_gamepad.c" />
+    <ClCompile Include="src\joystick\virtual\SDL_virtualjoystick.c" />
+    <ClCompile Include="src\joystick\windows\SDL_dinputjoystick.c" />
+    <ClCompile Include="src\joystick\windows\SDL_rawinputjoystick.c" />
+    <ClCompile Include="src\joystick\windows\SDL_windowsjoystick.c" />
+    <ClCompile Include="src\joystick\windows\SDL_windows_gaming_input.c" />
+    <ClCompile Include="src\joystick\windows\SDL_xinputjoystick.c" />
+    <ClCompile Include="src\libm\s_modf.c" />
+    <ClCompile Include="src\loadso\windows\SDL_sysloadso.c" />
+    <ClCompile Include="src\locale\SDL_locale.c" />
+    <ClCompile Include="src\locale\windows\SDL_syslocale.c" />
+    <ClCompile Include="src\misc\SDL_libusb.c" />
+    <ClCompile Include="src\misc\SDL_url.c" />
+    <ClCompile Include="src\misc\windows\SDL_sysurl.c" />
+    <ClCompile Include="src\power\SDL_power.c" />
+    <ClCompile Include="src\power\windows\SDL_syspower.c" />
+    <ClCompile Include="src\render\SDL_render.c" />
+    <ClCompile Include="src\render\SDL_render_unsupported.c" />
+    <ClCompile Include="src\render\SDL_yuv_sw.c" />
+    <ClCompile Include="src\SDL.c" />
+    <ClCompile Include="src\SDL_assert.c" />
+    <ClCompile Include="src\SDL_error.c" />
+    <ClCompile Include="src\SDL_hashtable.c" />
+    <ClCompile Include="src\SDL_hints.c" />
+    <ClCompile Include="src\SDL_list.c" />
+    <ClCompile Include="src\SDL_log.c" />
+    <ClCompile Include="src\SDL_properties.c" />
+    <ClCompile Include="src\SDL_utils.c" />
+    <ClCompile Include="src\sensor\dummy\SDL_dummysensor.c" />
+    <ClCompile Include="src\sensor\SDL_sensor.c" />
+    <ClCompile Include="src\sensor\windows\SDL_windowssensor.c" />
+    <ClCompile Include="src\stdlib\SDL_crc16.c" />
+    <ClCompile Include="src\stdlib\SDL_crc32.c" />
+    <ClCompile Include="src\stdlib\SDL_getenv.c" />
+    <ClCompile Include="src\stdlib\SDL_iconv.c" />
+    <ClCompile Include="src\stdlib\SDL_malloc.c" />
+    <ClCompile Include="src\stdlib\SDL_memcpy.c" />
+    <ClCompile Include="src\stdlib\SDL_memmove.c" />
+    <ClCompile Include="src\stdlib\SDL_memset.c" />
+    <ClCompile Include="src\stdlib\SDL_mslibc.c" />
+    <ClCompile Include="src\stdlib\SDL_murmur3.c" />
+    <ClCompile Include="src\stdlib\SDL_qsort.c" />
+    <ClCompile Include="src\stdlib\SDL_random.c" />
+    <ClCompile Include="src\stdlib\SDL_stdlib.c" />
+    <ClCompile Include="src\stdlib\SDL_string.c" />
+    <ClCompile Include="src\stdlib\SDL_strtokr.c" />
+    <ClCompile Include="src\thread\generic\SDL_syscond.c" />
+    <ClCompile Include="src\thread\generic\SDL_sysrwlock.c" />
+    <ClCompile Include="src\thread\SDL_thread.c" />
+    <ClCompile Include="src\thread\windows\SDL_syscond_cv.c" />
+    <ClCompile Include="src\thread\windows\SDL_sysmutex.c" />
+    <ClCompile Include="src\thread\windows\SDL_sysrwlock_srw.c" />
+    <ClCompile Include="src\thread\windows\SDL_syssem.c" />
+    <ClCompile Include="src\thread\windows\SDL_systhread.c" />
+    <ClCompile Include="src\thread\windows\SDL_systls.c" />
+    <ClCompile Include="src\timer\SDL_timer.c" />
+    <ClCompile Include="src\timer\windows\SDL_systimer.c" />
+    <ClCompile Include="src\time\SDL_time.c" />
+    <ClCompile Include="src\time\windows\SDL_systime.c" />
+    <ClCompile Include="src\tray\SDL_tray_utils.c" />
+    <ClCompile Include="src\video\dummy\SDL_nullevents.c" />
+    <ClCompile Include="src\video\dummy\SDL_nullframebuffer.c" />
+    <ClCompile Include="src\video\dummy\SDL_nullvideo.c" />
+    <ClCompile Include="src\video\SDL_blit.c" />
+    <ClCompile Include="src\video\SDL_blit_0.c" />
+    <ClCompile Include="src\video\SDL_blit_1.c" />
+    <ClCompile Include="src\video\SDL_blit_A.c" />
+    <ClCompile Include="src\video\SDL_blit_auto.c" />
+    <ClCompile Include="src\video\SDL_blit_copy.c" />
+    <ClCompile Include="src\video\SDL_blit_N.c" />
+    <ClCompile Include="src\video\SDL_blit_slow.c" />
+    <ClCompile Include="src\video\SDL_bmp.c" />
+    <ClCompile Include="src\video\SDL_clipboard.c" />
+    <ClCompile Include="src\video\SDL_egl.c" />
+    <ClCompile Include="src\video\SDL_fillrect.c" />
+    <ClCompile Include="src\video\SDL_pixels.c" />
+    <ClCompile Include="src\video\SDL_rect.c" />
+    <ClCompile Include="src\video\SDL_RLEaccel.c" />
+    <ClCompile Include="src\video\SDL_rotate.c" />
+    <ClCompile Include="src\video\SDL_stb.c" />
+    <ClCompile Include="src\video\SDL_stretch.c" />
+    <ClCompile Include="src\video\SDL_surface.c" />
+    <ClCompile Include="src\video\SDL_video.c" />
+    <ClCompile Include="src\video\SDL_video_unsupported.c" />
+    <ClCompile Include="src\video\SDL_vulkan_utils.c" />
+    <ClCompile Include="src\video\SDL_yuv.c" />
+    <ClCompile Include="src\video\yuv2rgb\yuv_rgb_lsx.c" />
+    <ClCompile Include="src\video\yuv2rgb\yuv_rgb_sse.c" />
+    <ClCompile Include="src\video\yuv2rgb\yuv_rgb_std.c" />
+    <ClCompile Include="src\tray\dummy\SDL_tray.c" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <!-- The objects' folders (the compiler makes no folder of its own). -->
+  <Target Name="SDLObjectFolders" BeforeTargets="ClCompile">
+    <MakeDir Directories="@(ClCompile->'$(IntDir)%(RelativeDir)')" />
+  </Target>
+</Project>

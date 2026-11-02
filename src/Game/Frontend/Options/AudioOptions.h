@@ -20,6 +20,8 @@ public:
 private:
     // One player's event; true when a window was asked for (the frame ends).
     bool updatePlayer(OptionsHost& host, ui::Screen& s, uint32_t event);
+    // The EAX row's value: ON or the game's OFF.
+    void showEax(OptionsHost& host, ui::Screen& s) const;
 
     std::string m_shownButton;  // +0x18: the highlighted button
     float m_sfxHeard = 0.0f;     // +0x4C: the effects' volume last heard ("Warning")
@@ -30,6 +32,9 @@ private:
     float m_sfx = 0.0f;          // +0x5C
     float m_speech = 0.0f;       // +0x64
     uint32_t m_speakerKept = 0;  // +0x68
+    // The fixed build's EAX row: on now, as at enter (for BACK).
+    bool m_eax = false;
+    bool m_eaxKept = false;
 };
 
 }  // namespace oj::frontend

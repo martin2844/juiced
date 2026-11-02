@@ -35,7 +35,7 @@ void CarBuy::enter(GarageHost& host, ui::Screen& s) {
         }
         if (host.engine() != nullptr && garage.car(host) != nullptr) {
             garage.view = std::make_unique<scene::GarageView>(*host.engine(), s, "Frame_Car3D", data->catalogue);
-            garage.view->enterBuy(*garage.car(host), offer, buying, host.viewLoading());
+            garage.view->enterBuy(*garage.car(host), offer, buying, gameRandom());
         }
     }
     g_statsCar = garage.car(host);

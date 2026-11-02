@@ -26,6 +26,12 @@ private:
 
 // The generator every part of the game draws from.
 CrtRandom& gameRandom();
+// The loading thread's rand() (the C runtime's state is the thread's): one thread for the whole game (0x0059AAD0 makes
+// it once), so its state goes on from 1 across its jobs: the windows the front end keeps (at the start, 0x0046AF80,
+// and as the front end is made after a race), the car views' loads, the races' loads.
+CrtRandom& loadingRandom();
+// The calling thread's rand(): the loading thread's on it (Core/Base/LoadingThread), else the game's.
+CrtRandom& threadRandom();
 // [0x0079E898]: the count rand() is seeded with in several places, one for the whole game: the transport's random
 // bytes and the grid's shuffle, the race director's cuts, the matchmaking's session ids and cookies.
 uint32_t& seedCount();

@@ -2,7 +2,9 @@
 
 #include "Game/Frontend/Saves/Driver.h"
 
+#include "Core/Base/GameFiles.h"
 #include "Core/Data/GameTexts.h"
+#include "Core/Data/Language.h"
 #include "Core/Network/GameSpy/GameSpyUser.h"
 #include "Core/Network/Matchmaking.h"
 #include "Core/Data/JetTexts.h"
@@ -26,8 +28,7 @@ void Driver::enter(SaveHost& host, ui::Screen& s) {
     GameData* data = host.gameData();
     const TextTable& texts = host.gameTexts();
     if (host.jetTexts().size() == 0) {
-        host.jetTexts().load(std::filesystem::path("scripts") / ("jettext" + std::string(1, host.language().controlsLetter) +
-                                                           ".txt"));
+        host.jetTexts().load(jetTextFile(GameFiles(std::filesystem::current_path()), host.language()));
     }
     s.setText("TITLE", texts.at(kTextProfileManager));
     clearList(host, s);

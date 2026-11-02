@@ -164,6 +164,8 @@ public:
     render::IRenderDevice* hudDevice = nullptr;
     const Language* hudLanguage = nullptr;
     TextTable* hudTexts = nullptr;
+    // The race's 3D engine (load's): the pause's graphics options make its programs again (Frontend::setEffectsScene).
+    scene::Engine* raceScene = nullptr;
     UiSound raceUi;          // the race front end's manager's sounds (0x004563E0: audio/ui/race)
     float raceFade = 0.0f;   // the race front end's black over the screen ([[G+0x3C]+8]+0x10C)
     // The race front end's +0x1C, +0x20: the FF manager's channels 0 and 1 had a device as it was made (0x004568C5;

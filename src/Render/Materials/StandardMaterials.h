@@ -76,6 +76,7 @@ public:
         return true;
     }
     void setup(uint32_t) override { m_r.device().setRenderState(RenderState::FogEnable, 1); }
+    const GameTexture* cutout() const override { return m_texture; }
     Program* program() override {
         if (m_r.lightTile == nullptr) return m_noShadow;
         return m_r.night ? m_night : m_shadow;
@@ -255,6 +256,7 @@ public:
         m_texture = texture;
         return true;
     }
+    const GameTexture* cutout() const override { return m_texture; }
     Program* program() override { return m_program; }
     void bind(uint32_t pass) override {
         if (m_program != nullptr) m_program->beginPass(pass);

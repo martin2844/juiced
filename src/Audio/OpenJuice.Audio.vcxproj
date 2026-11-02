@@ -38,14 +38,20 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\build\OpenJuice.props" />
   </ImportGroup>
+  <!-- The fixed build's output: OpenAL Soft's and the WMA decoder's headers (their libraries linked by the programs). -->
   <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>..\..\third_party\openal-soft-1.25.2\include;..\..\external\JuicedConfigExt\src\WmaDecoder;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
     <Lib>
-      <AdditionalDependencies>dsound.lib;dxguid.lib;strmiids.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dxguid.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Bank.h" />
+    <ClInclude Include="OpenAL\OpenAlOutput.h" />
     <ClInclude Include="Eax.h" />
+    <ClInclude Include="Output.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="SoundSystem.h" />
     <ClInclude Include="Stream.h" />
@@ -53,6 +59,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Bank.cpp" />
+    <ClCompile Include="OpenAL\OpenAlOutput.cpp" />
+    <ClCompile Include="Output.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="SoundSystem.cpp" />
     <ClCompile Include="Stream.cpp" />

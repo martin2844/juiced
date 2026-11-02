@@ -6,6 +6,7 @@
 #include "Core/Base/GameFiles.h"
 #include "Core/Base/Log.h"
 #include "Core/Base/X87.h"
+#include "Render/Display.h"
 
 #include <cmath>
 #include <filesystem>
@@ -138,7 +139,10 @@ std::string Screen::fontOf(const std::string& element) const {
 }
 
 Screen::Font* Screen::font(const std::string& name) {
-    const uint32_t cls = resolutionClass(m_device.width(), m_device.height());
+    // The fixed build's wide screens: the class of the 4:3 frame the windows are laid out in.
+    const render::Display d = render::display(m_device.width(), m_device.height());
+    const uint32_t cls =
+        resolutionClass(static_cast<uint32_t>(d.frameW + 0.5f), static_cast<uint32_t>(d.frameH + 0.5f));
     const std::string key = name + "_" + std::to_string(cls);
     const auto found = m_fonts.find(key);
     if (found != m_fonts.end()) {
@@ -208,7 +212,7 @@ std::wstring Screen::fitText(const std::string& element, const std::wstring& tex
     Font* f = fp != nullptr && !fp->values.empty() ? font(fp->values[0]) : nullptr;
     if (f == nullptr) return text;
     const State& s = m_states[static_cast<size_t>(i)];
-    const auto most = x87::chop(s.w * static_cast<float>(m_device.width()));
+    const auto most = x87::chop(s.w * placement(static_cast<size_t>(i)).sx);
     if (static_cast<int>(textWidth(*f, text)) <= most) return text;
     std::wstring kept = text;
     std::wstring shown;
@@ -240,21 +244,21 @@ std::wstring Screen::fitTextEnd(const std::string& element, const std::wstring& 
 int Screen::pixelWidth(const std::string& element) const {
     const int i = indexOf(element);
     if (i < 0) return -1;
-    const float w = m_states[static_cast<size_t>(i)].w * static_cast<float>(m_device.width()) * 1.0f;
+    const float w = m_states[static_cast<size_t>(i)].w * placement(static_cast<size_t>(i)).sx * 1.0f;
     return static_cast<int>(w);
 }
 
 int Screen::pixelWidthNearest(const std::string& element) const {
     const int i = indexOf(element);
     if (i < 0) return -1;
-    const float w = m_states[static_cast<size_t>(i)].w * static_cast<float>(m_device.width()) * 1.0f;
+    const float w = m_states[static_cast<size_t>(i)].w * placement(static_cast<size_t>(i)).sx * 1.0f;
     return static_cast<int>(std::nearbyint(w));
 }
 
 void Screen::drawFreeText(const std::string& fontName, const std::wstring& text, float x, float y, uint32_t colour) {
     Font* f = font(fontName);
     if (f == nullptr) return;
-    drawString(f, colour, text, x, y + static_cast<float>(f->ascent));
+    drawString(f, colour, text, x, y);
 }
 
 float Screen::freeTextWidth(const std::string& fontName, const std::wstring& text) {
@@ -442,7 +446,7 @@ void Screen::drawText(const Element& e, State& s, bool highlighted) {
     }
     // Characters are added to the line; CR is dropped, LF ends the line, and once the line is wider than the box it
     // is cut at its last space.
-    const int boxWidth = static_cast<int>(e.w * static_cast<float>(m_device.width()));
+    const int boxWidth = static_cast<int>(e.w * placementOf(s).sx);
     float baseline = y0 + lineHeight;
     if (s.text.autoScroll) {
         baseline = y1 + lineHeight;

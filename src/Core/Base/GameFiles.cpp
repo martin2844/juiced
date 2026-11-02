@@ -1,6 +1,7 @@
 #include "Core/Base/GameFiles.h"
 #include "Core/Base/CasePath.h"
 
+#include "Core/Base/LoadingThread.h"
 #include "Core/Formats/DatArchive.h"
 
 #include <fstream>
@@ -183,6 +184,8 @@ bool GameFiles::exists(const std::filesystem::path& relative) const {
 }
 
 std::optional<std::vector<std::byte>> GameFiles::read(const std::filesystem::path& relative) const {
+    // A wait of the loading job's: a frame waiting for the turn takes it (FrameTurns).
+    frameTurns().yield();
     if (auto data = readAt(m_root, relative)) return data;
     if (const auto other = localized(relative)) return readAt(m_root, *other);
     return std::nullopt;

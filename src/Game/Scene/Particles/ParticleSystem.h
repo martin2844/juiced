@@ -46,6 +46,10 @@ public:
     // the identity and c18 .. c21 the camera's (its slot 0x4C), CULLMODE none, the declaration, the FRAMEBUFFER
     // emitters' frames (0x00504290) and the default cull again.
     void drawFramebuffer(render::Camera& camera);
+    // The fixed build's heat haze (Game/Scene/HeatHaze): after the particles of a camera view, at the game's shaders
+    // 2.0 and up, the FRAMEBUFFER emitters' frames (the stock steps them in drawFramebuffer alone, which nothing
+    // calls) drawn into the device's heat haze pass; nothing when the device has no such pass.
+    void drawHeatHaze(render::Camera& camera);
     // Slot 1 (0x005041F0) from the view's end with the screen's smears (0x005224E0): the view's corners kept (+0x100
     // .. +0x10C) and each SMEAR emitter's frame.
     void drawSmears(float x0, float y0, float x1, float y1, render::Camera& camera);

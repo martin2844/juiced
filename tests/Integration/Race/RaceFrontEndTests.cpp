@@ -7,6 +7,7 @@
 
 #include "Core/Data/Language.h"
 #include "Game/Race/FrontEnd/RaceFrontEnd.h"
+#include "Game/Scene/Scene3d.h"
 
 #include <filesystem>
 #include <string>
@@ -136,4 +137,17 @@ OJ_INTEGRATION_TEST(RaceFrontEnd, UnknownWindowIsShownAsOther) {
     f.fe.windowsFrame(0.03f);
     check(f.fe.window.id == RaceWindowId::Other && f.fe.window.name == "no_such_window" && f.fe.screenWindow == nullptr,
           "an unknown window: shown by its name, nothing made");
+}
+
+// The race pause's graphics options make the race's programs again as their ADVANCED page is left (the car paint,
+// the world light, the headlights; the user 2026-10-27: HEADLIGHTS HI to MED in a race left a light on the road where
+// it was): their front end has the race's 3D engine for its effects.
+OJ_INTEGRATION_TEST(RaceFrontEnd, PauseOptionsMakeTheRaceProgramsAgain) {
+    oj::test::InGameFolder folder;
+    if (!folder.valid()) return;
+    FrontEnd f;
+    oj::scene::Engine engine(f.device, oj::test::sharedGameData().tables, 3, false);
+    check(f.fe.raceOptions().effectsScene() == nullptr, "no race: no engine for the effects");
+    f.fe.raceScene = &engine;
+    check(f.fe.raceOptions().effectsScene() == &engine, "the race's engine for the pause's effects");
 }

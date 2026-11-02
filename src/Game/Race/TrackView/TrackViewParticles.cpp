@@ -2,6 +2,9 @@
 
 #include "Game/Race/TrackView/TrackView.h"
 
+#include "Game/Scene/HeatHaze.h"
+#include "Game/Scene/Particles/SmokeEmitter.h"
+
 #include <bit>
 #include <cmath>
 
@@ -179,7 +182,28 @@ void TrackView::flameParticles(RaceSlot& s) {
         }
     }
     if (oj::scene::Emitter* haze = p.heatHaze.get(); haze != nullptr) {
-        haze->local = {0.0f, 70.0f, 180.0f, haze->local[3]};
+        // The fixed build's heat haze (JuicedConfigExt's HeatHaze): the emitter at the end of the car's pipe (between
+        // the two of a double exhaust), moving with the car, emitting by the time; without a pipe the game's place.
+        auto* smoke = heatHaze ? dynamic_cast<oj::scene::SmokeEmitter*>(haze) : nullptr;
+        oj::scene::haze::Vec3 local{};
+        if (smoke != nullptr) {
+            const oj::Mat34* pipe = s.exhaustNodes[0] != nullptr ? &s.exhaustNodes[0]->world() : nullptr;
+            const oj::Mat34* other = s.exhaustNodes[1] != nullptr ? &s.exhaustNodes[1]->world() : nullptr;
+            smoke->exhaust = smoke->node != nullptr
+                                 ? oj::scene::haze::placeAtExhaust(smoke->node->world(), pipe, other,
+                                                                   s.body ? s.body->throttle : 0.0f, local)
+                                 : oj::scene::haze::Exhaust{};
+        }
+        if (smoke != nullptr && smoke->exhaust.valid) {
+            smoke->local = {local[0], local[1], local[2], haze->local[3]};
+            if (smoke->motion.time >= 0.0) {
+                smoke->velocity = {smoke->motion.velocity[0], smoke->motion.velocity[1], smoke->motion.velocity[2], 0.0f};
+            }
+            smoke->noFollow = true;
+            smoke->emitByTime(oj::scene::haze::ownInterval(smoke->motion.speed));
+        } else {
+            haze->local = {0.0f, 70.0f, 180.0f, haze->local[3]};
+        }
         haze->ground = s.car.lowest;
     }
 }

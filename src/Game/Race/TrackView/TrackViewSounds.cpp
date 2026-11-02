@@ -33,16 +33,25 @@ void TrackView::makeCarSounds() {
         }
     }
     const oj::GameFiles files(std::filesystem::current_path());
-    std::vector<std::string> banks;
+    // 0x00498190: the banks' names in the cars' order, each counted by its cars; each bank's sets with twice its
+    // cars' instances (0x0049835D).
+    std::vector<std::pair<std::string, uint32_t>> banks;
     for (const std::unique_ptr<RaceSlot>& s : cars) {
         if (s->record.def == nullptr) continue;
         std::string name = s->record.def->engineSound;
         if (s->record.mods[oj::kExhaust] != 0xFF) name += "b";
         bool known = false;
-        for (const std::string& b : banks) known = known || b == name;
-        if (!known) banks.push_back(name);
+        for (auto& [b, count] : banks) {
+            if (b == name) {
+                ++count;
+                known = true;
+            }
+        }
+        if (!known) banks.emplace_back(name, 1);
     }
-    for (const std::string& name : banks) addSoundBank(name.c_str(), std::filesystem::path("cars") / name);
+    for (const auto& [name, count] : banks) {
+        addSoundBank(name.c_str(), std::filesystem::path("cars") / name, count * 2);
+    }
     oj::audio::Player& p = sound3d->player();
     const bool wet = gameData != nullptr && gameData->race.weather == 2;
     for (std::unique_ptr<RaceSlot>& s : cars) {
@@ -307,14 +316,14 @@ float TrackView::effectsVolume() const {
     return std::bit_cast<float>(v);
 }
 
-void TrackView::addSoundBank(const char* name, const std::filesystem::path& folder) {
+void TrackView::addSoundBank(const char* name, const std::filesystem::path& folder, uint32_t instances) {
     if (!sound3d) return;
     oj::audio::Player& p = sound3d->player();
     for (size_t i = 0; i < p.banks(); ++i) {
         if (_stricmp(p.bank(static_cast<int>(i))->name().c_str(), name) == 0) return;
     }
     const oj::GameFiles files(std::filesystem::current_path());
-    if (auto bank = oj::audio::Bank::load(files, std::filesystem::path("audio") / folder, name, nullptr)) {
+    if (auto bank = oj::audio::Bank::load(files, std::filesystem::path("audio") / folder, name, nullptr, instances)) {
         p.addBank(bank.get());
         sound3dBanks.push_back(std::move(bank));
     }

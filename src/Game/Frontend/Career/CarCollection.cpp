@@ -140,7 +140,7 @@ void CarCollection::enter(CareerHost& host, ui::Screen& s) {
     }
     const auto dollars = [&](int32_t value) {
         const std::string n = groupThousands(value, host.language().index);
-        return toWide(host.language().index == 1 ? n + " $" : "$" + n);
+        return toWide(host.language().index == kFrench ? n + " $" : "$" + n);
     };
     s.setText("SpentValue", dollars(static_cast<int32_t>(p.moneySpent)));
     s.setText("WinningValue", dollars(static_cast<int32_t>(p.prizesWon)));

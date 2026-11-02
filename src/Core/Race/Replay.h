@@ -149,6 +149,17 @@ public:
     // read).
     bool loadFrom(const save::SaveSource& source);
 
+    // The fixed build: a replay of Acclaim's Xbox builds (of 05 May and 04 August 2004) made the PC's as it is read.
+    // Their replay.hdr is the PC's (the 100-byte header, the cars' stream after it) and their blocks hold the same 240
+    // frames, 32 bytes each (0x1E0C a block: the PC's 33 without the last byte, the horn and the engine sound); the
+    // cars' records are shorter (xboxCar). A replay is the Xbox builds' when the header's bytes are whole blocks of
+    // theirs and not of the PC's and each car's record is 196 bytes (May) or 464 (August). `dat` the blocks as read:
+    // made the PC's blocks (the engine sound 0.5, no horn), the cars' stream the PC's records, the header's sizes
+    // with them. False (nothing changed) for a replay of the PC. The build of 13 July 2004 (PAL) writes the August
+    // build's replays: the same header and blocks, its car writer (0x00080B00) the August's (0x00082380) write for
+    // write.
+    static bool fromXbox(ReplayHeader& header, std::vector<uint8_t>& carsStream, std::vector<uint8_t>& dat);
+
     ReplayHeader header;
     std::vector<uint8_t> buffer;   // +0xD0C ([0x0075ECE0]): 48 blocks
     uint32_t written = 0;          // +0x08: blocks

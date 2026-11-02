@@ -301,24 +301,30 @@ public:
         m_r.bindTexture(m_texture, 0);
         if (m_program != nullptr) m_program->beginPass(pass);
         m_r.device().setVertexShaderConstantF(52, m_colours, 4);
+        float sway[16];
+        swayConstants(sway);
+        m_r.device().setVertexShaderConstantF(56, sway, 4);
+    }
+    const GameTexture* cutout() const override { return m_texture; }
+    bool swayConstants(float out[16]) const override {
         // Stock problem: w of c56 .. c59 are values left on the stack; 0 here.
-        float sway[16] = {};
         for (int i = 0; i < 4; ++i) {
             for (int j = 0; j < 3; ++j) {
                 const int k = i * 3 + j;
                 const float angle = m_r.time * m_rate[k] + m_phase[k];
-                sway[i * 4 + j] =
+                out[i * 4 + j] =
                     static_cast<float>(std::sin(static_cast<double>(angle)) * static_cast<double>(m_amplitude[k]));
             }
+            out[i * 4 + 3] = 0.0f;
         }
-        m_r.device().setVertexShaderConstantF(56, sway, 4);
+        return true;
     }
 
 private:
     // 0x0052A840: per sway vector the amplitudes (low + (high - low) x r / 32767), the speeds (low + r x range /
     // 32767, the range kept as a float) and the phases (r x 2 pi / 32767), nine values each.
     void sway() {
-        CrtRandom& random = m_r.materialRandom != nullptr ? *m_r.materialRandom : gameRandom();
+        CrtRandom& random = m_r.materialRandom != nullptr ? *m_r.materialRandom : threadRandom();
         const auto range = static_cast<float>(static_cast<double>(m_speed[1]) - m_speed[0]);
         const double k = kRandomScale;
         for (int i = 0; i < 4; ++i) {
@@ -453,6 +459,13 @@ public:
         m_r.device().setRenderState(RenderState::FogEnable, 1);
     }
     Program* program() override { return m_program; }
+    bool puddles(const GameTexture*& texture, const GameTexture*& noise, float tile[2]) const override {
+        texture = m_texture;
+        noise = m_noise;
+        tile[0] = m_tile[0];
+        tile[1] = m_tile[1];
+        return m_texture != nullptr && m_noise != nullptr;
+    }
     void bind(uint32_t) override {
         m_r.bindTexture(m_texture, 0);
         if (m_r.reflection != nullptr) {

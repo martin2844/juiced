@@ -11,6 +11,38 @@
 
 namespace oj {
 
+// The fixed build's effects: the registry's values of JuicedConfigExt's settings program (Game/Platform/Settings), read
+// at the start, changed in the graphics options' ADVANCED page and kept in the registry again (docs/fixes.md Added).
+struct FixedEffects {
+    uint32_t carPaint = 0;              // CarPaint
+    // WorldLight: MED the stock's (0), HI the sky light by the surface's direction (1), ULTRA (2) the same for now.
+    uint32_t worldLight = 0;
+    // Sky: MED the stock's clouds (0), HI the procedural clouds' layer (1), ULTRA the procedural clouds as a volume (2)
+    // (Game/Scene/Clouds), their shadows on the ground.
+    uint32_t sky = 0;
+    uint32_t headlights = 0;            // Headlights: the stock's (0), the fixed build's (1), with their shadows (2)
+    uint32_t heatHaze = 0;              // HeatHaze
+    uint32_t heatHazeStrength = 50;     // HeatHazeStrength: 0 .. 50 % (the ADVANCED page's ten steps)
+    // The picture's anti-aliasing and texture filter (Render/RenderDevice's setAntialiasing and setTextureFilter).
+    uint32_t msaa = 0;                  // MSAA: the samples, 0 off
+    uint32_t smaa = 0;                  // SMAA
+    uint32_t textureFilter = 5;         // TextureFilter: 0 the game's, 1 trilinear, 2 .. 5 anisotropic 2x .. 16x
+    // Reflections: 1 ULTRA over the stock's reflections HI (the graphics options' REFLECTION row): the car the camera
+    // looks at reflects the other cars near it (Game/Scene/TrackScene's cars' cube).
+    uint32_t reflections = 0;
+    // LightFlares: 1 CUSTOM over the stock's LIGHT FLARES on (the graphics options' GLOW row): the glow with the
+    // exposure at most kCustomExposure (Game/Scene/PostEffects; the stock's goes to 2 and overexposes the night).
+    uint32_t lightFlares = 0;
+    // AmbientOcclusion: 1 the fixed build's SSAO over the view (the graphics options' AMBIENT OCCLUSION row's HI;
+    // Game/Scene/AmbientOcclusion's depth serves the other passes either way).
+    uint32_t ambientOcclusion = 0;
+    // Shadows: the levels of the SHADOWS row above the stock's own, 1 the cars' shadows from the street lamps (HI), 2
+    // with the sun's cascades (ULTRA) (Game/Scene/LampShadows, SunShadows; the stock's SHADOWS off takes them with it).
+    uint32_t shadows = 0;
+
+    bool operator==(const FixedEffects&) const = default;
+};
+
 struct GraphicsConfig {
     uint32_t width = 0;                      // +0x00
     uint32_t height = 0;                     // +0x04
@@ -33,7 +65,7 @@ struct GraphicsConfig {
     int32_t reflections = 0;                 // +0x4C: 0 .. 3
     float detail = 0.0f;                     // +0x50: 0 .. 1
     int32_t motionBlur = 0;                  // +0x54
-    int32_t glow = 0;                        // +0x58: the fixed build's percent (glowStrength)
+    int32_t glow = 0;                        // +0x58
     int32_t depthOfField = 0;                // +0x5C
     float brightness = 0.0f;                 // +0x60: 0 .. 1
     int32_t noShaders = 0;                   // +0x64: the adapter has no shaders
@@ -42,10 +74,44 @@ struct GraphicsConfig {
     float lodBias = 0.0f;                    // +0x70 ([0x0079E670]): the detail x 1.5 + 0.66
     uint32_t vendor = 0;                     // +0x74: the adapter's vendor id
     uint32_t device = 0;                     // +0x78: the adapter's device id
+    int32_t fov = 0;                         // the fixed build's race view, reg.cf1's eighth value (fovScale)
+    FixedEffects effects;  // the fixed build's
 };
+
+// The sky light's shaping of WORLD LIGHT HI and ULTRA (JuicedConfigExt's WorldLightStrength / 100: sky 0.2 and side
+// 0.15 of the shaders' literals times this; the registry's WorldLightStrength not read).
+inline constexpr float kWorldLightShape = 1.5f;
+// The highest exposure of LIGHT FLARES CUSTOM: between OFF (1, no glow) and STOCK (2), a dark picture brightened half as
+// far as the stock's (the user, 2026-10-28: at 1 CUSTOM looked as OFF); a bright one dimmed as the stock's.
+inline constexpr float kCustomExposure = 1.5f;
 
 // The object of the game; made with the defaults of class 3 (0x006C37B0: 0x005A26C0 before any adapter is known).
 GraphicsConfig& graphicsConfig();
+
+// The fixed build's REFLECTIONS ULTRA: the stock's HI (3) with the shaders and the effects' Reflections.
+inline bool ultraReflections(const GraphicsConfig& c) {
+    return c.noShaders == 0 && c.reflections == 3 && c.effects.reflections != 0;
+}
+
+// The fixed build's WORLD LIGHT HI and ULTRA: the street lamps light the cars (TrackScene::setCarLamps, the paint's
+// CarPaint3 through setHeadlights' CarHeadlight; the user, 2026-10-29: this is light, so it belongs to the light's row
+// and not to REFLECTION ULTRA, which it used to hang off).
+inline bool carLampsLit(const GraphicsConfig& c) {
+    return c.noShaders == 0 && c.effects.worldLight >= 1;
+}
+
+// The fixed build's SHADOWS row (the user, 2026-10-29: its own levels, moved to the ADVANCED page): 0 OFF (the stock's
+// off: its silhouettes and none of ours), 1 MED (the stock's silhouettes), 2 HI (with the cars' shadows from the street
+// lamps), 3 ULTRA (with the sun's cascades in place of the baked sun shadow). The stock's own field keeps its 1 and 2
+// (Silhouette, Projector); ours are the levels above it (FixedEffects::shadows, as REFLECTION's ULTRA does).
+inline int shadowLevel(const GraphicsConfig& c) {
+    if (c.noShaders != 0 || c.shadows != 2) return 0;
+    return 1 + static_cast<int>(c.effects.shadows > 2 ? 2 : c.effects.shadows);
+}
+inline void setShadowLevel(GraphicsConfig& c, int level) {
+    c.shadows = level > 0 ? 2 : 1;
+    c.effects.shadows = static_cast<uint32_t>(level > 2 ? 2 : (level > 1 ? 1 : 0));
+}
 
 // 0x005A26C0's class of an adapter: 0 .. 4 (3 for one not listed).
 int graphicsClass(uint32_t vendor, uint32_t device);
@@ -88,11 +154,13 @@ save::RegCf1 graphicsRegCf1(const GraphicsConfig& config);
 // The detail factor of a detail (the graphics options window: x87 at 53 bits).
 float detailFactor(float detail);
 
-// The fixed build's glow strength (its own: the stock glow is on or off): the glow kept as a percent, 0 off, 2 .. 100
-// the percent; 1 (the stock's on, the defaults and a stock reg.cf1) and any other value 50 %. The stock reads any
-// value but 0 as on, so a stock game takes the file as before.
-float glowStrength(int32_t glow);
-// The kept glow of a strength (0 .. 1): the percent, 2 for 1 % (1 is 50 %).
-int32_t glowSetting(float strength);
+// The fixed build's field of view of the race's cameras (its own; the game options' FOV): kept in reg.cf1's eighth
+// value (0 in a stock file, which the stock never reads) as the permille of the stock's view, the tangents of its half
+// angles; 0 the stock's (1); within kFovLeast .. kFovMost.
+inline constexpr float kFovLeast = 0.6f;
+inline constexpr float kFovMost = 1.8f;
+float fovScale(int32_t fov);
+// The kept field of view of a scale (the permille, held within the least and the most).
+int32_t fovSetting(float scale);
 
 }  // namespace oj

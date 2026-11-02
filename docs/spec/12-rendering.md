@@ -322,6 +322,20 @@ and marks it done (`+0x08` 3). A job still on the list can be taken off (`0x0059
 end. The car view's loads also hold a token (`[0x00715C3C]` under the lock `[0x00767DBC]`, 10 ms sleeps while another
 holds it): one car load at a time (`0x00459750`, the parts' load `0x0045AC91`).
 
+The thread is made once for the whole game (`0x0059AAD0`, its flag `[0x0079E8A0]`), and the C runtime's `rand()` is
+the thread's (`_rand`, `0x005CA39C`: the state in the thread's data, 1 at its start): the loading thread's draws go on
+from job to job, apart from the main thread's. They are the models' (four per mesh node) and the swaying materials' of
+the windows the front end keeps (`0x0046AF80`: Angel_City, three mesh nodes, twelve values, in each of the eight
+windows with a SetModel, all kept: 96 at the start; the stock's trace of the main thread's `rand()` has none there), of
+the car views' loads (`0x0045A080`'s job `0x00459730`) and of the races' loads (`0x00461390`: the track, the cars, the
+race front end), and those of the front end made after a race (`0x00461A10`: the kept windows again and the career
+session's end, `0x004A3A40`). The four jobs are all the game queues (`0x0059A930`). What a window's own code loads is
+the main thread's: the city map's routes (`0x0045BB40`), the respect map's territories (`0x004DBE60`), the garage's
+and the showroom's scenes, cars and neon (the windows' enter `0x00436380`, `0x00438150`), a car view's model attached
+after its job (`0x0045A080`'s frames). OpenJuice: `oj::loadingRandom()`, one for the game (`TrackView::loading`, the
+front end's `viewLoading` for the car views' loads, the session's end after a race), and the windows' views take the
+rand() of the thread making the window (`oj::threadRandom()`).
+
 The renderer's queue (`[renderer+0x204]`, its thread id `+0x14`): work on the device from the loading thread is
 queued (`0x0051CF00`, which runs it at once on the main thread; from another it waits while the device is lost,
 `[renderer+0x1D0]`) and the main thread runs it at its frame (`0x00514C96`: one item after another while any are

@@ -11,8 +11,12 @@
 
 namespace oj::frontend {
 
+struct KeyboardSetup;
+
 class NetworkHost : public virtual WindowHost {
 public:
+    // The fixed build's lobby chat: the keyboard window's setup (the front end's; none here).
+    virtual KeyboardSetup* chatKeyboard() { return nullptr; }
     // 0x0046DFE0: the network game's wait of a window at its stage (loading: past the cars' stage the race loads);
     // true when the window is left.
     virtual bool netWait(net::SessionStage stage, bool loading) = 0;

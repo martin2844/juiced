@@ -41,9 +41,10 @@ RaceHud::RaceHud(render::IRenderDevice& device, const Language& language, const 
 
 bool RaceHud::load(const std::string& window, scene::Engine* engine) {
     if (engine != nullptr) {
+        // The views' models draw the rand() of the thread making the window (the race's load's: the loading thread's;
+        // no HUD window of the game has a SetModel).
         m_screen.setView3dFactory([engine](const ui::Element& e) -> std::unique_ptr<ui::View3d> {
-            CrtRandom none;
-            return std::make_unique<scene::View3d>(*engine, e, none);
+            return std::make_unique<scene::View3d>(*engine, e, threadRandom());
         });
     }
     return m_screen.load(window);
@@ -171,9 +172,10 @@ void RaceHud::enter(const HudRace& race) {
         p.lap = find("LAP" + n);
         p.lapNum = find("LAPNUM" + n);
         p.time = find("TIME" + n);
-        // 0x005B1BF0: the time's fonts step by the screen's width x 12 / 640 (0x0071E5B8 x 12 x 0.0015625).
+        // 0x005B1BF0: the time's fonts step by the screen's width x 12 / 640 (0x0071E5B8 x 12 x 0.0015625; the
+        // fixed build's wide screens: the 4:3 frame's width).
         const int advance =
-            static_cast<int>(static_cast<float>(static_cast<int32_t>(s.width()) * 12) * 0.0015625f);
+            static_cast<int>(static_cast<float>(static_cast<int32_t>(s.frameWidth()) * 12) * 0.0015625f);
         if (p.time >= 0) {
             s.setFixedAdvance(p.time, advance);
             s.setFontColour(p.time, dialTextColour);
@@ -367,7 +369,7 @@ void RaceHud::enter(const HudRace& race) {
         if (m_wrTopScore >= 0) s.setHidden(m_wrTopScore, true);
         if (m_wrTopScoreTitle >= 0) s.setHidden(m_wrTopScoreTitle, true);
     }
-    const int advance = static_cast<int>(static_cast<float>(static_cast<int32_t>(s.width()) * 12) * 0.0015625f);
+    const int advance = static_cast<int>(static_cast<float>(static_cast<int32_t>(s.frameWidth()) * 12) * 0.0015625f);
     for (int e : {m_best, m_score, m_combo}) {
         if (e < 0) continue;
         s.setFixedAdvance(e, advance);

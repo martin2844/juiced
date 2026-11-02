@@ -267,7 +267,7 @@ void netGrid(TrackView& view, oj::GameData& data, oj::scene::Engine& engine, oj:
     int32_t made = 0;
     std::vector<oj::net::NetPlayer>& players = session.players();
     for (size_t i = 0; i < players.size(); ++i) {
-        oj::net::NetPlayer& p = players[i];
+        const oj::net::NetPlayer& p = players[i];
         if (p.race.notRacing != 0 || p.race.left != 0) continue;
         auto car = std::make_unique<oj::Car>(oj::makeCar(oj::findCarDef(data.defs, std::string(p.car.name.data()))));
         p.car.apply(*car);
@@ -275,16 +275,18 @@ void netGrid(TrackView& view, oj::GameData& data, oj::scene::Engine& engine, oj:
         oj::Car* raced = car.get();
         view.ownCars.push_back(std::move(car));
         const oj::Spl::GridPoint& at = lines.grid[static_cast<size_t>(std::max(p.race.gridPlace, 0)) % lines.grid.size()];
+        const oj::CarKind kind =
+            p.peer == -1 ? (p.localIndex == 0 ? oj::CarKind::Player : oj::CarKind::Ai)
+                         : (static_cast<int32_t>(i) < race.players ? oj::CarKind::Player : oj::CarKind::Remote);
+        // The loads below give the frames their turns (the load is a job of the loading thread): the session's frame
+        // may take a player out meanwhile, so the player is found by its place again after them.
         auto model = oj::scene::CarModel::load(engine, *raced, data.catalogue, random, false);
         oj::scene::CarModel* shown = view.scene->addCar(std::move(model), at);
         const oj::CarDynamics* dynamics = data.dynamics && raced->def != nullptr ? data.dynamics->of(*raced->def) : nullptr;
         if (dynamics == nullptr) continue;
-        const oj::CarKind kind =
-            p.peer == -1 ? (p.localIndex == 0 ? oj::CarKind::Player : oj::CarKind::Ai)
-                         : (static_cast<int32_t>(i) < race.players ? oj::CarKind::Player : oj::CarKind::Remote);
         const size_t before = view.cars.size();
         view.addCar(*dynamics, *raced, raced, data, shown, at, kind, 0, made, true);
-        if (view.cars.size() > before) p.raceCar = &view.cars.back()->car;
+        if (view.cars.size() > before && i < players.size()) players[i].raceCar = &view.cars.back()->car;
         ++made;
     }
 }
@@ -433,10 +435,9 @@ std::string windowAfterRace(oj::GameData& data) {
         data.careerScreen = oj::CareerScreen::CarSel;
         return "garageload";
     }
-    // The session's end (0x004A3A40): 0x004BA8A0 with the job thread's rand() (a new thread's, from 1) and the route's
-    // record, then 0x004B9E20.
-    oj::CrtRandom job;
-    data.endSession(job);
+    // The session's end (0x004A3A40): 0x004BA8A0 with the loading thread's rand() (the job 0x00461A10 runs there; one
+    // thread for the game, its draws going on from its jobs before) and the route's record, then 0x004B9E20.
+    data.endSession(oj::loadingRandom());
     oj::CalendarEvent* event = oj::currentEvent(career.calendar);
     if (event != nullptr && event->type == oj::EventKind::Showoff) {
         oj::endEvent(career, *event, data.tables);

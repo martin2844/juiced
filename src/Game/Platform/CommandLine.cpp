@@ -100,6 +100,10 @@ LaunchOptions parseCommandLine(const char* commandLine) {
         if (a.rfind("--", 0) == 0) {
             if (a == "--frames" && i + 1 < args.size()) {
                 o.frames = std::strtoull(args[i + 1].c_str(), nullptr, 10);
+            } else if (a == "--caster-pixels" && i + 1 < args.size()) {
+                o.casterPixels = std::strtof(args[i + 1].c_str(), nullptr);
+            } else if (a == "--profile" && i + 1 < args.size()) {
+                o.profile = std::strtoull(args[i + 1].c_str(), nullptr, 10);
             } else if (a == "--screen" && i + 1 < args.size()) {
                 o.screen = args[i + 1];
             } else if (a == "--press" && i + 1 < args.size()) {
@@ -131,6 +135,28 @@ LaunchOptions parseCommandLine(const char* commandLine) {
                 o.saves = args[i + 1];
             } else if (a == "--capture" && i + 1 < args.size()) {
                 o.capture = args[i + 1];
+            } else if (a == "--world-light" && i + 1 < args.size()) {
+                o.worldLight = static_cast<uint32_t>(std::strtoul(args[i + 1].c_str(), nullptr, 10));
+            } else if (a == "--sky" && i + 1 < args.size()) {
+                o.sky = static_cast<uint32_t>(std::strtoul(args[i + 1].c_str(), nullptr, 10));
+            } else if (a == "--headlights" && i + 1 < args.size()) {
+                o.headlights = static_cast<uint32_t>(std::strtoul(args[i + 1].c_str(), nullptr, 10));
+            } else if (a == "--car-paint" && i + 1 < args.size()) {
+                o.carPaint = static_cast<uint32_t>(std::strtoul(args[i + 1].c_str(), nullptr, 10));
+            } else if (a == "--shadow-map" && i + 1 < args.size()) {
+                o.shadowMap = args[i + 1];
+            } else if (a == "--sun-map" && i + 1 < args.size()) {
+                o.sunMap = args[i + 1];
+            } else if (a == "--ao-map" && i + 1 < args.size()) {
+                o.occlusionMap = args[i + 1];
+            } else if (a == "--cube-map" && i + 1 < args.size()) {
+                o.cubeMap = args[i + 1];
+            } else if (a == "--glow" && i + 1 < args.size()) {
+                o.glow = static_cast<uint32_t>(std::strtoul(args[i + 1].c_str(), nullptr, 10));
+            } else if (a == "--user-settings") {
+                o.userSettings = true;
+            } else if (a == "--reflections" && i + 1 < args.size()) {
+                o.reflections = static_cast<uint32_t>(std::strtoul(args[i + 1].c_str(), nullptr, 10));
             } else if (a == "--test") {
                 o.test = true;
             } else if (a == "--players" && i + 1 < args.size()) {
@@ -139,6 +165,10 @@ LaunchOptions parseCommandLine(const char* commandLine) {
                 o.track = args[i + 1];
             } else if (a == "--car" && i + 1 < args.size()) {
                 o.car = args[i + 1];
+            } else if (a == "--cars" && i + 1 < args.size()) {
+                o.cars = std::atoi(args[i + 1].c_str());
+            } else if (a == "--car-ahead" && i + 1 < args.size()) {
+                o.carAhead = args[i + 1];
             } else if (a == "--track-camera" && i + 1 < args.size()) {
                 o.trackCamera = args[i + 1];
             } else if (a == "--net" && i + 1 < args.size()) {

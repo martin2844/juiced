@@ -157,12 +157,12 @@ OJ_INTEGRATION_TEST(CarPhysics, TyreBackwards) {
     check(tyre != nullptr && std::fabs(straight) > 100.0f && std::fabs(straight - steered) < std::fabs(steered) * 0.01f,
           "tyre (fixed): rolling backwards with the wheel straight keeps its longitudinal force");
 }
-// A tyre contact's drive and the traction control (0x004F6050, 0x004F6F30; the fixed build's): by the contact's own
-// wheel. The stock took the wheel at the contact's place in the step's list, so with a wheel in the air the drive slid
-// along the list: a rear-driven 350Z with its front wheels up gave its rear tyres (the list's first two, the front
-// wheels' places) neither the throttle nor the traction control; a front-driven Integra with its front left wheel up
-// drove its rear left tyre (the front right's place) and not its front right.
-OJ_INTEGRATION_TEST(CarPhysics, DriveOfTheContactsOwnWheel) {
+// A tyre contact's drive and the traction control (0x004F6050, 0x004F6F30) as the stock, kept in the fixed build (its
+// testers preferred it): by the wheel at the contact's place in the step's list, so with a wheel in the air the drive
+// slides along the list - a rear-driven 350Z with its front wheels up gives its rear tyres (the list's first two, the
+// front wheels' places) neither the throttle nor the traction control; a front-driven Integra with its front left
+// wheel up drives its rear left tyre (the front right's place) and not its front right.
+OJ_INTEGRATION_TEST(CarPhysics, DriveByTheContactsPlaceInTheList) {
     const oj::test::SharedGameData& g = oj::test::sharedGameData();
     if (!g.carDefsRead) return;
     // The throttle each tyre contact takes (by its wheel's ID, -1 for a wheel up) with the contacts of the wheels down
@@ -219,13 +219,14 @@ OJ_INTEGRATION_TEST(CarPhysics, DriveOfTheContactsOwnWheel) {
                 rearDown->throttle[2], rearDown->throttle[3], rearDown->asr ? "on" : "off");
     std::printf("     Integra, front left up: the throttle front right %.1f, rear left %.1f, rear right %.1f\n",
                 frontLeftUp->throttle[1], frontLeftUp->throttle[2], frontLeftUp->throttle[3]);
-    check(rearDown->throttle[2] == 1.0f && rearDown->throttle[3] == 1.0f && rearDown->asr,
-          "drive (fixed): a rear-driven car's rear tyres take the throttle and the traction control, front wheels up");
+    check(rearDown->throttle[2] == 0.0f && rearDown->throttle[3] == 0.0f && !rearDown->asr,
+          "drive (stock): a rear-driven car's rear tyres take neither the throttle nor the traction control, front "
+          "wheels up");
     check(allDown->throttle[0] == 0.0f && allDown->throttle[1] == 0.0f && allDown->throttle[2] == 1.0f &&
               allDown->throttle[3] == 1.0f,
           "drive: with every wheel down the rear-driven car's rear tyres alone take the throttle");
-    check(frontLeftUp->throttle[1] == 1.0f && frontLeftUp->throttle[2] == 0.0f && frontLeftUp->throttle[3] == 0.0f,
-          "drive (fixed): a front-driven car's front right tyre alone takes the throttle, its front left up");
+    check(frontLeftUp->throttle[1] == 1.0f && frontLeftUp->throttle[2] == 1.0f && frontLeftUp->throttle[3] == 0.0f,
+          "drive (stock): a front-driven car's front right and rear left tyres take the throttle, its front left up");
 }
 // A turbo given back (0x004896A0, a restart after the damage took it): the stock's at 1.3 whatever the car's own; the
 // fixed build's the Turbo the car was made with.
@@ -665,4 +666,84 @@ OJ_INTEGRATION_TEST(CarPhysics, BrakeWear) {
     check(raced > 0.0099f && raced < 0.0101f, "a second braking in a race wears the brakes by 0.01");
     check(braked(true, oj::RaceType::Circuit) == 0.0f, "a second braking on the dyno's stand wears nothing");
     check(braked(false, oj::RaceType::TestTrack) == 0.0f, "a second braking on the test track wears nothing");
+}
+
+// Two cars of one world head-on on Angel SuperSpeedway's straight, each at 300 km/h (600 km/h closing; 2.8 m a step at
+// 60 steps a second, 1.2 m at 144), met at twelve phases of a step (the one ahead placed 0 .. 2.75 m farther). A body
+// touches only the other's faces its centre of gravity lies in front of (0x0053D0C0, at 0x0053D776): a step that
+// takes a centre from short of a touch to inside the other car finds no touch, and the cars go on through each other
+// untouched. At 144 steps a second every phase stops them; at 60 (one step a frame up to 0.05 s, 0x00425E87) some
+// go through, as the stock's do.
+OJ_INTEGRATION_TEST(CarPhysics, HeadOnAtSpeed) {
+    const oj::CarDynamics* d = oj::test::eclipseDynamics();
+    if (d == nullptr) return;
+    const oj::GameFiles& game = oj::test::gameFiles();
+    if (!game.valid()) return;
+    const std::filesystem::path base = std::filesystem::path("tracks") / "Angel SuperSpeedway";
+    const auto cldBytes = game.read(base / "angel superspeedway_speedway_r1.cld");
+    const auto splBytes = game.read(base / "angel superspeedway_speedway_r1.spl");
+    const std::optional<oj::Cld> cld =
+        cldBytes ? oj::parseCld(std::vector<uint8_t>(reinterpret_cast<const uint8_t*>(cldBytes->data()),
+                                                     reinterpret_cast<const uint8_t*>(cldBytes->data()) +
+                                                         cldBytes->size()))
+                 : std::nullopt;
+    const oj::Spl route =
+        splBytes ? oj::parseSpl(std::string(reinterpret_cast<const char*>(splBytes->data()), splBytes->size()))
+                 : oj::Spl{};
+    if (!cld || route.grid.empty()) {
+        check(false, "Angel SuperSpeedway's collision and grid read");
+        return;
+    }
+    oj::CarDynamics withShapes = *d;
+    oj::loadShapes(withShapes.body, game, std::filesystem::path("cars") / "eclipse");
+    for (const float hz : {60.0f, 144.0f}) {
+        int stopped = 0, through = 0;
+        for (int k = 0; k < 12; ++k) {
+            oj::PhysicsWorld world(*cld);
+            oj::CarBody a(withShapes, {});
+            oj::CarBody b(withShapes, {});
+            world.add(a);
+            world.add(b);
+            // b 80 m (and the phase) ahead on the straight, turned to face a; both at 300 km/h towards the other, the
+            // throttle held.
+            const oj::Spl::GridPoint& g = route.grid[0];
+            const float fx = std::sin(g.heading), fz = std::cos(g.heading);
+            const float ahead = 8000.0f + 25.0f * static_cast<float>(k);
+            int stepsA = 75, stepsB = 75;
+            oj::settleOnGrid(a, world.pools(), {g.x, g.y, g.z, 0.0f}, g.heading, stepsA);
+            oj::settleOnGrid(b, world.pools(), {g.x + fx * ahead, g.y, g.z + fz * ahead, 0.0f},
+                             g.heading + 3.14159265f, stepsB);
+            const float speed = 300.0f / 3.6f;
+            a.setLocalVelocity({0.0f, 0.0f, speed, 0.0f});
+            b.setLocalVelocity({0.0f, 0.0f, speed, 0.0f});
+            auto along = [&](const oj::CarBody& c) { return c.position[0] * fx + c.position[2] * fz; };
+            float closest = 1e9f;
+            for (int i = 0; i < static_cast<int>(hz) * 2; ++i) {
+                a.throttle = 1.0f;
+                b.throttle = 1.0f;
+                world.update(1.0f / hz);
+                closest = std::min(closest, along(b) - along(a));
+            }
+            const float end = along(b) - along(a);
+            // Stopped: never nearer than 1 m between the centres. Through untouched: past each other at full speed
+            // (80 m apart, 2 s at 83 m/s each: some 250 m past at the end).
+            if (closest > 1.0f) {
+                ++stopped;
+            } else if (end < -150.0f) {
+                ++through;
+            }
+            check(closest > 1.0f || end < -150.0f,
+                  "head-on at " + std::to_string(static_cast<int>(hz)) + " steps a second, phase " +
+                      std::to_string(k) + ": stopped or through untouched (closest " + std::to_string(closest) +
+                      " m, end " + std::to_string(end) + " m)");
+        }
+        std::printf("     head-on at 300 km/h each, %3.0f steps a second: %d of 12 phases stopped, %d through "
+                    "untouched\n", hz, stopped, through);
+        if (hz > 100.0f) {
+            check(stopped == 12, "head-on at 144 steps a second: every phase stops the cars");
+        } else {
+            check(stopped > 0 && through > 0,
+                  "head-on at 60 steps a second: the cars stopped at some phases, through untouched at others");
+        }
+    }
 }

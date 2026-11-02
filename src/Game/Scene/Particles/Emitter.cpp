@@ -5,6 +5,7 @@
 #include "Game/Scene/Particles/ParticlesInternal.h"
 
 #include "Core/Physics/TrackCollision.h"
+#include "Game/Scene/HeatHaze.h"
 #include "Game/Scene/PostEffects.h"
 #include "Game/Scene/Scene3d.h"
 
@@ -270,7 +271,7 @@ bool ParticleEmitter::prepare(Vec4& axis1, Vec4& axis2, Vec4* axis3) {
     float spread = 0.01f;
     while (q * def.triggerLevel <= level) {
         if (!(m_timer <= 0.0f) || n <= 0) break;
-        m_timer = def.emitInterval + m_timer;
+        m_timer = (ownEmitInterval > 0.0f ? ownEmitInterval : def.emitInterval) + m_timer;
         Particle& slot = m_particles[m_next];
         ++m_next;
         letOut(slot, spread);
@@ -289,6 +290,13 @@ void ParticleEmitter::letOut(Particle& p, float spread) {
     p.frequency = 0.0f;
     p.phase = -1.0f;
     p.age = 0.0f;
+}
+
+void ParticleEmitter::emitByTime(float own) {
+    if (m_points == 0 || m_points > haze::kMaxParticles || !(m_life > 0.0f && m_life < 100.0f) || !(own > 0.0f)) return;
+    if (const float interval = haze::emitInterval(m_system.dt); interval > 0.0f) ownEmitInterval = interval;
+    if (m_timer > -100.0f && m_timer < 100.0f) m_timer -= haze::kTimerStep * (haze::kEmitInterval / own - 1.0f);
+    m_life = own * static_cast<float>(m_points);
 }
 
 }  // namespace oj::scene

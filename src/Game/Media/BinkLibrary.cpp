@@ -8,7 +8,9 @@ namespace oj::bink {
 
 namespace {
 
-#if defined(_M_IX86)
+// The fixed build: OpenJuice's own decoder in both builds (the game's binkw32.dll plays its sound through DirectSound,
+// which the fixed build's output does not make).
+#if 0
 
 // The 32-bit build: the library in this process.
 class Direct final : public Library {
@@ -45,7 +47,7 @@ constexpr const char* kReady = "bink: the game's binkw32.dll ready";
 
 #else
 
-// The 64-bit build: OpenJuice's own decoder.
+// The 64-bit build (the fixed build's both): OpenJuice's own decoder.
 using Chosen = Native;
 constexpr const char* kReady = "bink: movies decoded by OpenJuice (Bink 1)";
 

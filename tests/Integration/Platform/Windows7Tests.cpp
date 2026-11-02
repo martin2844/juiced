@@ -27,6 +27,15 @@
 #include <shlobj.h>
 #include <commctrl.h>
 #include <dpapi.h>
+#include <avrt.h>
+#include <mmsystem.h>
+#include <propidl.h>
+#include <cfgmgr32.h>
+#include <shellapi.h>
+#include <shlwapi.h>
+#include <uxtheme.h>
+#include <objidl.h>
+#include <gdiplus.h>
 
 #include <algorithm>
 #include <cstddef>
@@ -55,10 +64,25 @@ struct Windows7Function {
 #define OJ_WIN7(dll, function) Windows7Function{dll, (static_cast<void>(sizeof(&::function)), #function), 0}
 #define OJ_WIN7_ORDINAL(dll, ordinal, function) \
     Windows7Function{dll, (static_cast<void>(sizeof(&::function)), #function), ordinal}
+// GDI+'s flat functions, declared in its namespace.
+#define OJ_WIN7_GDIPLUS(function) \
+    Windows7Function{"gdiplus.dll", (static_cast<void>(sizeof(&Gdiplus::DllExports::function)), #function), 0}
 
 // What the executables import (Release and Debug, x86 and x64).
 const Windows7Function kWindows7[] = {
     // KERNEL32.dll
+    // OpenAL Soft's (the fixed build)
+    OJ_WIN7("KERNEL32.dll", CreateEventW),
+    OJ_WIN7("KERNEL32.dll", DebugBreak),
+    OJ_WIN7("KERNEL32.dll", GetThreadPriority),
+    OJ_WIN7("KERNEL32.dll", InitOnceBeginInitialize),
+    OJ_WIN7("KERNEL32.dll", InitOnceComplete),
+    OJ_WIN7("KERNEL32.dll", ResetEvent),
+    OJ_WIN7("KERNEL32.dll", SetThreadPriority),
+    OJ_WIN7("KERNEL32.dll", TlsAlloc),
+    OJ_WIN7("KERNEL32.dll", TlsFree),
+    OJ_WIN7("KERNEL32.dll", TlsGetValue),
+    OJ_WIN7("KERNEL32.dll", TlsSetValue),
     OJ_WIN7("KERNEL32.dll", AcquireSRWLockExclusive),
     OJ_WIN7("KERNEL32.dll", AcquireSRWLockShared),
     OJ_WIN7("KERNEL32.dll", AreFileApisANSI),
@@ -260,6 +284,7 @@ const Windows7Function kWindows7[] = {
     OJ_WIN7("USER32.dll", SetFocus),
     OJ_WIN7("USER32.dll", ShowCursor),
     OJ_WIN7("USER32.dll", ShowWindow),
+    OJ_WIN7("USER32.dll", ShowWindowAsync),
     OJ_WIN7("USER32.dll", SystemParametersInfoW),
     OJ_WIN7("USER32.dll", TranslateMessage),
     OJ_WIN7("USER32.dll", UnregisterClassA),
@@ -274,8 +299,82 @@ const Windows7Function kWindows7[] = {
     OJ_WIN7("ADVAPI32.dll", RegSetValueExA),
     // SHELL32.dll
     OJ_WIN7("SHELL32.dll", SHGetSpecialFolderPathW),
+    OJ_WIN7("SHELL32.dll", SHGetKnownFolderPath),  // OpenAL Soft (the fixed build)
+    // AVRT.dll, WINMM.dll's sound: OpenAL Soft's WASAPI and WinMM backends (the fixed build)
+    OJ_WIN7("AVRT.dll", AvSetMmThreadCharacteristicsW),
+    OJ_WIN7("AVRT.dll", AvRevertMmThreadCharacteristics),
+    OJ_WIN7("WINMM.dll", waveInAddBuffer),
+    OJ_WIN7("WINMM.dll", waveInClose),
+    OJ_WIN7("WINMM.dll", waveInGetDevCapsW),
+    OJ_WIN7("WINMM.dll", waveInGetNumDevs),
+    OJ_WIN7("WINMM.dll", waveInOpen),
+    OJ_WIN7("WINMM.dll", waveInPrepareHeader),
+    OJ_WIN7("WINMM.dll", waveInReset),
+    OJ_WIN7("WINMM.dll", waveInStart),
+    OJ_WIN7("WINMM.dll", waveInStop),
+    OJ_WIN7("WINMM.dll", waveInUnprepareHeader),
+    OJ_WIN7("WINMM.dll", waveOutClose),
+    OJ_WIN7("WINMM.dll", waveOutGetDevCapsW),
+    OJ_WIN7("WINMM.dll", waveOutGetNumDevs),
+    OJ_WIN7("WINMM.dll", waveOutOpen),
+    OJ_WIN7("WINMM.dll", waveOutPrepareHeader),
+    OJ_WIN7("WINMM.dll", waveOutUnprepareHeader),
+    OJ_WIN7("WINMM.dll", waveOutWrite),
+    // The fixed build's controllers: SDL3 (its joysticks, gamepads and hidden window) and JuicedConfigExt's core.
+    OJ_WIN7("USER32.dll", CallWindowProcW),
+    OJ_WIN7("USER32.dll", CreateWindowExW),
+    OJ_WIN7("USER32.dll", DefWindowProcW),
+    OJ_WIN7("USER32.dll", DispatchMessageW),
+    OJ_WIN7("USER32.dll", GetMessageA),
+    OJ_WIN7("USER32.dll", GetMessageW),
+    OJ_WIN7("USER32.dll", GetRawInputData),
+    OJ_WIN7("USER32.dll", GetRawInputDeviceInfoA),
+    OJ_WIN7("USER32.dll", GetRawInputDeviceList),
+    OJ_WIN7("USER32.dll", GetSystemMetrics),
+    OJ_WIN7("USER32.dll", KillTimer),
+    OJ_WIN7("USER32.dll", PeekMessageW),
+    OJ_WIN7("USER32.dll", PostThreadMessageW),
+    OJ_WIN7("USER32.dll", RegisterClassExA),
+    OJ_WIN7("USER32.dll", RegisterClassExW),
+    OJ_WIN7("USER32.dll", RegisterClassW),
+    OJ_WIN7("USER32.dll", RegisterDeviceNotificationW),
+    OJ_WIN7("USER32.dll", RegisterRawInputDevices),
+    OJ_WIN7("USER32.dll", SetTimer),
+    OJ_WIN7("USER32.dll", UnregisterClassW),
+    OJ_WIN7("USER32.dll", UnregisterDeviceNotification),
+    OJ_WIN7("KERNEL32.dll", AddVectoredExceptionHandler),
+    OJ_WIN7("KERNEL32.dll", AttachConsole),
+    OJ_WIN7("KERNEL32.dll", CancelIo),
+    OJ_WIN7("KERNEL32.dll", CompareFileTime),
+    OJ_WIN7("KERNEL32.dll", CreateSemaphoreW),
+    OJ_WIN7("KERNEL32.dll", FormatMessageW),
+    OJ_WIN7("KERNEL32.dll", GetEnvironmentVariableA),
+    OJ_WIN7("KERNEL32.dll", GetFileTime),
+    OJ_WIN7("KERNEL32.dll", GetLogicalDrives),
+    OJ_WIN7("KERNEL32.dll", GetOverlappedResult),
+    OJ_WIN7("KERNEL32.dll", GetPrivateProfileSectionW),
+    OJ_WIN7("KERNEL32.dll", InitializeCriticalSectionAndSpinCount),
+    OJ_WIN7("KERNEL32.dll", ReleaseSemaphore),
+    OJ_WIN7("KERNEL32.dll", RemoveVectoredExceptionHandler),
+    OJ_WIN7("KERNEL32.dll", SetErrorMode),
+    OJ_WIN7("KERNEL32.dll", SetEvent),
+    OJ_WIN7("KERNEL32.dll", SetFilePointer),
+    OJ_WIN7("KERNEL32.dll", SystemTimeToFileTime),
+    OJ_WIN7("KERNEL32.dll", TryEnterCriticalSection),
+    OJ_WIN7("KERNEL32.dll", VerSetConditionMask),
+    OJ_WIN7("KERNEL32.dll", VerifyVersionInfoW),
+    OJ_WIN7("KERNEL32.dll", WaitForSingleObject),
+    OJ_WIN7("SHELL32.dll", SHGetFolderPathW),
+    OJ_WIN7("WINMM.dll", timeBeginPeriod),
+    OJ_WIN7("WINMM.dll", timeEndPeriod),
+    OJ_WIN7("SETUPAPI.dll", CM_Get_Device_IDA),
+    OJ_WIN7("SETUPAPI.dll", CM_Get_Parent),
+    OJ_WIN7("SETUPAPI.dll", CM_Locate_DevNodeA),
+    OJ_WIN7_ORDINAL("OLEAUT32.dll", 6, SysFreeString),
     // ole32.dll
     OJ_WIN7("ole32.dll", CoCreateInstance),
+    OJ_WIN7("ole32.dll", CoTaskMemFree),     // OpenAL Soft (the fixed build)
+    OJ_WIN7("ole32.dll", PropVariantClear),  // OpenAL Soft's WASAPI (the fixed build)
     OJ_WIN7("ole32.dll", CoInitialize),
     OJ_WIN7("ole32.dll", CoInitializeEx),
     OJ_WIN7("ole32.dll", CoUninitialize),
@@ -334,13 +433,184 @@ const Windows7Function kWindows7[] = {
     OJ_WIN7_ORDINAL("DSOUND.dll", 6, DirectSoundCaptureCreate),
     OJ_WIN7_ORDINAL("DSOUND.dll", 7, DirectSoundCaptureEnumerateA),
     OJ_WIN7_ORDINAL("DSOUND.dll", 9, GetDeviceID),
+    // The fixed build: the game starts its OpenJuiceConfig (CreateProcessW); OpenJuiceConfig, JuicedConfigExt's
+    // settings program (its window, GDI+, the themes, its version and resources; Windows' processor for Save and
+    // play's game).
+    // KERNEL32.dll
+    OJ_WIN7("KERNEL32.dll", CreateProcessW),
+    OJ_WIN7("KERNEL32.dll", GetNativeSystemInfo),
+    OJ_WIN7("KERNEL32.dll", MulDiv),
+    OJ_WIN7("KERNEL32.dll", CopyFileW),
+    OJ_WIN7("KERNEL32.dll", FindResourceW),
+    OJ_WIN7("KERNEL32.dll", SizeofResource),
+    OJ_WIN7("KERNEL32.dll", LockResource),
+    OJ_WIN7("KERNEL32.dll", LoadResource),
+    OJ_WIN7("KERNEL32.dll", GetUserDefaultUILanguage),
+    OJ_WIN7("KERNEL32.dll", GetSystemDirectoryW),
+    // COMCTL32.dll
+    OJ_WIN7_ORDINAL("COMCTL32.dll", 410, SetWindowSubclass),
+    OJ_WIN7_ORDINAL("COMCTL32.dll", 412, RemoveWindowSubclass),
+    OJ_WIN7_ORDINAL("COMCTL32.dll", 413, DefSubclassProc),
+    // gdiplus.dll
+    OJ_WIN7_GDIPLUS(GdipAlloc),
+    Windows7Function{"gdiplus.dll", (static_cast<void>(sizeof(&Gdiplus::GdiplusStartup)), "GdiplusStartup"), 0},
+    OJ_WIN7_GDIPLUS(GdipFree),
+    Windows7Function{"gdiplus.dll", (static_cast<void>(sizeof(&Gdiplus::GdiplusShutdown)), "GdiplusShutdown"), 0},
+    OJ_WIN7_GDIPLUS(GdipSetStringFormatTrimming),
+    OJ_WIN7_GDIPLUS(GdipSetStringFormatLineAlign),
+    OJ_WIN7_GDIPLUS(GdipSetStringFormatAlign),
+    OJ_WIN7_GDIPLUS(GdipSetStringFormatFlags),
+    OJ_WIN7_GDIPLUS(GdipDeleteStringFormat),
+    OJ_WIN7_GDIPLUS(GdipCreateStringFormat),
+    OJ_WIN7_GDIPLUS(GdipFillPolygon),
+    OJ_WIN7_GDIPLUS(GdipFillRectangle),
+    OJ_WIN7_GDIPLUS(GdipDrawPolygon),
+    OJ_WIN7_GDIPLUS(GdipDrawEllipse),
+    OJ_WIN7_GDIPLUS(GdipDrawRectangle),
+    OJ_WIN7_GDIPLUS(GdipDrawLines),
+    OJ_WIN7_GDIPLUS(GdipDrawLine),
+    OJ_WIN7_GDIPLUS(GdipReleaseDC),
+    OJ_WIN7_GDIPLUS(GdipGetDC),
+    OJ_WIN7_GDIPLUS(GdipSetPenLineJoin),
+    OJ_WIN7_GDIPLUS(GdipSetPenEndCap),
+    OJ_WIN7_GDIPLUS(GdipSetPenStartCap),
+    OJ_WIN7_GDIPLUS(GdipCreateLineBrush),
+    OJ_WIN7_GDIPLUS(GdipAddPathBeziers),
+    OJ_WIN7_GDIPLUS(GdipMeasureString),
+    OJ_WIN7_GDIPLUS(GdipDrawString),
+    OJ_WIN7_GDIPLUS(GdipDeleteFont),
+    OJ_WIN7_GDIPLUS(GdipCreateFontFromLogfontW),
+    OJ_WIN7_GDIPLUS(GdipDrawImageRect),
+    OJ_WIN7_GDIPLUS(GdipFillPath),
+    OJ_WIN7_GDIPLUS(GdipFillEllipse),
+    OJ_WIN7_GDIPLUS(GdipDrawPath),
+    OJ_WIN7_GDIPLUS(GdipScaleWorldTransform),
+    OJ_WIN7_GDIPLUS(GdipSetInterpolationMode),
+    OJ_WIN7_GDIPLUS(GdipSetTextRenderingHint),
+    OJ_WIN7_GDIPLUS(GdipSetPixelOffsetMode),
+    OJ_WIN7_GDIPLUS(GdipSetSmoothingMode),
+    OJ_WIN7_GDIPLUS(GdipDeleteGraphics),
+    OJ_WIN7_GDIPLUS(GdipCreateFromHDC),
+    OJ_WIN7_GDIPLUS(GdipDeletePen),
+    OJ_WIN7_GDIPLUS(GdipCreatePen1),
+    OJ_WIN7_GDIPLUS(GdipCreateSolidFill),
+    OJ_WIN7_GDIPLUS(GdipDeleteBrush),
+    OJ_WIN7_GDIPLUS(GdipCloneBrush),
+    OJ_WIN7_GDIPLUS(GdipAddPathBezier),
+    OJ_WIN7_GDIPLUS(GdipDeletePath),
+    OJ_WIN7_GDIPLUS(GdipCreatePath),
+    OJ_WIN7_GDIPLUS(GdipCloneBitmapAreaI),
+    OJ_WIN7_GDIPLUS(GdipCreateBitmapFromStream),
+    OJ_WIN7_GDIPLUS(GdipGetImageHeight),
+    OJ_WIN7_GDIPLUS(GdipGetImageWidth),
+    OJ_WIN7_GDIPLUS(GdipDisposeImage),
+    OJ_WIN7_GDIPLUS(GdipCloneImage),
+    OJ_WIN7_GDIPLUS(GdipAddPathArc),
+    OJ_WIN7_GDIPLUS(GdipClosePathFigure),
+    // UxTheme.dll
+    OJ_WIN7("UxTheme.dll", OpenThemeData),
+    OJ_WIN7("UxTheme.dll", CloseThemeData),
+    OJ_WIN7("UxTheme.dll", DrawThemeBackground),
+    OJ_WIN7("UxTheme.dll", GetThemePartSize),
+    OJ_WIN7("UxTheme.dll", SetWindowTheme),
+    // VERSION.dll
+    OJ_WIN7("VERSION.dll", VerQueryValueW),
+    OJ_WIN7("VERSION.dll", GetFileVersionInfoSizeW),
+    OJ_WIN7("VERSION.dll", GetFileVersionInfoW),
+    // SHELL32.dll
+    OJ_WIN7("SHELL32.dll", CommandLineToArgvW),
+    OJ_WIN7("SHELL32.dll", SHCreateDirectoryExW),
+    // USER32.dll
+    OJ_WIN7("USER32.dll", AppendMenuW),
+    OJ_WIN7("USER32.dll", DestroyMenu),
+    OJ_WIN7("USER32.dll", TrackPopupMenu),
+    OJ_WIN7("USER32.dll", MapVirtualKeyW),
+    OJ_WIN7("USER32.dll", GetAsyncKeyState),
+    OJ_WIN7("USER32.dll", GetClassNameW),
+    OJ_WIN7("USER32.dll", SetForegroundWindow),
+    OJ_WIN7("USER32.dll", ClientToScreen),
+    OJ_WIN7("USER32.dll", GetClassLongPtrW),
+    OJ_WIN7("USER32.dll", MonitorFromPoint),
+    OJ_WIN7("USER32.dll", MonitorFromWindow),
+    OJ_WIN7("USER32.dll", DrawFrameControl),
+    OJ_WIN7("USER32.dll", FrameRect),
+    OJ_WIN7("USER32.dll", IsWindowEnabled),
+    OJ_WIN7("USER32.dll", IsWindow),
+    OJ_WIN7("USER32.dll", IsIconic),
+    OJ_WIN7("USER32.dll", CreatePopupMenu),
+    OJ_WIN7("USER32.dll", SetProcessDPIAware),
+    OJ_WIN7("USER32.dll", LoadImageW),
+    OJ_WIN7("USER32.dll", LoadIconW),
+    OJ_WIN7("USER32.dll", LoadCursorW),
+    OJ_WIN7("USER32.dll", EnumChildWindows),
+    OJ_WIN7("USER32.dll", SetWindowLongPtrW),
+    OJ_WIN7("USER32.dll", GetWindowLongPtrW),
+    OJ_WIN7("USER32.dll", GetWindowLongW),
+    OJ_WIN7("USER32.dll", PtInRect),
+    OJ_WIN7("USER32.dll", FillRect),
+    OJ_WIN7("USER32.dll", DrawFocusRect),
+    OJ_WIN7("USER32.dll", GetSysColor),
+    OJ_WIN7("USER32.dll", GetCursorPos),
+    OJ_WIN7("USER32.dll", AdjustWindowRectEx),
+    OJ_WIN7("USER32.dll", GetWindowRect),
+    OJ_WIN7("USER32.dll", GetWindowTextLengthW),
+    OJ_WIN7("USER32.dll", GetWindowTextW),
+    OJ_WIN7("USER32.dll", SetWindowTextW),
+    OJ_WIN7("USER32.dll", InvalidateRect),
+    OJ_WIN7("USER32.dll", EndPaint),
+    OJ_WIN7("USER32.dll", BeginPaint),
+    OJ_WIN7("USER32.dll", ReleaseDC),
+    OJ_WIN7("USER32.dll", GetDC),
+    OJ_WIN7("USER32.dll", DrawTextW),
+    OJ_WIN7("USER32.dll", GetFocus),
+    OJ_WIN7("USER32.dll", IsWindowVisible),
+    OJ_WIN7("USER32.dll", SetWindowPos),
+    OJ_WIN7("USER32.dll", MoveWindow),
+    OJ_WIN7("USER32.dll", IsChild),
+    OJ_WIN7("USER32.dll", TrackMouseEvent),
+    OJ_WIN7("USER32.dll", EnumDisplayMonitors),
+    OJ_WIN7("USER32.dll", GetMonitorInfoW),
+    OJ_WIN7("USER32.dll", DisplayConfigGetDeviceInfo),
+    OJ_WIN7("USER32.dll", QueryDisplayConfig),
+    OJ_WIN7("USER32.dll", GetDisplayConfigBufferSizes),
+    OJ_WIN7("USER32.dll", EnumDisplayDevicesW),
+    OJ_WIN7("USER32.dll", EnumDisplaySettingsW),
+    OJ_WIN7("USER32.dll", IsDialogMessageW),
+    OJ_WIN7("USER32.dll", GetClassLongW),
+    OJ_WIN7("USER32.dll", SetWindowLongW),
+    // GDI32.dll
+    OJ_WIN7("GDI32.dll", BitBlt),
+    OJ_WIN7("GDI32.dll", GetObjectW),
+    OJ_WIN7("GDI32.dll", GetTextMetricsW),
+    OJ_WIN7("GDI32.dll", SetTextColor),
+    OJ_WIN7("GDI32.dll", SetBkMode),
+    OJ_WIN7("GDI32.dll", SetBkColor),
+    OJ_WIN7("GDI32.dll", SelectObject),
+    OJ_WIN7("GDI32.dll", GetTextExtentPoint32W),
+    OJ_WIN7("GDI32.dll", GetPixel),
+    OJ_WIN7("GDI32.dll", GetDeviceCaps),
+    OJ_WIN7("GDI32.dll", DeleteObject),
+    OJ_WIN7("GDI32.dll", DeleteDC),
+    OJ_WIN7("GDI32.dll", CreateSolidBrush),
+    OJ_WIN7("GDI32.dll", CreateFontIndirectW),
+    OJ_WIN7("GDI32.dll", CreateCompatibleDC),
+    OJ_WIN7("GDI32.dll", CreateCompatibleBitmap),
+    // ADVAPI32.dll
+    OJ_WIN7("ADVAPI32.dll", RegSetValueExW),
+    OJ_WIN7("ADVAPI32.dll", RegCreateKeyExW),
+    OJ_WIN7("ADVAPI32.dll", RegOpenKeyExW),
+    OJ_WIN7("ADVAPI32.dll", RegQueryValueExW),
+    OJ_WIN7("ADVAPI32.dll", RegGetValueW),
+    // SHLWAPI.dll
+    OJ_WIN7_ORDINAL("SHLWAPI.dll", 12, SHCreateMemStream),
 };
 
 #undef OJ_WIN7
 #undef OJ_WIN7_ORDINAL
+#undef OJ_WIN7_GDIPLUS
 
-// An executable of the tests' configuration, beside them: the game's (OpenJuice) or the settings tool's
-// (OpenJuiceConfig).
+// An executable of the tests' configuration, beside them: the game's (OpenJuice) or the 32-bit tests' settings
+// tool's (OpenJuiceConfig).
 std::filesystem::path executable(const std::wstring& base) {
     wchar_t tests[MAX_PATH] = {};
     GetModuleFileNameW(nullptr, tests, MAX_PATH);
@@ -514,8 +784,10 @@ void checkStartsOnWindows7(const std::filesystem::path& file, size_t leastImport
 // The game's executable starts on Windows 7.
 OJ_INTEGRATION_TEST(Windows7, Executable) { checkStartsOnWindows7(executable(L"OpenJuice"), 100); }
 
-// The settings tool's executable starts on Windows 7.
+#if !defined(_M_X64)
+// The settings tool's executable (32-bit only, as the stock's) starts on Windows 7.
 OJ_INTEGRATION_TEST(Windows7, ConfigTool) { checkStartsOnWindows7(executable(L"OpenJuiceConfig"), 50); }
+#endif
 
 // The game's executable names neither file function of Windows 8 its C++ library calls: not imported, and not looked
 // up by name as it runs (its own slots hold Windows 7's ways on every Windows, Game/Platform/Win7Imports.cpp). The
@@ -580,6 +852,29 @@ OJ_INTEGRATION_TEST(Windows7, CopyFile2) {
     check(oj::win7::copyFile2(from.c_str(), to.c_str(), &parameters) == S_OK, "a flag of CopyFile2's only left out");
     DeleteFileW(from.c_str());
     DeleteFileW(to.c_str());
+}
+
+// WaitOnAddress and WakeByAddressAll without Windows 8 (the fixed build's atomic waits): a wait on unchanged bytes
+// times out (ERROR_TIMEOUT); one on bytes another thread changes, then wakes, returns true.
+OJ_INTEGRATION_TEST(Windows7, WaitOnAddress) {
+    volatile uint32_t value = 1;
+    const uint32_t same = 1;
+    SetLastError(0);
+    const bool timedOut = !oj::win7::waitOnAddress(&value, &same, sizeof value, 20) && GetLastError() == ERROR_TIMEOUT;
+    check(timedOut, "unchanged: the wait timed out");
+    const HANDLE changer = CreateThread(
+        nullptr, 0,
+        [](LPVOID p) -> DWORD {
+            Sleep(30);
+            *static_cast<volatile uint32_t*>(p) = 2;
+            oj::win7::wakeByAddressAll(p);
+            return 0;
+        },
+        const_cast<uint32_t*>(&value), 0, nullptr);
+    const bool woken = oj::win7::waitOnAddress(&value, &same, sizeof value, 5000) && value == 2;
+    WaitForSingleObject(changer, INFINITE);
+    CloseHandle(changer);
+    check(woken, "changed by another thread and woken: the wait returned");
 }
 
 // GetSystemTimePreciseAsFileTime without Windows 8: the system's time of its last tick.

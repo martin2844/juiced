@@ -3,6 +3,7 @@
 #include "Core/Base/GameFiles.h"
 #include "Core/Base/Log.h"
 #include "Core/Base/X87.h"
+#include "Core/Data/Language.h"
 #include "Core/Network/Matchmaking.h"
 #include "Core/Network/NetSession.h"
 #include "Core/Network/OnlineRecords.h"
@@ -50,6 +51,7 @@ void RaceFrontEnd::load(const RaceRules& rules, scene::Engine* engine, ff::Wheel
                              "closedown", "hud_spectator"}) {
         raceWindows->keep(name);
     }
+    raceScene = engine;
     options.reset();
     raceOptions();
     hud = std::make_unique<RaceHud>(*hudDevice, *hudLanguage, *hudTexts);
@@ -90,6 +92,7 @@ Frontend& RaceFrontEnd::raceOptions() {
         options->useSounds(raceUi);
         options->keepRaceWindows();
     }
+    options->setEffectsScene(raceScene);
     return *options;
 }
 
@@ -246,8 +249,7 @@ bool RaceFrontEnd::openCritical(uint32_t priority, const std::wstring& text) {
 const std::wstring& RaceFrontEnd::jetText(size_t line) {
     static const std::wstring none;
     if (jetTexts.size() == 0 && hudLanguage != nullptr) {
-        jetTexts.load(std::filesystem::path("scripts") /
-                      ("jettext" + std::string(1, hudLanguage->controlsLetter) + ".txt"));
+        jetTexts.load(jetTextFile(GameFiles(std::filesystem::current_path()), *hudLanguage));
     }
     return line < jetTexts.size() ? jetTexts.at(line) : none;
 }

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -44,6 +44,8 @@
   <ItemDefinitionGroup>
     <ClCompile>
       <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <!-- An object a source's folder: two folders' files of one name (Unit\X.cpp, Integration\X.cpp) keep their own. -->
+      <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -63,8 +65,17 @@
     <ProjectReference Include="..\src\Core\OpenJuice.Core.vcxproj">
       <Project>{4940519A-A764-4AA2-B9F2-707CAB229C54}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\src\JuicedConfig\OpenJuice.JuicedConfig.vcxproj">
-      <Project>{BE571CD2-F93E-421B-9FFB-25FC8C7144A0}</Project>
+    <ProjectReference Include="..\third_party\openal-soft-1.25.2\OpenJuice.OpenAL.vcxproj">
+      <Project>{6E3A1B52-4C7D-4F28-9A61-0D2B8E5C7F34}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\third_party\juicedconfigext\OpenJuice.JuicedConfigExt.vcxproj">
+      <Project>{2F7C4A93-6B15-4E08-9D3A-81C5E2B0F647}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\third_party\sdl3-3.4.16\OpenJuice.SDL3.vcxproj">
+      <Project>{3B9E5D27-8C41-4A6F-9E12-5D7C0A4B8F61}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\third_party\wmadec\OpenJuice.WmaDecoder.vcxproj">
+      <Project>{8D4F2C61-3B7A-4E95-A2D0-5C9E1F7B3A48}</Project>
     </ProjectReference>
     <ProjectReference Include="..\third_party\speex-1.0.3\OpenJuice.Speex.vcxproj">
       <Project>{5C2D8E14-7A31-4B6F-9E08-2F4A6B1C3D95}</Project>
@@ -74,8 +85,11 @@
     <ClInclude Include="Framework\Fakes\FakeCareerHost.h" />
     <ClInclude Include="Framework\Fakes\FakeCustomRaceHost.h" />
     <ClInclude Include="Framework\Fakes\FakeGarageHost.h" />
+    <ClInclude Include="Framework\Fakes\FakeAvailable.h" />
     <ClInclude Include="Framework\Fakes\FakeGpcm.h" />
     <ClInclude Include="Framework\Fakes\FakeWindowHost.h" />
+    <ClInclude Include="Framework\Fakes\FakeSaveHost.h" />
+    <ClInclude Include="Framework\RealDevice.h" />
     <ClInclude Include="Framework\Fakes\FlatGround.h" />
     <ClInclude Include="Framework\Fakes\NullRenderDevice.h" />
     <ClInclude Include="Framework\Fixtures.h" />
@@ -99,18 +113,26 @@
     <ClCompile Include="Integration\Frontend\MenuPictureTests.cpp" />
     <ClCompile Include="Integration\Frontend\MessageWindowTests.cpp" />
     <ClCompile Include="Integration\Frontend\OnlineCrewRaceSetupTests.cpp" />
+    <ClCompile Include="Integration\Frontend\ReplayPictureTests.cpp" />
     <ClCompile Include="Integration\Frontend\RespectChangesTests.cpp" />
     <ClCompile Include="Integration\Frontend\ScreenShowTests.cpp" />
     <ClCompile Include="Integration\Frontend\StartupTests.cpp" />
     <ClCompile Include="Integration\Frontend\WindowStackTests.cpp" />
+    <ClCompile Include="Integration\Frontend\KeyboardTests.cpp" />
     <ClCompile Include="Integration\Frontend\GarageFixesTests.cpp" />
     <ClCompile Include="Integration\Frontend\CareerRaceResultsTests.cpp" />
     <ClCompile Include="Integration\Frontend\OnlineLoginTests.cpp" />
+    <ClCompile Include="Integration\Frontend\LobbyChatTests.cpp" />
+    <ClCompile Include="Integration\Frontend\WideScreenTests.cpp" />
+    <ClCompile Include="Integration\Frontend\GameOptionsFovTests.cpp" />
+    <ClCompile Include="Integration\Frontend\ConsoleTextsTests.cpp" />
     <ClCompile Include="Integration\GameData\CarDefsTests.cpp" />
     <ClCompile Include="Integration\GameData\CareerTests.cpp" />
     <ClCompile Include="Integration\GameData\CarPhysicsTests.cpp" />
     <ClCompile Include="Integration\GameData\EffectDefsTests.cpp" />
     <ClCompile Include="Integration\GameData\EffectsTests.cpp" />
+    <ClCompile Include="Integration\GameData\WorldLightTests.cpp" />
+    <ClCompile Include="Integration\GameData\CarPaintTests.cpp" />
     <ClCompile Include="Integration\GameData\ExeTablesTests.cpp" />
     <ClCompile Include="Integration\GameData\GroundMapTests.cpp" />
     <ClCompile Include="Integration\GameData\ModelFilesTests.cpp" />
@@ -118,7 +140,6 @@
     <ClCompile Include="Integration\GameData\ReplayTests.cpp" />
     <ClCompile Include="Integration\GameData\SceneObjectsTests.cpp" />
     <ClCompile Include="Integration\GameData\TracksTests.cpp" />
-    <ClCompile Include="Integration\JuicedConfig\SystemChecksTests.cpp" />
     <ClCompile Include="Integration\Network\HttpTests.cpp" />
     <ClCompile Include="Integration\Network\LeaderboardTests.cpp" />
     <ClCompile Include="Integration\Network\MatchmakingTests.cpp" />
@@ -128,20 +149,46 @@
     <ClCompile Include="Integration\Network\SessionTests.cpp" />
     <ClCompile Include="Integration\Network\TcpTests.cpp" />
     <ClCompile Include="Integration\Network\TransportTests.cpp" />
-    <ClCompile Include="Integration\Network\PeerchatTests.cpp" />
+    <ClCompile Include="Integration\Network\PeerchatServerTests.cpp" />
     <ClCompile Include="Integration\Platform\DirectInputKeyboardTests.cpp" />
+    <ClCompile Include="Integration\Platform\RendererSettingsTests.cpp" />
+    <ClCompile Include="Integration\Platform\ScreenModeTests.cpp" />
+    <ClCompile Include="Integration\Platform\GlowPassTests.cpp" />
+    <ClCompile Include="Integration\Platform\HeatHazePassTests.cpp" />
+    <ClCompile Include="Integration\Platform\FrameLimitTests.cpp" />
+    <ClCompile Include="Integration\Platform\TextureFilterTests.cpp" />
+    <ClCompile Include="Integration\Platform\BrightnessPassTests.cpp" />
+    <ClCompile Include="Integration\Platform\SceneTargetMsaaTests.cpp" />
+    <ClCompile Include="Integration\Platform\SmaaPassTests.cpp" />
+    <ClCompile Include="Integration\Platform\HeadlightShadowsDeviceTests.cpp" />
+    <ClCompile Include="Integration\Platform\ReflectionsUltraDeviceTests.cpp" />
+    <ClCompile Include="Integration\Platform\AmbientOcclusionDeviceTests.cpp" />
+    <ClCompile Include="Integration\Platform\LightReflectionDeviceTests.cpp" />
+    <ClCompile Include="Integration\Platform\LampShadowDeviceTests.cpp" />
+    <ClCompile Include="Integration\Platform\CloudsDeviceTests.cpp" />
+    <ClCompile Include="Integration\Platform\PointLightsDeviceTests.cpp" />
+    <ClCompile Include="Integration\Platform\ProfilerDeviceTests.cpp" />
+    <ClCompile Include="Integration\Platform\VolumetricLightDeviceTests.cpp" />
     <ClCompile Include="Integration\Platform\Windows7Tests.cpp" />
     <ClCompile Include="Integration\Race\RaceCameraTests.cpp" />
     <ClCompile Include="Integration\Race\RaceIntroTests.cpp" />
     <ClCompile Include="Integration\Race\RaceFrontEndTests.cpp" />
     <ClCompile Include="Integration\Race\RaceHudTargetTests.cpp" />
     <ClCompile Include="Integration\Race\RaceCarRecordTests.cpp" />
+    <ClCompile Include="Integration\Race\TrackViewCollisionsTests.cpp" />
+    <ClCompile Include="Integration\Race\AfterRaceTests.cpp" />
+    <ClCompile Include="Integration\Race\TrackViewRumbleTests.cpp" />
+    <ClCompile Include="Integration\Race\FreeTextTests.cpp" />
     <ClCompile Include="Integration\Race\PostEffectsSplitTests.cpp" />
     <ClCompile Include="Integration\Race\HudReplayTests.cpp" />
+    <ClCompile Include="Integration\Race\ReplayKeysTests.cpp" />
     <ClCompile Include="Integration\Race\CruiseTricksTests.cpp" />
     <ClCompile Include="Integration\Saves\ReplaysDeviceTests.cpp" />
     <ClCompile Include="Integration\Saves\SaveDeviceTests.cpp" />
     <ClCompile Include="Integration\Saves\UserSavesTests.cpp" />
+    <ClCompile Include="Integration\Audio\OpenAlOutputTests.cpp" />
+    <ClCompile Include="Unit\Audio\OutputCallsTests.cpp" />
+    <ClCompile Include="Unit\Audio\VolumeFadeTests.cpp" />
     <ClCompile Include="Unit\Audio\SoundSetTests.cpp" />
     <ClCompile Include="Unit\Base\CpuInfoTests.cpp" />
     <ClCompile Include="Unit\Base\LoadingThreadTests.cpp" />
@@ -160,13 +207,17 @@
     <ClCompile Include="Unit\Formats\TextureTests.cpp" />
     <ClCompile Include="Unit\Input\ControlsTests.cpp" />
     <ClCompile Include="Unit\Input\GameControllerTests.cpp" />
+    <ClCompile Include="Integration\Input\PadControlsFileTests.cpp" />
+    <ClCompile Include="Integration\Input\WheelInputTests.cpp" />
+    <ClCompile Include="Unit\Input\PadControlsTests.cpp" />
+    <ClCompile Include="Unit\Input\PadRumbleTests.cpp" />
     <ClCompile Include="Unit\Input\KeyboardSteeringTests.cpp" />
     <ClCompile Include="Unit\Input\UiInputTests.cpp" />
-    <ClCompile Include="Unit\JuicedConfig\DirectXCheckTests.cpp" />
-    <ClCompile Include="Unit\JuicedConfig\ConfigDataTests.cpp" />
     <ClCompile Include="Unit\Network\GameSpyPresenceTests.cpp" />
     <ClCompile Include="Unit\Network\GameSpyTests.cpp" />
     <ClCompile Include="Unit\Network\OnlineRecordsTests.cpp" />
+    <ClCompile Include="Unit\Network\OnlineUserTests.cpp" />
+    <ClCompile Include="Unit\Network\VoiceCallsTests.cpp" />
     <ClCompile Include="Unit\Network\VoiceTests.cpp" />
     <ClCompile Include="Unit\Network\NetCarTests.cpp" />
     <ClCompile Include="Unit\Network\PeerchatTests.cpp" />
@@ -175,6 +226,8 @@
     <ClCompile Include="Unit\Physics\TrackCollisionTests.cpp" />
     <ClCompile Include="Unit\Platform\LanguageChoiceTests.cpp" />
     <ClCompile Include="Unit\Platform\SystemCommandTests.cpp" />
+    <ClCompile Include="Unit\Platform\ScreenTests.cpp" />
+    <ClCompile Include="Unit\Platform\WheelSettingsTests.cpp" />
     <ClCompile Include="Unit\Race\DriverControlTests.cpp" />
     <ClCompile Include="Unit\Race\RaceStateTests.cpp" />
     <ClCompile Include="Unit\Race\RaceWindowIdTests.cpp" />
@@ -184,14 +237,34 @@
     <ClCompile Include="Unit\Race\ArcadeRacesBoundsTests.cpp" />
     <ClCompile Include="Unit\Race\HudTimeTests.cpp" />
     <ClCompile Include="Unit\Race\ReplayFrameTests.cpp" />
+    <ClCompile Include="Unit\Race\ReplayXboxTests.cpp" />
     <ClCompile Include="Unit\Race\CrewSchemeTests.cpp" />
     <ClCompile Include="Unit\Race\RacePauseTests.cpp" />
     <ClCompile Include="Unit\Render\MeshTests.cpp" />
+    <ClCompile Include="Unit\Render\DisplayTests.cpp" />
+    <ClCompile Include="Unit\Render\FrameOptionsTests.cpp" />
+    <ClCompile Include="Unit\Render\BrightnessTests.cpp" />
+    <ClCompile Include="Unit\Render\ShaderReplacementsTests.cpp" />
     <ClCompile Include="Unit\Saves\ArchiveTests.cpp" />
     <ClCompile Include="Unit\Saves\GraphicsConfigTests.cpp" />
     <ClCompile Include="Unit\Saves\SettingsTests.cpp" />
     <ClCompile Include="Unit\Saves\OnlineAccountTests.cpp" />
     <ClCompile Include="Unit\Scene\WorldClockTests.cpp" />
+    <ClCompile Include="Unit\Scene\CarsEnvironmentTests.cpp" />
+    <ClCompile Include="Unit\Scene\HeadlightsTests.cpp" />
+    <ClCompile Include="Unit\Scene\HeadlightShadowsTests.cpp" />
+    <ClCompile Include="Unit\Scene\AmbientOcclusionTests.cpp" />
+    <ClCompile Include="Unit\Scene\LampShadowTests.cpp" />
+    <ClCompile Include="Unit\Scene\CloudsTests.cpp" />
+    <ClCompile Include="Unit\Scene\FlameLightsTests.cpp" />
+    <ClCompile Include="Unit\Scene\LensFlaresTests.cpp" />
+    <ClCompile Include="Unit\Scene\NearestFadeTests.cpp" />
+    <ClCompile Include="Unit\Scene\LightSetsTests.cpp" />
+    <ClCompile Include="Unit\Scene\TunnelLightsTests.cpp" />
+    <ClCompile Include="Unit\Scene\VolumetricLightTests.cpp" />
+    <ClCompile Include="Unit\Scene\SunShadowsTests.cpp" />
+    <ClCompile Include="Unit\Scene\ExposureTests.cpp" />
+    <ClCompile Include="Unit\Scene\HeatHazeTests.cpp" />
     <ClCompile Include="Unit\Tracks\AtmosphereTests.cpp" />
     <ClCompile Include="Unit\Tracks\RouteTests.cpp" />
     <ClCompile Include="Unit\Tracks\SplinePathTests.cpp" />

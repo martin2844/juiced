@@ -1,6 +1,5 @@
 #pragma once
-// .ddt, a texture of the game: a 44-byte header and the mip levels (format details: the Blender add-on's
-// docs/technical/DDT.md).
+// .ddt, a texture of the game: a 44-byte header and the mip levels (docs/spec/31-file-layouts.md).
 //
 //   u32 format          FourCC 'DXT1' / 'DXT3' / 'DXT5', or 21 A8R8G8B8, 22 X8R8G8B8
 //   u32 width, height, mipLevels

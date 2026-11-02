@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>18.0</VCProjectVersion>
+    <ProjectGuid>{2F7C4A93-6B15-4E08-9D3A-81C5E2B0F647}</ProjectGuid>
+    <RootNamespace>OpenJuiceJuicedConfigExt</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v145</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseDebugLibraries Condition="'$(Configuration)'=='Debug'">true</UseDebugLibraries>
+    <UseDebugLibraries Condition="'$(Configuration)'=='Release'">false</UseDebugLibraries>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\build\OpenJuice.props" />
+  </ImportGroup>
+  <!-- JuicedConfigExt's core of the controls (external/JuicedConfigExt/src/Shared, README.OpenJuice.md), the same its
+       plugin and its settings program build, as a static library: the controller layout and its file (controller.ini),
+       the controls file with the layout's controls, the controls' values, the controller's reading (XInput, SDL), the
+       steering wheels' marks, map and reading, the force feedback's scale; and the brightness's and SMAA's passes
+       (Direct3D 9). Its sources as they are, its warnings not errors. -->
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <DisableSpecificWarnings>4005;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <AdditionalIncludeDirectories>..\..\external\JuicedConfigExt\src\Shared;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Lib>
+      <AdditionalDependencies>shell32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\external\JuicedConfigExt\src\Shared\ControlsFile.cpp" />
+    <ClCompile Include="..\..\external\JuicedConfigExt\src\Shared\PadActions.cpp" />
+    <ClCompile Include="..\..\external\JuicedConfigExt\src\Shared\PadReader.cpp" />
+    <ClCompile Include="..\..\external\JuicedConfigExt\src\Shared\LayoutFile.cpp" />
+    <ClCompile Include="..\..\external\JuicedConfigExt\src\Shared\WheelDetect.cpp" />
+    <ClCompile Include="..\..\external\JuicedConfigExt\src\Shared\WheelMap.cpp" />
+    <ClCompile Include="..\..\external\JuicedConfigExt\src\Shared\WheelReader.cpp" />
+    <ClCompile Include="..\..\external\JuicedConfigExt\src\Shared\ForceFeedbackScale.cpp" />
+    <ClCompile Include="..\..\external\JuicedConfigExt\src\Shared\BrightnessPass.cpp" />
+    <ClCompile Include="..\..\external\JuicedConfigExt\src\Shared\SmaaPass.cpp" />
+    <ClCompile Include="..\..\external\JuicedConfigExt\src\Shared\AmbientOcclusionPass.cpp" />
+    <ClCompile Include="..\..\external\JuicedConfigExt\src\Shared\LightReflectionPass.cpp" />
+    <ClCompile Include="..\..\external\JuicedConfigExt\src\Shared\LampShadowPass.cpp" />
+    <ClCompile Include="..\..\external\JuicedConfigExt\src\Shared\VolumetricLightPass.cpp" />
+    <ClCompile Include="..\..\external\JuicedConfigExt\src\Shared\PointLightPass.cpp" />
+    <ClCompile Include="..\..\external\JuicedConfigExt\src\Shared\CloudPass.cpp" />
+    <ClCompile Include="..\..\external\JuicedConfigExt\src\Shared\DepthDilatePass.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\external\JuicedConfigExt\src\Shared\ControlsFile.h" />
+    <ClInclude Include="..\..\external\JuicedConfigExt\src\Shared\PadActions.h" />
+    <ClInclude Include="..\..\external\JuicedConfigExt\src\Shared\PadReader.h" />
+    <ClInclude Include="..\..\external\JuicedConfigExt\src\Shared\LayoutFile.h" />
+    <ClInclude Include="..\..\external\JuicedConfigExt\src\Shared\WheelDetect.h" />
+    <ClInclude Include="..\..\external\JuicedConfigExt\src\Shared\WheelMap.h" />
+    <ClInclude Include="..\..\external\JuicedConfigExt\src\Shared\WheelReader.h" />
+    <ClInclude Include="..\..\external\JuicedConfigExt\src\Shared\ForceFeedbackScale.h" />
+    <ClInclude Include="..\..\external\JuicedConfigExt\src\Shared\ControllerLayout.h" />
+    <ClInclude Include="..\..\external\JuicedConfigExt\src\Shared\BrightnessCurve.h" />
+    <ClInclude Include="..\..\external\JuicedConfigExt\src\Shared\BrightnessPass.h" />
+    <ClInclude Include="..\..\external\JuicedConfigExt\src\Shared\SmaaPass.h" />
+    <ClInclude Include="..\..\external\JuicedConfigExt\src\Shared\AmbientOcclusionPass.h" />
+    <ClInclude Include="..\..\external\JuicedConfigExt\src\Shared\LightReflectionPass.h" />
+    <ClInclude Include="..\..\external\JuicedConfigExt\src\Shared\LampShadowPass.h" />
+    <ClInclude Include="..\..\external\JuicedConfigExt\src\Shared\VolumetricLightPass.h" />
+    <ClInclude Include="..\..\external\JuicedConfigExt\src\Shared\PointLightPass.h" />
+    <ClInclude Include="..\..\external\JuicedConfigExt\src\Shared\CloudPass.h" />
+    <ClInclude Include="..\..\external\JuicedConfigExt\src\Shared\DepthDilatePass.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+</Project>

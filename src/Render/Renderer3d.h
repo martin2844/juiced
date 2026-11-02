@@ -92,6 +92,66 @@ public:
 
     // The material drawn last and the pass (0x005240E0, 0x00524170).
     void beginMaterialPass(Material& material, uint32_t pass);
+    // The fixed build's depth passes (Game/Scene/HeadlightShadows, AmbientOcclusion): while the shaders are set every
+    // material's pass draws with them (the distance along the light or the view), the depth written, no blending, no
+    // alpha test, the cull mode given; the meshes draw their first pass only, and only those of the materials that
+    // cast a shadow. With the cutout shaders the alpha tested classes draw too, their texture's alpha tested
+    // (`cutoutPixel` on stage 0), their vertices where their shaders put them: the trees' (Tree-Standard, Tree-Sprite)
+    // swayed (Material::swayConstants on c56 .. c59), the others' as the plain `cutoutVertex` puts them.
+    struct ShadowShaders {
+        ShaderId vertex = 0;
+        ShaderId pixel = 0;
+        uint32_t cull = 1;
+        bool ground = false;  // the ground's materials too (the view's depth of the ambient occlusion)
+        ShaderId cutoutVertex = 0;
+        ShaderId treeVertex = 0;
+        ShaderId treeSpriteVertex = 0;
+        ShaderId cutoutPixel = 0;
+        ShaderId groundPixel = 0;  // with `ground`, every opaque part's: the road's depth marked (kGroundMark),
+                                   // the sea's (kWaterMark), the cars' (kCarMark), each at most the range's end
+        ShaderId puddlePixel = 0;  // with `ground`, the rain's water over the road (Material::puddles; with the
+                                   // cutout vertex shader): its puddles alone, the rest cut away (GroundPass)
+    };
+    ShadowShaders shadowShaders;
+    bool shadowPass() const { return shadowShaders.vertex != 0; }
+    // A material class the shadow pass draws: one that casts a shadow, with `ground` the ground's as well (the road,
+    // the water, the sea, the lines laid on the road), with the cutout shaders the alpha tested ones.
+    bool shadowPassDraws(uint32_t classId) const;
+    // A material class (Core/Data/ExeTables.h) that casts a shadow drawn whole: an opaque one; not the ground (the
+    // road, grass, water, the sea), the sky, glass, nor the alpha tested and blended ones, the sprites and flares
+    // (drawn whole, without their textures, they would be solid shapes).
+    static bool castsShadow(uint32_t classId);
+    // A class of the game's materials whose effect tests the texture's alpha (ALPHATESTENABLE, ALPHAREF 128) and
+    // whose vertices its shader places as the depth passes can: Standard Alpha Test, Vert-Col Alpha Test, Unlit ATest,
+    // the trees, AmbientLit (the leaves of the trees laid as cards).
+    static bool cutsOut(uint32_t classId);
+    // The trees' classes among those (Tree-Standard, Tree-Sprite, AmbientLit): the view's depth marks their leaves
+    // with kFoliageMark for their own occlusion (JuicedConfigExt's AmbientOcclusion.hlsl).
+    static bool isFoliage(uint32_t classId);
+    // The cut out pixel shader's c4.x: a cut out pixel's depth written as -(depth + this) (0 for the others).
+    static constexpr float kFoliageMark = 2.0f;
+    // The ground's classes the view's depth marks for their lights' reflections (the road, its lines, the water, the
+    // sea), and the ground pixel shader's c4.y: their depth written as depth + this (JuicedConfigExt's
+    // LightReflections.hlsl).
+    static bool isReflectingGround(uint32_t classId);
+    static constexpr float kGroundMark = 4.0f;
+    // The water's among them (the rain's puddles, the sea), marked depth + this: its reflections stronger, the
+    // asphalt's weaker (the user, 2026-10-29: in the wet the asphalt shone as the puddles did, so they were not seen).
+    // The rain's water lies over the whole road: only the road under its puddles marked (GroundPass), a part of its
+    // noise's blue by its texture's alpha past kPuddleMask.
+    static bool isWater(uint32_t classId);
+    static constexpr float kWaterMark = 6.0f;
+    static constexpr float kPuddleMask = 0.3f;
+    // The cars' parts in that depth (drawingCars): depth + this (no shadow of the street lamps on them,
+    // JuicedConfigExt's LampShadows.hlsl).
+    static constexpr float kCarMark = 8.0f;
+    bool drawingCars = false;  // the cars drawn now (TrackScene::drawShadowCasters)
+    // The view's marked depth drawn again (TrackScene::markGround): the rain's puddles into the stencil alone (no
+    // depth, no colour; puddlePixel), then the ground (not the rain's water) with groundMark where the stencil holds;
+    // nothing else drawn.
+    enum class GroundPass { None, Puddles, Marked };
+    GroundPass groundPass = GroundPass::None;
+    float groundMark = 0.0f;
     void endMaterial();
     // A material whose parameters change is no longer the one drawn last.
     void forgetMaterial(const Material* material) {
@@ -135,6 +195,13 @@ public:
     Material* override = nullptr;  // +0x124
     Vec4 random{};            // +0x14C
     uint32_t cloudMode = 0;   // [0x0075F108]
+    // The fixed build's procedural clouds (Game/Scene/Clouds): the map's coordinates per world unit in c46 and c47 in
+    // place of the mode's scale, no scroll (the clouds' wind moves them in their map); 0 the stock's.
+    float cloudScale = 0.0f;
+    // c46 and c47 as setLightDirection set them last: the world to the cloud map's coordinates.
+    std::array<std::array<float, 4>, 2> cloudRows() const {
+        return {{{m_cloud[4], m_cloud[5], m_cloud[6], m_cloud[7]}, {m_cloud[8], m_cloud[9], m_cloud[10], m_cloud[11]}}};
+    }
     uint32_t defaultCull = 3; // [0x0071935C]
     Vec4 objectOffset{};      // +0x138: the node drawn minus the camera
     DeclarationId lastDeclaration = 0;  // [0x0075F144]

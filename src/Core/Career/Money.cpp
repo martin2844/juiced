@@ -1,5 +1,7 @@
 #include "Core/Career/Money.h"
 
+#include "Core/Data/Language.h"
+
 #include <algorithm>
 #include <format>
 
@@ -12,7 +14,7 @@ std::string groupThousands(int value, int language) {
     const int shown = static_cast<int>(magnitude);
     std::string digits = std::format("{}", shown);
     std::reverse(digits.begin(), digits.end());
-    const char separator = language == 3 || language == 1 ? '.' : ',';
+    const char separator = language == kItalian || language == kFrench ? '.' : ',';
     std::string grouped;
     int run = 0;
     for (char c : digits) {
@@ -30,7 +32,7 @@ std::string groupThousands(int value, int language) {
 
 std::string moneyText(int value, int language) {
     const std::string amount = groupThousands(value, language);
-    return language == 1 ? amount + " $" : "$" + amount;
+    return language == kFrench ? amount + " $" : "$" + amount;
 }
 
 }  // namespace oj

@@ -73,10 +73,12 @@ int32_t ModShop::drawPart(GarageHost& host, size_t kind, int level) {
 // 0x00442A80: the upgrades. The car's induction, exhaust and turbo kept; each level (-1 none .. 3) of the turbo, then
 // the exhaust, then the induction, all three none left out, none past the levels the profile unlocked for the model
 // (+0x50) nor below the car's: the car takes the three (for a level a part drawn, 0x00498F40 and 0x004990F0, put on
-// unless the car's own is of that level or more; -1 none) and is rated (0x0048E8A0; ITER .. printed for debugging: not
-// followed). A rating whose whole number (to the nearest) passes the car's (cut) and passes the best of its class (7
-// under 200 .. 0 from 800) found before takes that class: the nitro, the suspension, the brakes and the tyres up to the
-// highest of the three levels and the profile's, each drawn when above the car's; the class's parts the car's
+// unless the car's own is of that level or more; -1 none) and is rated (0x0048E8A0; to the debugger's output "ITER
+// <n> - Class <the class + 1> - BHP <the rating to the nearest> - Induc .. - Exhaust .. - Turbo .." with the three
+// levels, n counting every combination from 0). A rating whose whole number (to the nearest) passes the car's (cut)
+// and passes the best of its class (7 under 200 .. 0 from 800) found before takes that class: the nitro, the
+// suspension, the brakes and the tyres up to the highest of the three levels and the profile's, each drawn when above
+// the car's; the class's parts the car's
 // induction, exhaust and turbo; the cost the parts' COST (the three only when not of the car's levels) and the meters:
 // the three's PHYSICS a and b (/ 255) into accel and speed, the nitro sets speed (0.35, 0.25, 0.1 by its level 2, 1,
 // 0), the suspension's d into handling, the brakes' c into braking, the tyres' c and d into braking and handling; accel
@@ -160,9 +162,11 @@ void ModShop::enter(GarageHost& host, ui::Screen& s) {
         }
     };
 
+    int iteration = -1;  // [esp+0x3C]: one more at the top of each combination (0x00442C80)
     for (int t = -1; t < 4; ++t) {
         for (int e = -1; e < 4; ++e) {
             for (int i = -1; i < 4; ++i) {
+                ++iteration;
                 if (i == -1 && e == -1 && t == -1) continue;
                 if (i > unlocked[kInduction] || e > unlocked[kExhaust] || t > unlocked[kTurbo]) continue;
                 if (i < levelInduction || e < levelExhaust || t < levelTurbo) continue;
@@ -175,6 +179,8 @@ void ModShop::enter(GarageHost& host, ui::Screen& s) {
                 const float rating = rate();
                 const int c = modClass(rating);
                 const auto whole = static_cast<int>(std::nearbyint(rating));
+                log::debugPrint("ITER %d - Class %d - BHP %d - Induc %d - Exhaust %d - Turbo %d \n", iteration, c + 1,
+                                whole, i, e, t);
                 const int top = std::max({-1, i, e, t});
                 if (whole <= ownRating) continue;
                 Slot& slot = slots[static_cast<size_t>(c)];
@@ -466,7 +472,7 @@ void ModShop::update(GarageHost& host, ui::Screen& s, uint32_t event) {
         if (static_cast<float>(p.money) > e.cost) {
             const std::wstring itemText = s.menuItemText("menu", item);
             std::wstring text;
-            if (host.language().index == 2) {
+            if (host.language().index == kGerman) {
                 text = itemText + texts.at(kTextBuy);
             } else {
                 text = texts.at(kTextBuy) + L" " + itemText;

@@ -7,6 +7,7 @@
 #include "Core/Data/GameTexts.h"
 #include "Core/Data/JetTexts.h"
 #include "Game/Frontend/WindowTools.h"
+#include "Game/UI/WindowFixes.h"
 
 #include <windows.h>
 
@@ -50,6 +51,18 @@ std::wstring systemDate(uint64_t written) {
 
 }  // namespace
 
+std::string districtPicture(ui::Screen& s, const ExeTables& t, const std::string& track) {
+    for (const ExeTables::CityLocation& place : t.cityLocations) {
+        if (_stricmp(place.name.c_str(), track.c_str()) != 0) continue;
+        if (place.texture.rfind("ui_", 0) != 0) return std::string();
+        const std::string picture = "ui_replay_" + place.texture.substr(3);
+        if (s.texture(picture) == 0) return std::string();
+        s.smoothPicture(picture);
+        return picture;
+    }
+    return std::string();
+}
+
 // 0x004694B0: the windows' enter, the record cleared (0x004693A0), +0x38 0, LAPSTITLE "CARS" (65, its FontModifier
 // started again).
 void LoadReplay::enter(SaveHost& host, ui::Screen& s) {
@@ -85,6 +98,7 @@ void LoadReplay::clear(SaveHost& host, ui::Screen& s) {
     m_networkNote = 999995;
     m_wait = 0.0f;
     m_shown = -1;
+    m_pictured = false;
     if (s.find("menu") >= 0) s.clearMenu("menu");
     s.hideContaining("INFO_");
     s.hideContaining("DEL_");
@@ -121,7 +135,8 @@ void LoadReplay::fill(SaveHost& host, ui::Screen& s) {
 // for a showoff or a sprint (types 4 and 6), else its route's name (0x00426520: the first route of that name) or
 // empty; INFO_RACETYPE the race type's name (495 + type; type 7 is first made 5, in the record too); INFO_NUMCARS the
 // cars ("%d"); INFO_DRIVERNAME the driver; INFO_TRACK_PIC the place's picture (0x00462730: none when no place has the
-// name), hidden for a replay without cars.
+// name), hidden for a replay without cars. The fixed build's window has that picture (Game/UI/WindowFixes): the
+// district's (districtPicture) with its frame, both hidden for a replay without cars or without a picture.
 void LoadReplay::showInfo(SaveHost& host, ui::Screen& s, const save::ReplaySlot& replay) {
     GameData* data = host.gameData();
     const TextTable& texts = host.gameTexts();
@@ -162,15 +177,14 @@ void LoadReplay::showInfo(SaveHost& host, ui::Screen& s, const save::ReplaySlot&
     }
     if (s.find("INFO_NUMCARS") >= 0) s.setText("INFO_NUMCARS", cars ? std::to_wstring(replay.cars) : L"");
     if (s.find("INFO_DRIVERNAME") >= 0) s.setText("INFO_DRIVERNAME", cars ? replay.driver : L"");
-    if (s.find("INFO_TRACK_PIC") >= 0) {
-        s.setHidden("INFO_TRACK_PIC", !cars);
-        if (cars) {
-            for (const ExeTables::CityLocation& place : t.cityLocations) {
-                if (_stricmp(place.name.c_str(), replay.track.c_str()) == 0) {
-                    s.setTexture("INFO_TRACK_PIC", place.texture);
-                    break;
-                }
-            }
+    if (s.find(ui::kReplayPicture) >= 0) {
+        const std::string picture = cars ? districtPicture(s, t, replay.track) : std::string();
+        m_pictured = !picture.empty();
+        if (m_pictured) {
+            s.setTexture(ui::kReplayPicture, picture);
+            s.showContaining(ui::kReplayPicture, false);
+        } else {
+            s.hideContaining(ui::kReplayPicture);
         }
     }
 }
@@ -211,6 +225,8 @@ void LoadReplay::update(SaveHost& host, ui::Screen& s, uint32_t event) {
     if (m_infoState != m_infoHidden) {
         if (m_infoHidden == 0) {
             s.showContaining("INFO_", true);
+            // The fixed build's picture only for a replay that has one.
+            if (!m_pictured) s.hideContaining(ui::kReplayPicture);
         } else {
             s.hideContaining("INFO_", true);
         }

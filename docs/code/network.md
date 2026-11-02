@@ -37,6 +37,13 @@ the front end's network windows (Game/Frontend/Network)     the race (Game/Race/
   (`GameSpy.h`: the game's name and key, the challenge's answer, the available check), QR2 (`GameSpyQr2.h`), the
   server browser (`GameSpyBrowser.h`), NAT negotiation (`GameSpyNatNeg.h`), Presence (`GameSpyPresence.h`, the user
   object `GameSpyUser.h`), the statistics (`GameSpyStats.h`) and HTTP (`GameSpyHttp.h`), Voice (`GameSpyVoice.h`).
+  Voice's sound devices are behind **`VoiceSound`** (`VoiceSound.h`; `makeVoiceSound` in `VoiceSound.cpp` picks the
+  build's): the devices listed with the default voice devices, a playback device's looping buffer the mix writes
+  behind its play cursor, a capture device's looping buffer read behind its read cursor. The SDK's logic (the
+  sources' frames, the mix, the capture's threshold and encoding) asks it in the stock's order;
+  **`DirectSoundVoice`** (`DirectSound/DirectSoundVoice.h`) is the stock's, DirectSound and DirectSoundCapture;
+  the fixed build builds **`OpenAlVoice`** (`OpenAL/OpenAlVoice.h`) in its place, OpenAL Soft's devices and capture.
+  `setVoiceSound` puts another in its place (test `VoiceCalls`, `tests/Unit/Network/VoiceCallsTests.cpp`).
 - **The game's online objects**: the records and leaderboards (`OnlineRecords.h`, `OnlineStats.h`), the voice
   (`VoiceChat.h`). `NetTcp.h` is the services' non-blocking TCP.
 

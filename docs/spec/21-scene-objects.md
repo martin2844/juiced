@@ -1,6 +1,6 @@
 # Scene objects
 
-The `.dlh` files of a route (their layout: the Blender add-on's `docs/technical/DLH.md`) hold everything on a track
+The `.dlh` files of a route (their layout: `31-file-layouts.md`) hold everything on a track
 that is not plain geometry. The race's load reads them on the loading thread, in the `.tdf` order of the route's
 entries, between the geometry layers (`0x00543350`): a `.dlh` entry whose hidden flags have the race's condition bit
 (`15-tracks.md`) is not loaded at all; the file is `<track>_<entry name>`. Their making draws the loading thread's

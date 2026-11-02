@@ -25,6 +25,9 @@
     <Filter Include="Network\GameSpy">
       <UniqueIdentifier>{A44A1A9A-1B77-5195-B0A9-B31759C8C424}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Network\GameSpy\OpenAL">
+      <UniqueIdentifier>{9E2B7C41-5D3A-4F86-B1C0-7A4E2D9F6B13}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Physics">
       <UniqueIdentifier>{A9C206BB-C0C4-5EC3-AB09-54207DFDDD89}</UniqueIdentifier>
     </Filter>
@@ -162,6 +165,12 @@
     <ClCompile Include="Input\Input.cpp">
       <Filter>Input</Filter>
     </ClCompile>
+    <ClCompile Include="Input\PadControls.cpp">
+      <Filter>Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Input\PadRumble.cpp">
+      <Filter>Input</Filter>
+    </ClCompile>
     <ClCompile Include="Network\GameSpy\GameSpy.cpp">
       <Filter>Network\GameSpy</Filter>
     </ClCompile>
@@ -197,6 +206,12 @@
     </ClCompile>
     <ClCompile Include="Network\GameSpy\GameSpyVoice.cpp">
       <Filter>Network\GameSpy</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\GameSpy\VoiceSound.cpp">
+      <Filter>Network\GameSpy</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\GameSpy\OpenAL\OpenAlVoice.cpp">
+      <Filter>Network\GameSpy\OpenAL</Filter>
     </ClCompile>
     <ClCompile Include="Network\Matchmaking.cpp">
       <Filter>Network</Filter>
@@ -446,6 +461,12 @@
     <ClInclude Include="Input\Input.h">
       <Filter>Input</Filter>
     </ClInclude>
+    <ClInclude Include="Input\PadControls.h">
+      <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Input\PadRumble.h">
+      <Filter>Input</Filter>
+    </ClInclude>
     <ClInclude Include="Network\GameSpy\GameSpy.h">
       <Filter>Network\GameSpy</Filter>
     </ClInclude>
@@ -478,6 +499,12 @@
     </ClInclude>
     <ClInclude Include="Network\GameSpy\GameSpyVoice.h">
       <Filter>Network\GameSpy</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\GameSpy\VoiceSound.h">
+      <Filter>Network\GameSpy</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\GameSpy\OpenAL\OpenAlVoice.h">
+      <Filter>Network\GameSpy\OpenAL</Filter>
     </ClInclude>
     <ClInclude Include="Network\Matchmaking.h">
       <Filter>Network</Filter>

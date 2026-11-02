@@ -1,8 +1,7 @@
 # The race: loading and the track
 
 Behaviour of Juiced 1.0 (PC) as observed; addresses are those of the retail build. The
-byte layouts of the track files are those of the Blender add-on's `docs/technical` (TDF, D8G, D8M_ROUTE, D8W_D8T,
-SHD_TXB, SPL, DLH); this file says how the game uses them.
+byte layouts of the track files are in `31-file-layouts.md`; this file says how the game uses them.
 
 ## From `loading` to the race
 
@@ -261,7 +260,7 @@ over.
 
 ## The collision (`.cld`)
 
-A route's `<track>_<route>.cld` (read by `0x0053DFF0`; the layout is the add-on's `CLD`): the zones (surface flag,
+A route's `<track>_<route>.cld` (read by `0x0053DFF0`; its layout in `31-file-layouts.md`): the zones (surface flag,
 friction and bounce factors, the contact offset and the walls' bottom and top), the vertices, the faces (three
 vertex indices, the unit normal, a word 0), a zone byte per face (bit 7 cleared: the query marks collected faces with
 it), the markers (position, the wall's normal) and their zone bytes, each byte block padded to 4, the tree's area and

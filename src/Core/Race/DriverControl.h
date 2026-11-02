@@ -33,6 +33,8 @@ struct DriverActions {
     // DRIVER_TACTICS_UP, _RIGHT, _DOWN, _LEFT, DRIVER_TACTICS3_UP, _DOWN went down (W, S, Q, A, X, Z): the crew's
     // first, second and third driver up and down.
     std::array<bool, 6> tactics{};
+    // The fixed build: the steering was the controller's (PadControls), not the keys' or a wheel's.
+    bool steeringFromController = false;
 };
 
 // The DRIVER1 actions of a race player's controller (its +0x08; 0x004080D0's slots, read by 0x004015D0 and
@@ -54,6 +56,13 @@ public:
     bool wheel = false;
     bool notSpeedSensitive = false;
     bool multiTurn = false;
+    // The fixed build: [Wheel] exponent, the steering wheel's power in place of 1.65 - 1.65 x the sensitivity + 0.8
+    // (JuicedConfigExt's: the scale 0, the base the exponent); 0 the game's.
+    float wheelExponent = 0.0f;
+    // The fixed build: controller.ini's [Controller] consoleSteering, a controller steering as on the Xbox without the
+    // steering wheel (JuicedConfigExt's SteeringCurve: the stick as it is, lessened by 1 + 0.0023 x (speed - 4)^2
+    // above 4 m/s, the profile's sensitivity bending it around the Xbox's straight line); the keys keep the game's.
+    bool consoleSteering = true;
 
     // 0x0041E200: the car's controls from the actions, dt the race's step time, count the race's count before the
     // start (from 10 up the actions are not read; above 0 the handbrake holds the car).
@@ -62,9 +71,9 @@ public:
     // steering wheel the target by MultiTurn ((sensitivity + 1) x the input), by not speed sensitive (the input
     // shaped by |s| to the power 1.65 - 1.65 x sensitivity + 0.8, no lessening at speed) or as without one with that
     // power; without it the input shaped by the power 1.1 - 1.1 x sensitivity + 0.07 (1.00: 0.05) and lessened at speed
-    // (from 1 to 0.25 at 140 mph). It is reached at the steering speed (x 3 coming back; 3000 with the wheel). Returns
-    // the turn.
-    float steerToward(float input, float speed, float dt);
+    // (from 1 to 0.25 at 140 mph), or the controller's (`controller`) as on the Xbox with consoleSteering. It is
+    // reached at the steering speed (x 3 coming back; 3000 with the wheel). Returns the turn.
+    float steerToward(float input, float speed, float dt, bool controller = false);
 
     float steer = 0.0f;                // +0x2C: the wheel's turn
     bool shiftedUp = false;            // +0x30: a gear up by hand this frame

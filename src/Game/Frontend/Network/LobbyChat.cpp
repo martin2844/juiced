@@ -1,15 +1,18 @@
 #include "Game/Frontend/Network/LobbyChat.h"
 
+#include "Core/Input/Input.h"
 #include "Core/Network/GameSpy/Peerchat.h"
 #include "Core/Network/NetSession.h"
-#include "Game/Frontend/Network/OnlineHost.h"
+#include "Game/Frontend/Network/NetworkHost.h"
 #include "Game/Frontend/Profile/Keyboard.h"
 #include "Game/UI/UiScreen.h"
 #include "Game/UI/WindowFixes.h"
 
 #include <array>
+#include <cmath>
 #include <format>
 #include <string>
+#include <utility>
 #include <vector>
 
 namespace oj::frontend {
@@ -19,6 +22,28 @@ namespace {
 // The keyboard window's top frame, where the chat's lines go.
 constexpr std::array<const char*, 6> kTopFrame = {"INSTRUCTION",      "FRAME_TRIBAL01",       "FRAME_LINESTOP",
                                                   "FRAME_METALLINE1", "FRAME_CORNER_BLUETOP", "FRAME_CORNER_REDTOP"};
+
+// The chat's keyboard: the keys' rows from keyboard.ui's to the lower half, their height, the text above them.
+constexpr std::pair<float, float> kChatKeyRows[] = {
+    {0.295f, 0.530f}, {0.368f, 0.585f}, {0.441f, 0.640f}, {0.516f, 0.695f}, {0.591f, 0.750f}};
+constexpr float kChatKeyHeight = 0.050f;
+constexpr float kChatTextTop = 0.455f;
+constexpr float kChatTextHeight = 0.060f;
+
+// The chat's own keys: an empty key of keyboard.ui, its character and its neighbours.
+struct ChatKey {
+    const char* key;
+    wchar_t symbol;
+    const char* up;
+    const char* down;
+    const char* left;
+    const char* right;
+};
+constexpr ChatKey kChatKeys[] = {
+    {"BLANK1", L'!', "SHIFT", "BQ", "BACKSPACE", "B1"},
+    {"BLANK4", L'?', "BACKSPACE", "DONE", "BP", "BQ"},
+    {"BLANK5", L',', "B@", "SPACE", "B.", "SHIFT"},
+};
 
 std::wstring wide(std::u16string_view text) {
     return std::wstring(text.begin(), text.end());
@@ -32,6 +57,8 @@ struct Wrapped {
     std::array<std::wstring, ui::kChatLines> rows{};
 };
 Wrapped g_wrapped;
+// The session's stage the chat was opened at (its window's).
+net::SessionStage g_chatStage = net::SessionStage::Lobby;
 
 // The rows of a line within the width: the longest beginning that fits each time (by halves), then the rest.
 std::vector<std::wstring> wrap(ui::Screen& s, const std::wstring& line, int most) {
@@ -73,8 +100,9 @@ std::wstring stateLine(net::peerchat::LobbyChat::State state) {
 
 bool lobbyChatOn() {
     const net::NetGame* game = net::netGame();
-    return net::peerchat::lobbyChat() != nullptr && game != nullptr &&
-           game->session.stage() == net::SessionStage::Lobby;
+    if (net::peerchat::lobbyChat() == nullptr || game == nullptr) return false;
+    const net::SessionStage stage = game->session.stage();
+    return stage == net::SessionStage::Lobby || stage == net::SessionStage::Cars;
 }
 
 void lobbyChatHint(ui::Screen& s) {
@@ -87,8 +115,12 @@ void lobbyChatHint(ui::Screen& s) {
     s.setText(ui::kChatText, unread != 0 ? std::format(L"CHAT ({})", unread) : std::wstring(L"CHAT"));
 }
 
-void openLobbyChat(OnlineHost& host) {
-    KeyboardSetup& k = host.keyboardSetup();
+void openLobbyChat(NetworkHost& host, const char* window) {
+    KeyboardSetup* setup = host.chatKeyboard();
+    const net::NetGame* game = net::netGame();
+    if (setup == nullptr || game == nullptr) return;
+    g_chatStage = game->session.stage();
+    KeyboardSetup& k = *setup;
     k = KeyboardSetup{};
     k.chat = true;
     for (char c = 0x20; c < 0x7F; ++c) k.allowed.push_back(c);
@@ -97,8 +129,8 @@ void openLobbyChat(OnlineHost& host) {
     k.small = true;
     k.checkName = false;
     k.symbols = true;
-    k.back = "link_lobby";
-    k.next = "link_lobby";
+    k.back = window;
+    k.next = window;
     g_wrapped = Wrapped{};
     host.sound("CLICK");
     host.request("keyboard", SwitchMode::Replace);
@@ -114,11 +146,45 @@ void lobbyChatLayout(ui::Screen& s, bool chat) {
         s.setHidden(name, !chat);
         s.setText(name, L"");
     }
+    if (!chat) return;
+    // The keys lower and shorter, the text above them, so the chat's lines fill the upper half (keyboard.ui's rows at
+    // 0.295, 0.368, 0.441, 0.516 and 0.591, 0.067 high; the text at 0.687).
+    for (const std::string& b : s.buttons()) {
+        const int e = s.find(b);
+        float x = 0.0f, y = 0.0f, w = 0.0f, h = 0.0f;
+        s.placeOf(e, x, y, w, h);
+        for (const auto& [from, to] : kChatKeyRows) {
+            if (std::fabs(y - from) < 0.01f) {
+                s.setPlace(e, x, to, w, kChatKeyHeight);
+                break;
+            }
+        }
+    }
+    for (const char* name : {"STRING", "STRING_SMALL", "DRIVERNAMEBOX"}) {
+        const int e = s.find(name);
+        if (e < 0) continue;
+        float x = 0.0f, y = 0.0f, w = 0.0f, h = 0.0f;
+        s.placeOf(e, x, y, w, h);
+        s.setPlace(e, x, kChatTextTop, w, kChatTextHeight);
+    }
+    // keyboard.ui's empty keys BLANK1 (before 1), BLANK4 (after P) and BLANK5 (after .) type ! ? and , (the game's
+    // keys have none of them), linked into the rows: the pad reaches them.
+    for (const ChatKey& k : kChatKeys) {
+        if (s.find(k.key) < 0) continue;
+        s.setText(k.key, std::wstring(1, k.symbol));
+        s.setNeighbour(k.key, input::kUp, k.up);
+        s.setNeighbour(k.key, input::kDown, k.down);
+        s.setNeighbour(k.key, input::kLeft, k.left);
+        s.setNeighbour(k.key, input::kRight, k.right);
+        s.setNeighbour(k.left, input::kRight, k.key);
+        s.setNeighbour(k.right, input::kLeft, k.key);
+    }
 }
 
 bool lobbyChatFrame(ui::Screen& s) {
     net::peerchat::LobbyChat* chat = net::peerchat::lobbyChat();
-    if (chat == nullptr || !lobbyChatOn()) return false;
+    const net::NetGame* game = net::netGame();
+    if (chat == nullptr || !lobbyChatOn() || game == nullptr || game->session.stage() != g_chatStage) return false;
     const auto& lines = chat->lines();
     const std::u16string last = lines.empty() ? std::u16string() : lines.back().nick + u":" + lines.back().text;
     if (lines.size() != g_wrapped.count || last != g_wrapped.last || chat->state() != g_wrapped.state) {

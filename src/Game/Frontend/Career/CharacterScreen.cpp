@@ -149,11 +149,11 @@ void careerCashTexts(ui::Screen& screen, const Career& career, int language, con
     const int day = career.calendar.dayOfMonth;
     const int month = career.calendar.month;
     std::wstring date = toWide(std::format("{}", day + 1));
-    if (m_language == 3) {
+    if (m_language == kItalian) {
         if (day == 0) date += line(kTextOrdinals + 3);
-    } else if (m_language == 1) {
+    } else if (m_language == kFrench) {
         if (day == 0) date += L"er";
-    } else if (m_language == 4) {
+    } else if (m_language == kSpanish) {
         date += L" de ";
     } else {
         // 1st, 2nd, 3rd, then th; 11th .. 14th.
@@ -180,7 +180,7 @@ void crewRespect(CareerHost& host, Career& career, int crew, RespectReason kind,
     if (kind == RespectReason::ChallengeCompleted) {
         comment = texts.at(kTextChallengeCompleted);
     } else {
-        if (language != 4) {
+        if (language != kSpanish) {
             comment = widenSigned(std::string_view(c.memberNames[0].data(), c.memberNames[0].size()));
         }
         comment += texts.at(kTextRespectReasons + static_cast<size_t>(kind));

@@ -227,7 +227,8 @@ void SkyDome::draw(Camera& camera) {
     m_r.setVertexConstants(18, modelToClip.data(), 4);
     device.setRenderState(RenderState::FogEnable, 0);
     device.setStream(m_buffer, sizeof(Vertex));
-    device.draw(Primitive::TriangleStrip, 0, static_cast<uint32_t>(m_vertices.size()) - 2);
+    const auto strips = static_cast<uint32_t>(m_vertices.size()) - 2;
+    if (clouds == nullptr || !device.cloudSky(strips, *clouds)) device.draw(Primitive::TriangleStrip, 0, strips);
     device.setRenderState(RenderState::FogEnable, 1);
 }
 
@@ -247,7 +248,8 @@ void SkyDome::drawReflected(Camera& camera) {
     m_r.setVertexConstants(18, modelToClip.data(), 4);
     device.setRenderState(RenderState::FogEnable, 0);
     device.setStream(m_buffer, sizeof(Vertex));
-    device.draw(Primitive::TriangleStrip, 0, static_cast<uint32_t>(m_vertices.size()) - 2);
+    const auto strips = static_cast<uint32_t>(m_vertices.size()) - 2;
+    if (clouds == nullptr || !device.cloudSky(strips, *clouds)) device.draw(Primitive::TriangleStrip, 0, strips);
     device.setRenderState(RenderState::FogEnable, 1);
 }
 

@@ -20,7 +20,7 @@ Where each mesh of a model goes: cars (`cars\<car>\models\`), wheels, the scenes
 ## Mesh (`.d8m` of a model)
 
 The meshes of a model live in a `mesh\` folder (`mesh\`, `carmesh\`, `cars\<car>\mesh\`); a route's `.d8m` is another
-layout (the route geometry). Some files in `mesh\` are of an earlier layout and do not read as below; a few are
+layout (the route's materials, `31-file-layouts.md`). Some files in `mesh\` are of an earlier layout and do not read as below; a few are
 empty.
 
 ```

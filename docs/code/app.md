@@ -24,7 +24,10 @@ to find its `binkw32.dll`; elsewhere it says so and ends. The game's files are t
    pages (`App/DebugPages.h`: made, never shown, as in the stock game).
 3. The language (`chooseLanguage`: the registry's id, else Windows', or `[Game] Language`), its text table, the input
    (`Platform/InputDevices.h`: DirectInput's controllers and the force feedback; the keyboard comes from the window's
-   messages) and the controls file.
+   messages) and the controls file. The fixed build has no DirectInput maps: JuicedConfigExt's controller and layout
+   (`Platform/Pads.h`, `Core/Input/PadControls.h`; the controls file with the layout's controls) and its steering
+   wheels (`Platform/WheelInput.h`: controller.ini's `[WheelMap]` and `[Wheel]`, DirectInput's raw states beside the
+   force feedback's channels, which `InputDevices::startWheels` opens for the wheels).
 4. `rand()` seeded from the performance counter (or `--seed`), then `GameData::load` (`data.md`): the car models, the
    parts, the arcade, a first career.
 5. The graphics settings, the 3D engine (`scene::Engine`, `rendering.md`), the movies (`movie::System`), the first
@@ -37,20 +40,26 @@ to find its `binkw32.dll`; elsewhere it says so and ends. The game's files are t
 The game object's phases (0x0040CCA0):
 
 ```
-Frontend --race asked--> Load --track and cars made--> Race --race left--> Unload --3 frames--> Frontend
+Frontend --race asked--> Load --the load's job done--> Race --race left--> Unload --the job done--> Frontend
 ```
 
 - **Frontend**: `Frontend::update` and `draw` (`frontend.md`). When a window asks for a race (`raceLoadAsked`), the
   front end goes and a loading front end (`keepLoaderWindows`, `startLoader`: `loader`, `arcade_loading` or
   `custom_loader` by the race's mode) takes its place.
-- **Load**: the loading front end's frames; after three, the load on the main thread: `TrackView::start` (the track),
-  the grid by the race's mode (`Race/RaceGrids.h`: the career's racers, a custom or arcade race, a replay's, the
-  network's), the intro, `beginRace`. The stock game loads on a thread with the loading window moving; here the window
-  stands while the track loads; in a network game a thread of the transport (`LoadKeepAlive`) says the keep-alive
-  to the peers meanwhile, as the stock's frames did (else the peers drop a machine whose load passes 25 s).
+- **Load**: the loading front end's frames; after three, its animation and the load as a job of the loading thread
+  (`Core/Base/LoadingThread.h`), as the stock's: `TrackView::start` (the track), the grid by the race's mode
+  (`Race/RaceGrids.h`: the career's racers, a custom or arcade race, a replay's, the network's), the intro,
+  `beginRace`. The frames go on meanwhile (the loading window and its animation move, the network's frames keep the
+  peers); once the job is done the main thread ends the load (`finishLoad`) and the race's music starts.
 - **Race**: `TrackView::drive` and `draw` (`race.md`), the 3D sounds' world. When the race front end asks to leave
   (`unloadAsked`), the race ends (`endRace`) and a loading front end shows.
-- **Unload**: three frames of it, then a new `Frontend` on the window that follows the race (`windowAfterRace`).
+- **Unload**: one frame of it (three in the arcade), then its animation and a job of the loading thread making the new
+  `Frontend` (`windowAfterRace`, the windows it keeps); once the job is done and the loading window's transitions
+  have ended, the front end's music and its first window.
+
+The stock's two threads share the game's objects without a lock. Here a job of the loading thread takes turns with
+the frames (`FrameTurns`): a frame holds the turn from its start to its present, the job runs between the frames and
+gives the turn back at its waits (the files it reads, the engine's loads) when a frame waits for it.
 
 Each frame, in the stock order:
 
@@ -66,9 +75,14 @@ Each frame, in the stock order:
 ## The platform
 
 - `Platform` (`Platform/Platform.h`) owns the window, its messages (the keys, the activation, Print Screen, the close
-  from the system menu) and the single instance.
+  from the system menu) and the single instance. The fixed build's screen modes (`Platform/Screen.h`,
+  `Platform::chooseScreen`): the process DPI aware, the adapter of the settings' `Monitor`, the full screen mode at its
+  refresh rate (no mode of the resolution: the window without a frame), the window without a frame over the monitor
+  (minimized when it loses the focus), the window with a frame fitted to the work area.
 - `Settings` are the registry's values `JuicedConfig.exe` writes (`HKEY_CURRENT_USER\Software\THQ\Juiced`); OpenJuice
-  writes none. `runConfigurationTool` starts `JuicedConfig.exe` and waits for it (the adapter check, `-setup`).
+  writes none. `runConfigurationTool` starts `JuicedConfig.exe` and waits for it (the adapter check, `-setup`); the
+  fixed build starts its `OpenJuiceConfig` first (`runSettingsProgram`: JuicedConfigExt's settings program,
+  `third_party/juicedconfigext`; `--first-run` from the adapter check, `--layout-only` from the controls' menu).
 - `startupText` is the start's messages (another instance, no `JuicedConfig.exe`, ..) read from the game's
   `jettext<letter>.txt` before the game's texts are loaded.
 - `CrashLog`: a crash writes the stack to `OpenJuice.log` and the stock's `crash.txt`.
@@ -87,7 +101,21 @@ Each frame, in the stock order:
   `LaunchOptions`, and OpenJuice's `-setup`.
 - The debug builds (`_DEBUG`) also read OpenJuice's switches of scripted runs, which start with `--`: `--frames N`,
   `--test` (a hidden windowed run that changes nothing on the system and opens no tool or controller), `--seed N`,
-  `--capture <file>`, `--press`, `--screen`, `--track`, `--car`, `--net`, `--players`, `--autopilot`, `--saves`, ..
+  `--capture <file>`, `--press`, `--screen`, `--track`, `--car`, `--cars N` (on the first N grid places),
+  `--car-ahead <right>,<forward>` (the second grid place that far from the first, in cm), `--track-camera
+  <right>,<up>,<back>[,<right>,<forward>]` (held through the race; looking at the first grid place or at the point the
+  last two give), `--net`,
+  `--players`, `--autopilot`, `--saves`, `--headlights N` (the fixed build's 0 .. 2 whatever `--test` resets),
+  `--shadow-map <file>` (the headlights' shadow maps at the last frame, grey: light i's in `<file>_i`),
+  `--reflections N` (the REFLECTION row's 0 .. 3, 4 the fixed build's ULTRA), `--cube-map <file>` (the cars' cubes at
+  the last frame: `<file>_stock_<face>`, `<file>_cars_<face>`), `--world-light N` (0 .. 2), `--sky N` (0 .. 2),
+  `--ao-map <file>` (the
+  last ambient occlusion; beside it the lights' reflection `_lights`, the street lamps' shade `_lamps`, the first
+  lamp's map `_lamp0` and the light in the haze `_haze`), `--glow N` (LIGHT FLARES: 0 OFF, 1 STOCK, 2 CUSTOM),
+  `--user-settings` (with `--test` the registry's renderer settings and effects kept, the window still hidden),
+  `--profile N` (the frames' layers timed from the N-th: each layer's GPU and CPU time, draws and triangles a frame,
+  logged at the end, `Render/D3D9/D3D9Profiler`; with `-r` and no VSync a release-like run's are the frame's real
+  costs), `--caster-pixels X` (the shadow maps' casters under X pixels across from the view left out, 0 none), ..
   (`LaunchOptions` names each). The release builds read them as the stock game does: as no switch.
 - `Config` (`Core/Base/Config.h`) is `OpenJuice.ini`: `[Game] Language`, `[Game] SkipIntroMovies`, and in the debug
   builds `[Saves] Folder`. A missing file is written with the defaults.

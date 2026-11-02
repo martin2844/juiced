@@ -1,12 +1,13 @@
 #include "Game/Media/BinkNative.h"
 
+#include "Audio/Output.h"
+#include "Audio/SoundSystem.h"
 #include "Core/Base/Log.h"
 
 #include <windows.h>
 
 #include <mmsystem.h>
 
-#include <dsound.h>
 
 #include <algorithm>
 #include <bit>
@@ -1619,9 +1620,10 @@ void AudioDecoder::decode(const uint8_t* data, size_t bytes, std::vector<int16_t
 
 // ---- binkw32's calls.
 
-// A movie's sound: a looping DirectSound buffer of a second, fed by the sound thread from the samples decoded.
+// A movie's sound: a looping buffer of the sound library's output (DirectSound) of a second, fed by the sound thread
+// from the samples decoded.
 struct Native::Sound {
-    IDirectSoundBuffer* buffer = nullptr;
+    std::unique_ptr<audio::OutputBuffer> buffer;
     uint32_t bytes = 0;      // of the buffer
     uint32_t frameBytes = 0; // a sample of all channels
     std::vector<int16_t> pending;
@@ -1635,27 +1637,14 @@ struct Native::Sound {
     bool paused = false;
     int32_t volume = 32768;
 
-    // Bytes into the buffer at the place, across its end.
-    void put(uint32_t at, const uint8_t* data, uint32_t n) {
-        void* p1 = nullptr;
-        void* p2 = nullptr;
-        DWORD n1 = 0, n2 = 0;
-        if (FAILED(buffer->Lock(at, n, &p1, &n1, &p2, &n2, 0))) return;
-        if (data != nullptr) {
-            std::memcpy(p1, data, n1);
-            if (p2 != nullptr) std::memcpy(p2, data + n1, n2);
-        } else {
-            std::memset(p1, 0, n1);
-            if (p2 != nullptr) std::memset(p2, 0, n2);
-        }
-        buffer->Unlock(p1, n1, p2, n2);
-    }
+    // Bytes into the buffer at the place, across its end (zeros without data).
+    void put(uint32_t at, const uint8_t* data, uint32_t n) { buffer->write(at, data, n); }
 
     void service() {
         if (buffer == nullptr || paused) return;
         if (playing) {
-            DWORD play = 0, write = 0;
-            if (FAILED(buffer->GetCurrentPosition(&play, &write))) return;
+            uint32_t play = 0, write = 0;
+            if (audio::failed(buffer->cursors(play, write))) return;
             played += (play + bytes - lastPlay) % bytes;
             lastPlay = play;
             if (written < played) {
@@ -1689,7 +1678,7 @@ struct Native::Sound {
             quietTo = quietEnd;
         }
         if (!playing && written != 0) {
-            buffer->Play(0, 0, DSBPLAY_LOOPING);
+            buffer->play(audio::kPlayLooping);
             playing = true;
         }
     }
@@ -1819,28 +1808,23 @@ uint32_t Native::open(const std::filesystem::path& file, uint32_t flags) {
 }
 
 void Native::startSound(Movie& m) {
-    auto* ds = static_cast<IDirectSound8*>(m_directSound);
-    WAVEFORMATEX format{};
-    format.wFormatTag = WAVE_FORMAT_PCM;
-    format.nChannels = static_cast<WORD>(m.audio.channels());
-    format.nSamplesPerSec = m.audio.sampleRate();
-    format.wBitsPerSample = 16;
-    format.nBlockAlign = static_cast<WORD>(format.nChannels * 2);
-    format.nAvgBytesPerSec = format.nSamplesPerSec * format.nBlockAlign;
-    DSBUFFERDESC desc{};
-    desc.dwSize = sizeof(desc);
-    desc.dwFlags = DSBCAPS_CTRLVOLUME | DSBCAPS_GETCURRENTPOSITION2 | DSBCAPS_GLOBALFOCUS;
-    desc.dwBufferBytes = format.nAvgBytesPerSec;
-    desc.lpwfxFormat = &format;
-    IDirectSoundBuffer* buffer = nullptr;
-    if (FAILED(ds->CreateSoundBuffer(&desc, &buffer, nullptr)) || buffer == nullptr) {
+    audio::SampleFormat format;
+    format.channels = static_cast<uint16_t>(m.audio.channels());
+    format.rate = m.audio.sampleRate();
+    format.bits = 16;
+    format.blockAlign = static_cast<uint16_t>(format.channels * 2);
+    format.bytesPerSecond = format.rate * format.blockAlign;
+    std::unique_ptr<audio::OutputBuffer> buffer = audio::system().output().createBuffer(
+        format, format.bytesPerSecond,
+        audio::kCapsCtrlVolume | audio::kCapsGetCurrentPosition2 | audio::kCapsGlobalFocus);
+    if (buffer == nullptr) {
         log::warning("bink: no sound buffer for a movie's track");
         return;
     }
     auto sound = std::make_unique<Sound>();
-    sound->buffer = buffer;
-    sound->bytes = desc.dwBufferBytes;
-    sound->frameBytes = format.nBlockAlign;
+    sound->buffer = std::move(buffer);
+    sound->bytes = format.bytesPerSecond;
+    sound->frameBytes = format.blockAlign;
     sound->put(0, nullptr, sound->bytes);
     std::lock_guard lock(m_soundLock);
     m_sounds.push_back(sound.get());
@@ -1866,9 +1850,7 @@ void Native::close(uint32_t movie) {
     if (m->sound) {
         std::lock_guard lock(m_soundLock);
         std::erase(m_sounds, m->sound.get());
-        m->sound->buffer->Stop();
-        m->sound->buffer->Release();
-        m->sound.reset();
+        m->sound.reset();  // the buffer stopped and released
     }
     CloseHandle(m->file);
     m_movies[movie - 1].reset();
@@ -1971,9 +1953,9 @@ int32_t Native::pause(uint32_t movie, int32_t on) {
             s.paused = paused;
             if (s.playing) {
                 if (paused) {
-                    s.buffer->Stop();
+                    s.buffer->stop();
                 } else {
-                    s.buffer->Play(0, 0, DSBPLAY_LOOPING);
+                    s.buffer->play(audio::kPlayLooping);
                 }
             }
         }
@@ -1988,12 +1970,13 @@ void Native::setVolume(uint32_t movie, uint32_t track, int32_t volume) {
     Sound& s = *m->sound;
     if (s.volume == volume) return;
     s.volume = volume;
-    LONG decibels = DSBVOLUME_MIN;
+    constexpr int32_t kVolumeMin = -10000;  // DSBVOLUME_MIN
+    int32_t decibels = kVolumeMin;
     if (volume > 0) {
         const double d = 2000.0 * std::log10(static_cast<double>(std::min(volume, 32768)) / 32768.0);
-        decibels = static_cast<LONG>(std::max(d, static_cast<double>(DSBVOLUME_MIN)));
+        decibels = static_cast<int32_t>(std::max(d, static_cast<double>(kVolumeMin)));
     }
-    s.buffer->SetVolume(decibels);
+    s.buffer->setVolume(decibels);
 }
 
 // binkw32's conversion (measured against its pictures, exact): tables of each term cut toward 0 and added, Y below 16

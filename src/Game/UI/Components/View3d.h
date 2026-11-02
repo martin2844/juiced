@@ -16,6 +16,9 @@ public:
     virtual void draw(float x0, float y0, float x1, float y1, float seconds, float dt) = 0;
     // The view's flag 0x10: given to the 3d elements of a window whose name holds "HUD_" (case aside; 0x005AB3DC).
     virtual void setRound(bool) {}
+    // The fixed build's wide screens: the camera's widening (Render/Camera::setWiden) for the box's shape against the
+    // shape it has in the 4:3 frame.
+    virtual void setWiden(float, float) {}
 };
 using View3dFactory = std::function<std::unique_ptr<View3d>(const Element&)>;
 

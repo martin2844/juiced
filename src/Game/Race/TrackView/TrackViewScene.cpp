@@ -21,8 +21,7 @@ void TrackView::makeLightSteps(RaceSlot& s) {
     // Room for every step (the parts keep the chassis's place: no reallocation), the fixed build's four more.
     s.lights.reserve(20);
     if (s.chassis == nullptr) return;
-    const oj::render::AtmosphereSet* set = scene->atmosphere();
-    const bool night = set != nullptr && set->current != nullptr && set->current->night != 0;
+    const bool night = scene->night();
     const oj::GameFiles files(std::filesystem::current_path());
     auto add = [&](LightStep::Kind kind, oj::render::Node* node, size_t table) {
         s.lights.emplace_back(kind, node);
@@ -243,6 +242,26 @@ void TrackView::carLights(RaceSlot& s) {
         } else {
             s.reverseLight->flags |= 4u;
         }
+    }
+}
+
+void TrackView::tunnelLights(RaceSlot& s, float dt) {
+    if (headlights <= 0.0f || s.lightsOn || s.chassis == nullptr) return;
+    const bool was = s.tunnelLights.on;
+    const oj::Mat34& w = s.chassis->world();
+    s.tunnelLights.step(!s.car.headlightsOut && scene->sceneObjects().inTunnel({w[3], w[7], w[11], 0.0f}), dt);
+    if (s.tunnelLights.on != was && !s.car.headlightsOut) showHeadlights(s, s.tunnelLights.on);
+}
+
+void TrackView::showHeadlights(RaceSlot& s, bool on) {
+    for (oj::scene::CarFlare* f : s.headFlares) {
+        if (f != nullptr) f->on = on;
+    }
+    if (s.litLamps == nullptr) return;
+    if (on) {
+        s.litLamps->flags &= ~4u;
+    } else {
+        s.litLamps->flags |= 4u;
     }
 }
 

@@ -27,9 +27,9 @@ public:
     // 0x0045BD10
     void clear(ui::Screen& s);
     // 0x0045B720
-    void route(WindowHost& host, ui::Screen& s, const std::string& route, bool add);
+    void route(ui::Screen& s, const std::string& route, bool add);
     // 0x0045BB40
-    void addRoute(WindowHost& host, ui::Screen& s, const std::string& route);
+    void addRoute(ui::Screen& s, const std::string& route);
     // 0x0045BEC0
     void lookAt(WindowHost& host, ui::Screen& s, const std::wstring& location);
     // The map freed (a window's leave): its element no longer taken.

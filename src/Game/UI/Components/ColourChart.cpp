@@ -114,12 +114,11 @@ void Screen::moveChart(State& s, float dt, uint32_t scroll) {
 // x its height (10 at most) x 4 above and below. Then +0xD8's red, green and blue are taken to 0.75 (to the nearest).
 void Screen::drawChart(const Element& e, State& s) {
     (void)e;
-    const float sw = static_cast<float>(m_device.width());
-    const float sh = static_cast<float>(m_device.height());
-    float left = sw * s.x;
-    float top = sh * s.y;
-    float right = (s.w + s.x) * sw;
-    float bottom = (s.h + s.y) * sh;
+    const Placement p = placementOf(s);
+    float left = p.sx * s.x + p.ox;
+    float top = p.sy * s.y + p.oy;
+    float right = (s.w + s.x) * p.sx + p.ox;
+    float bottom = (s.h + s.y) * p.sy + p.oy;
     if (s.hasTransition) {
         left += s.transition.offsetX;
         top += s.transition.offsetY;

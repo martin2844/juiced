@@ -95,7 +95,7 @@ void CityMap::clear(ui::Screen& s) {
 // the view looks at its "centre". Not add (0): each model of the element's list (its own first) of that name shown and
 // made the one coming down (+0x08), every other hidden (its top node: the city's own keeps its buildings below it);
 // the one of that name placed at (0, 0, 0) and the view at its "centre". Either way the height 20000.
-void CityMap::route(WindowHost& host, ui::Screen& s, const std::string& route, bool add) {
+void CityMap::route(ui::Screen& s, const std::string& route, bool add) {
     scene::View3d* view = view3d(s);
     if (view == nullptr) return;
     const std::string name = "UI_" + route + "_GUI";
@@ -126,16 +126,17 @@ void CityMap::route(WindowHost& host, ui::Screen& s, const std::string& route, b
         }
         view->removeModel(0);
     }
-    const int added = view->addModel(name, {0.0f, 0.0f, 0.0f, 0.0f}, host.viewLoading());
+    // The window's code (the main thread's rand(), 0x005B3E60 not a job of the loading thread).
+    const int added = view->addModel(name, {0.0f, 0.0f, 0.0f, 0.0f}, gameRandom());
     if (added >= 0) lookAtCentre(*view, *view->listedModel(added), "centre");
 }
 
 // 0x0045BB40: UI_<route>_GUI added to the element's models at (0, 0, 0) hidden; the view looks at its "centre0"
 // (hidden); the height 20000.
-void CityMap::addRoute(WindowHost& host, ui::Screen& s, const std::string& route) {
+void CityMap::addRoute(ui::Screen& s, const std::string& route) {
     scene::View3d* view = view3d(s);
     if (view == nullptr) return;
-    const int added = view->addModel("UI_" + route + "_GUI", {0.0f, 0.0f, 0.0f, 0.0f}, host.viewLoading());
+    const int added = view->addModel("UI_" + route + "_GUI", {0.0f, 0.0f, 0.0f, 0.0f}, gameRandom());
     if (added >= 0) {
         scene::Model& model = *view->listedModel(added);
         model.setHidden(true);

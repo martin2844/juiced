@@ -28,7 +28,8 @@ public:
     // (empty for none), the camera's zoom (+0x14), the mirror image (+0x30), the car's folder kept (+0x34) and the
     // shadow (+0x38). keepFolder: the load's +0x48 (0x0045FC80); without it the load lets go of the car's folder
     // (cars\<car>_ui, the load's +0x44) at its end (0x00459B24); with it the load holds the folder until it is freed
-    // (0x004596AD) and the view takes it on too (its +0x28, 0x00459C06). The folders are not followed here.
+    // (0x004596AD) and the view takes it on too (its +0x28, 0x00459C06). The folder's keeping is not followed here:
+    // it is the loads' cache in memory only (the car views read their meshes anew anyway, 0x004598B3).
     struct Setup {
         std::string element;
         std::string name;
@@ -148,7 +149,8 @@ private:
 };
 
 // The garage's scene of carbuy and carsel (the car's model object [0x0075ED00], its folder [0x0075ED04]): the showroom,
-// the scrapyard or the garage, the car, its mirror image, its shadow and its neon in the window's Begin3d element.
+// the scrapyard or the garage, the car, its mirror image, its shadow and its neon in the window's Begin3d element. The
+// windows' enter and update make them on the main thread (not a job of the loading thread): `random` the game's rand().
 class GarageView {
 public:
     GarageView(Engine& engine, ui::Screen& screen, std::string element, const PartCatalogue& catalogue);
@@ -157,10 +159,10 @@ public:
     // carbuy's scene (0x00438150): buying (`offer` the dealer's entry) the showroom of a new car (showroom2), of a used
     // one (showroom3, the atmosphere dealer) or of a damaged one (scrapyard, its atmosphere and sky); selling
     // don_garage1.
-    void enterBuy(const Car& car, const DealerOffer* offer, bool buying, CrtRandom& loading);
+    void enterBuy(const Car& car, const DealerOffer* offer, bool buying, CrtRandom& random);
     // carsel's scene (0x00436380): don_garage1, the car, the camera (0x00436200) and the shadow and neon
     // (0x00435FB0).
-    void enterSel(const Car& car, CrtRandom& loading);
+    void enterSel(const Car& car, CrtRandom& random);
     // The views freed.
     void clear();
     CarModel* car() { return m_car.get(); }
@@ -183,7 +185,7 @@ public:
     void setRig(float pitch, float yaw);
     // 0x00436160: gen_neon shown under the car (loaded the first time), the size of its chassis (x 1.25, z 1), in the
     // car's neon colour; the unlisting of 0x005B42A0 hides it.
-    void showNeon(const Car& car, CrtRandom& loading);
+    void showNeon(const Car& car, CrtRandom& random);
     void hideNeon();
     // The neon material's colour (parameter 0) and its parameter 4 1 (0x0048BEB0).
     void colourNeon(uint32_t argb);

@@ -128,6 +128,14 @@ public:
     bool active = true;                      // +0xCC
     bool dying = false;                      // +0xB4
 
+    // The fixed build's heat haze (Game/Scene/HeatHaze), the definition shared by every car left as it is: an emit
+    // interval of its own (0: the definition's EMIT_INTERVAL), the particles not following the emitter's velocity
+    // (FOLLOW_FRAC 0); emitted by the time (JuicedConfigExt's EmitByTime): the interval for the frame's time and the
+    // car's `own` one (s), its timer counted down the more for a shorter one, the particles' life the ring of them.
+    float ownEmitInterval = 0.0f;
+    bool noFollow = false;
+    void emitByTime(float own);
+
 protected:
     // 0x0050F920: the axes of the quads (the manager's +0x110, +0x120, +0x130); false when it is done; with time, its
     // light sampled again once it moved 300 across the ground (with a node), its box at its place, and particles let

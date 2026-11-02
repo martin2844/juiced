@@ -2,7 +2,7 @@
 
 #include <windows.h>
 #include <mmreg.h>
-#include <dsound.h>
+#include <objbase.h>
 
 #include <cmath>
 #include <cstdlib>
@@ -13,12 +13,6 @@ extern "C" {
 #include "speex_bits.h"
 }
 
-#ifdef _MSC_VER
-#pragma comment(lib, "dsound.lib")
-#endif
-#ifdef _MSC_VER
-#pragma comment(lib, "dxguid.lib")
-#endif
 #ifdef _MSC_VER
 #pragma comment(lib, "ole32.lib")
 #endif
@@ -299,9 +293,8 @@ double peak(const Sample* samples, int32_t count) {
 bool playbackThink(Device& device) {
     Device::Data& h = device.data;
     if (h.playing == 0) return true;
-    DWORD play = 0;
-    DWORD write = 0;
-    if (FAILED(h.buffer->GetCurrentPosition(&play, &write))) return false;
+    uint32_t play = 0;
+    if (!h.buffer->playCursor(play)) return false;
     const int32_t aligned = static_cast<int32_t>(play) - static_cast<int32_t>(play) % g.bytesPerFrame;
     const uint32_t old = h.writePos;
     const uint32_t advanced = (h.bufferSize - old + static_cast<uint32_t>(aligned)) % h.bufferSize;
@@ -322,12 +315,9 @@ bool playbackThink(Device& device) {
         h.clock = static_cast<FrameStamp>(h.clock + static_cast<FrameStamp>(frames * static_cast<uint32_t>(lag / whole)));
     }
     if (advanced == 0) return true;
-    void* p1 = nullptr;
-    void* p2 = nullptr;
-    DWORD b1 = 0;
-    DWORD b2 = 0;
-    if (FAILED(h.buffer->Lock(old, advanced, &p1, &b1, &p2, &b2, 0))) return false;
-    const auto part = [&](void* p, DWORD bytes) {
+    Locked locked;
+    if (!h.buffer->lock(old, advanced, locked)) return false;
+    const auto part = [&](void* p, uint32_t bytes) {
         const int32_t frames = static_cast<int32_t>(bytes / static_cast<uint32_t>(g.bytesPerFrame));
         Sample* out = static_cast<Sample*>(p);
         if (!mixSources(*h.sources, frames, h.clock, out)) std::memset(out, 0, bytes);
@@ -339,23 +329,20 @@ bool playbackThink(Device& device) {
         }
         h.clock = static_cast<FrameStamp>(h.clock + frames);
     };
-    part(p1, b1);
-    if (p2 != nullptr) part(p2, b2);
-    return SUCCEEDED(h.buffer->Unlock(p1, b1, p2, b2));
+    part(locked.first, locked.firstBytes);
+    if (locked.second != nullptr) part(locked.second, locked.secondBytes);
+    return h.buffer->unlock(locked);
 }
 
 // 0x0057F2C0: stopped, all of it zeroed, from the start, looping; the clock 0, the tick taken; playing.
 bool startPlayback(Device::Data& h) {
-    h.buffer->Stop();
-    void* p1 = nullptr;
-    void* p2 = nullptr;
-    DWORD b1 = 0;
-    DWORD b2 = 0;
-    if (FAILED(h.buffer->Lock(0, 0, &p1, &b1, &p2, &b2, DSBLOCK_ENTIREBUFFER))) return false;
-    std::memset(p1, 0, b1);
-    if (FAILED(h.buffer->Unlock(p1, b1, p2, b2))) return false;
-    if (FAILED(h.buffer->SetCurrentPosition(0))) return false;
-    if (FAILED(h.buffer->Play(0, 0, DSBPLAY_LOOPING))) return false;
+    h.buffer->stop();
+    Locked locked;
+    if (!h.buffer->lock(0, 0, locked)) return false;
+    std::memset(locked.first, 0, locked.firstBytes);
+    if (!h.buffer->unlock(locked)) return false;
+    if (!h.buffer->rewind()) return false;
+    if (!h.buffer->playLooping()) return false;
     h.clock = 0;
     h.tick = GetTickCount();
     h.playing = 1;
@@ -365,10 +352,10 @@ bool startPlayback(Device::Data& h) {
 // 0x0057F420: DirectSound's volume 2000 x ln(volume) (cut toward zero), -10000 for 0.
 void setPlaybackVolume(Device::Data& h, double volume) {
     if (volume == 0.0) {
-        h.buffer->SetVolume(-10000);
+        h.buffer->setVolume(-10000);
         return;
     }
-    h.buffer->SetVolume(static_cast<LONG>(static_cast<int64_t>(std::log(volume) * 2000.0)));
+    h.buffer->setVolume(static_cast<int32_t>(static_cast<int64_t>(std::log(volume) * 2000.0)));
 }
 
 // 0x0057EC70 (the list's free function): a playback device's sources freed, its buffer and DirectSound released; a
@@ -380,52 +367,35 @@ void destroyDevice(Device* device) {
             freeSources(*h.sources);
             delete h.sources;
         }
-        if (h.buffer != nullptr) h.buffer->Release();
-        if (h.sound != nullptr) h.sound->Release();
+        h.buffer.reset();
     } else {
-        if (h.captureBuffer != nullptr) {
-            h.captureBuffer->Stop();
-            h.captureBuffer->Release();
-        }
-        if (h.capture != nullptr) h.capture->Release();
+        h.captureBuffer.reset();
     }
     delete device;
 }
 
-// 0x0057F8B0: DSSCL_NORMAL with the window; the buffer's bytes 3200 rounded up to two frames' bytes, half of them
-// kept; the buffer (GETCURRENTPOSITION2 | GLOBALFOCUS | CTRLVOLUME) of the format.
-bool makePlaybackBuffer(Device::Data& h) {
-    if (FAILED(h.sound->SetCooperativeLevel(g.window, DSSCL_NORMAL))) return false;
+// 0x0057FA20's DirectSoundCreate and 0x0057F8B0 (VoiceSound::openPlayback, with the window): the buffer's bytes 3200
+// rounded up to two frames' bytes, half of them kept; the buffer of the format.
+bool makePlaybackBuffer(Device::Data& h, const DeviceId& id) {
     uint32_t bytes = 0xC80;
     const int32_t two = g.bytesPerFrame * 2;
     h.bufferSize = 0xC80;
     if (0xC80 % two != 0) bytes = static_cast<uint32_t>(two - 0xC80 % two + 0xC80);
-    DSBUFFERDESC desc{};
     h.halfSize = bytes >> 1;
     h.bufferSize = bytes;
-    desc.dwSize = 0x24;
-    desc.dwFlags = DSBCAPS_GETCURRENTPOSITION2 | DSBCAPS_GLOBALFOCUS | DSBCAPS_CTRLVOLUME;
-    desc.dwBufferBytes = bytes;
-    desc.lpwfxFormat = &g.format;
-    return SUCCEEDED(h.sound->CreateSoundBuffer(&desc, &h.buffer, nullptr));
+    h.buffer = voiceSound().openPlayback(id, g.window, g.format, bytes);
+    return h.buffer != nullptr;
 }
 
-// 0x0057F980: the buffer's bytes 16000 rounded up to a frame's bytes; the capture buffer of the format, started
-// looping (released when it does not start).
-bool makeCaptureBuffer(Device::Data& h) {
+// 0x0057FA20's DirectSoundCaptureCreate and 0x0057F980 (VoiceSound::openCapture): the buffer's bytes 16000 rounded up
+// to a frame's bytes; the capture buffer of the format, started looping.
+bool makeCaptureBuffer(Device::Data& h, const DeviceId& id) {
     uint32_t bytes = 16000;
     h.captureSize = 16000;
     if (16000 % g.bytesPerFrame != 0) bytes = static_cast<uint32_t>(g.bytesPerFrame - 16000 % g.bytesPerFrame + 16000);
-    DSCBUFFERDESC desc{};
     h.captureSize = bytes;
-    desc.dwBufferBytes = bytes;
-    desc.dwSize = 0x1C;
-    desc.lpwfxFormat = &g.format;
-    if (FAILED(h.capture->CreateCaptureBuffer(&desc, &h.captureBuffer, nullptr))) return false;
-    if (SUCCEEDED(h.captureBuffer->Start(DSCBSTART_LOOPING))) return true;
-    h.captureBuffer->Release();
-    h.captureBuffer = nullptr;
-    return false;
+    h.captureBuffer = voiceSound().openCapture(id, g.format, bytes);
+    return h.captureBuffer != nullptr;
 }
 
 // The callback's context (0x0057F190's locals): the list, its room, and the kind enumerated (+0x0C).
@@ -435,22 +405,21 @@ struct ListContext {
     bool capture;
 };
 
-// 0x0057F0B0 (LPDSENUMCALLBACKA).
-BOOL CALLBACK onDevice(LPGUID guid, LPCSTR description, LPCSTR, LPVOID context) {
-    ListContext& c = *static_cast<ListContext*>(context);
-    if (guid == nullptr) return TRUE;
+// 0x0057F0B0 (the enumeration's callback).
+bool onDevice(ListContext& c, const DeviceId* guid, const char* description) {
+    if (guid == nullptr) return true;
     DeviceInfo* entry = nullptr;
     for (DeviceInfo& d : *c.devices) {
-        if (std::memcmp(d.id.data(), guid, 16) == 0) entry = &d;
+        if (d.id == *guid) entry = &d;
     }
     if (entry == nullptr) {
         // Stock problem: the entry is added without a look at the room, so a playback device met with the list
         // already full (ten capture devices) is written past the voice object's array (over the count, +0x648).
         // Here it is not added.
-        if (static_cast<int32_t>(c.devices->size()) >= c.max) return FALSE;
+        if (static_cast<int32_t>(c.devices->size()) >= c.max) return false;
         c.devices->push_back(DeviceInfo{});
         entry = &c.devices->back();
-        std::memcpy(entry->id.data(), guid, 16);
+        entry->id = *guid;
         // strncpy with 0x40, the last byte 0.
         size_t n = 0;
         while (n < sizeof(entry->name) && description != nullptr && description[n] != 0) {
@@ -461,7 +430,7 @@ BOOL CALLBACK onDevice(LPGUID guid, LPCSTR description, LPCSTR, LPVOID context) 
     }
     entry->type = c.capture ? kCapture : kPlayback;
     entry->hardware = 0;
-    return static_cast<int32_t>(c.devices->size()) == c.max ? FALSE : TRUE;
+    return static_cast<int32_t>(c.devices->size()) != c.max;
 }
 
 }  // namespace
@@ -471,22 +440,22 @@ std::vector<DeviceInfo> listDevices(int32_t max, int32_t types) {
     if (max < 1) return devices;
     devices.reserve(static_cast<size_t>(max));
     ListContext context{&devices, max, true};
+    const auto each = [&](const DeviceId* id, const char* description) { return onDevice(context, id, description); };
+    VoiceSound& sound = voiceSound();
     if ((types & kCapture) != 0) {
         context.capture = true;
-        DirectSoundCaptureEnumerateA(onDevice, &context);
+        sound.list(true, each);
     }
     if ((types & kPlayback) != 0) {
         context.capture = false;
-        DirectSoundEnumerateA(onDevice, &context);
+        sound.list(false, each);
     }
-    GUID capture{};
-    GUID playback{};
-    GetDeviceID(&DSDEVID_DefaultVoiceCapture, &capture);
-    GetDeviceID(&DSDEVID_DefaultVoicePlayback, &playback);
+    const DeviceId capture = sound.defaultDevice(true);
+    const DeviceId playback = sound.defaultDevice(false);
     for (DeviceInfo& d : devices) {
-        if (std::memcmp(d.id.data(), &capture, 16) == 0) {
+        if (d.id == capture) {
             d.isDefault = 1;
-        } else if (std::memcmp(d.id.data(), &playback, 16) == 0) {
+        } else if (d.id == playback) {
             d.isDefault = 2;
         }
     }
@@ -515,7 +484,7 @@ bool Device::start(int32_t type) {
 
 void Device::stop(int32_t type) {
     if (type == kPlayback) {
-        data.buffer->Stop();
+        data.buffer->stop();
         data.playing = 0;
         freeSources(*data.sources);
         return;
@@ -525,11 +494,7 @@ void Device::stop(int32_t type) {
 }
 
 bool Device::isStarted(int32_t type) {
-    if (type == kPlayback) {
-        DWORD status = 0;
-        if (FAILED(data.buffer->GetStatus(&status))) return false;
-        return (status & DSBSTATUS_PLAYING) != 0;
-    }
+    if (type == kPlayback) return data.buffer->playing();
     return data.capturing != 0;
 }
 
@@ -544,8 +509,8 @@ void Device::setVolume(int32_t type, double v) {
 // Playback: e^(DirectSound's volume x 0.0005) (0 when it cannot be had); capture: its own.
 double Device::volume(int32_t type) {
     if (type == kPlayback) {
-        LONG v = 0;
-        if (FAILED(data.buffer->GetVolume(&v))) return 0.0;
+        int32_t v = 0;
+        if (!data.buffer->volume(v)) return 0.0;
         return std::exp(static_cast<double>(v) * 0.0005);
     }
     return data.volume;
@@ -562,8 +527,8 @@ double Device::captureThreshold() const {
 // The read cursor against the last read: the frames there, as encoded bytes. A failure: the unplugged callback, the
 // device freed, 0.
 int32_t Device::availableCaptureBytes() {
-    DWORD read = 0;
-    if (FAILED(data.captureBuffer->GetCurrentPosition(nullptr, &read))) {
+    uint32_t read = 0;
+    if (!data.captureBuffer->readCursor(read)) {
         if (unplugged != nullptr) {
             unplugged(this);
             free();
@@ -578,7 +543,7 @@ int32_t Device::availableCaptureBytes() {
 // Not capturing they are passed over. Else locked: the peak of both parts as the volume; at the threshold or above
 // (the stamp kept), or within 20 frames of the last stamp that was, each frame scaled by the volume when it is under
 // 1, filtered and encoded at its place; unlocked. The read position and the clock move on by the frames, len their
-// encoded bytes. A failure of DirectSound: the unplugged callback, the device freed, false.
+// encoded bytes. A failure of the capture buffer: the unplugged callback, the device freed, false.
 bool Device::capturePacket(uint8_t* packet, int32_t* len, FrameStamp* stamp, double* volume) {
     const int32_t room = *len;
     *len = 0;
@@ -592,8 +557,8 @@ bool Device::capturePacket(uint8_t* packet, int32_t* len, FrameStamp* stamp, dou
         }
         return false;
     };
-    DWORD read = 0;
-    if (FAILED(h.captureBuffer->GetCurrentPosition(nullptr, &read))) return fail();
+    uint32_t read = 0;
+    if (!h.captureBuffer->readCursor(read)) return fail();
     int32_t frames = static_cast<int32_t>(((h.captureSize - h.readPos + read) % h.captureSize) /
                                           static_cast<uint32_t>(g.bytesPerFrame));
     const int32_t most = room / g.encodedFrameSize;
@@ -601,13 +566,11 @@ bool Device::capturePacket(uint8_t* packet, int32_t* len, FrameStamp* stamp, dou
     if (frames == 0) return false;
     const uint32_t lockBytes = static_cast<uint32_t>(g.bytesPerFrame * frames);
     if (h.capturing != 0) {
-        void* p1 = nullptr;
-        void* p2 = nullptr;
-        DWORD b1 = 0;
-        DWORD b2 = 0;
-        if (FAILED(h.captureBuffer->Lock(h.readPos, lockBytes, &p1, &b1, &p2, &b2, 0))) return fail();
-        const double peak1 = peak(static_cast<const Sample*>(p1), static_cast<int32_t>(b1 >> 1));
-        const double peak2 = peak(static_cast<const Sample*>(p2), static_cast<int32_t>(b2 >> 1));
+        Locked locked;
+        if (!h.captureBuffer->lock(h.readPos, lockBytes, locked)) return fail();
+        const double peak1 = peak(static_cast<const Sample*>(locked.first), static_cast<int32_t>(locked.firstBytes >> 1));
+        const double peak2 =
+            peak(static_cast<const Sample*>(locked.second), static_cast<int32_t>(locked.secondBytes >> 1));
         const double loudest = peak1 <= peak2 ? peak2 : peak1;
         *volume = loudest;
         if (!(loudest < h.threshold)) {
@@ -618,8 +581,8 @@ bool Device::capturePacket(uint8_t* packet, int32_t* len, FrameStamp* stamp, dou
         }
         if (result != 0) {
             *stamp = h.captureClock;
-            Sample* samples = static_cast<Sample*>(p1);
-            uint32_t left = b1;
+            Sample* samples = static_cast<Sample*>(locked.first);
+            uint32_t left = locked.firstBytes;
             for (int32_t i = 0; i < frames; ++i) {
                 if (h.volume < 1.0) {
                     for (int32_t j = 0; j < g.samplesPerFrame; ++j) {
@@ -634,12 +597,12 @@ bool Device::capturePacket(uint8_t* packet, int32_t* len, FrameStamp* stamp, dou
                     left -= static_cast<uint32_t>(g.bytesPerFrame);
                     samples += g.samplesPerFrame;
                 } else {
-                    left = b2;
-                    samples = static_cast<Sample*>(p2);
+                    left = locked.secondBytes;
+                    samples = static_cast<Sample*>(locked.second);
                 }
             }
         }
-        if (FAILED(h.captureBuffer->Unlock(p1, b1, p2, b2))) return fail();
+        if (!h.captureBuffer->unlock(locked)) return fail();
     }
     h.readPos = (h.readPos + lockBytes) % h.captureSize;
     h.captureClock = static_cast<FrameStamp>(h.captureClock + frames);
@@ -735,30 +698,16 @@ Device* newDevice(const std::array<uint8_t, 16>& id, int32_t type) {
     device->id = id;
     device->types = type;
     Device::Data& h = device->data;
-    GUID guid{};
-    std::memcpy(&guid, id.data(), 16);
     if (type == kPlayback) {
         h.sources = newSourceList();
-        if (FAILED(DirectSoundCreate(&guid, &h.sound, nullptr))) {
+        if (!makePlaybackBuffer(h, id)) {
             freeSources(*h.sources);
             delete h.sources;
-            delete device;
-            return nullptr;
-        }
-        if (!makePlaybackBuffer(h)) {
-            freeSources(*h.sources);
-            delete h.sources;
-            h.sound->Release();
             delete device;
             return nullptr;
         }
     } else {
-        if (FAILED(DirectSoundCaptureCreate(&guid, &h.capture, nullptr))) {
-            delete device;
-            return nullptr;
-        }
-        if (!makeCaptureBuffer(h)) {
-            h.capture->Release();
+        if (!makeCaptureBuffer(h, id)) {
             delete device;
             return nullptr;
         }

@@ -60,3 +60,54 @@ OJ_INTEGRATION_TEST(RaceCamera, SweepCrossesTheGrid) {
     check(sweepDistance(places) > 100.0f, "the route's grid points: the camera travels across the grid");
     check(sweepDistance({places[0]}) == 0.0f, "the one car's place alone: the camera stands still");
 }
+
+// The view behind the car widens with the car's acceleration only while it moves forward (the fixed build's; the stock
+// widened it braking in reverse too: the car slowed, accelerating forward at 15 m/s²); the speed's part as before.
+OJ_INTEGRATION_TEST(RaceCamera, ReverseBrakingKeepsTheView) {
+    const auto fovAfter = [](float forward) {
+        oj::scene::CameraTarget target;
+        target.forwardAcceleration = 15.0f;
+        target.localVelocity[2] = forward;
+        oj::scene::CameraRace race;
+        oj::scene::RaceCamera view;
+        oj::render::Camera camera;
+        view.take(oj::scene::RaceCamera::kChase, true, target, race, camera);
+        for (int frame = 0; frame < 300; ++frame) view.update(target, race, 1.0f / 60.0f, camera);
+        return view.fov();
+    };
+    const float reversing = fovAfter(-3.0f);
+    const float going = fovAfter(3.0f);
+    check(reversing == 1.0f, "braking in reverse: the stock's view (" + std::to_string(reversing) + ")");
+    check(going > 1.3f, "accelerating forward: the view widened (" + std::to_string(going) + ")");
+}
+
+// A restart's fly-by: 0x0041FE50 steps the race's camera in the fly-by's view 9 too, whose frame clears the scene
+// camera's post effects and keeps the speed's blur off (views 8 .. 12). The blur of the race before the restart (the
+// nitro at full) is gone from the fly-by's first frame, and eased away by its end, so the view behind the car after
+// it has none (the fixed build's port drew the old blur through the fly-by: the race's camera was not stepped). The
+// fixed build's fly-by has the depth of field of the settings (the TV cameras'), its point 1 m over the car.
+OJ_INTEGRATION_TEST(RaceCamera, FlyByClearsTheBlur) {
+    oj::scene::CameraTarget target;
+    target.nitro = true;
+    target.nitroAmount = 1.0f;
+    oj::scene::CameraRace race;
+    oj::scene::RaceCamera view;
+    oj::render::Camera camera;
+    view.take(oj::scene::RaceCamera::kChase, true, target, race, camera);
+    for (int frame = 0; frame < 300; ++frame) view.update(target, race, 1.0f / 60.0f, camera);
+    const float before = camera.blurEdge;
+    target.nitro = false;  // the restart: the car still on the grid
+    target.nitroAmount = 0.0f;
+    target.matrix[3] = 1000.0f;
+    target.matrix[7] = 20.0f;
+    target.matrix[11] = -500.0f;
+    view.flyByFrame(target, race, 1.0f / 60.0f, camera);
+    const bool cleared = camera.blurEdge == 0.0f && camera.blurMiddle == 0.0f;
+    const bool focused = camera.focus[0] == 1000.0f && camera.focus[1] == 120.0f && camera.focus[2] == -500.0f;
+    for (int frame = 0; frame < 600; ++frame) view.flyByFrame(target, race, 1.0f / 60.0f, camera);
+    view.take(oj::scene::RaceCamera::kChase, false, target, race, camera);
+    check(before > 0.9f && cleared, "the fly-by's first frame: the race's blur off (" + std::to_string(before) + ")");
+    check(focused, "the fly-by: the camera's point 1 m over the car");
+    check(camera.blurEdge < 0.01f && camera.blurMiddle == 0.0f,
+          "the view behind the car after the fly-by: no old blur (" + std::to_string(camera.blurEdge) + ")");
+}

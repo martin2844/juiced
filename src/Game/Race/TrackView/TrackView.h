@@ -37,6 +37,13 @@
 #include "Game/Race/Hud/RaceWindows.h"
 #include "Game/Race/FrontEnd/RaceFrontEnd.h"
 #include "Game/Race/RaceIntro.h"
+#include "Game/Scene/AmbientOcclusion.h"
+#include "Game/Scene/HeadlightShadows.h"
+#include "Game/Scene/LampShadows.h"
+#include "Game/Scene/LightSets.h"
+#include "Game/Scene/TunnelLights.h"
+#include "Game/Scene/VolumetricLight.h"
+#include "Game/Scene/SunShadows.h"
 #include "Game/Scene/PostEffects.h"
 #include "Game/Scene/Scene3d.h"
 #include "Game/Scene/TrackScene.h"
@@ -105,6 +112,9 @@ struct RaceSlot {
     // The lamps' flares: RBRKLIGHTON_R, _L (+0x40, +0x44), HLIGHTON_R, _L (+0x48, +0x4C).
     std::array<oj::scene::CarFlare*, 2> brakeFlares{};
     std::array<oj::scene::CarFlare*, 2> headFlares{};
+    oj::render::ModelNode* litLamps = nullptr;  // LIGHTSON: the lamps lit with the headlights
+    // The fixed build's headlights by a dry day: on in a tunnel (Game/Scene/TunnelLights).
+    oj::scene::TunnelLights tunnelLights;
     // With the sound on (0x00498410): the engine's sounds (+0x498), the road's (+0x4BC) with its sets (+0x49C the
     // current, +0x4A4 tarmacdry, +0x4AC tarmac in the wet, +0x4B4 sand; never found: bank 0, set 0) and the horn
     // (+0x4C0).
@@ -163,6 +173,7 @@ struct RacePlayer {
     oj::DriverControl control;
     oj::DriverKeys keys;
     oj::DriverActions actions;  // the frame's actions of its controller
+    bool replayChangeHeld = false;  // the fixed build's replay keys: CHANGE_CAMERA down at the frame before
     float rumbleTimer = 0.0f;   // +0x28: the pulling steering's rumble's time
     bool finished = false;      // +0x18
     bool raceComplete = false;  // +0x1C: the race front end takes hud_race_complete
@@ -189,15 +200,65 @@ struct TrackView {
     bool allFinished() const;
     RacePlayer* pausing = nullptr;  // the race track's +0x10: the player who paused the race (0x0041F6EB)
     std::string cameraOffset;  // --track-camera
-    bool alwaysDepthOfField = false;  // -rf ([0x0075F14C])
+    // The shadow maps' casters under this many pixels across from the view left out (TrackScene::setCasterView; the
+    // debug builds' --caster-pixels, 0: none).
+    float casterPixels = oj::scene::TrackScene::kCasterPixels;
+    // That view of a player's camera and the viewport's height.
+    oj::scene::TrackScene::CasterView casterView(RacePlayer& player, float height) const;
     // The world's nearest lights to a point for the night's silhouettes (0x0054C8E0 → 0x0054E850): the grid the race's
     // load builds (the world's slot 9 0x00548780 → 0x0054DF20, 0x0042435x) from the world's lights (+0xF4, slot 8
     // 0x00548760), which nothing adds to: with fewer than 2 there is no grid and never a light (Stock problem: the
-    // night's silhouettes are made and never cast).
+    // night's silhouettes are made and never cast). The fixed build's: the street lamps (TrackScene::nearestLamps).
     oj::scene::Silhouette::NearestLights nearestLights;
     bool wideScreen = false;
     bool multiTurn = false;  // [0x0075F78C]: the registry's MultiTurn (0x0059C9EA)
-    oj::CrtRandom loading;  // the loading thread's rand(): the track, then the cars (0x00424270)
+    float wheelExponent = 0.0f;  // the fixed build's [Wheel] exponent (DriverControl), 0 the game's
+    bool consoleSteering = true;  // the fixed build's [Controller] consoleSteering (DriverControl)
+    float headlights = 0.0f;     // the fixed build's headlights' strength (Game/Scene/Headlights), 0: off
+    // The race's light case this frame (Game/Scene/LightSets: what it draws, the pixel shaders' variants bound).
+    oj::render::LightCase lighting = oj::render::kBaseLightCase;
+    bool headlightsSet = false;  // their constants set by the last frame
+    // HEADLIGHTS ULTRA: the lights' shadows (Game/Scene/HeadlightShadows, made on the first frame with them); the
+    // frames counted for the far maps' turns.
+    bool headlightShadows = false;
+    uint64_t shadowFrame = 0;
+    std::unique_ptr<oj::scene::HeadlightShadows> shadows;
+    // The fixed build's ambient occlusion (WORLD LIGHT HI and ULTRA): each view's depth, made at first use.
+    // WORLD LIGHT HI and ULTRA: each view's depth, made at first use (Game/Scene/AmbientOcclusion); it serves the
+    // lights in the road, the lamps' shadows and the flames' light as well as the occlusion itself.
+    bool ambientOcclusion = false;
+    // The AMBIENT OCCLUSION row's HI: the occlusion multiplied over the view (the user, 2026-10-29; the depth above is
+    // the other passes' either way).
+    bool occlusionOn = false;
+    std::unique_ptr<oj::scene::AmbientOcclusion> occlusion;
+    // WORLD LIGHT ULTRA: the sun's cascaded shadows by day (Game/Scene/SunShadows, made at first use) in place of the
+    // light tiles' baked sun shadow; drawn this frame (the stock's sun silhouettes of the cars then not drawn); their
+    // boolean set by the last frame.
+    bool sunShadows = false;
+    // The SHADOWS row's level (GraphicsConfig's shadowLevel; the user, 2026-10-29: its own row on the ADVANCED page):
+    // 0 OFF, 1 MED (the stock's silhouettes), 2 HI (the cars' shadows from the street lamps), 3 ULTRA (the sun's
+    // cascades), set by the settings each frame.
+    int shadowsLevel = 1;
+    // SKY: MED the stock's clouds (0), HI the procedural clouds' layer (1), ULTRA their volume (2), by the light case's
+    // set (Game/Scene/Clouds).
+    uint32_t sky = 0;
+    bool sunShadowsDrawn = false;
+    bool sunShadowsSet = false;
+    std::unique_ptr<oj::scene::SunShadows> sunCascades;
+    // WORLD LIGHT ULTRA by night: the cars' shadows from the street lamps nearest the first player's view
+    // (Game/Scene/LampShadows, made at first use); drawn this frame (the night's silhouettes of the cars from the lamps
+    // then not drawn).
+    std::unique_ptr<oj::scene::LampShadows> lampShadows;
+    bool lampShadowsDrawn = false;
+    // WORLD LIGHT ULTRA by night: the lights in the haze (the street lamps' cones, the shown headlights' beams;
+    // Game/Scene/VolumetricLight), for each view.
+    std::vector<oj::render::VolumetricLight> hazeLights;
+    // WORLD LIGHT HI and ULTRA: the cars' shown flames as lights (Game/Scene/FlameLights), for each view.
+    std::vector<oj::render::PointLight> flameLights;
+    bool heatHaze = false;       // the fixed build's heat haze: its emitters at the cars' exhausts (Game/Scene/HeatHaze)
+    // The loading thread's rand() (oj::loadingRandom, going on from its jobs before): the track, then the cars
+    // (0x00424270).
+    oj::CrtRandom& loading = oj::loadingRandom();
     // The race load's two timers (0x00461390: the whole and its parts) and the parts' seconds (to the debugger).
     oj::debug::Stopwatch loadTotal;
     oj::debug::Stopwatch loadPart;
@@ -478,7 +539,7 @@ struct TrackView {
     // its depth to nothing at 100 m; the watched car's at the top of the view (0.16 of its height), opaque. With the
     // voice ([0x0075F044]) the car's player's user (0x004EA100: referenced, Stock problem: never let go, one more a
     // frame) and its icon for the user object's first local player (mute; for a user whose devices are opened on
-    // while it talks, off): 25 x 25 pixels from 5 right of the name, its bottom at the name's top, in the name's
+    // while it talks, off): 25 x 25 pixels from 5 right of the name, its bottom on the name's baseline, in the name's
     // colour.
     void drawNetOverlay();
 
@@ -579,7 +640,7 @@ struct TrackView {
     void netCruiseBoard();
 
     // 0x00498190 with the sound on: each car's bank cars\<engine>[b] ("b" with an exhaust part) added once, its
-    // instances twice the cars of it (the bank's instance count not followed); then 0x00498410 for each car: its
+    // instances twice the cars of it (0x0049835D: the bank file's own count unused); then 0x00498410 for each car: its
     // engine's sounds (0x00492D20, on the car's node), the road's sets and its instance (tarmacdry, looping, not
     // played) and the horn carhorn<n> (looping, volume 1, rolloff 1, its scale 1, from 1300; not played).
     void makeCarSounds();
@@ -767,6 +828,12 @@ struct TrackView {
     // 0x00487C70: the brake lights shown while the brake is applied, the reversing lights in reverse (gear 0); each
     // left as it is once the damage put it out (+0x44C, +0x454).
     static void carLights(RaceSlot& s);
+    // The fixed build's headlights (HI and ULTRA) by a dry day: a car's lights on in the scene's tunnels and off a
+    // little after them (Game/Scene/TunnelLights, SceneObjects::inTunnel at its chassis); by night and in the rain they
+    // are on from the start (the stock's), put out ones stay out.
+    void tunnelLights(RaceSlot& s, float dt);
+    // A car's headlights shown or hidden: their flares and lit lamps (LIGHTSON).
+    static void showHeadlights(RaceSlot& s, bool on);
 
     void raceFrame(float dt, bool impacts);
 
@@ -791,6 +858,15 @@ struct TrackView {
     // 0x00408AC0: the camera on it, the director active with view 8 for 0 s, its frame), each player's next view
     // (0x004069F0; on the bumper's view the director's trackside view for 10000.94 s), its windows and question.
     void followReplayWindow(const oj::ReplayWindowFrame& f);
+    // hud_replay's CHANGE VIEW (next_car): each player's next view (0x004069F0; with the director active the view
+    // behind the car and the director stopped), on the bumper's view the director's trackside view for 10000.94 s.
+    void replayChangeView();
+    // The fixed build's replay keys: in hud_replay (no note or message over it) the first player's race keys of its
+    // driver map, read past the window's UI map (Input::driverDown): CHANGE_CAMERA going down hud_replay's CHANGE
+    // VIEW, not in a frame of a key the window acts on (SELECT, SELECT2, BACK, a direction) nor once the play ended;
+    // REAR_VIEW held the race's look back (RaceCamera::controls: the views on the car turn round, the director's views
+    // do not). True when the frame's Change View is due (the caller's replayChangeView).
+    bool replayKeys();
 
     // 0x0041E110 for a cruise (type 4): the cruise set up for the race's minutes (+0x60, cut) and running (+0x10).
     void cruiseReset();
@@ -836,7 +912,8 @@ struct TrackView {
     void frontEndFrame(float dt);
 
     // The end of a player's frame: 0x0041E200 (0x0041F3F3): after a respawn the player's car passes through the others
-    // while its ghost time lasts; the cars as its camera shows them.
+    // while its ghost time lasts, then touches them again (online only in a session hosted with collisions); the cars
+    // as its camera shows them.
     void playerFrameEnd(RacePlayer& player);
 
     // 0x0041FE50: every car shown (0x00489370 with 1), then under the views on the car the car the player's camera
@@ -896,9 +973,10 @@ struct TrackView {
     // The settings' effects volume (+0x58 of the profile) of the driver, a new driver's without one.
     float effectsVolume() const;
 
-    // 0x005B9430: audio/<name>/<name>.cfg added to the 3D world's player unless a bank of the name is loaded.
-    void addSoundBank(const char* name) { addSoundBank(name, std::filesystem::path(name)); }
-    void addSoundBank(const char* name, const std::filesystem::path& folder);
+    // 0x005B9430: audio/<name>/<name>.cfg added to the 3D world's player unless a bank of the name is loaded, each
+    // set's instances times `instances` (Audio/Bank load).
+    void addSoundBank(const char* name) { addSoundBank(name, std::filesystem::path(name), 1); }
+    void addSoundBank(const char* name, const std::filesystem::path& folder, uint32_t instances);
 
     // 0x00461390's start with the sound on: the world of audio/3d with 350 voices, its volume (and its player's) the
     // settings' effects volume, fading down by 20 and up by 50, the manager not paused, the volume groups 0.25, 1,

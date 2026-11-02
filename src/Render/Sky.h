@@ -50,6 +50,9 @@ public:
     // height of the reflection not read, nor the dome's height); the model through the world-to-clip matrix as the
     // object draw makes it (0x00511620).
     void drawReflected(Camera& camera);
+    // The fixed build's procedural clouds (Game/Scene/Clouds): the dome drawn with them (IRenderDevice::cloudSky) in
+    // its draws while set, as it is when the device cannot.
+    const CloudView* clouds = nullptr;
 
     struct Vertex {
         float x, y, z;

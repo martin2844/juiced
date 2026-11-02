@@ -6,6 +6,7 @@
 #include "Game/Frontend/Network/OnlineFriendWindows.h"
 
 #include "Game/Frontend/Network/OnlineFriendInternal.h"
+#include "Render/Display.h"
 
 namespace oj::frontend {
 
@@ -37,10 +38,13 @@ void drawPresenceIcon(render::IRenderDevice& device, ui::Screen& loader, const s
         }
     }
     if (icon == 0) return;
-    const auto w = static_cast<float>(device.width());
-    const auto h = static_cast<float>(device.height());
-    const float x0 = race ? w * 0.1f : w * 0.878f;
-    const float y0 = race ? h * 0.853f : h * 0.089f;
+    // The fixed build's wide screens (Render/Display): the frame's sizes; the menus' its middle across their zone as
+    // their pictures, the race's as the HUD's left and low elements (Game/UI/WideScreen).
+    const render::Display d = render::display(device.width(), device.height());
+    const float w = d.frameW;
+    const float h = d.frameH;
+    const float x0 = race ? w * 0.1f + d.zoneX : (0.878f + 0.02f) * d.menuW + d.menuX - w * 0.02f;
+    const float y0 = race ? h * 0.853f + (d.height - d.frameH) : h * 0.089f + d.frameY;
     const float side = w * 0.04f;
     const render::QuadVertex corners[4] = {
         {x0, y0, 0.0f, 0.0f, 0xFFFFFFFFu},

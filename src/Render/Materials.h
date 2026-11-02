@@ -41,6 +41,23 @@ public:
     // vtable + 0x1C
     virtual uint32_t passes() { return 1; }
 
+    // The fixed build's depth passes (Renderer3d::shadowShaders): the texture whose alpha the class's effect tests
+    // (ALPHATESTENABLE, ALPHAREF 128; Renderer3d::cutsOut), none for a class drawn whole or without its texture.
+    virtual const GameTexture* cutout() const { return nullptr; }
+    // The rain's water over the road (Water): its texture, whose alpha by the noise's blue at the tiling's place
+    // makes its puddles, the noise and the tiling (Renderer3d::shadowShaders' puddlePixel); false for the others.
+    virtual bool puddles(const GameTexture*& texture, const GameTexture*& noise, float tile[2]) const {
+        (void)texture;
+        (void)noise;
+        (void)tile;
+        return false;
+    }
+    // The trees' sway at the time (c56 .. c59 of the drawing), false for a class that does not sway.
+    virtual bool swayConstants(float out[16]) const {
+        (void)out;
+        return false;
+    }
+
     // The material manager's description of the material (the manager's +0x14, 0x0048AED8): the parameters' values
     // in the class's order as its file gives them.
     const std::vector<std::vector<uint8_t>>& description() const { return m_description; }

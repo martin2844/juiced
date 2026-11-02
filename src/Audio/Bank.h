@@ -2,9 +2,10 @@
 // A bank of the stock game's sound library (docs/spec/26-sound.md, "Banks"): audio\...\<name>\<name>.cfg names the
 // samples or streams and the sound sets (SS) that play them; <name>.dat holds the samples (entries of 0xA4 bytes,
 // the data after them), or each sample is <sample>.wav. A sample bank (banktype 0 or 3, 0xBC bytes, vtable
-// 0x006FEE88, made by 0x005BDD60) makes the DirectSound buffers of every set as it ends ([EndBank], 0x005BE000); a
-// stream bank (1 or 2, 0xC0 bytes, 0x006FEEF8, 0x005BE6E0) plays <name>.dsb (Audio/Stream.h).
+// 0x006FEE88, made by 0x005BDD60) makes the output's buffers (Audio/Output.h) of every set as it ends ([EndBank],
+// 0x005BE000); a stream bank (1 or 2, 0xC0 bytes, 0x006FEEF8, 0x005BE6E0) plays <name>.dsb (Audio/Stream.h).
 
+#include "Audio/Output.h"
 #include "Core/Base/GameFiles.h"
 
 #include <cstddef>
@@ -14,9 +15,6 @@
 #include <string>
 #include <vector>
 
-struct IDirectSoundBuffer8;
-struct IDirectSound3DBuffer;
-struct IKsPropertySet;
 typedef struct tWAVEFORMATEX WAVEFORMATEX;
 
 namespace oj::audio {
@@ -39,7 +37,7 @@ struct SampleEntry {
     uint32_t bytesPerSecond() const;   // +0x10: nAvgBytesPerSec
 };
 
-// A DirectSound buffer of a set (0x2C bytes, vtable 0x006FF3E8, made by 0x005C42D0): the values last given to it.
+// An output buffer of a set (0x2C bytes, vtable 0x006FF3E8, made by 0x005C42D0): the values last given to it.
 struct HardwareVoice {
     uint32_t frequency = 48000;            // +0x04
     uint32_t given = 0;                    // +0x08: a 3D voice's frequency last given (with its doppler)
@@ -48,9 +46,8 @@ struct HardwareVoice {
     int32_t volume = 0;                    // +0x14: hundredths of a decibel
     uint32_t playFlags = 0;                // +0x18
     float occlusion = 0.0f;                // +0x1C (EAX)
-    IDirectSoundBuffer8* buffer = nullptr;     // +0x20
-    IDirectSound3DBuffer* buffer3d = nullptr;  // +0x24
-    IKsPropertySet* properties = nullptr;      // +0x28
+    std::unique_ptr<OutputBuffer> buffer;  // +0x20; its 3D buffer +0x24 and its EAX property set +0x28
+    bool has3d = false;                    // +0x24 not null
 };
 
 // The buffers of a set (vtables 0x006FF090 2D, 0x006FF120 3D, 0x006FF2D8 stream; base 0x005C41D0 / 0x005C33C0):
@@ -201,9 +198,11 @@ public:
     const std::vector<SampleEntry>& samples() const { return m_entries; }
     Stream* stream() const { return m_stream.get(); }
 
-    // Read by the .cfg's keywords (Bank::load).
+    // Read by the .cfg's keywords (Bank::load). `instances` the loader's multiplier of every set's instances (its
+    // +0x18, 0x005BAF00): 1 for a player's bank, cruise, wet, the UI's and the dyno's; twice the race's cars of a
+    // car's bank (0x00498190 → 0x005B9430).
     static std::unique_ptr<Bank> load(const GameFiles& files, const std::filesystem::path& folder,
-                                      const std::string& name, uint32_t* channels);
+                                      const std::string& name, uint32_t* channels, uint32_t instances = 1);
 
 private:
     void makeVoices(const GameFiles& files);  // [EndBank] (0x005BE000 / 0x005BE7A0)

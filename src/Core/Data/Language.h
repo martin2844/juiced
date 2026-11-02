@@ -14,6 +14,13 @@
 
 namespace oj {
 
+class GameFiles;
+
+// The languages by their index (Language::index, the settings' language, the order of their names below).
+enum LanguageIndex {
+    kEnglish = 0, kFrench = 1, kGerman = 2, kItalian = 3, kSpanish = 4, kCzech = 5, kPolish = 6, kRussian = 7,
+};
+
 struct Language {
     int index = 0;
     const char* name = "english";   // english french german italian spanish czech polish russian
@@ -25,8 +32,21 @@ struct Language {
     const char* looseExtension = "eng";
 
     static std::optional<Language> byIndex(int index);
+    // By its name, the letters' case aside (OpenJuice.ini's "Polish" and "polish" alike).
     static std::optional<Language> byName(std::string_view name);
 };
+
+// A language's files where the game's data has them, else English's in their place (each logged once): the installed
+// data may lack a language (a build for a region without it, its texts alone), and the language comes from the
+// user's language or OpenJuice.ini, where the English build 1.0.1 takes English for any but its five (a player's
+// Polish Windows on a build without Polish: no controls at all). The text table scripts\<name>.txt, the controls
+// scripts\controls_dx9_<letter>.txt (then controls_dx9.txt), the messages' texts scripts\jettext<letter>.txt, the
+// speech banks audio\speech\ui<letter> and race<letter> (by their .dsb).
+std::filesystem::path textTableFile(const GameFiles& files, const Language& language);
+std::filesystem::path controlsFile(const GameFiles& files, const Language& language);
+std::filesystem::path jetTextFile(const GameFiles& files, const Language& language);
+// `kind` ("ui", "race") and the letter, else English's letter.
+std::string speechBank(const GameFiles& files, const std::string& kind, char letter);
 
 // The language of the English build 1.0.1 (0x0059E300): the settings' `language` when it is not negative, else the
 // user's language (GetUserDefaultLangID), taken as a Windows language id; its primary language: German (0x07) 2,

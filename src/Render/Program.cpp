@@ -223,6 +223,13 @@ void ProgramContext::setVertexConstants(uint32_t start, const float* data, uint3
     m_device.setVertexShaderConstantF(start, data, count);
 }
 
+bool ProgramContext::setShared(const std::string& name, const void* data, size_t bytes) {
+    const auto it = shared.find(name);
+    if (it == shared.end()) return false;
+    std::memcpy(it->second.data(), data, std::min(bytes, it->second.size()));
+    return true;
+}
+
 void ProgramContext::endCurrent() {
     if (current != nullptr) current->end();
 }
@@ -305,6 +312,33 @@ bool Program::recreate() {
     loadTextures();
     chooseTechnique();
     return m_technique >= 0 && m_techniques[static_cast<size_t>(m_technique)].usable;
+}
+
+bool Program::rebuild(fx::Effect effect) {
+    end();
+    IRenderDevice& device = m_context.device();
+    for (const auto& [object, id] : m_shaders) {
+        if (id != 0) device.destroyShader(id);
+    }
+    m_shaders.clear();
+    m_tables.clear();
+    m_preshaders.clear();
+    m_textures.clear();
+    m_effect = std::move(effect);
+    m_values.assign(m_effect.parameters.size(), {});
+    for (size_t i = 0; i < m_effect.parameters.size(); ++i) {
+        const fx::Parameter& p = m_effect.parameters[i];
+        std::vector<uint8_t> value;
+        appendValue(p, value);
+        if ((p.flags & 1) != 0) {
+            m_context.shared.try_emplace(p.name, std::move(value));
+        } else {
+            m_values[i] = std::move(value);
+        }
+    }
+    loadTextures();
+    chooseTechnique();
+    return usable();
 }
 
 bool Program::chooseLevel(uint32_t level) {
@@ -732,6 +766,11 @@ Program* ProgramManager::find(const std::string& name) const {
 
 void ProgramManager::endAll() {
     for (Program* p : m_programs) p->end();
+}
+
+void ProgramManager::replaceTexture(TextureId from, TextureId to) {
+    endAll();
+    for (Program* p : m_programs) p->replaceTexture(from, to);
 }
 
 void ProgramManager::chooseLevel(uint32_t level) {

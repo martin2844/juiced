@@ -3,6 +3,7 @@
 // keeps once for every world: the race's track and each interface view's world (docs/spec/21-scene-objects.md).
 
 #include "Core/Base/Matrix.h"
+#include "Core/Formats/Ddt.h"
 #include "Core/Tracks/SceneObjects.h"
 #include "Render/Camera.h"
 #include "Render/Materials.h"
@@ -10,6 +11,8 @@
 
 #include <array>
 #include <cstdint>
+#include <functional>
+#include <map>
 #include <memory>
 #include <string>
 #include <vector>
@@ -17,6 +20,10 @@
 namespace oj::scene {
 
 class Engine;
+
+// The colour of a flare texture's glow: its pixels' mean weighed by their alpha and brightness, its strongest channel
+// 1 (white for none).
+std::array<float, 3> glowColour(const Ddt& image);
 
 // A batch of a flare texture (0x005089B0: 0x800 vertices of 0x20 bytes): its Light Flare material (0x00541210) and
 // the quads of the frame.
@@ -64,6 +71,13 @@ public:
         float groundX = 3.4028235e38f;
         float groundZ = 3.4028235e38f;
         float ground = 0.0f;
+        // The fixed build's colour of its y reflection's texture (glowColour): a car's light's streak in the wet road
+        // (TrackScene::lampStreaks; the brake lights' red).
+        std::array<float, 3> roadColour{1.0f, 1.0f, 1.0f};
+        // The fixed build's visibility eased for its streak in the road (TrackScene::lampStreaks).
+        float shown = 0.0f;
+        // The fixed build's share of its quad's light where it overlaps others on the view (calmCrowds; 1 else).
+        float crowd = 1.0f;
     };
 
     explicit LensFlares(Engine& engine);
@@ -76,7 +90,8 @@ public:
     FlareBatch& batchAt(size_t b);
     size_t batchCount() const;
     bool queries() const;
-    // A flare's reflection batches (0x005416DB: with the texture found, the batch of its material, 0x005089B0).
+    // A flare's reflection batches (0x005416DB: with the texture found, the batch of its material, 0x005089B0); the
+    // fixed build's colour of its y reflection (roadColour, each texture's worked out once).
     void makeReflectionBatches(Flare& flare);
     // The flares' declarations, index buffer, visibility test and queries, made with the first flare.
     void makeDevice();
@@ -88,8 +103,23 @@ public:
     // flare's visibility test (0x00540C70), without them every flare fully visible; each flare's quad (0x00541C10);
     // the batches drawn (0x00540EE0).
     void draw(render::Camera& camera);
-    // 0x00540EE0: each batch with quads, its material's first pass; the depth test only without the queries.
-    void drawBatches();
+    // 0x00540EE0: each batch with quads, its material's first pass; the depth test only without the queries (or
+    // always with `depthTest`, never with `noDepth`: the fixed build's street lamps' streaks under the road).
+    void drawBatches(bool depthTest = false, bool noDepth = false);
+    // The fixed build's REFLECTIONS ULTRA: the flares `take` chooses (the lights of the cars in the cars' cube) on a
+    // cube's face, each where its node is now, seen whole (no visibility test) and behind what the face holds.
+    void drawChosen(render::Camera& camera, const std::function<bool(const Flare&)>& take);
+    // The fixed build's WORLD LIGHT ULTRA (the user, 2026-10-29: groups of street lamps in a row on the view merged
+    // into one bright shaft): the world's flares overlapping on the view combined as light combines (each one's quad
+    // by 1 / sqrt(1 + its overlaps' sum), so n alike in one place shine sqrt(n) as bright, a lone one as it was).
+    bool calmCrowds = false;
+    // Each seen world flare's share by its overlaps with the others: its core's angular radius about the camera
+    // (kCrowdCore of half its size, over its distance; its glow's edge adds little), two overlapping by 1 - their angle
+    // apart over the sum of their radii, by the other's visibility; flares of one lamp (within kCrowdSame of each
+    // other) are one light.
+    void crowdShares(render::Camera& camera);
+    static constexpr float kCrowdCore = 0.3f;
+    static constexpr float kCrowdSame = 100.0f;  // 1 m
 
 private:
     // 0x00540C70
@@ -99,6 +129,7 @@ private:
 
     Engine& m_engine;
     std::vector<Flare> m_flares;  // the world's +0x120
+    std::map<std::string, std::array<float, 3>> m_roadColours;  // glowColour by y reflection texture
 };
 
 }  // namespace oj::scene

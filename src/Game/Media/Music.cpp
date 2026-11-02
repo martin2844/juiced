@@ -4,6 +4,7 @@
 #include "Audio/Bank.h"
 #include "Core/Base/Log.h"
 #include "Core/Base/Random.h"
+#include "Core/Data/Language.h"
 #include "Game/UI/UiSound.h"
 
 #include <windows.h>
@@ -71,7 +72,13 @@ void Jukebox::play(const std::vector<uint32_t>& playlist, bool wait, bool force)
         m_player->start(h);
     }
     handle = h;
-    log::info("music: song {} (handle {:#x}) at {}", song, h, v);
+    // A song that does not play is started again each frame (the frame's update): the first starts logged only.
+    ++m_unplayedStarts;
+    if (m_unplayedStarts <= 2) {
+        log::info("music: song {} (handle {:#x}) at {}", song, h, v);
+    } else if (m_unplayedStarts == 3) {
+        log::warning("music: song {} does not play; started again each frame, no more logged", song);
+    }
     audio::system().update();
     // With wait half a second slept and then one job of the main thread's queue ([0x0075F10C] + 0x204, 0x0051D200)
     // run when it holds any (none here).
@@ -111,6 +118,7 @@ void Jukebox::update(const std::vector<uint32_t>& playlist, float frameTime, boo
         }
         if (0.0f < d && target - kLow <= volume) volume = target;
     }
+    if (playing()) m_unplayedStarts = 0;
     if (!playing() && nextSong) {
         stop(false);
         song = -1;
@@ -299,11 +307,12 @@ void makeSpeech(int kind, int language, const GameFiles& files) {
     g_speech.reset();
     if (kind == 0 || !audio::system().on()) return;
     if (language < 0 || language > 7) language = 0;
+    // The language's bank, English's where the data has none (Core/Data/Language).
     const char letter = "efgiscpr"[language];
     if (kind == Speech::kInterface) {
-        g_speech = std::make_unique<Speech>(files, std::string("ui") + letter, Speech::kInterface);
+        g_speech = std::make_unique<Speech>(files, speechBank(files, "ui", letter), Speech::kInterface);
     } else if (kind == Speech::kRace) {
-        g_speech = std::make_unique<Speech>(files, std::string("race") + letter, Speech::kRace);
+        g_speech = std::make_unique<Speech>(files, speechBank(files, "race", letter), Speech::kRace);
     } else {
         return;
     }

@@ -161,7 +161,7 @@ void AtMeeting::enter(CareerHost& host, ui::Screen& s) {
     m_map.start(s);
     if (m_map.view3d(s) != nullptr) m_map.look(host, s, 0, -0.4f);
     const std::vector<ExeTables::Route>& routes = data->tables.routes;
-    if (static_cast<size_t>(e.round.route) < routes.size()) m_map.route(host, s, routes[e.round.route].name, true);
+    if (static_cast<size_t>(e.round.route) < routes.size()) m_map.route(s, routes[e.round.route].name, true);
     if (mayRace(career, e, data->catalogue) && (p.money >= e.entranceFee || e.crew == 0)) {
         size_t line = kTextEnterRace;
         if (e.type == EventKind::Challenge) line = kTextEnterChallenge;

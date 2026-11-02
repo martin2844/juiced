@@ -2,15 +2,22 @@
 
 #include "Audio/SoundSystem.h"
 
+#include "Core/Base/GameFiles.h"
 #include "Core/Data/Language.h"
 #include "Core/Base/Log.h"
 #include "Game/Platform/CommandLine.h"
+#include "Game/Platform/Screen.h"
 
 #include <windows.h>
 #include <d3d9.h>
 
+#include <algorithm>
 #include <array>
 #include <cstring>
+#include <filesystem>
+#include <format>
+#include <string>
+#include <vector>
 
 namespace oj {
 
@@ -25,10 +32,16 @@ struct WindowState {
     bool closedFromSystemMenu = false;
     bool screenshotRequested = false;
     std::vector<input::KeyEvent> keys;
+    std::string chars;  // WM_CHAR's printable characters (Platform::takeTypedText)
     std::array<bool, 256> down{};
     HCURSOR savedCursor = nullptr;   // the cursor hidden while the game is active
     bool cursorHidden = false;
     bool configuring = false;        // [0x0075F770]: the controls' mapping window up
+    // The fixed build's window without a frame: minimized when it loses the focus, not again within a second of a
+    // restore.
+    bool borderless = false;
+    bool minimized = false;
+    DWORD restoreTime = 0;
 };
 WindowState g_state;
 bool g_freeCameraHook = false;  // [0x0075EC84]
@@ -95,6 +108,23 @@ LRESULT CALLBACK windowProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lpara
                     g_state.keys.push_back({static_cast<uint8_t>(code), false});
                 }
             }
+            // The fixed build's window without a frame: minimized as a full screen game is when another program or
+            // Windows itself takes the focus (the Windows key, the taskbar, Alt+Tab); not within a second of a
+            // restore, so that a window being brought back stays.
+            if (hwnd == g_state.gameWindow && g_state.borderless && !IsIconic(hwnd) &&
+                GetTickCount() - g_state.restoreTime > 1000) {
+                ShowWindowAsync(hwnd, SW_MINIMIZE);
+            }
+        }
+        break;
+    case WM_SIZE:
+        if (hwnd == g_state.gameWindow) {
+            if (wparam == SIZE_MINIMIZED) {
+                g_state.minimized = true;
+            } else if (g_state.minimized) {
+                g_state.minimized = false;
+                g_state.restoreTime = GetTickCount();
+            }
         }
         break;
     case WM_KEYDOWN:
@@ -115,6 +145,11 @@ LRESULT CALLBACK windowProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lpara
             g_state.down[code] = down;
             g_state.keys.push_back({code, down});
         }
+        break;
+    }
+    case WM_CHAR: {
+        const auto c = static_cast<unsigned char>(wparam & 0xFF);
+        if (c >= 0x20 && c < 0x7F && g_state.chars.size() < 64) g_state.chars.push_back(static_cast<char>(c));
         break;
     }
     case WM_SYSCOMMAND:
@@ -145,12 +180,66 @@ void bringForward(HWND window) {
     UpdateWindow(window);
 }
 
-// Work area of the monitor of the settings' adapter, for centering the window.
+// Work area of the monitor of the settings' adapter, for centering the window; the fixed build's window without a
+// frame covers the whole monitor (area).
 struct MonitorArea {
     bool found = false;
     RECT work{};
+    RECT area{};
 };
 MonitorArea g_monitor;
+
+// The fixed build's screen: the window's and the monitor's sizes in pixels, not scaled by Windows (Windows 10 1703's
+// per-monitor awareness, else Vista's).
+void becomeDpiAware() {
+    HMODULE user = GetModuleHandleA("user32.dll");
+    if (user == nullptr) return;
+    using SetContext = BOOL(WINAPI*)(HANDLE);
+    const auto setContext = reinterpret_cast<SetContext>(GetProcAddress(user, "SetProcessDpiAwarenessContext"));
+    if (setContext != nullptr && setContext(reinterpret_cast<HANDLE>(-4))) return;  // PER_MONITOR_AWARE_V2
+    using SetAware = BOOL(WINAPI*)();
+    const auto setAware = reinterpret_cast<SetAware>(GetProcAddress(user, "SetProcessDPIAware"));
+    if (setAware != nullptr) setAware();
+}
+
+// The desktop's monitors by their GDI names, the primary first (the order a wrapper's adapters follow).
+std::vector<std::wstring> desktopMonitors() {
+    std::vector<std::wstring> names;
+    DISPLAY_DEVICEW device{};
+    device.cb = sizeof(device);
+    for (DWORD i = 0; EnumDisplayDevicesW(nullptr, i, &device, 0); ++i) {
+        if ((device.StateFlags & DISPLAY_DEVICE_ATTACHED_TO_DESKTOP) != 0) {
+            const bool primary = (device.StateFlags & DISPLAY_DEVICE_PRIMARY_DEVICE) != 0;
+            names.insert(primary ? names.begin() : names.end(), device.DeviceName);
+        }
+        device.cb = sizeof(device);
+    }
+    return names;
+}
+
+// The monitor of the GDI name given.
+bool monitorByName(const std::wstring& name, MONITORINFOEXW& info) {
+    struct Search {
+        const std::wstring* name;
+        MONITORINFOEXW* info;
+        bool found;
+    } search{&name, &info, false};
+    EnumDisplayMonitors(
+        nullptr, nullptr,
+        [](HMONITOR monitor, HDC, LPRECT, LPARAM data) -> BOOL {
+            auto* s = reinterpret_cast<Search*>(data);
+            MONITORINFOEXW candidate{};
+            candidate.cbSize = sizeof(candidate);
+            if (GetMonitorInfoW(monitor, &candidate) && _wcsicmp(candidate.szDevice, s->name->c_str()) == 0) {
+                *s->info = candidate;
+                s->found = true;
+                return FALSE;
+            }
+            return TRUE;
+        },
+        reinterpret_cast<LPARAM>(&search));
+    return search.found;
+}
 
 }  // namespace
 
@@ -201,8 +290,7 @@ std::wstring startupText(int index) {
     static TextTable jet;
     static bool loaded = false;
     if (!loaded) {
-        loaded = jet.load(std::filesystem::path("scripts") /
-                          ("jettext" + std::string(1, g_startupLanguage.controlsLetter) + ".txt"));
+        loaded = jet.load(jetTextFile(GameFiles(std::filesystem::current_path()), g_startupLanguage));
     }
     if (!loaded) index = 4;
     switch (index) {
@@ -272,6 +360,7 @@ bool Platform::findAdapter(int attempt, const LaunchOptions& options, bool& matc
                 continue;
             }
             matched = true;
+            m_adapter = i;
             MONITORINFO info{sizeof(MONITORINFO)};
             if (GetMonitorInfoA(d3d->GetAdapterMonitor(i), &info)) {
                 g_monitor.found = true;
@@ -306,8 +395,43 @@ bool Platform::findAdapter(int attempt, const LaunchOptions& options, bool& matc
     return true;
 }
 
+bool runSettingsProgram(const std::wstring& arguments) {
+    wchar_t self[MAX_PATH] = {};
+    GetModuleFileNameW(nullptr, self, MAX_PATH);
+    const std::filesystem::path folder = std::filesystem::path(self).parent_path();
+    // OpenJuiceConfig is 32-bit, for both executables of the game.
+    std::vector<std::wstring> names;
+#if defined(_DEBUG)
+    names.push_back(L"OpenJuiceConfig_d.exe");
+#endif
+    names.push_back(L"OpenJuiceConfig.exe");
+    for (const std::wstring& name : names) {
+        const std::filesystem::path program = folder / name;
+        std::error_code error;
+        if (!std::filesystem::is_regular_file(program, error)) continue;
+        std::wstring commandLine = L"\"" + program.wstring() + L"\"" + (arguments.empty() ? L"" : L" " + arguments);
+        STARTUPINFOW si{};
+        si.cb = sizeof(si);
+        PROCESS_INFORMATION pi{};
+        if (!CreateProcessW(program.c_str(), commandLine.data(), nullptr, nullptr, FALSE, 0, nullptr,
+                            folder.c_str(), &si, &pi)) {
+            log::warning("{} did not start", program.string());
+            return false;
+        }
+        log::info("{} {}: waited for", program.filename().string(), std::filesystem::path(arguments).string());
+        WaitForSingleObject(pi.hProcess, INFINITE);
+        CloseHandle(pi.hProcess);
+        CloseHandle(pi.hThread);
+        return true;
+    }
+    return false;
+}
+
 // <title>Config.exe from the current directory.
-bool runConfigurationTool() {
+bool runConfigurationTool(bool firstStart) {
+    if (runSettingsProgram(firstStart ? L"--first-run" : L"")) {
+        return true;
+    }
     STARTUPINFOA si{};
     si.cb = sizeof(si);
     PROCESS_INFORMATION pi{};
@@ -380,22 +504,53 @@ bool Platform::registerWindowClass() {
 }
 
 bool Platform::createWindow(const char* title, const Settings& settings, bool hidden) {
-    const bool fullScreen = settings.windowed == 0;
-    const DWORD style = fullScreen ? WS_POPUP : (WS_CAPTION | WS_SYSMENU);
+    // The fixed build's screen modes (JuicedConfigExt's renderer): full screen at the monitor's corner, the window
+    // without a frame over the whole monitor, the window with a frame at the resolution (smaller when it does not fit
+    // the work area) in the middle of the work area.
+    const screen::Mode mode = screen::modeOf(settings.displayMode);
+    const DWORD style = mode == screen::Mode::Window ? (WS_CAPTION | WS_SYSMENU) : WS_POPUP;
     RECT rect{0, 0, static_cast<LONG>(settings.width), static_cast<LONG>(settings.height)};
-    AdjustWindowRect(&rect, style, FALSE);
+    screen::Size client{static_cast<int32_t>(settings.width), static_cast<int32_t>(settings.height)};
+    if (mode == screen::Mode::Window && g_monitor.found && !hidden) {  // a test run: the resolution as it is
+        RECT frame{0, 0, 0, 0};
+        AdjustWindowRect(&frame, style, FALSE);
+        const RECT& work = g_monitor.work;
+        client = screen::windowClient(work.right - work.left, work.bottom - work.top, frame.right - frame.left,
+                                      frame.bottom - frame.top, settings.width, settings.height);
+    }
+    if (mode == screen::Mode::Window) {
+        rect = {0, 0, client.width, client.height};
+        AdjustWindowRect(&rect, style, FALSE);
+    } else if (mode == screen::Mode::Borderless && g_monitor.found) {
+        rect = {0, 0, g_monitor.area.right - g_monitor.area.left, g_monitor.area.bottom - g_monitor.area.top};
+    }
     int x = CW_USEDEFAULT;
     int y = CW_USEDEFAULT;
     if (g_monitor.found) {
-        x = (g_monitor.work.right - rect.right + g_monitor.work.left + rect.left) / 2;
-        y = (g_monitor.work.bottom - rect.bottom + g_monitor.work.top + rect.top) / 2;
+        if (mode == screen::Mode::Window) {
+            x = std::max(g_monitor.work.left, (g_monitor.work.right - rect.right + g_monitor.work.left + rect.left) / 2);
+            y = std::max(g_monitor.work.top, (g_monitor.work.bottom - rect.bottom + g_monitor.work.top + rect.top) / 2);
+        } else {
+            x = g_monitor.area.left;
+            y = g_monitor.area.top;
+        }
     }
     m_window = CreateWindowExA(WS_EX_APPWINDOW, kClassName, title, style, x, y, rect.right - rect.left,
                                rect.bottom - rect.top, nullptr, nullptr, GetModuleHandleA(nullptr), nullptr);
     if (m_window == nullptr) {
         return false;
     }
+    if (mode == screen::Mode::Window) {
+        // The frame of a monitor of another DPI differs from AdjustWindowRect's: the client corrected.
+        RECT real{};
+        if (GetClientRect(m_window, &real) && (real.right != client.width || real.bottom != client.height)) {
+            SetWindowPos(m_window, nullptr, 0, 0, rect.right - rect.left + client.width - real.right,
+                         rect.bottom - rect.top + client.height - real.bottom,
+                         SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
+        }
+    }
     g_state.gameWindow = m_window;
+    g_state.borderless = mode == screen::Mode::Borderless;
     if (!hidden) {
         ShowWindow(m_window, SW_SHOWNORMAL);
         UpdateWindow(m_window);
@@ -403,7 +558,63 @@ bool Platform::createWindow(const char* title, const Settings& settings, bool hi
     return true;
 }
 
+void Platform::chooseScreen(Settings& settings) {
+    IDirect3D9* d3d = Direct3DCreate9(D3D_SDK_VERSION);
+    MONITORINFOEXW monitor{};
+    monitor.cbSize = sizeof(monitor);
+    bool found = false;
+    if (d3d != nullptr) {
+        std::vector<std::wstring> reported;
+        for (UINT a = 0; a < d3d->GetAdapterCount(); ++a) {
+            MONITORINFOEXW info{};
+            info.cbSize = sizeof(info);
+            HMONITOR handle = d3d->GetAdapterMonitor(a);
+            reported.push_back(handle != nullptr && GetMonitorInfoW(handle, &info) ? info.szDevice : L"");
+        }
+        const uint32_t adapter = screen::monitorAdapter(reported, desktopMonitors(), settings.monitor, m_adapter);
+        if (adapter != m_adapter) log::info("screen: adapter {} of the monitor of the settings", adapter);
+        m_adapter = adapter;
+        HMONITOR handle = d3d->GetAdapterMonitor(m_adapter);
+        found = handle != nullptr && GetMonitorInfoW(handle, &monitor);
+    }
+    // The monitor named, else the adapter's, else the primary.
+    if (!settings.monitor.empty() && monitorByName(settings.monitor, monitor)) found = true;
+    if (!found) {
+        found = GetMonitorInfoW(MonitorFromPoint(POINT{0, 0}, MONITOR_DEFAULTTOPRIMARY), &monitor) != 0;
+    }
+    if (found) {
+        g_monitor.found = true;
+        g_monitor.work = monitor.rcWork;
+        g_monitor.area = monitor.rcMonitor;
+    }
+    uint32_t refreshRate = 0;
+    if (screen::modeOf(settings.displayMode) == screen::Mode::FullScreen && d3d != nullptr) {
+        std::vector<screen::DisplayMode> modes;
+        for (const D3DFORMAT format : {D3DFMT_X8R8G8B8, D3DFMT_R5G6B5}) {
+            for (UINT i = 0; i < d3d->GetAdapterModeCount(m_adapter, format); ++i) {
+                D3DDISPLAYMODE mode{};
+                if (SUCCEEDED(d3d->EnumAdapterModes(m_adapter, format, i, &mode))) {
+                    modes.push_back({mode.Width, mode.Height, mode.RefreshRate});
+                }
+            }
+        }
+        refreshRate = screen::fullScreenRate(modes, settings.width, settings.height, settings.refreshRate);
+        if (refreshRate == 0) {
+            log::warning("screen: the adapter has no full screen mode {}x{}, the window without a frame",
+                         settings.width, settings.height);
+            settings.displayMode = static_cast<uint32_t>(screen::Mode::Borderless);
+        }
+    }
+    if (d3d != nullptr) d3d->Release();
+    settings.windowed = screen::modeOf(settings.displayMode) == screen::Mode::FullScreen ? 0 : 1;
+    static constexpr const char* kModes[] = {"full screen", "window without a frame", "window"};
+    log::info("screen: {} on {}x{}{}", kModes[static_cast<uint32_t>(screen::modeOf(settings.displayMode))],
+              g_monitor.area.right - g_monitor.area.left, g_monitor.area.bottom - g_monitor.area.top,
+              refreshRate != 0 ? std::format(", {} Hz", refreshRate) : "");
+}
+
 bool Platform::start(const char* title, const LaunchOptions& options, Settings& settings) {
+    becomeDpiAware();
     bool matched = false;
     for (int attempt = 1; !matched; ++attempt) {
         if (!findAdapter(attempt, options, matched)) {
@@ -411,9 +622,39 @@ bool Platform::start(const char* title, const LaunchOptions& options, Settings& 
         }
     }
     readSettings(settings);
-    if (options.test) {
+    // The command line's audio switches over the registry's flags (-x the music off, -n all the audio).
+    settings.audioFlags |= options.audioFlagsOr;
+    if (options.audioFlagsOne) settings.audioFlags = 1;
+    if (options.test && options.userSettings) {
         settings.windowed = 1;
+        settings.displayMode = 2;
+        settings.monitor.clear();
+    } else if (options.test) {
+        settings.windowed = 1;
+        // The fixed build's renderer as the stock's: a test run's pictures the same on every machine.
+        settings.displayMode = 2;
+        settings.monitor.clear();
+        settings.msaa = 0;
+        settings.smaa = 0;
+        settings.vsync = 1;
+        settings.maxFps = 0;
+        settings.textureFilter = 0;
+        settings.lodBias = 0;
+        settings.showFps = 0;
+        settings.worldLight = 0;
+        settings.sky = 0;
+        settings.carPaint = 0;
+        settings.headlights = 0;
+        settings.heatHaze = 0;
+        settings.reflections = 0;
+        settings.lightFlares = 0;
     }
+    if (options.headlights && *options.headlights <= 2) settings.headlights = *options.headlights;
+    if (options.worldLight && *options.worldLight <= 2) settings.worldLight = *options.worldLight;
+    if (options.sky && *options.sky <= 2) settings.sky = *options.sky;
+    if (options.carPaint && *options.carPaint <= 1) settings.carPaint = *options.carPaint;
+    if (options.reflections && *options.reflections <= 4) settings.reflections = *options.reflections == 4 ? 1 : 0;
+    chooseScreen(settings);
     log::info("settings: {}x{} {} bit, {}, antialiasing {}, shaders {}, language {}, threading {}", settings.width,
               settings.height, settings.depth, settings.windowed ? "windowed" : "full screen",
               settings.antialiasing, settings.shaders, settings.language, settings.threading);
@@ -447,6 +688,12 @@ std::vector<input::KeyEvent> Platform::takeKeyEvents() {
     std::vector<input::KeyEvent> keys;
     keys.swap(g_state.keys);
     return keys;
+}
+
+std::string Platform::takeTypedText() {
+    std::string chars;
+    chars.swap(g_state.chars);
+    return chars;
 }
 
 bool Platform::takeScreenshotRequest() {

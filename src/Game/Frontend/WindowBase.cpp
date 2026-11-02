@@ -3,8 +3,12 @@
 #include "Game/Frontend/Frontend.h"
 #include "Game/Frontend/FrontendInternal.h"
 
+#include "Audio/SoundSystem.h"
 #include "Core/Data/GameTexts.h"
 #include "Core/Network/GameSpy/GameSpyUser.h"
+#include "Game/Platform/Settings.h"
+#include "Game/Scene/Scene3d.h"
+#include "Render/ShaderReplacements.h"
 
 #include <algorithm>
 
@@ -125,6 +129,56 @@ void Frontend::setDetailFactor(float lodBias) {
 
 void Frontend::restorePlaylistChoice() {
     m_playlist.restoreChoice();
+}
+
+void Frontend::keepEffects(const FixedEffects& e) {
+    const std::pair<const char*, uint32_t> values[] = {{"CarPaint", e.carPaint},
+                                                       {"WorldLight", e.worldLight},
+                                                       {"Sky", e.sky},
+                                                       {"Headlights", e.headlights},
+                                                       {"HeatHaze", e.heatHaze},
+                                                       {"HeatHazeStrength", e.heatHazeStrength},
+                                                       {"MSAA", e.msaa},
+                                                       {"SMAA", e.smaa},
+                                                       {"TextureFilter", e.textureFilter},
+                                                       {"Reflections", e.reflections},
+                                                       {"LightFlares", e.lightFlares},
+                                                       {"Shadows", e.shadows},
+                                                       {"AmbientOcclusion", e.ambientOcclusion}};
+    for (const auto& [name, value] : values) writeSetting(name, value);
+}
+
+bool Frontend::eax() const {
+    return audio::system().on() && (audio::system().flags() & audio::kNoEax) == 0;
+}
+
+void Frontend::setEax(bool on) {
+    audio::system().enableEax(on);
+    if (m_data == nullptr) return;
+    m_data->audioFlags = on ? (m_data->audioFlags & ~audio::kNoEax) : (m_data->audioFlags | audio::kNoEax);
+}
+
+// The registry's audioflags with 0x20 (EAX off) as the row leaves it, its other bits kept (2, the hardware's mixing,
+// when it has none).
+void Frontend::keepEax(bool on) {
+    const uint32_t flags = readSetting("audioflags").value_or(audio::kHardware);
+    writeSetting("audioflags", on ? (flags & ~audio::kNoEax) : (flags | audio::kNoEax));
+}
+
+void Frontend::applyEffects(const FixedEffects& e, bool programs) {
+    m_device.setHeatHazeStrength(static_cast<float>(e.heatHazeStrength) / 100.0f);
+    m_device.setAntialiasing(e.msaa, e.smaa != 0);
+    m_device.setTextureFilter(e.textureFilter);
+    if (!programs || m_effectsScene == nullptr) return;
+    unsigned features = 0;
+    if (e.worldLight != 0) features |= static_cast<unsigned>(render::ShaderFeature::WorldLight);
+    if (e.headlights != 0) features |= static_cast<unsigned>(render::ShaderFeature::Headlights);
+    if (e.shadows >= 2) features |= static_cast<unsigned>(render::ShaderFeature::SunShadows);
+    m_device.setShaderFeatures(features, kWorldLightShape);
+    // The fixed build's car effects (JuicedConfigExt's CarPaint) with CAR PAINT; with REFLECTIONS ULTRA alone its
+    // paint drawn as the game's, its CarPaint3 lighting the cars (TrackView::draw, TrackScene::setCarLamps); the
+    // trees' (Trees) with WORLD LIGHT ULTRA, their leaves in the sun's cascades (SunShadows::draw).
+    m_effectsScene->remakePrograms({render::carEffectsOf(e.carPaint != 0, e.reflections != 0), e.worldLight == 2});
 }
 
 }  // namespace oj

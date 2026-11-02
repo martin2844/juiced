@@ -88,26 +88,49 @@ void TrackView::followReplayWindow(const oj::ReplayWindowFrame& f) {
         first().director.update(first().raceCamera, 0.0f, paused, cameraTarget(first()), cameraRace(first()),
                                 first().camera);
     }
-    if (f.changeView) {
-        // 0x0044E7D6: the first player's camera's next view (0x004069F0), with more players the second's too;
-        // the first's on the bumper (5): the director on the trackside view for 9999 s, the second's too.
-        const size_t count = players.size() > 1 ? 2 : 1;
-        for (size_t i = 0; i < count; ++i) {
-            RacePlayer& player = *players[i];
-            player.raceCamera.changeView(cameraTarget(player), cameraRace(player), player.camera);
-        }
-        if (first().raceCamera.mode() == oj::scene::RaceCamera::kBumper) {
-            for (size_t i = 0; i < count; ++i) {
-                RacePlayer& player = *players[i];
-                player.director.start(player.raceCamera, oj::scene::RaceCamera::kTrackside,
-                                      std::bit_cast<float>(0x461C3C00u), cameraTarget(player), cameraRace(player),
-                                      player.camera);
-            }
-        }
-        // The replay's view (0x004069F0) is not kept in the settings.
-    }
+    if (f.changeView) replayChangeView();
     syncReplayFlags();
     followWindow(f);
+}
+
+void TrackView::replayChangeView() {
+    // 0x0044E7D6: the first player's camera's next view (0x004069F0), with more players the second's too;
+    // the first's on the bumper (5): the director on the trackside view for 9999 s, the second's too.
+    const size_t count = players.size() > 1 ? 2 : 1;
+    for (size_t i = 0; i < count; ++i) {
+        RacePlayer& player = *players[i];
+        player.raceCamera.changeView(cameraTarget(player), cameraRace(player), player.camera);
+    }
+    if (first().raceCamera.mode() == oj::scene::RaceCamera::kBumper) {
+        for (size_t i = 0; i < count; ++i) {
+            RacePlayer& player = *players[i];
+            player.director.start(player.raceCamera, oj::scene::RaceCamera::kTrackside,
+                                  std::bit_cast<float>(0x461C3C00u), cameraTarget(player), cameraRace(player),
+                                  player.camera);
+        }
+    }
+    // The replay's view (0x004069F0) is not kept in the settings.
+}
+
+bool TrackView::replayKeys() {
+    RacePlayer& player = first();
+    const bool shown = frontEnd.window.id == RaceWindowId::Replay && frontEnd.critical == nullptr &&
+                       frontEnd.message == nullptr && frontEnd.netMessage == nullptr && replay.playing != 0;
+    if (!shown) {
+        player.replayChangeHeld = false;
+        return false;
+    }
+    // The window's own keys first: a frame of SELECT, SELECT2, BACK or a direction (its menu, the next car, the
+    // eject) changes no view (a layout may share the control: the Back button BACK2 and Change View).
+    using namespace oj::input;
+    const uint32_t e = frontEnd.uiEvent;
+    const bool windowKey = e == kSelect || e == kSelect2 || e == kBack || e == kUp || e == kDown || e == kLeft ||
+                           e == kRight;
+    const bool change = input->driverDown("CHANGE_CAMERA", player.controller);
+    const bool went = change && !player.replayChangeHeld && !windowKey;
+    player.replayChangeHeld = change;
+    player.actions.rearView = input->driverDown("REAR_VIEW", player.controller);
+    return went && !paused && !replay.done();
 }
 
 void TrackView::replayRestart() {

@@ -72,8 +72,7 @@ void NeonMenu::enter(GarageHost &host, ui::Screen &s) {
     s.setHidden("locked", true);
     if (car->body[9] == 0xFF) {
         garage.fitBodyPart(*car, garage.styleCategory, 0);
-        if (garage.view)
-            garage.view->showNeon(*car, host.viewLoading());
+        if (garage.view) garage.view->showNeon(*car, gameRandom());
         m_had = 0;
         s.setHidden("MENU", true);
         s.setHidden("COLOURMENU", false);

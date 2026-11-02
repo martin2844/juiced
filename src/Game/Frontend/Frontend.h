@@ -137,6 +137,7 @@ struct FrontendInput {
     input::UiFrame ui;
     char typed = 0;          // the character typed this frame (input::Input::typed)
     bool shiftHeld = false;  // a shift key is down
+    std::string text;        // the fixed build's chat: the window's characters this frame (Platform::takeTypedText)
     bool playerTaken = false;  // the first player's device taken (the input manager's +0x28 not -1)
     // The second player's frame (0x00408260 on the controller of the input manager's +0x2C), none without its device.
     input::UiFrame ui2;
@@ -203,14 +204,24 @@ public:
     // The options run from a race's pause: their sounds and the effects' volume are the race front end's manager's
     // ([G+0x3C], 0x004563E0: audio/ui/race), the one 0x005A8860 and 0x005A89F0 find while the race runs.
     void useSounds(UiSound& sounds) { m_sounds = &sounds; }
+    // The 3D engine whose programs the graphics options' effects make again (the car paint, the world light, the
+    // headlights): the windows' own (the constructor's `scene`), or the race's for the race pause's options, whose
+    // windows have no 3D elements.
+    void setEffectsScene(scene::Engine* scene) { m_effectsScene = scene; }
+    scene::Engine* effectsScene() const { return m_effectsScene; }
     // The main function with -i (0x004184D2), before the first window: the input manager's +0x28 0 (Main), a
     // new driver "Player" (0x0040AB80) with its music volume (the settings' +0x00) 0, the race's gearbox 1 (0 with -m),
     // one player, no opponents, +0x64 1, not a replay's (0 already here), dry (wet, 2, with -wet) and heat 0; the race
     // keeps the rest of the game object's start (0x0040D0C0). The first window is then loading.
     void instantRace(bool automatic, bool wet);
-    // The loading phase's own front end (0x00462D90): the loading window (its record's +0x0C set: the tips shown) and
-    // over it the animation window.
-    void startLoader(const std::string& window, const std::string& animation);
+    // The loading phase's own front end (0x00462D90; 0x004634B0 after a race): the loading window, its record's +0x0C
+    // set for the race's load (the tips shown) and cleared after the race.
+    void startLoader(const std::string& window, bool tips);
+    // 0x005A7040 after the loading window's first frames: the animation window over it (the manager's window over the
+    // windows, +0x30); the arcade's TEXT over several lines (0x004639BE).
+    void startLoaderAnimation(const std::string& animation);
+    // 0x005AA120 on the loading window (the manager's last window, 0x00463AC9): every transition of it at its end.
+    bool loaderShown() const { return m_screen == nullptr || m_screen->transitionsDone(); }
     // The state "loading" came: the game starts loading the race (0x0046AE50).
     bool raceLoadAsked() const { return m_raceLoadAsked; }
     // The main menu's "Quit to Windows" answered yes: the application's method +0x40 (0x00513C50) clears its +0x14
@@ -258,9 +269,9 @@ public:
     // 0x0046C208, the second player's controller whatever the front end's +0x38: connected with its note up (+0x24 0),
     // the note of priority 1 or more closing (0x005A7F70 inlined) and both players' notes counted as closed (+0x24
     // and +0x1C 1; nothing more of the first player's part). Lost with no note up, unless the first player's closed
-    // one this frame (`opens`): the note "To continue, please reconnect .. controller port " (1632) and
-    // "<device + 1>." (0x005A8030, priority 1; Stock problem: the console's text, not emptied as the first player's),
-    // +0x24 0 when it opened.
+    // one this frame (`opens`): the note (0x005A8030, priority 1) with the stock's "To continue, please reconnect ..
+    // controller port " (1632) and "<device + 1>." (Stock problem: the console's text, not emptied as the first
+    // player's; the fixed build's note is empty as the first player's), +0x24 0 when it opened.
     void watchSecondController(bool connected, int32_t device, bool opens);
     // The options from a race's pause (the game object's +0x3C set): opts_ingame_bg, its windows asking for the
     // race's windows (hud_pause) in place of the front end's.
@@ -334,6 +345,12 @@ private:
     void setEffectsVolume(float volume) override { m_sounds->setVolume(volume); }
     void setDetailFactor(float lodBias) override;
     void restorePlaylistChoice() override;
+    void keepEffects(const FixedEffects& effects) override;
+    void applyEffects(const FixedEffects& effects, bool programs) override;
+    render::QualityCaps qualityCaps() const override { return m_device.qualityCaps(); }
+    bool eax() const override;
+    void setEax(bool on) override;
+    void keepEax(bool on) override;
     // The network's windows (Game/Frontend/Network/LinkWindows.cpp; docs/spec/28-network.md, "The windows").
     void netHook() override;
     void netUnhook();
@@ -383,6 +400,7 @@ private:
     // ProfileHost
     bool nameRefused(const std::wstring& name) const override { return m_names.refuses(name); }
     frontend::KeyboardSetup& keyboardSetup() override { return m_keyboard.setup(); }
+    frontend::KeyboardSetup* chatKeyboard() override { return &m_keyboard.setup(); }
 
     // SaveHost
     void setSaveBusy(int32_t busy) override { m_saveBusy = busy; }
@@ -430,7 +448,7 @@ private:
     const TextTable& gameTexts() const override { return m_gameTexts; }
     const Language& language() const override { return m_language; }
     scene::Engine* engine() override { return m_scene; }
-    CrtRandom& viewLoading() override { return m_viewLoading; }
+    CrtRandom& viewLoading() override { return loadingRandom(); }
     float frameTime() override { return m_frameTime; }
     uint32_t scrollHeld() const override { return m_scroll; }
     float gameFrameTime() const override { return m_gameFrameTime; }
@@ -636,6 +654,7 @@ private:
     };
     NetCall m_netCall;
     scene::Engine* m_scene = nullptr;
+    scene::Engine* m_effectsScene = nullptr;
     // The loading phase's own front end (0x00462D90), whose windows are arcade_loading, loader and custom_loader (the
     // game's front end has Arcade_Loading under the same name, case aside).
     bool m_loadingFrontEnd = false;
@@ -718,8 +737,6 @@ private:
     bool enterSharedWindow(ui::Screen& s, const std::string& state);
     bool updateSharedWindow(ui::Screen& s, const std::string& state, uint32_t event);
     bool leaveSharedWindow(ui::Screen& s, const std::string& state);
-    // The loading thread's generator (the car views' models; each thread's rand() starts at 1).
-    CrtRandom m_viewLoading;
     // The window records' +0x04 (a Menu's highlighted item kept by the state's leave) and +0x08 (1 in the records'
     // data, cleared by their first enter), by the record's name: the records are the game's and outlive the front
     // ends.

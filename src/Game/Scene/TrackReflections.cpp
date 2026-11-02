@@ -6,12 +6,18 @@
 #include "Core/Saves/GraphicsConfig.h"
 #include "Core/Physics/TrackCollision.h"
 #include "Core/Base/X87.h"
+#include "Game/Cars/CarModel.h"
+#include "Game/Scene/AmbientOcclusion.h"
+#include "Game/Scene/NearestFade.h"
 #include "Game/Scene/PostEffects.h"
 
+#include <algorithm>
+#include <array>
 #include <bit>
 #include <cmath>
 #include <cstring>
 #include <limits>
+#include <utility>
 
 namespace oj::scene {
 
@@ -76,6 +82,34 @@ std::array<uint32_t, 4> pushOrder(const RenderTreeNode& n, const Vec4& place) {
 
 }  // namespace
 
+int cubeCar(const std::vector<Vec4>& places, const Vec4& focus) {
+    int best = -1;
+    float nearest = kCubeCarReach * kCubeCarReach;
+    for (size_t i = 0; i < places.size(); ++i) {
+        const float dx = places[i][0] - focus[0], dy = places[i][1] - focus[1], dz = places[i][2] - focus[2];
+        const float d = dx * dx + dy * dy + dz * dz;
+        if (d <= nearest) {
+            nearest = d;
+            best = static_cast<int>(i);
+        }
+    }
+    return best;
+}
+
+std::vector<size_t> reflectedCars(const std::vector<Vec4>& places, const Vec4& focus, int own) {
+    std::vector<std::pair<float, size_t>> close;
+    for (size_t i = 0; i < places.size(); ++i) {
+        if (static_cast<int>(i) == own) continue;
+        const float dx = places[i][0] - focus[0], dy = places[i][1] - focus[1], dz = places[i][2] - focus[2];
+        const float d = dx * dx + dy * dy + dz * dz;
+        if (d <= kReflectedReach * kReflectedReach) close.emplace_back(d, i);
+    }
+    std::stable_sort(close.begin(), close.end(), [](const auto& a, const auto& b) { return a.first < b.first; });
+    std::vector<size_t> out;
+    for (size_t k = 0; k < close.size() && k < kReflectedCars; ++k) out.push_back(close[k].second);
+    return out;
+}
+
 void TrackScene::mirror(Instance& in, float twice) {
     in.block[7] = twice - in.block[7];
     in.block[1] = -in.block[1];
@@ -100,7 +134,35 @@ void TrackScene::loaded() {
 }
 
 void TrackScene::drawCarCube(render::Camera& camera, float clock) {
-    drawCube(camera, m_engine.reflectionTargets().carCube, clock);
+    Engine::ReflectionTargets& targets = m_engine.reflectionTargets();
+    m_cubeCar = nullptr;
+    m_reflected.clear();
+    const render::GameTexture* cars = nullptr;
+    if (ultraReflections(graphicsConfig()) && !(m_engine.renderer().drawQuality < 0.8f) && targets.carCube.id != 0) {
+        cars = m_engine.carsCube();
+    }
+    if (cars == nullptr) {
+        drawCube(camera, targets.carCube, clock);
+        return;
+    }
+    // The shown cars' places (their top nodes'); the car looked at and those near it.
+    std::vector<Vec4> places;
+    std::vector<size_t> shown;
+    for (size_t i = 0; i < m_cars.size(); ++i) {
+        render::Node* root = m_cars[i]->hidden ? nullptr : m_cars[i]->root();
+        if (root == nullptr) continue;
+        const Mat34& w = root->world();
+        places.push_back({w[3], w[7], w[11], 0.0f});
+        shown.push_back(i);
+    }
+    const int own = cubeCar(places, camera.focus);
+    if (own < 0) {
+        drawCube(camera, targets.carCube, clock);
+        return;
+    }
+    m_cubeCar = m_cars[shown[static_cast<size_t>(own)]].get();
+    for (size_t k : reflectedCars(places, camera.focus, own)) m_reflected.push_back(shown[k]);
+    drawCube(camera, *cars, clock, &targets.carCube);
 }
 
 void TrackScene::drawWorldCube(float clock) {
@@ -126,7 +188,8 @@ void TrackScene::drawWorldCube(float clock) {
     r.drawQuality = quality;
 }
 
-void TrackScene::drawCube(render::Camera& camera, const render::GameTexture& cube, float clock) {
+void TrackScene::drawCube(render::Camera& camera, const render::GameTexture& cube, float clock,
+                          const render::GameTexture* stock) {
     render::Renderer3d& r = m_engine.renderer();
     const GraphicsConfig& settings = graphicsConfig();
     if (r.drawQuality < 0.8f || settings.reflections == 0) return;
@@ -154,11 +217,21 @@ void TrackScene::drawCube(render::Camera& camera, const render::GameTexture& cub
             f.update();
         }
         r.setVertexConstants(10, m_faces[0].projection().data(), 4);
-        collectCube(region, focus, std::sqrt(m_cubeRange));
+        collectCube(region, focus, std::sqrt(m_cubeRange), device.targetWidth(cube.id));
+        // REFLECTIONS ULTRA: the lights of the cars that go in.
+        std::vector<const render::Node*> lights;
+        if (stock != nullptr) {
+            for (size_t k : m_reflected) {
+                for (const auto& light : m_cars[k]->flares()) lights.push_back(light->node);
+            }
+        }
         PostEffects& post = m_engine.postEffects();
         for (uint32_t face = 0; face < 6; ++face) {
-            // Below the reflections 3 the faces of one parity by turns.
-            if (settings.reflections != 3 && ((m_cubeFrames ^ face) & 1) != 0) continue;
+            // Below the reflections 3 the faces of one parity by turns; the fixed build's REFLECTIONS ULTRA too (the
+            // user, 2026-10-28: its cube of the cars was the dearest layer, 2.7 ms of 8 or 9; each face a frame old at
+            // most, as below HI).
+            const bool turns = settings.reflections != 3 || stock != nullptr;
+            if (turns && ((m_cubeFrames ^ face) & 1) != 0) continue;
             const uint32_t bit = 1u << face;
             // 0x005C9120: the stages emptied, the face set past the target taken last; cleared to black.
             for (uint32_t s = 0; s < 4; ++s) device.setTexture(s, 0);
@@ -187,6 +260,7 @@ void TrackScene::drawCube(render::Camera& camera, const render::GameTexture& cub
             r.setVertexConstants(41, sprite, 2);
             // The opaque instances that reach the face, the sky dome, those drawn after the cars (the last found
             // first), then with the object constants of no object the flares' reflections (0x0054FE30).
+            device.profileMark("reflections cube: world");
             for (size_t i = 0; i < m_cubeEntries.size(); ++i) {
                 if ((m_cubeFaces[i] & bit) != 0) drawInstance(f, *m_cubeEntries[i].mesh, *m_cubeEntries[i].instance);
             }
@@ -196,6 +270,30 @@ void TrackScene::drawCube(render::Camera& camera, const render::GameTexture& cub
             }
             identityObject(f);
             drawFlareReflections(f);
+            // REFLECTIONS ULTRA: the face as the stock draws it copied to the stock's cube, then the cars near the
+            // focus that reach it, their opaque parts then their late ones, then their lit lights' flares (the user,
+            // 2026-10-28: a car's lights shine in the others' reflections).
+            if (stock != nullptr) {
+                device.copyCubeFace(cube.id, stock->id, face);
+                device.profileMark("reflections cube: cars");
+                for (uint32_t mode : {1u, 2u}) {
+                    for (size_t k : m_reflected) {
+                        CarModel& car = *m_cars[k];
+                        const Mat34& place = car.root()->world();
+                        const Vec4 centre{place[3], place[7], place[11], 0.0f};
+                        if ((cubeFaces(focus, centre, kReflectedRadius) & bit) == 0) continue;
+                        setCarLamps(car);
+                        car.draw(r, f, mode);
+                    }
+                }
+                r.endMaterial();
+                identityObject(f);
+                m_lens.drawChosen(f, [&](const LensFlares::Flare& flare) {
+                    return std::find(lights.begin(), lights.end(), flare.node) != lights.end();
+                });
+                r.endMaterial();
+            }
+            device.profileMark("car reflections cube");
         }
         m_deferred.clear();
         m_cubeEntries.clear();
@@ -206,15 +304,20 @@ void TrackScene::drawCube(render::Camera& camera, const render::GameTexture& cub
     r.drawingCube = false;
 }
 
-void TrackScene::collectCube(const Region& region, const Vec4& focus, float radius) {
+void TrackScene::collectCube(const Region& region, const Vec4& focus, float radius, uint32_t faceSize) {
     const render::Renderer3d& r = m_engine.renderer();
+    // A face's pixels a unit at a unit's distance (90 degrees: half its size), its diameter's across compared squared.
+    const float across = static_cast<float>(faceSize) / kCasterPixels;
     auto take = [&](const Entry& e) {
         const Instance& in = *e.instance;
         const float dz = focus[2] - in.centre[2];
         const float dy = focus[1] - in.centre[1];
         const float dx = focus[0] - in.centre[0];
-        const float d = ((dx * dx + dy * dy) + dz * dz) * m_lodScale;
+        const float d2 = (dx * dx + dy * dy) + dz * dz;
+        const float d = d2 * m_lodScale;
         if (!(r.lodBias * e.mesh->range[2] < d) || !(d <= r.lodBias * e.mesh->range[3])) return;
+        const float size = in.radius * across;
+        if (faceSize != 0 && size * size < d2) return;
         const uint32_t faces = cubeFaces(focus, in.centre, in.radius);
         if (e.mesh->deferred) {
             m_deferred.push_back(e);
@@ -391,6 +494,55 @@ void TrackScene::drawFlareRoadReflections(render::Camera& camera) {
         b.data.insert(b.data.end(), {px, y, pz, 1.0f, 0.0f, w * 0.5f, h * 0.5f, topBits});
     }
     m_lens.drawBatches();
+}
+
+void TrackScene::lampStreaks(render::Camera& camera, render::LightReflectionView& view) {
+    view.streakCount = 0;
+    if (m_lens.empty()) return;
+    // The flares' visibility (their occlusion tests of the view) eased over the world's time since the last streaks,
+    // at once on a new clock.
+    const float now = m_engine.renderer().time;
+    const float ease =
+        m_streakTime < 0.0f || now < m_streakTime ? 1.0f : 1.0f - std::exp(-(now - m_streakTime) / kStreakEase);
+    m_streakTime = now;
+    struct Found {
+        float distance;
+        Flare* flare;
+    };
+    std::vector<Found> found;
+    const Mat34& c = camera.world();
+    const float ax = c[3] + c[2] * kStreakAhead, ay = c[7] + c[6] * kStreakAhead, az = c[11] + c[10] * kStreakAhead;
+    for (Flare& f : m_lens.flares()) {
+        // drawFlareRoadReflections's lamps, lit, seen or not (the nearest changing only as one passes another).
+        if ((f.on != nullptr && !*f.on) || f.roadBatch == SIZE_MAX) continue;
+        f.shown += (f.visibility - f.shown) * ease;
+        m_lens.flareWorld(f);
+        const float dx = f.world[3] - ax, dy = f.world[7] - ay, dz = f.world[11] - az;
+        found.push_back({std::sqrt(dx * dx + dy * dy + dz * dz), &f});
+    }
+    std::stable_sort(found.begin(), found.end(),
+                     [](const Found& a, const Found& b) { return a.distance < b.distance; });
+    std::vector<float> away;
+    for (const Found& one : found) away.push_back(one.distance);
+    const std::vector<float> weights = rankFade(away, view.streaks.size(), kStreakBand);
+    size_t count = 0;
+    for (size_t i = 0; i < weights.size(); ++i) {
+        Flare& f = *found[i].flare;
+        const float strength = f.shown * view.wetness * weights[i];
+        if (strength <= 0.0f) continue;
+        const float px = f.world[3], pz = f.world[11];
+        if (px != f.groundX || pz != f.groundZ) {
+            float lowest = 0.0f, highest = -3.4028235e38f;
+            if (m_collision) groundSpan(*m_collision, px, pz, lowest, highest);
+            f.ground = highest == -3.4028235e38f ? 0.0f : highest;
+            f.groundX = px;
+            f.groundZ = pz;
+        }
+        // A street lamp's warm white, a car's light its texture's colour (its brake lights red).
+        const std::array<float, 3>& colour = f.on != nullptr ? f.roadColour : kStreakColour;
+        if (lampStreak(camera, {px, f.world[7], pz, 0.0f}, f.ground, strength, colour, view.streaks[count])) ++count;
+    }
+    view.streakCount = static_cast<int32_t>(count);
 }
 
 }  // namespace oj::scene

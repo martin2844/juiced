@@ -134,6 +134,11 @@ public:
     // 0x00406300: dt the race's step time over the frame's physics steps (the fixed build's: the step time), taken as 0
     // while the race is paused (race.paused) but by the free views 14 and 15, which move on.
     void update(const CameraTarget& target, const CameraRace& race, float dt, render::Camera& camera);
+    // 0x00406300 while the fly-by plays (the race's view 9, whose step 0x00405BE0 is the race's fly-by,
+    // Game/Race/RaceIntro): the scene camera's post effects cleared (0x0040632D) and the speed's blur kept off (none in
+    // views 8 .. 12) while it eases on toward the car's, so a blur of the race before a restart is not drawn in the
+    // fly-by nor kept for the view after it.
+    void flyByFrame(const CameraTarget& target, const CameraRace& race, float dt, render::Camera& camera);
 
     // 0x00406AB0 after the frame's view: CHANGE_CAMERA going down takes the next view (0 to 1, 1 to 6, else 0);
     // REAR_VIEW held turns the views round; DRIVER_CAMERA_PAN (pan) turns them to a side.

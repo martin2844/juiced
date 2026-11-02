@@ -45,23 +45,24 @@ void Screen::slide(State& s, float dt, uint32_t scroll) {
 // (0xFF323232) when the slider is not active; without a picture a plain square.
 void Screen::drawSlider(const Element& e, State& s) {
     (void)e;
-    const float sw = static_cast<float>(m_device.width());
-    const float sh = static_cast<float>(m_device.height());
+    const Placement p = placementOf(s);
+    const float sw = p.sx;
+    const float sh = p.sy;
     float x0, y0, x1, y1, half, middle;
     if (!s.slider.vertical) {
         const float pad = s.w * sw * 0.04f;
-        x0 = sw * s.x + pad + pad;
-        x1 = (s.w + s.x) * sw - (pad + pad);
+        x0 = sw * s.x + p.ox + pad + pad;
+        x1 = (s.w + s.x) * sw + p.ox - (pad + pad);
         half = s.h * sh * 0.4f;
-        middle = (s.h * 0.5f + s.y) * sh;
+        middle = (s.h * 0.5f + s.y) * sh + p.oy;
         y0 = middle - half;
         y1 = half + half + y0;
     } else {
         const float pad = s.h * sh * 0.04f;
-        y0 = s.y * sh + pad + pad;
-        y1 = (s.y + s.h) * sh - (pad + pad);
+        y0 = s.y * sh + p.oy + pad + pad;
+        y1 = (s.y + s.h) * sh + p.oy - (pad + pad);
         half = s.w * sw * 0.4f;
-        middle = (s.w * 0.5f + s.x) * sw;
+        middle = (s.w * 0.5f + s.x) * sw + p.ox;
         x0 = middle - half;
         x1 = half + half + x0;
     }

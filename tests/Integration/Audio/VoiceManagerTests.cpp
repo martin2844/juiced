@@ -20,8 +20,8 @@ using oj::test::check;
 
 }  // namespace
 
-// Two instances of a set of one voice (FTOB_HIGH_ON, as the player's FTO and an opponent's of arcade race 1 have it),
-// both heard: the louder takes the voice and keeps it frame after frame. Keeping it counts as a user of the set
+// Two instances of a set of one voice (FTOB_HIGH_ON of the bank loaded with no multiplier, as the dyno's), both
+// heard: the louder takes the voice and keeps it frame after frame. Keeping it counts as a user of the set
 // (0x005C1360), so the other's acquire answers 3 instead of taking the voice (the engine's sound passed between the
 // two cars every other frame).
 OJ_INTEGRATION_TEST(VoiceManager, KeptVoiceNotTaken) {
@@ -75,8 +75,8 @@ OJ_INTEGRATION_TEST(VoiceManager, KeptVoiceNotTaken) {
     sound.stop();
 }
 
-// Two instances of a set of one voice (FTOB_HIGH_ON, as two cars of the same engine bank have it): the louder takes
-// the voice. Silenced, it is culled and its voice faded out (the 3D handle's +0x20, 0x005C1A90): in that frame the
+// Two instances of a set of one voice (FTOB_HIGH_ON of the bank loaded with no multiplier): the louder takes the
+// voice. Silenced, it is culled and its voice faded out (the 3D handle's +0x20, 0x005C1A90): in that frame the
 // other's oldest-voice steal is refused, the voice kept by the fading slot; the player's frame stops it, and the next
 // frame gives the voice to the other.
 OJ_INTEGRATION_TEST(VoiceManager, FadingVoiceKept) {
@@ -136,6 +136,62 @@ OJ_INTEGRATION_TEST(VoiceManager, FadingVoiceKept) {
         }
         if (quiet != nullptr) quiet->release();
         if (loud != nullptr) loud->release();
+    }
+    sound.stop();
+}
+
+// Two cars of one engine sound (FTOB, as the player's FTO and an opponent's of arcade race 1): the race adds the bank
+// with twice its cars' instances (0x005B9430 → 0x005BEBF0), so FTOB_HIGH_ON has four voices, and both cars' instances
+// play at once, each on a voice of its own (one voice for both let the louder car's engine silence the other's).
+OJ_INTEGRATION_TEST(VoiceManager, OneVoiceEachCar) {
+    oj::test::InGameFolder folder;
+    if (!folder.valid()) return;
+    oj::audio::System& sound = oj::audio::system();
+    if (!sound.start(
+#if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
+            nullptr,
+#else
+            GetDesktopWindow(),
+#endif
+            0x20)) {
+        check(false, "the sound system started (the tests need a DirectSound device)");
+        return;
+    }
+    {
+        std::unique_ptr<oj::audio::Bank> bank;
+        oj::CrtRandom random;
+        oj::audio::World world(oj::test::gameFiles(), 256, random);
+        bank = oj::audio::Bank::load(oj::test::gameFiles(), std::filesystem::path("audio") / "cars" / "ftob", "ftob",
+                                     nullptr, 2 * 2);
+        if (bank != nullptr) world.player().addBank(bank.get());
+        world.player().setMasterVolume(0.0f);  // heard by no one
+        oj::audio::SetRef ref;
+        oj::audio::SoundSet* set = world.player().find("FTOB_HIGH_ON", ref) == 0 ? world.player().setOf(ref) : nullptr;
+        oj::audio::Instance* player = world.create("FTOB_HIGH_ON", nullptr, 0);
+        oj::audio::Instance* opponent = world.create("FTOB_HIGH_ON", nullptr, 0);
+        if (set == nullptr || set->instances() != 4 || player == nullptr || opponent == nullptr) {
+            check(false, "the ftob bank of two cars: FTOB_HIGH_ON with four voices, and two instances of it");
+        } else {
+            player->setVolume(1.0f);
+            opponent->setVolume(0.3f);
+            player->play();
+            opponent->play();
+            int playing = 0;
+            for (int frame = 0; frame < 6; ++frame) {
+                world.update(1.0f / 60.0f);
+                oj::audio::Player::updateAll();
+                playing = 0;
+                for (uint32_t v = 0; v < set->instances(); ++v) {
+                    int state = 0;
+                    const uint32_t handle = set->owner(v);
+                    if (handle != 0 && world.player().state(handle, state) == 0 && (state == 3 || state == 4)) ++playing;
+                }
+                if (playing != 2) break;
+            }
+            check(playing == 2, "both cars' engines play, frame after frame, each on its own voice");
+        }
+        if (opponent != nullptr) opponent->release();
+        if (player != nullptr) player->release();
     }
     sound.stop();
 }

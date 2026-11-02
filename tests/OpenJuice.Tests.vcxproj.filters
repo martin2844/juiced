@@ -22,9 +22,6 @@
     <Filter Include="Integration\GameData">
       <UniqueIdentifier>{3E2CD07F-3434-5754-95FD-A78CAAE2A394}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Integration\JuicedConfig">
-      <UniqueIdentifier>{1C7E5A93-4D28-5B61-A0F3-8E2D6B9C4F15}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Integration\Platform">
       <UniqueIdentifier>{78343DCC-B939-5F91-BBCF-82141D95D887}</UniqueIdentifier>
     </Filter>
@@ -60,9 +57,6 @@
     </Filter>
     <Filter Include="Unit\Input">
       <UniqueIdentifier>{38AB6953-E512-525C-BF91-A498EB9ADF74}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Unit\JuicedConfig">
-      <UniqueIdentifier>{9D3F6B42-7E15-5A8C-B6D4-2C8E0F1A3B57}</UniqueIdentifier>
     </Filter>
     <Filter Include="Unit\Network">
       <UniqueIdentifier>{AE405641-9751-5562-8327-3C88DC49B792}</UniqueIdentifier>
@@ -147,6 +141,9 @@
     <ClCompile Include="Integration\Frontend\OnlineCrewRaceSetupTests.cpp">
       <Filter>Integration\Frontend</Filter>
     </ClCompile>
+    <ClCompile Include="Integration\Frontend\ReplayPictureTests.cpp">
+      <Filter>Integration\Frontend</Filter>
+    </ClCompile>
     <ClCompile Include="Integration\Frontend\RespectChangesTests.cpp">
       <Filter>Integration\Frontend</Filter>
     </ClCompile>
@@ -159,6 +156,9 @@
     <ClCompile Include="Integration\Frontend\WindowStackTests.cpp">
       <Filter>Integration\Frontend</Filter>
     </ClCompile>
+    <ClCompile Include="Integration\Frontend\KeyboardTests.cpp">
+      <Filter>Integration\Frontend</Filter>
+    </ClCompile>
     <ClCompile Include="Integration\Frontend\GarageFixesTests.cpp">
       <Filter>Integration\Frontend</Filter>
     </ClCompile>
@@ -166,6 +166,18 @@
       <Filter>Integration\Frontend</Filter>
     </ClCompile>
     <ClCompile Include="Integration\Frontend\OnlineLoginTests.cpp">
+      <Filter>Integration\Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Frontend\LobbyChatTests.cpp">
+      <Filter>Integration\Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Frontend\WideScreenTests.cpp">
+      <Filter>Integration\Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Frontend\GameOptionsFovTests.cpp">
+      <Filter>Integration\Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Frontend\ConsoleTextsTests.cpp">
       <Filter>Integration\Frontend</Filter>
     </ClCompile>
     <ClCompile Include="Integration\GameData\CarDefsTests.cpp">
@@ -178,6 +190,12 @@
       <Filter>Integration\GameData</Filter>
     </ClCompile>
     <ClCompile Include="Integration\GameData\EffectDefsTests.cpp">
+      <Filter>Integration\GameData</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\GameData\CarPaintTests.cpp">
+      <Filter>Integration\GameData</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\GameData\WorldLightTests.cpp">
       <Filter>Integration\GameData</Filter>
     </ClCompile>
     <ClCompile Include="Integration\GameData\EffectsTests.cpp">
@@ -203,9 +221,6 @@
     </ClCompile>
     <ClCompile Include="Integration\GameData\TracksTests.cpp">
       <Filter>Integration\GameData</Filter>
-    </ClCompile>
-    <ClCompile Include="Integration\JuicedConfig\SystemChecksTests.cpp">
-      <Filter>Integration\JuicedConfig</Filter>
     </ClCompile>
     <ClCompile Include="Integration\Network\HttpTests.cpp">
       <Filter>Integration\Network</Filter>
@@ -234,10 +249,64 @@
     <ClCompile Include="Integration\Network\TransportTests.cpp">
       <Filter>Integration\Network</Filter>
     </ClCompile>
-    <ClCompile Include="Integration\Network\PeerchatTests.cpp">
+    <ClCompile Include="Integration\Network\PeerchatServerTests.cpp">
       <Filter>Integration\Network</Filter>
     </ClCompile>
     <ClCompile Include="Integration\Platform\DirectInputKeyboardTests.cpp">
+      <Filter>Integration\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Platform\FrameLimitTests.cpp">
+      <Filter>Integration\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Platform\TextureFilterTests.cpp">
+      <Filter>Integration\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Platform\BrightnessPassTests.cpp">
+      <Filter>Integration\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Platform\SceneTargetMsaaTests.cpp">
+      <Filter>Integration\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Platform\SmaaPassTests.cpp">
+      <Filter>Integration\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Platform\HeadlightShadowsDeviceTests.cpp">
+      <Filter>Integration\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Platform\ReflectionsUltraDeviceTests.cpp">
+      <Filter>Integration\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Platform\AmbientOcclusionDeviceTests.cpp">
+      <Filter>Integration\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Platform\LightReflectionDeviceTests.cpp">
+      <Filter>Integration\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Platform\LampShadowDeviceTests.cpp">
+      <Filter>Integration\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Platform\CloudsDeviceTests.cpp">
+      <Filter>Integration\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Platform\PointLightsDeviceTests.cpp">
+      <Filter>Integration\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Platform\ProfilerDeviceTests.cpp">
+      <Filter>Integration\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Platform\VolumetricLightDeviceTests.cpp">
+      <Filter>Integration\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Platform\GlowPassTests.cpp">
+      <Filter>Integration\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Platform\HeatHazePassTests.cpp">
+      <Filter>Integration\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Platform\ScreenModeTests.cpp">
+      <Filter>Integration\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Platform\RendererSettingsTests.cpp">
       <Filter>Integration\Platform</Filter>
     </ClCompile>
     <ClCompile Include="Integration\Platform\Windows7Tests.cpp">
@@ -258,10 +327,25 @@
     <ClCompile Include="Integration\Race\RaceCarRecordTests.cpp">
       <Filter>Integration\Race</Filter>
     </ClCompile>
+    <ClCompile Include="Integration\Race\TrackViewCollisionsTests.cpp">
+      <Filter>Integration\Race</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Race\AfterRaceTests.cpp">
+      <Filter>Integration\Race</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Race\TrackViewRumbleTests.cpp">
+      <Filter>Integration\Race</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Race\FreeTextTests.cpp">
+      <Filter>Integration\Race</Filter>
+    </ClCompile>
     <ClCompile Include="Integration\Race\PostEffectsSplitTests.cpp">
       <Filter>Integration\Race</Filter>
     </ClCompile>
     <ClCompile Include="Integration\Race\HudReplayTests.cpp">
+      <Filter>Integration\Race</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Race\ReplayKeysTests.cpp">
       <Filter>Integration\Race</Filter>
     </ClCompile>
     <ClCompile Include="Integration\Race\CruiseTricksTests.cpp">
@@ -275,6 +359,15 @@
     </ClCompile>
     <ClCompile Include="Integration\Saves\UserSavesTests.cpp">
       <Filter>Integration\Saves</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Audio\OpenAlOutputTests.cpp">
+      <Filter>Unit\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Audio\VolumeFadeTests.cpp">
+      <Filter>Unit\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Audio\OutputCallsTests.cpp">
+      <Filter>Unit\Audio</Filter>
     </ClCompile>
     <ClCompile Include="Unit\Audio\SoundSetTests.cpp">
       <Filter>Unit\Audio</Filter>
@@ -330,17 +423,23 @@
     <ClCompile Include="Unit\Input\GameControllerTests.cpp">
       <Filter>Unit\Input</Filter>
     </ClCompile>
+    <ClCompile Include="Integration\Input\PadControlsFileTests.cpp">
+      <Filter>Unit\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\Input\WheelInputTests.cpp">
+      <Filter>Unit\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Input\PadControlsTests.cpp">
+      <Filter>Unit\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Input\PadRumbleTests.cpp">
+      <Filter>Unit\Input</Filter>
+    </ClCompile>
     <ClCompile Include="Unit\Input\KeyboardSteeringTests.cpp">
       <Filter>Unit\Input</Filter>
     </ClCompile>
     <ClCompile Include="Unit\Input\UiInputTests.cpp">
       <Filter>Unit\Input</Filter>
-    </ClCompile>
-    <ClCompile Include="Unit\JuicedConfig\DirectXCheckTests.cpp">
-      <Filter>Unit\JuicedConfig</Filter>
-    </ClCompile>
-    <ClCompile Include="Unit\JuicedConfig\ConfigDataTests.cpp">
-      <Filter>Unit\JuicedConfig</Filter>
     </ClCompile>
     <ClCompile Include="Unit\Network\GameSpyPresenceTests.cpp">
       <Filter>Unit\Network</Filter>
@@ -349,6 +448,12 @@
       <Filter>Unit\Network</Filter>
     </ClCompile>
     <ClCompile Include="Unit\Network\OnlineRecordsTests.cpp">
+      <Filter>Unit\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Network\OnlineUserTests.cpp">
+      <Filter>Unit\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Network\VoiceCallsTests.cpp">
       <Filter>Unit\Network</Filter>
     </ClCompile>
     <ClCompile Include="Unit\Network\VoiceTests.cpp">
@@ -372,7 +477,13 @@
     <ClCompile Include="Unit\Platform\LanguageChoiceTests.cpp">
       <Filter>Unit\Platform</Filter>
     </ClCompile>
+    <ClCompile Include="Unit\Platform\ScreenTests.cpp">
+      <Filter>Unit\Platform</Filter>
+    </ClCompile>
     <ClCompile Include="Unit\Platform\SystemCommandTests.cpp">
+      <Filter>Unit\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Platform\WheelSettingsTests.cpp">
       <Filter>Unit\Platform</Filter>
     </ClCompile>
     <ClCompile Include="Unit\Race\DriverControlTests.cpp">
@@ -402,6 +513,9 @@
     <ClCompile Include="Unit\Race\ReplayFrameTests.cpp">
       <Filter>Unit\Race</Filter>
     </ClCompile>
+    <ClCompile Include="Unit\Race\ReplayXboxTests.cpp">
+      <Filter>Unit\Race</Filter>
+    </ClCompile>
     <ClCompile Include="Unit\Race\CrewSchemeTests.cpp">
       <Filter>Unit\Race</Filter>
     </ClCompile>
@@ -409,6 +523,18 @@
       <Filter>Unit\Race</Filter>
     </ClCompile>
     <ClCompile Include="Unit\Render\MeshTests.cpp">
+      <Filter>Unit\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Render\ShaderReplacementsTests.cpp">
+      <Filter>Unit\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Render\FrameOptionsTests.cpp">
+      <Filter>Unit\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Render\BrightnessTests.cpp">
+      <Filter>Unit\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Render\DisplayTests.cpp">
       <Filter>Unit\Render</Filter>
     </ClCompile>
     <ClCompile Include="Unit\Saves\ArchiveTests.cpp">
@@ -422,6 +548,51 @@
     </ClCompile>
     <ClCompile Include="Unit\Saves\OnlineAccountTests.cpp">
       <Filter>Unit\Saves</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Scene\HeatHazeTests.cpp">
+      <Filter>Unit\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Scene\CarsEnvironmentTests.cpp">
+      <Filter>Unit\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Scene\HeadlightsTests.cpp">
+      <Filter>Unit\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Scene\SunShadowsTests.cpp">
+      <Filter>Unit\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Scene\AmbientOcclusionTests.cpp">
+      <Filter>Unit\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Scene\LampShadowTests.cpp">
+      <Filter>Unit\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Scene\CloudsTests.cpp">
+      <Filter>Unit\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Scene\FlameLightsTests.cpp">
+      <Filter>Unit\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Scene\LensFlaresTests.cpp">
+      <Filter>Unit\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Scene\NearestFadeTests.cpp">
+      <Filter>Unit\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Scene\LightSetsTests.cpp">
+      <Filter>Unit\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Scene\TunnelLightsTests.cpp">
+      <Filter>Unit\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Scene\VolumetricLightTests.cpp">
+      <Filter>Unit\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Scene\ExposureTests.cpp">
+      <Filter>Unit\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit\Scene\HeadlightShadowsTests.cpp">
+      <Filter>Unit\Scene</Filter>
     </ClCompile>
     <ClCompile Include="Unit\Scene\WorldClockTests.cpp">
       <Filter>Unit\Scene</Filter>
@@ -446,10 +617,16 @@
     <ClInclude Include="Framework\Fakes\FakeGarageHost.h">
       <Filter>Framework\Fakes</Filter>
     </ClInclude>
+    <ClInclude Include="Framework\Fakes\FakeAvailable.h">
+      <Filter>Framework\Fakes</Filter>
+    </ClInclude>
     <ClInclude Include="Framework\Fakes\FakeGpcm.h">
       <Filter>Framework\Fakes</Filter>
     </ClInclude>
     <ClInclude Include="Framework\Fakes\FakeWindowHost.h">
+      <Filter>Framework\Fakes</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Fakes\FakeSaveHost.h">
       <Filter>Framework\Fakes</Filter>
     </ClInclude>
     <ClInclude Include="Framework\Fakes\FlatGround.h">
@@ -459,6 +636,9 @@
       <Filter>Framework\Fakes</Filter>
     </ClInclude>
     <ClInclude Include="Framework\Fixtures.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\RealDevice.h">
       <Filter>Framework</Filter>
     </ClInclude>
     <ClInclude Include="Framework\Test.h">

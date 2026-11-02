@@ -3,6 +3,7 @@
 
 #include "Game/Scene/Particles/ParticleSystem.h"
 #include "Game/Scene/Particles/ParticlesInternal.h"
+#include "Game/Scene/Particles/SmokeEmitter.h"
 
 #include "Core/Physics/TrackCollision.h"
 #include "Game/Scene/PostEffects.h"
@@ -200,6 +201,27 @@ void ParticleSystem::sortLists() {
     for (List* list : {&m_smoke, &m_sparks, &m_scenery, &m_tracks, &m_framebuffer, &m_smears}) {
         std::stable_sort(list->begin(), list->end(), higher);
     }
+}
+
+void ParticleSystem::drawHeatHaze(render::Camera& camera) {
+    render::IRenderDevice& device = m_engine.device();
+    render::Renderer3d& r = m_engine.renderer();
+    if (m_framebuffer.empty() || (r.classes() & 0x40000u) == 0) return;
+    const uint32_t viewWidth = device.beginHeatHaze();
+    if (viewWidth == 0) return;
+    device.setRenderState(RenderState::CullMode, Cull::None);
+    device.setDeclaration(m_declaration);
+    size_t done = m_framebuffer.size();
+    for (size_t i = 0; i < m_framebuffer.size(); ++i) {
+        auto* smoke = dynamic_cast<SmokeEmitter*>(m_framebuffer[i].get());
+        if (smoke != nullptr && !smoke->hazeFrame(camera, static_cast<float>(viewWidth))) done = i;
+    }
+    if (done < m_framebuffer.size()) m_framebuffer.erase(m_framebuffer.begin() + static_cast<std::ptrdiff_t>(done));
+    device.endHeatHaze();
+    // The device's states are the view's again: the renderer's material, samplers and declaration unknown.
+    r.endMaterial();
+    r.forgetSamplers();
+    r.lastDeclaration = 0;
 }
 
 void ParticleSystem::drawFramebuffer(render::Camera& camera) {

@@ -258,8 +258,9 @@ Off the network the race front end's frame (`0x004574C1`) draws `0x004BF320` in 
 outside the attract replay (mode 4), mode 3 and a replay's race, for each racer of the career's session (`+0x30`,
 whatever race it last held) whose car (its `+0x2C`) is not the player's (`0x004BAE70`: the car of the first racer of
 crew 0, member 0). The colour: white for the player's crew; else 0xFFE6gg00, the green (1 - (nerves - 1)) x 236 held
-within 0 .. 236, 236 above 1.9 nerves on the frames `[0x0075EF64]` is set (they blink), rounded. The alpha 0, then
-1 - depth / d in front of the camera within d.
+within 0 .. 236, 236 above 1.9 nerves on the frames `[0x0075EF64]` is set (they blink; the `!` on each such frame,
+`0x004BF9BC` tests no nerves), rounded. The alpha 0, then 1 - depth / d in front of the camera within d. Each text's
+baseline is its place (`0x005186C0`): it stands on it.
 
 - The names' time below 0 (`0x004BF8B0`): a racer with nerves of 1.9 or more gets `!` (`[0x00769A58]`) centred 1.2 m
   above its car's centre, d 100 m (`[0x0079E844]` counts the racers 0 .. 7 round, read by nothing).

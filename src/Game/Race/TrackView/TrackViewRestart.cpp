@@ -134,6 +134,9 @@ void TrackView::resetCar(RaceSlot& s) {
             if (f != nullptr) f->on = true;
         }
     }
+    // The fixed build's: the lights a tunnel turned on off again.
+    if (s.tunnelLights.on) showHeadlights(s, false);
+    s.tunnelLights = {};
 }
 
 void TrackView::endRace() {

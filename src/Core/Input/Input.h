@@ -10,6 +10,8 @@
 
 #include "Core/Data/Controls.h"
 #include "Core/Input/ForceFeedback.h"
+#include "Core/Input/PadControls.h"
+#include "Core/Input/PadRumble.h"
 #include "Core/Saves/SaveEntries.h"
 
 #include <array>
@@ -18,6 +20,7 @@
 #include <memory>
 #include <optional>
 #include <string>
+#include <string_view>
 #include <utility>
 #include <vector>
 
@@ -174,6 +177,10 @@ struct Device {
     bool typedAny = false;               // +0x39C
     char typed = 0;                      // +0x3A0
     std::string mapName;                 // the map registered last
+    // The fixed build: JuicedConfigExt's controls of the format (a value's index: its control, none for DirectInput's
+    // own), read through the input manager's PadControls.
+    PadControls* pads = nullptr;
+    std::vector<const PadControls::Control*> virtuals;
 
     // 0x005940B0 / 0x00594390 / 0x00594670: a control of the semantic's text; a semantic already in the format keeps
     // its value, else a DIACTION and a value (flag 1 for a key or button, 0 for an axis) are added.
@@ -182,7 +189,9 @@ struct Device {
     void addCharacterKeys(const std::string& mapName);
     // 0x00594E20.
     bool hasInput() const;
-    // A control's value as its class reads it; table: the response table (channel 0, 1024 entries).
+    // A control's value as its class reads it; table: the response table (channel 0, 1024 entries). A control of
+    // JuicedConfigExt's as its plugin's bindings read it (XInputBindings): a key its IsDown, an axis its Value, an axis
+    // through the response table its Value as the -100 .. 100 a DirectInput axis gives.
     float read(const Control& c, const std::array<int32_t, 2048>& table) const;
 };
 
@@ -203,6 +212,13 @@ public:
     void setControllers(const std::vector<ControllerPort*>& controllers);
     // The keyboard's maps; none (a test run, no DirectInput): each DIKEYBOARD_ action on its key.
     void setKeyboard(KeyboardPort* keyboard) { m_keyboardPort = keyboard; }
+    // The fixed build: JuicedConfigExt's controls (their layout, the game's keys) and the controller the platform read
+    // for the next poll.
+    PadControls& pads() { return m_pads; }
+    const PadControls& pads() const { return m_pads; }
+    void setPad(const PadState& pad) { m_pad = pad; }
+    // The fixed build: the first player's motors of the race's frames for the controller (PadRumble).
+    PadRumble& padRumble() { return m_padRumble; }
     // The uAppData of the action the keyboard's map gives a key (a DIK code), -1 for none.
     int64_t keyAction(uint8_t key) const { return m_keyboard.appData[key]; }
 
@@ -267,6 +283,11 @@ public:
     // The DRIVER1 slots of a player's controller (0x004015D0 for a digital one, 0x00401640 for an analogue one; the
     // first player's or the second's, playerController): -1 or past the device's actions 0.
     int32_t digital(size_t slot, int player = 0) const;
+    // The fixed build's replay keys: a control of the player's driver map (DRIVER1 .. 4 by its device's setting, as
+    // useDriver takes it) for `action` down now, whatever map its device has registered: a key of the keyboard while
+    // the window is active, a control of JuicedConfigExt's (a button down, an axis past the action's dead zone its
+    // way).
+    bool driverDown(std::string_view action, int player = 0) const;
     float analogue(size_t slot, int player = 0) const;
     // The DRIVER1 action names of the slots (0x00711588 .., 0x00711610 ..).
     static constexpr int kDriverDigital = 16;
@@ -326,6 +347,9 @@ private:
     std::vector<MapFormat> m_formats;       // each device's format registered last (for 0x005957D6)
     KeyboardPort* m_keyboardPort = nullptr;  // the input manager's +0x40
     ff::Wheels* m_wheels = nullptr;
+    PadControls m_pads;
+    PadState m_pad;
+    PadRumble m_padRumble;
 };
 
 }  // namespace oj::input

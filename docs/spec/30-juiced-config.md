@@ -3,9 +3,10 @@
 `JuicedConfig.exe` (139264 bytes, built May 2005, 32-bit), the game's settings tool: one window that writes the
 settings the game reads at start (`01-startup.md`, "Game object: platform start") into
 `HKEY_CURRENT_USER\Software\THQ\Juiced`. The game runs it when no saved adapter matches one of the system's, and
-`-setup` opens it. OpenJuiceConfig (`src/JuicedConfig`) is its port: `OpenJuiceConfig.exe` and
-`OpenJuiceConfig64.exe`, with the stock's resources byte for byte (the window, its pictures, its icon) but four
-languages' texts (below, "The texts") and OpenJuice's version resource. The stock tool speaks through the ANSI
+`-setup` opens it. The retail versions' OpenJuiceConfig (`src/JuicedConfig` there) is its port, 32-bit as the stock's,
+with the stock's resources byte for byte (the window, its pictures, its icon) but four languages' texts (below, "The
+texts") and OpenJuice's version resource; the fixed build's OpenJuiceConfig is JuicedConfig Extended's settings
+program (`third_party/juicedconfigext`, docs/fixes.md Added), 32-bit too. The stock tool speaks through the ANSI
 functions throughout.
 
 ## The start (`0x004053C0`)

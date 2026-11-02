@@ -10,7 +10,9 @@
 #include "Core/Base/Log.h"
 #include "Core/Base/X87.h"
 #include "Core/Formats/Ddt.h"
+#include "Render/FrameOptions.h"
 
+#include <algorithm>
 #include <filesystem>
 
 namespace oj::ui {
@@ -112,6 +114,21 @@ render::TextureId Screen::loadTexture(const std::string& name) {
 #endif
     Ddt ddt;
     if (bytes && ddt.parse(*bytes)) {
+        // The fixed build's texture filter: the picture's transparent texels coloured as their seen neighbours (a
+        // 32-bit picture's levels), so that the filter blends no white into its edges (Render/FrameOptions); always,
+        // as the graphics options turn the filter on while the game runs (point sampled nothing seen changes).
+        if (ddt.format == Ddt::kA8R8G8B8) {
+            uint32_t w = ddt.width, h = ddt.height;
+            size_t at = 0;
+            for (uint32_t level = 0; level < std::max(ddt.mipLevels, 1u) && w != 0 && h != 0; ++level) {
+                const size_t levelBytes = static_cast<size_t>(w) * h * 4;
+                if (at + levelBytes > ddt.pixels.size()) break;
+                render::bleedTransparent(reinterpret_cast<uint32_t*>(ddt.pixels.data() + at), w, h);
+                at += levelBytes;
+                w = std::max(w / 2, 1u);
+                h = std::max(h / 2, 1u);
+            }
+        }
         render::TextureData data;
         data.format = pixelFormat(ddt.format);
         data.width = ddt.width;
@@ -129,6 +146,14 @@ render::TextureId Screen::loadTexture(const std::string& name) {
         log::warning("ui: texture {} not loaded", name);
     }
     return id;
+}
+
+void Screen::smoothPicture(const std::string& name) {
+    const render::TextureId id = texture(name);
+    if (id == 0) return;
+    render::SamplerParams& p = pictureSamplers()[id];
+    p.minFilter = p.magFilter = 2;  // D3DTEXF_LINEAR
+    p.addressU = p.addressV = 3;    // D3DTADDRESS_CLAMP
 }
 
 void Screen::drawFreePicture(const std::string& textureName, float x0, float y0, float x1, float y1, uint32_t colour) {
@@ -158,7 +183,7 @@ void Screen::quad(float x0, float y0, float x1, float y1, const uint32_t (&colou
 // shrinks the box to its centre, FALSH lays a white quad over a Box (not over an Animated or a UVScroll one).
 void Screen::drawBox(const Element& e, const State& s, float seconds) {
     float x0, y0, x1, y1;
-    elementRect(e, s, x0, y0, x1, y1);
+    boxRect(e, s, x0, y0, x1, y1);
     const Transition* t = s.hasTransition ? &s.transition : nullptr;
     if (t != nullptr) {
         x0 += t->offsetX, x1 += t->offsetX;
@@ -235,10 +260,9 @@ void Screen::drawBox(const Element& e, const State& s, float seconds) {
 // line from (x0, y0) to (x1, y1) of the screen moved by its transition's offsets in its Colour (+0x10, 0x00517A60); a
 // FADEIN or GROW writes the transition's alpha into that colour (0x0042E560), where it stays.
 void Screen::drawLineElement(const Element& e, State& s) {
-    const float sw = static_cast<float>(m_device.width());
-    const float sh = static_cast<float>(m_device.height());
-    float x0 = sw * s.x, y0 = sh * s.y;
-    float x1 = sw * s.w, y1 = sh * s.h;
+    const Placement p = placementOf(s);
+    float x0 = p.sx * s.x + p.ox, y0 = p.sy * s.y + p.oy;
+    float x1 = p.sx * s.w + p.ox, y1 = p.sy * s.h + p.oy;
     if (s.hasTransition) {
         const Transition& t = s.transition;
         x0 += t.offsetX, x1 += t.offsetX;

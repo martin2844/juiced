@@ -232,7 +232,7 @@ void ArcadeRace::enter(WindowHost& host, ui::Screen& s) {
         m_map.look(host, s, 0, std::bit_cast<float>(0xBF4CCCCDu));
         for (int32_t r = 0; r < 5; ++r) {
             const auto route = static_cast<size_t>(a.i32(Arcade::race(c, r) + Arcade::kRaceRoute));
-            if (route < data->tables.routes.size()) m_map.addRoute(host, s, data->tables.routes[route].name);
+            if (route < data->tables.routes.size()) m_map.addRoute(s, data->tables.routes[route].name);
         }
     }
     m_view.reset();
@@ -388,7 +388,7 @@ void ArcadeRace::show(WindowHost& host, ui::Screen& s) {
         // looks at the first place); Super Speedway is past the eight city places. The fixed build gives it the
         // location's English name ([0x00711A10], as the hosted events' map does): the same place in every language.
         m_map.lookAt(host, s, englishLocation(host, routes[route].location));
-        m_map.route(host, s, routes[route].name, false);
+        m_map.route(s, routes[route].name, false);
     }
     const size_t place = static_cast<size_t>(a.i32(Arcade::kChampionshipIndex) * 5 + a.i32(Arcade::kRaceIndex));
     if (m_view && place < data->arcadeRaceCars.size()) {

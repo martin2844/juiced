@@ -26,8 +26,11 @@ The English build 1.0.1 picks the index at the start (`0x0059E300`, kept in the 
 settings' `language` when it is not negative, else the user's language (`GetUserDefaultLangID`), taken as a Windows
 language id; by its primary language German (0x07) 2, Spanish (0x0A) 4, French (0x0C) 1, Italian (0x10) 3, any other
 English 0. OpenJuice picks it the same way and also takes Czech (0x05) 5, Polish (0x15) 6 and Russian (0x19) 7, so
-the eight languages of the data are reached; `[Game] Language` of `OpenJuice.ini` names one instead. With none picked
-the language is English.
+the eight languages of the data are reached; `[Game] Language` of `OpenJuice.ini` names one instead (the letters'
+case aside). With none picked the language is English. The installed data may lack a language (a build for a region
+without it, or its texts alone: a player's Polish Windows on a build with no `controls_dx9_p.txt` had no controls at
+all), so where a language's text table, controls file, `jettext` or speech bank is missing OpenJuice takes English's
+(the controls then `controls_dx9.txt`), logged once (`Core/Data/Language`).
 
 - The game's text table: `scripts\<language>.txt`, UTF-16 with a byte order mark, one quoted text per line; the index
   of a text is its line number from 0 (line 24 is "PRESS ENTER").
@@ -840,20 +843,21 @@ with DirectInput's mapping window (the input manager's method `+0x04`: `IDirectI
 since Vista: the call fails (anything but `DI_OK`) and a message box (`MB_ICONHAND | MB_SETFOREGROUND | MB_TOPMOST`,
 over the desktop) shows the texts 111 and 112 of `scripts\jettext<letter>.txt` ("There is a problem with your
 DirectInput registry settings." / "Please see the ReadMe file for further assistance.") under the title 113
-("DirectInput problem detected"); Wine's DirectInput and DIMapper on Windows 7 give the window. Its parameters
-(`0x0059563F`): no user names, the one format of the map just registered (DRIVER1 of the first player's device), the
-desktop as its window, the colours text `0xFF9CC4CE`, highlight, callouts and border `0xFFECEC01`, the control and
-highlight fills `0xFF18536D`, the area `0xFF253E4A`, no target; round it the game's window hidden and the messages
-pumped, the cursor given back, then hidden again, the window shown and made active (`SetActiveWindow`), the messages
-pumped. The map the user made there is DirectInput's: BuildActionMap gives it to the controller and the keyboard
-from then on. DirectInput keeps the users' maps in `Common Files\DirectX\DirectInput\User Maps` (`<user>_<device>.ini`):
-the 32-bit one's under `Program Files (x86)`, where the stock game leaves them (it has no manifest: its writes there go
-to `%LOCALAPPDATA%\VirtualStore`); the 64-bit one's under `Program Files`, so the 64-bit OpenJuice does not see the maps
-the stock game saved. Either way the devices are made again after it (`0x005957D1`:
-`0x00590EE0` for every input manager, `0x00590F40`: each device's controller released and made again from its
-instance GUID with `c_dfDIJoystick2` and the cooperative level `0x16` (`0x00596210`; `DISCL_NOWINKEY` is a keyboard's,
-so DirectInput refuses it), the keyboard made again (the old one not released) and the force feedback manager made
-anew) and the map registered again on the new controller and the keyboard.
+("DirectInput problem detected"); Wine's DirectInput and DIMapper on Windows 7 give the window. DIMapper is Windows XP's
+32-bit `dimap.dll` and `diactfrm.dll` (beside the game, or in `SysWOW64`), which DirectInput loads for this window and
+the users' maps (below): 32-bit programs only, so the 64-bit build has neither. Its parameters (`0x0059563F`): no user
+names, the one format of the map just registered (DRIVER1 of the first player's device), the desktop as its window, the
+colours text `0xFF9CC4CE`, highlight, callouts and border `0xFFECEC01`, the control and highlight fills `0xFF18536D`,
+the area `0xFF253E4A`, no target; round it the game's window hidden and the messages pumped, the cursor given back, then
+hidden again, the window shown and made active (`SetActiveWindow`), the messages pumped. The map the user made there is
+DirectInput's: BuildActionMap gives it to the controller and the keyboard from then on. DirectInput keeps the users'
+maps in `Common Files\DirectX\DirectInput\User Maps` (`<user>_<device>.ini`): the 32-bit one's under `Program Files
+(x86)`, where the stock game leaves them (it has no manifest: its writes there go to `%LOCALAPPDATA%\VirtualStore`); the
+64-bit one's under `Program Files`, so the 64-bit OpenJuice does not see the maps the stock game saved. Either way the
+devices are made again after it (`0x005957D1`: `0x00590EE0` for every input manager, `0x00590F40`: each device's
+controller released and made again from its instance GUID with `c_dfDIJoystick2` and the cooperative level `0x16`
+(`0x00596210`; `DISCL_NOWINKEY` is a keyboard's, so DirectInput refuses it), the keyboard made again (the old one not
+released) and the force feedback manager made anew) and the map registered again on the new controller and the keyboard.
 
 ## opts_voice
 

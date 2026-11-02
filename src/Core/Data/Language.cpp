@@ -1,9 +1,14 @@
 #include "Core/Data/Language.h"
 
 #include "Core/Base/GameFiles.h"
+#include "Core/Base/Log.h"
 
+#include <cctype>
 #include <fstream>
+#include <initializer_list>
 #include <iterator>
+#include <mutex>
+#include <set>
 
 namespace oj {
 
@@ -14,6 +19,23 @@ constexpr Language kLanguages[] = {
     {3, "italian", "ita", 'i', "ita"}, {4, "spanish", "spa", 's', "spa"}, {5, "czech", "czk", 'c', "czk"},
     {6, "polish", "pol", 'p', "pol"},  {7, "russian", "rus", 'r', "rus"},
 };
+
+// The first of `names` the data has; a missing first logged once with the one in its place; the first when none is
+// there (its reader says so).
+std::filesystem::path firstPresent(const GameFiles& files, std::initializer_list<std::filesystem::path> names) {
+    const std::filesystem::path& own = *names.begin();
+    for (const std::filesystem::path& name : names) {
+        if (!files.exists(name)) continue;
+        if (name != own) {
+            static std::mutex lock;
+            static std::set<std::filesystem::path> told;
+            const std::lock_guard<std::mutex> hold(lock);
+            if (told.insert(own).second) log::warning("no {}: {} in its place", own.string(), name.string());
+        }
+        return name;
+    }
+    return own;
+}
 
 }  // namespace
 
@@ -28,11 +50,40 @@ std::optional<Language> Language::byIndex(int index) {
 
 std::optional<Language> Language::byName(std::string_view name) {
     for (const Language& l : kLanguages) {
-        if (name == l.name) {
-            return l;
+        const std::string_view own = l.name;
+        if (name.size() != own.size()) continue;
+        bool same = true;
+        for (size_t i = 0; i < name.size() && same; ++i) {
+            same = std::tolower(static_cast<unsigned char>(name[i])) == static_cast<unsigned char>(own[i]);
         }
+        if (same) return l;
     }
     return std::nullopt;
+}
+
+std::filesystem::path textTableFile(const GameFiles& files, const Language& language) {
+    const std::filesystem::path scripts = "scripts";
+    return firstPresent(files, {scripts / (std::string(language.name) + ".txt"), scripts / "english.txt"});
+}
+
+std::filesystem::path controlsFile(const GameFiles& files, const Language& language) {
+    const std::filesystem::path scripts = "scripts";
+    return firstPresent(files, {scripts / (std::string("controls_dx9_") + language.controlsLetter + ".txt"),
+                                scripts / "controls_dx9_e.txt", scripts / "controls_dx9.txt"});
+}
+
+std::filesystem::path jetTextFile(const GameFiles& files, const Language& language) {
+    const std::filesystem::path scripts = "scripts";
+    return firstPresent(files, {scripts / ("jettext" + std::string(1, language.controlsLetter) + ".txt"),
+                                scripts / "jettexte.txt"});
+}
+
+std::string speechBank(const GameFiles& files, const std::string& kind, char letter) {
+    const std::string own = kind + letter, english = kind + 'e';
+    const std::filesystem::path speech = std::filesystem::path("audio") / "speech";
+    const std::filesystem::path chosen =
+        firstPresent(files, {speech / own / (own + ".dsb"), speech / english / (english + ".dsb")});
+    return chosen.parent_path().filename().string();
 }
 
 int languageOfLangId(uint32_t langId) {

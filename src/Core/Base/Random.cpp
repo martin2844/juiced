@@ -1,5 +1,7 @@
 #include "Core/Base/Random.h"
 
+#include "Core/Base/LoadingThread.h"
+
 #include <bit>
 
 namespace oj {
@@ -7,6 +9,15 @@ namespace oj {
 CrtRandom& gameRandom() {
     static CrtRandom random;
     return random;
+}
+
+CrtRandom& loadingRandom() {
+    static CrtRandom random;
+    return random;
+}
+
+CrtRandom& threadRandom() {
+    return loadingThread().onThread() ? loadingRandom() : gameRandom();
 }
 
 uint32_t& seedCount() {

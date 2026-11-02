@@ -116,6 +116,8 @@ bool RainEmitter::frame(render::Camera& camera) {
     if (count == 0 || m_buffer == 0) return true;
     CrtRandom& random = gameRandom();
     const float d = m_drift;
+    // The fixed build's wide screens: across (the world's x and z) as far out as the widened view reaches (Hor+).
+    const float across = camera.widen();
     for (uint32_t i = 0; i < count && i < m_points; ++i) {
         // A streak at a point drawn within d x 0.75 (up d x 0.5625) of the place d ahead of the camera; START_SIZE
         // up and the camera's move long, BOUNCINESS wide along the camera's x.
@@ -123,9 +125,9 @@ bool RainEmitter::frame(render::Camera& camera) {
         const float a = static_cast<float>(random.next()) * kRandomScale - 0.5f;
         const float b = (r1 - 0.5f) * 0.75f;
         const float c = static_cast<float>(random.next()) * kRandomScale - 0.5f;
-        const float px = (a * d) * 1.5f + m_place[0];
+        const float px = (a * d) * 1.5f * across + m_place[0];
         const float py = (b * d) * 1.5f + m_place[1];
-        const float pz = (c * d) * 1.5f + m_place[2];
+        const float pz = (c * d) * 1.5f * across + m_place[2];
         const float tx = ahead[0] * d + px;
         const float ty = ahead[1] * d + py;
         const float tz = ahead[2] * d + pz;

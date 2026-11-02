@@ -81,7 +81,8 @@ void SaveProfile::leave(SaveHost& host) {
 // CLICK, keyboard. The device steps; a write that ended without its success (the device no longer writing, flag 2
 // not set) asks "You will not be able to save your progress. Do you want to continue without saving? ..." (type 4,
 // on NO): yes turns the saving off, "Autosave is disabled. ..." (type 1) and done; no writes again (and, with the
-// saving turned on by the window, asks the PS2 question 1994: Stock problem, a console's text). The flags while
+// saving turned on by the window, asks whether to save: the stock's PS2 question 1994, a console's text; the fixed
+// build's "Are you sure you want to save?", 1504). The flags while
 // writing (0x006ED9F0): 4 the space (type 2), 9 busy, 10 its note once, 12 written: the save system's driver not
 // changed, the saving on, the volumes (settingsVolumes), "Save Successful" (type 1), done; 13 the note of 10 closed; 16
 // "Save failed! Data write error" (type 2) once; 17 its note when 10's is up; 19 the stock's debug text, ended; 6 the
@@ -140,7 +141,8 @@ void SaveProfile::update(SaveHost& host) {
             again(host);
             m_ps2Answer = -1;
             if (m_turnedOn != 0 && r.skipCardQuestion == 0) {
-                host.message(MessageType::YesNoModeless, texts.at(kTextPs2Save), false, &m_ps2Answer, true);
+                // Stock problem: the PS2's memory card (1994); the fixed build asks to save (1504).
+                host.message(MessageType::YesNoModeless, texts.at(kTextSaveAsk), false, &m_ps2Answer, true);
                 m_ps2Asked = host.lastMessageNumber();
             }
             return;

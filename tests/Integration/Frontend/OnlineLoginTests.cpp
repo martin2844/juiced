@@ -4,6 +4,7 @@
 
 #include "Framework/Test.h"
 #include "Framework/Fixtures.h"
+#include "Framework/Fakes/FakeAvailable.h"
 #include "Framework/Fakes/FakeGpcm.h"
 #include "Framework/Fakes/FakeWindowHost.h"
 
@@ -36,6 +37,16 @@ namespace {
 
 using oj::test::check;
 using oj::test::FakeGpcm;
+
+// The textures of the quads drawn.
+struct RecordingDevice : oj::test::NullRenderDevice {
+    std::vector<oj::render::TextureId> textures;
+
+    void drawQuad(const oj::render::QuadVertex (&)[4], oj::render::TextureId texture, oj::render::Blend,
+                  bool) override {
+        textures.push_back(texture);
+    }
+};
 
 // The online windows' front end with no session.
 class FakeOnlineHost : public oj::test::FakeWindowHost, public oj::frontend::OnlineHost {
@@ -73,9 +84,9 @@ struct Login {
 };
 
 // The window's frames with the game's loop's user frame after each (as 0x0040CF48), the account of the command line
-// (stored at once), until online_main or a note; at most ~5 s.
+// (stored at once), until online_main or a note; at most ~5 s. The available check answered by `available`.
 Login runLogin(FakeOnlineHost& host, oj::ui::Screen& s, oj::frontend::OnlineConnect& window, FakeGpcm& server,
-               const std::filesystem::path& info) {
+               const std::filesystem::path& info, oj::test::FakeAvailable& available) {
     Login out;
     window.enter(host, s);
     oj::net::OnlineUser* user = oj::net::onlineUser();
@@ -94,6 +105,7 @@ Login runLogin(FakeOnlineHost& host, oj::ui::Screen& s, oj::frontend::OnlineConn
             out.noted = true;
             out.note = host.messages.back().text;
         }
+        available.answer();
         if (oj::net::OnlineUser* u = oj::net::onlineUser()) u->update(0.001f);
         Sleep(1);
     }
@@ -119,7 +131,8 @@ OJ_INTEGRATION_TEST(OnlineLogin, FrameAtATimeAccountKeptWhenGood) {
     wrong.nicks[1234] = "Tester";
     FakeGpcm right;
     right.nicks[1234] = "Tester";
-    if (!wrong.start() || !right.start()) {
+    oj::test::FakeAvailable available;
+    if (!wrong.start() || !right.start() || !available.open()) {
         check(false, "the stand-ins started");
         oj::net::endOnline();
         return;
@@ -132,7 +145,7 @@ OJ_INTEGRATION_TEST(OnlineLogin, FrameAtATimeAccountKeptWhenGood) {
     f.password = L"secret";
 
     oj::frontend::OnlineConnect first;
-    const Login failed = runLogin(host, *screen, first, wrong, info);
+    const Login failed = runLogin(host, *screen, first, wrong, info, available);
     const oj::save::OnlineAccount afterFail = oj::save::OnlineAccount::of(set);
     const bool failOk = !failed.loggedOn && failed.noted && failed.note == host.gameTexts().at(oj::kTextBadPassword) &&
                         afterFail.nick == L"Kept" && afterFail.password == L"kept" &&
@@ -141,7 +154,7 @@ OJ_INTEGRATION_TEST(OnlineLogin, FrameAtATimeAccountKeptWhenGood) {
     host.requests.clear();
 
     oj::frontend::OnlineConnect second;
-    const Login good = runLogin(host, *screen, second, right, info);
+    const Login good = runLogin(host, *screen, second, right, info, available);
     const oj::save::OnlineAccount afterGood = oj::save::OnlineAccount::of(set);
     const bool goodOk = good.loggedOn && !good.noted && afterGood.nick == L"Tester" &&
                         afterGood.email == L"tester@example.com" && afterGood.password == L"secret";
@@ -153,7 +166,7 @@ OJ_INTEGRATION_TEST(OnlineLogin, FrameAtATimeAccountKeptWhenGood) {
     check(failOk, "online login: a wrong password's note, the account kept before untouched");
     check(goodOk, "online login: logged on, the account kept");
     // The frames hold no loop (the stock's held the frame through the login: 570 .. 590 ms here); the available
-    // check's name resolved in the frame of the login's start (as the stock's) may take tens of ms.
+    // check's name is resolved in the frame of the login's start (as the stock's; the stand-in's address here).
     check(failed.longestFrame < 300.0 && good.longestFrame < 300.0,
           "online login: no frame waits for the server (" + std::to_string(failed.longestFrame) + ", " +
               std::to_string(good.longestFrame) + " ms)");
@@ -176,6 +189,7 @@ OJ_INTEGRATION_TEST(OnlineLogin, Guest) {
                       logon->menuSize("BACKMENU") == 3;
     logon->selectMenuItem("MENU", 2);
     oj::net::availableResult() = oj::net::AvailableCheck::Waiting;
+    oj::test::FakeAvailable available;
     window.update(host, *logon, oj::input::kSelect);
     // "Logging into account..." while the available check answers (the game's loop runs the user object's frame),
     // then online_main.
@@ -183,12 +197,13 @@ OJ_INTEGRATION_TEST(OnlineLogin, Guest) {
     bool asked = false;
     for (int i = 0; i < 20000 && !asked; ++i) {
         window.update(host, *logon, 0);
+        available.answer();
         if (oj::net::OnlineUser* waiting = oj::net::onlineUser()) waiting->update(0.001f);
         for (const auto& r : host.requests) asked = asked || r.first == "online_main";
         Sleep(1);
     }
-    // The available check ran (the server browser is made only after its "available").
-    asked = asked && noted && oj::net::availableResult() == oj::net::AvailableCheck::Available;
+    // The available check ran (the server browser is made only after its "available"), the stand-in asked.
+    asked = asked && noted && oj::net::availableResult() == oj::net::AvailableCheck::Available && available.asked();
     oj::net::OnlineUser* u = oj::net::onlineUser();
     bool guest = u != nullptr && u->guest() && u->loggedOn == 1 && u->localPlayers.size() == 1 &&
                  u->playerNick(u->localPlayers[0]) == u"Guest" && !oj::net::gpConnection();
@@ -225,6 +240,37 @@ OJ_INTEGRATION_TEST(OnlineLogin, Guest) {
     check(item, "online guest: online_logon_gs's third item, once");
     check(asked && guest, "online guest: logged on under the driver's name, no connection, presence or statistics");
     check(menu && whole, "online guest: online_main without the friends and the scoreboards, the lobby without their hints; an account's whole");
+}
+
+// The fixed build's guest's bar (BACKMENU's third item): ui_pan5_yel as its high picture, as the .ui's two items have
+// theirs, so it shows under PLAY AS GUEST only while that is highlighted (its own picture showed it under the others'
+// highlight too, inset and at half alpha).
+OJ_INTEGRATION_TEST(OnlineLogin, GuestBar) {
+    oj::test::InGameFolder folder;
+    if (!folder.valid()) return;
+    FakeOnlineHost host;
+    RecordingDevice device;
+    oj::ui::Screen s(device, host.lang);
+    if (!s.load("online_logon_gs")) {
+        check(false, "online_logon_gs.ui read from the game's folder");
+        return;
+    }
+    oj::frontend::OnlineLogon window;
+    window.enter(host, s);
+    const oj::render::TextureId yellow = s.texture("ui_pan5_yel");
+    const auto bars = [&](size_t selected) {
+        s.selectMenuItem("MENU", selected);
+        s.selectMenuItem("BACKMENU", selected);
+        s.finishTransitions();
+        device.textures.clear();
+        s.draw(1.0f, 0.0f);
+        return std::count(device.textures.begin(), device.textures.end(), yellow);
+    };
+    const auto first = bars(0);
+    const auto guest = bars(2);
+    oj::net::endOnline();
+    check(yellow != 0 && s.menuSize("BACKMENU") == 3 && first == 1 && guest == 1,
+          "the guest's bar shown under PLAY AS GUEST only while it is highlighted");
 }
 
 // The fixed build's lobby chat's windows: keyboard with CHAT_LINE1 .. 6, link_lobby with CHAT_BUT and CHAT_TEXT; the

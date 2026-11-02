@@ -14,6 +14,8 @@ using HWND = HWND__*;
 
 namespace oj {
 
+class WheelInput;
+
 class InputDevices {
 public:
     InputDevices();
@@ -34,13 +36,17 @@ public:
     // the window, the colours text 0xFF9CC4CE, highlight, callouts and border 0xFFECEC01, the control and highlight
     // fills 0xFF18536D, the area 0xFF253E4A, no target. True when it gives DI_OK (no window since Windows Vista: an
     // error; DIMapper on Windows 7 and Wine have one). The user's map it keeps comes back with the next BuildActionMap.
+    // DIMapper is Windows XP's 32-bit dimap.dll and diactfrm.dll: the window and the user's maps come to the 32-bit
+    // build only.
     bool configure(const input::MapFormat& format);
 
     // 0x00591DF0, the FF manager ([0x0075F5F8]) made with a DirectInput of its own ([0x0075F748]): the first two game
     // controllers attached opened (0x00596790), its channels, each with c_dfDIJoystick2 and the cooperative level 5
     // (DISCL_EXCLUSIVE | DISCL_FOREGROUND, 0x005969E0) and its axes' range -10000 .. 10000 (0x00596A50); then the
-    // wheels' groups and tables (Core/Input/ForceFeedback). Without a window (a test run) no channel.
-    void startWheels(HWND window);
+    // wheels' groups and tables (Core/Input/ForceFeedback). Without a window (a test run) no channel. The fixed build
+    // gives `wheels` (Game/Platform/WheelInput): the controllers it takes, what the manager made of each and the
+    // states its channels read; its effects and gain scaled with ffb = scaled.
+    void startWheels(HWND window, WheelInput* wheels = nullptr);
     // 0x00590F40 / 0x00591500: the FF manager stopped (0x00593C80), its groups' effects released, its devices and its
     // DirectInput released (0x00596CA0).
     void stopWheels();

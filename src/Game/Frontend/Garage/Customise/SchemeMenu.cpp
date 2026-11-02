@@ -80,7 +80,7 @@ void SchemeMenu::onCar(GarageHost& host, Car& car, const std::array<uint32_t, 17
     if (garage.view) {
         garage.view->colourNeon(car.neon);
         if (static_cast<int32_t>(look[15]) > -1) {
-            garage.view->showNeon(car, host.viewLoading());
+            garage.view->showNeon(car, gameRandom());
         } else {
             garage.view->hideNeon();
         }

@@ -8,6 +8,8 @@
 #include <cmath>
 #include <cstdio>
 #include <cstring>
+#include <filesystem>
+#include <fstream>
 #include <memory>
 #include <vector>
 
@@ -44,7 +46,7 @@ IDirectSoundBuffer* buffer(std::vector<float> pcm) {
     DSBUFFERDESC desc{};
     desc.lpwfxFormat = &format;
     IDirectSoundBuffer* out = nullptr;
-    oj::audio::system().device()->CreateSoundBuffer(&desc, &out, nullptr);
+    reinterpret_cast<IDirectSound8*>(oj::audio::system().output().soundSystem())->CreateSoundBuffer(&desc, &out, nullptr);
     out->samples = std::make_shared<std::vector<float>>(std::move(pcm));
     return out;
 }
@@ -141,7 +143,7 @@ int main() {
     desc.lpwfxFormat = &format;
     desc.dwBufferBytes = 8;
     IDirectSoundBuffer* decoded = nullptr;
-    sound.device()->CreateSoundBuffer(&desc, &decoded, nullptr);
+    reinterpret_cast<IDirectSound8*>(sound.output().soundSystem())->CreateSoundBuffer(&desc, &decoded, nullptr);
     const int16_t source[4]{16384, -8192, -16384, 8192};
     void* a = nullptr;
     void* b = nullptr;
@@ -156,6 +158,39 @@ int main() {
               "raw signed16 stereo decodes through SDL and reaches the native mix unchanged");
     }
     decoded->Release();
+    // Exercise the upstream 1.02.7 interface through the real SDL backend.
+    oj::audio::SampleFormat nativeFormat{1, 2, 48000, 192000, 4, 16};
+    auto apiVoice = sound.output().createBuffer(nativeFormat, sizeof source, oj::audio::kCapsCtrlVolume);
+    check(apiVoice && apiVoice->write(0, source, sizeof source) == oj::audio::Answer::Ok,
+          "new OutputBuffer API accepts signed16 PCM");
+    if (apiVoice) {
+        auto duplicate = sound.output().duplicate(*apiVoice);
+        apiVoice.reset();
+        check(bool(duplicate), "new OutputBuffer duplicate owns its sample storage");
+        if (duplicate) {
+            duplicate->play(0);
+            check(equal(render(2), {0.5f, -0.25f, -0.5f, 0.25f}),
+                  "duplicated upstream output survives original destruction and reaches SDL");
+        }
+    }
+    const auto wave = std::filesystem::temp_directory_path() / "openjuice-native-output-test.wav";
+    std::vector<uint8_t> wav(44 + sizeof source);
+    auto put = [&](size_t at, uint32_t value) { std::memcpy(wav.data() + at, &value, 4); };
+    std::memcpy(wav.data(), "RIFF", 4); put(4, wav.size() - 8);
+    std::memcpy(wav.data() + 8, "WAVEfmt ", 8); put(16, 16);
+    std::memcpy(wav.data() + 20, &format, 16);
+    std::memcpy(wav.data() + 36, "data", 4); put(40, sizeof source);
+    std::memcpy(wav.data() + 44, source, sizeof source);
+    { std::ofstream out(wave, std::ios::binary); out.write(reinterpret_cast<const char*>(wav.data()), wav.size()); }
+    {
+        auto stream = sound.output().openStream(wave);
+        check(stream->setPositions(0, 10000000), "FFmpeg stream accepts upstream time units");
+        stream->run();
+        check(equal(render(2), {0.5f, -0.25f, -0.5f, 0.25f}), "FFmpeg stream reaches native SDL mixer");
+        int64_t current = 0, end = 0; stream->positions(current, end);
+        check(current == end, "short decoded file reports completion instead of waiting forever");
+    }
+    std::filesystem::remove(wave);
     sound.stop();
     std::printf("%d passed, %d failed\n", checks - failures, failures);
     return failures ? 1 : 0;

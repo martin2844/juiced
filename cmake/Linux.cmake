@@ -17,9 +17,12 @@ FetchContent_MakeAvailable(mojoshader)
 target_compile_definitions(mojoshader PRIVATE USE_SDL3)
 target_link_libraries(mojoshader PUBLIC SDL3::SDL3)
 file(GLOB_RECURSE CORE CONFIGURE_DEPENDS ${PROJECT_SOURCE_DIR}/src/Core/*.cpp)
-list(FILTER CORE EXCLUDE REGEX "/(CpuInfo|Cpu|Config|Text|Log|GameSpyVoice)\\.cpp$")
+list(FILTER CORE EXCLUDE REGEX "/(CpuInfo|Cpu|Config|Text|Log|GameSpyVoice|VoiceSound)\\.cpp$")
+list(FILTER CORE EXCLUDE REGEX "/GameSpy/(DirectSound|OpenAL)/")
 add_library(juice_core STATIC ${CORE} src/Mac/Base.cpp src/Mac/Compat/Windows.cpp src/Mac/VoiceUnavailable.cpp)
 target_include_directories(juice_core PUBLIC src src/Mac/Compat)
+include(${PROJECT_SOURCE_DIR}/cmake/NativeShared.cmake)
+oj_native_shared(juice_core)
 target_compile_options(juice_core PUBLIC -include ${PROJECT_SOURCE_DIR}/src/Mac/Compat/Crt.h)
 target_compile_definitions(juice_core PUBLIC _DEBUG OJ_LINUX)
 target_link_libraries(juice_core PUBLIC SDL3::SDL3)
@@ -28,10 +31,10 @@ list(FILTER RENDER EXCLUDE REGEX "D3D9/|RenderDevice\\.cpp$|HlslCompiler\\.cpp$"
 add_library(juice_render STATIC ${RENDER} src/Linux/Render/GlesDevice.cpp src/Linux/Render/GlShader.cpp)
 target_include_directories(juice_render PRIVATE ${mojoshader_SOURCE_DIR})
 target_link_libraries(juice_render PUBLIC juice_core mojoshader OpenGL::GL)
-add_library(juice_audio STATIC src/Audio/Bank.cpp src/Audio/Player.cpp src/Audio/Voices.cpp src/Mac/Audio.cpp src/Mac/Streams.cpp)
+add_library(juice_audio STATIC src/Audio/Bank.cpp src/Audio/Player.cpp src/Audio/Voices.cpp src/Audio/SoundSystem.cpp src/Audio/Stream.cpp src/Mac/Audio.cpp src/Mac/Streams.cpp)
 target_link_libraries(juice_audio PUBLIC juice_core PkgConfig::FFMPEG)
 file(GLOB_RECURSE GAME CONFIGURE_DEPENDS ${PROJECT_SOURCE_DIR}/src/Game/*.cpp)
-list(FILTER GAME EXCLUDE REGEX "App/(Main|CrashLog)\\.cpp$|Platform/(Platform|InputDevices|Settings|SystemKeys|Win7Imports|Windows7)\\.cpp$|Media/Binkw32\\.cpp$")
+list(FILTER GAME EXCLUDE REGEX "App/(Main|CrashLog)\\.cpp$|Platform/(Platform|InputDevices|Settings|SystemKeys|Win7Imports|Windows7|Pads|WheelInput)\\.cpp$|Media/Binkw32\\.cpp$")
 add_library(juice_game STATIC ${GAME} src/Mac/Platform.cpp src/Mac/Controls.cpp src/Mac/ControlsOverlay.cpp src/Mods/Packages.cpp src/Mods/Runtime.cpp src/Mods/Creative.cpp src/Mods/CreativeMenu.cpp src/Linux/ImageImport.cpp)
 target_include_directories(juice_game PRIVATE ${LUA_INCLUDE_DIR})
 target_link_libraries(juice_game PUBLIC juice_render juice_audio ${LUA_LIBRARIES} PkgConfig::PIXBUF)
@@ -109,7 +112,7 @@ if(BUILD_TESTING)
     tests/Integration/Network/LeaderboardTests.cpp
     tests/Integration/Network/MatchmakingTests.cpp
     tests/Integration/Network/NatNegotiationTests.cpp
-    tests/Integration/Network/PeerchatTests.cpp
+    tests/Integration/Network/PeerchatServerTests.cpp
     tests/Integration/Network/PresenceTests.cpp
     tests/Integration/Network/ServerBrowsingTests.cpp
     tests/Integration/Race/CruiseTricksTests.cpp
@@ -123,8 +126,8 @@ if(BUILD_TESTING)
     tests/Integration/Saves/SaveDeviceTests.cpp
     tests/Integration/Saves/ReplaysDeviceTests.cpp
     tests/Integration/Saves/UserSavesTests.cpp)
-  list(FILTER TESTS EXCLUDE REGEX "DirectXCheckTests\\.cpp$|CpuInfoTests\\.cpp$|VoiceTests\\.cpp$|SystemCommandTests\\.cpp$")
-  add_executable(juiced_tests ${TESTS} tests/Framework/TestMain.cpp tests/Framework/Fixtures.cpp src/Mac/TestMain.cpp src/JuicedConfig/ConfigData.cpp)
+  list(FILTER TESTS EXCLUDE REGEX "DirectXCheckTests\\.cpp$|CpuInfoTests\\.cpp$|VoiceTests\\.cpp$|VoiceCallsTests\\.cpp$|WheelSettingsTests\\.cpp$|SystemCommandTests\\.cpp$")
+  add_executable(juiced_tests ${TESTS} tests/Framework/TestMain.cpp tests/Framework/Fixtures.cpp src/Mac/TestMain.cpp)
   target_compile_definitions(juiced_tests PRIVATE JUICED_TEST_MODS="${PROJECT_SOURCE_DIR}/mods")
   target_include_directories(juiced_tests PRIVATE tests)
   target_link_libraries(juiced_tests PRIVATE juice_game)

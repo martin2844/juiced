@@ -27,7 +27,7 @@ void PostEffects::splitBegin(const View& view, uint32_t x, uint32_t y, uint32_t 
     for (Target& t : own.targets) {
         if (t.texture.id != 0 && t.width == width && t.height == height) continue;
         if (t.texture.id != 0) m_device.destroyTexture(t.texture.id);
-        makeTarget(t, width, height);
+        makeSceneTarget(t, width, height);
         m_taken = -1;
     }
     m_split = &own;

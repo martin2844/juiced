@@ -1,5 +1,7 @@
 #include "Game/Frontend/Garage/Graph.h"
 
+#include "Render/Display.h"
+
 #include <array>
 #include <bit>
 
@@ -52,9 +54,13 @@ void Graph::advance() {
 
 void Graph::draw(render::IRenderDevice& device, bool shadow) const {
     // The fixed build: the line under the points' places (x to 2 x the points + x, of 640 x 480) scaled as the series.
-    const float sx = static_cast<float>(device.width()) * 0.0015625f;
-    const float sy = static_cast<float>(device.height()) * 0.0020833334f;
-    device.drawLine(sx * x, sy * y, sx * (static_cast<float>(points) * 2.0f + x), sy * y, 0x80FFFFFF);
+    // The fixed build's wide screens: 640 x 480 across the menus' zone and down the 4:3 frame, as the window's grid
+    // (Render/Display, Game/UI/WideScreen; the screen's on the stock's).
+    const render::Display d = render::display(device.width(), device.height());
+    const float sx = d.menuW * 0.0015625f;
+    const float sy = d.frameH * 0.0020833334f;
+    device.drawLine(sx * x + d.menuX, sy * y + d.frameY, sx * (static_cast<float>(points) * 2.0f + x) + d.menuX,
+                    sy * y + d.frameY, 0x80FFFFFF);
     for (uint32_t number : order) {
         const Series& s = series[number];
         const uint32_t rgb = kSeriesColours[number % 10] & 0x00FFFFFF;
@@ -63,17 +69,18 @@ void Graph::draw(render::IRenderDevice& device, bool shadow) const {
 }
 
 void Graph::drawSeries(render::IRenderDevice& device, const Series& s, uint32_t argb, bool shadow) const {
-    const float sx = static_cast<float>(device.width()) * 0.0015625f;
-    const float sy = static_cast<float>(device.height()) * 0.0020833334f;
+    const render::Display d = render::display(device.width(), device.height());
+    const float sx = d.menuW * 0.0015625f;
+    const float sy = d.frameH * 0.0020833334f;
     uint32_t at = next;
     for (uint32_t i = 0; i + 1 < drawn; ++i) {
         const uint32_t then = at + 1 == drawn ? 0 : at + 1;
         // Stock problem: a next point past the points drawn runs off the values; not reached by car_rolling.
         if (then >= s.values.size()) return;
-        float ax = static_cast<float>(i) * sx + static_cast<float>(i) * sx + sx * x;
-        float ay = sy * y - sy * s.values[at] * s.scale;
-        float bx = static_cast<float>(i + 1) * sx + static_cast<float>(i + 1) * sx + sx * x;
-        float by = sy * y - sy * s.values[then] * s.scale;
+        float ax = static_cast<float>(i) * sx + static_cast<float>(i) * sx + sx * x + d.menuX;
+        float ay = sy * y - sy * s.values[at] * s.scale + d.frameY;
+        float bx = static_cast<float>(i + 1) * sx + static_cast<float>(i + 1) * sx + sx * x + d.menuX;
+        float by = sy * y - sy * s.values[then] * s.scale + d.frameY;
         if (shadow && s.values[then] != 0.0f) {
             const float dx = sx * 3.0f;
             const float dy = sy + sy;

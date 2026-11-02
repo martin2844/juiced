@@ -38,6 +38,7 @@ bool TrackView::allFinished() const {
 
 void TrackView::drive(float dt) {
     for (std::unique_ptr<RacePlayer>& p : players) p->actions = p->keys.update(*input, p->controller);
+    if (replayKeys()) replayChangeView();
     const oj::DriverActions& actions = first().actions;
     const bool impacts = impactFrame;
     impactFrame = !impactFrame;
@@ -179,6 +180,7 @@ void TrackView::raceFrame(float dt, bool impacts) {
             s->chassis->invalidate();
         }
         carLights(*s);
+        tunnelLights(*s, dt);
         // 0x004875F0: the road's sound (0x00487490); +0x43C falls to 0; the engine's frame, then a gear up or down
         // told to it (+0x438 the gear it was told of, +0x43C 2 after a change up).
         // 0x00428180: a replay's frame applied turns the horn (from 1300) on or off by it, off in a race of
@@ -400,6 +402,12 @@ void TrackView::playerFrame(RacePlayer& player, const oj::DriverActions& actions
         flyBySkipped = true;
         oj::log::info("race: the fly-by skipped (Change View)");
     }
+    if (player.introPlaying) {
+        // 0x0041FE50 steps the race's camera in the fly-by too (its view 9): what that step does to the scene
+        // camera's post effects and the speed's blur (RaceCamera::flyByFrame; the fly-by places the camera itself).
+        player.raceCamera.flyByFrame(cameraTarget(player), cameraRace(player),
+                                     world->stepTime() / static_cast<float>(world->steps()), player.camera);
+    }
     if (!player.introPlaying) {
         // 0x0041FE50: the director first (0x00408830, with the frame's step; none while paused).
         player.director.update(player.raceCamera, step, paused, cameraTarget(player), cameraRace(player),
@@ -479,6 +487,8 @@ void TrackView::playerFrame(RacePlayer& player, const oj::DriverActions& actions
             player.control.wheel = set.u32(DriverSettings::kSteeringWheel) != 0;
             player.control.notSpeedSensitive = set.u32(DriverSettings::kWheelSpeed + byNumber) != 0;
             player.control.multiTurn = multiTurn;
+            player.control.wheelExponent = wheelExponent;
+            player.control.consoleSteering = consoleSteering;
             player.control.apply(body, actions, step, race->count);
             // 0x0041E5D9: a car whose steering pulls (the car's +0x64) turns 0.05 more to its side (+0x4F8, 0
             // the left), within -1 .. 1 (0x004203E0).
@@ -669,7 +679,22 @@ void TrackView::finishStatistics(const RacePlayer& player) {
 
 void TrackView::playerFrameEnd(RacePlayer& player) {
     if (player.slot != nullptr && player.slot->car.kind == oj::CarKind::Player) {
-        player.slot->body->collides = player.slot->car.ghostTime == 0.0f;
+        // 0x0041F3F0: while the ghost time runs the car touches no other body; else off line it touches them, and
+        // online when the session hosted has collisions (the online arcade 0x004E1AA0's +0x34, the online career
+        // 0x004E1AC0's +0x44, each 1); online without them the car stays as it was made (0x00485F86).
+        oj::CarBody& body = *player.slot->body;
+        if (player.slot->car.ghostTime != 0.0f) {
+            body.collides = false;
+        } else {
+            const bool matchmaking = oj::net::matchmaking() != nullptr;
+            const oj::net::OnlineHosted& hosted = oj::net::onlineHosted();
+            const bool arcade = matchmaking && hosted.mode == oj::net::OnlineKind::Arcade;
+            const bool career = matchmaking && hosted.mode == oj::net::OnlineKind::Career;
+            if ((arcade && hosted.arcade.collision == 1) || (career && hosted.career.collision == 1) ||
+                (!arcade && !career)) {
+                body.collides = true;
+            }
+        }
     }
     hideFollowed(player);
 }

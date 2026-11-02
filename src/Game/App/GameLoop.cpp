@@ -43,18 +43,26 @@
 #include "Game/Media/Movies.h"
 #include "Game/Media/Music.h"
 #include "Game/Platform/InputDevices.h"
+#if !defined(OJ_MACOS) && !defined(OJ_LINUX) && !defined(OJ_ANDROID)
+#include "Game/Platform/Pads.h"
+#include "Game/Platform/WheelInput.h"
+#endif
 #include "Game/Race/RaceCamera.h"
 #include "Game/Scene/TrackScene.h"
+#include "Render/Display.h"
+#include "Render/FrameOptions.h"
 #include "Render/RenderDevice.h"
+
+#include <LayoutFile.h>
 
 #include <windows.h>
 #include <shlobj.h>
 
 #include <algorithm>
-#include <array>
 #include <bit>
 #include <cmath>
 #include <cstddef>
+#include <cstdio>
 #include <cstdlib>
 #include <format>
 #include <memory>
@@ -104,32 +112,11 @@ bool carModelsReadable() {
 // 0x00512920 at the start of the renderer's frame (0x00514A40): with the gamma of the settings (+0x68) and the
 // brightness changed since it was last taken ([0x00722EB0]: -1 at first and after the device's reset, 0x005142E9), the
 // gamma g = (brightness - 0.5) x 0.15 + 1 within 0.01 .. 2 and each of the 256 steps i pow(i x 256, g) within 0 ..
-// 65535, rounded to the nearest, for red, green and blue (SetGammaRamp, flags 1).
+// 65535, rounded to the nearest, for red, green and blue (SetGammaRamp, flags 1). The fixed build draws that curve over
+// each finished frame in every screen mode instead (DeviceDesc::brightness): the ramp reaches only a full screen whose
+// adapter takes one (+0x68), so the option did nothing in a window and in the window without a frame.
 void brightnessGamma(oj::render::IRenderDevice& device) {
-    static float last = -1.0f;
-    static uint32_t resets = 0;
-    if (device.resets() != resets) {
-        resets = device.resets();
-        last = -1.0f;
-    }
-    const oj::GraphicsConfig& c = oj::graphicsConfig();
-    if (c.gamma == 0 || c.brightness == last) return;
-    last = c.brightness;
-    const double t = (static_cast<double>(c.brightness) - 0.5) * static_cast<double>(0.15f) + 1.0;
-    float g = static_cast<float>(t);
-    if (t < static_cast<double>(0.01f)) {
-        g = 0.01f;
-    } else if (t > 2.0) {
-        g = 2.0f;
-    }
-    std::array<uint16_t, 256> ramp{};
-    for (int i = 0; i < 256; ++i) {
-        double v = std::pow(static_cast<double>(i) * 256.0, static_cast<double>(g));
-        if (v < 0.0) v = 0.0;
-        if (v > 65535.0) v = 65535.0;
-        ramp[static_cast<size_t>(i)] = static_cast<uint16_t>(std::nearbyint(v));
-    }
-    device.setGammaRamp(1, ramp.data(), ramp.data(), ramp.data());
+    device.setBrightness(oj::graphicsConfig().brightness);
 }
 
 // The game object's start: platform, then the renderer on its window.
@@ -147,6 +134,7 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
 #endif
     oj::render::DeviceDesc desc;
     desc.window = platform.window();
+    desc.adapter = platform.adapter();
     desc.windowed = settings.windowed != 0;
     desc.depthBits = settings.depth;
     desc.antialiasing = settings.antialiasing;
@@ -154,6 +142,33 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
     desc.pureDevice = options.pureDevice;
     desc.multithreaded = options.multithreadedD3D;
     desc.softwareVertexProcessing = options.softwareVertexProcessing || options.debugEffects;
+    // The fixed build's renderer (JuicedConfigExt's settings: Render/FrameOptions); a test run keeps the stock's.
+    desc.textureFilter = settings.textureFilter;
+    desc.lodBias = settings.lodBias;
+    desc.vsync = settings.vsync != 0;
+    desc.msaa = settings.msaa;
+    desc.smaa = settings.smaa != 0;
+    desc.showFps = settings.showFps != 0;
+    // The fixed build's screen modes (Platform::chooseScreen): the full screen mode's refresh rate; the window without
+    // a frame draws the resolution's picture into the monitor's, its shape kept or stretched (BorderlessScale).
+    desc.refreshRate = settings.refreshRate;
+    desc.worldLight = settings.worldLight != 0;
+    desc.worldLightStrength = oj::kWorldLightShape;
+    desc.shaders = settings.shaders;
+    desc.headlights = settings.headlights != 0;
+    desc.sunShadows = settings.shadows >= 2;  // the SHADOWS row's ULTRA (the registry's Shadows 2)
+    // The heat haze's pass always made: the graphics options turn it on and off (the race's view draws it then).
+    desc.heatHaze = true;
+    desc.heatHazeStrength = static_cast<float>(settings.heatHazeStrength) / 100.0f;
+    if (desc.heatHaze) desc.pureDevice = false;
+    // The fixed build's brightness over the frame in place of the gamma ramp (its pass keeps the game's states).
+    desc.brightness = true;
+    desc.pureDevice = false;
+    if (settings.displayMode == 1) {
+        desc.pictureWidth = settings.width;
+        desc.pictureHeight = settings.height;
+        desc.stretch = settings.borderlessScale == 1;
+    }
     std::string error;
     auto device = oj::render::createDevice(backend, desc, &error);
     if (!device) {
@@ -167,8 +182,12 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
     struct JobEnd {
         explicit JobEnd(oj::render::IRenderDevice& d) {
             oj::loadingThread().setJobEnd([&d] { d.waitForService(); });
+            oj::frameTurns().setFrameWaitService([&d] { d.letLoadingRun(); });
         }
-        ~JobEnd() { oj::loadingThread().setJobEnd(nullptr); }
+        ~JobEnd() {
+            oj::frameTurns().setFrameWaitService(nullptr);
+            oj::loadingThread().setJobEnd(nullptr);
+        }
     } jobEnd(*device);
     // 0x005132AC, the renderer's start: the processors for the game ([0x0079E5C0]) to the debugger's output.
     oj::log::debugPrint("numCores %d\n", g_gameProcessors);
@@ -195,29 +214,51 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
     oj::setNamesCodePage(oj::namesCodePage(language.index));  // the fixed build: the files' 8-bit names
     // The file system's localized names (0x004F9DB3) by the language object's letter.
     oj::GameFiles::setLanguageLetter(language.controlsLetter);
+    // The language's files, English's where the data lacks them (Core/Data/Language).
+    const oj::GameFiles languageFiles(std::filesystem::current_path());
     oj::TextTable gameTexts;
-    if (!gameTexts.load(std::filesystem::path("scripts") / (std::string(language.name) + ".txt"))) {
-        oj::log::warning("no scripts\\{}.txt", language.name);
+    if (const auto table = oj::textTableFile(languageFiles, language); !gameTexts.load(table)) {
+        oj::log::warning("no {}", table.string());
     }
-    // 0x00591050: the input manager with its DirectInput: a device for each game controller found (test runs take
-    // none, so that a controller attached does not change them), the keyboard read from the window's messages.
-    oj::InputDevices inputDevices;
+    // 0x00591050: the input manager. The fixed build: no DirectInput maps (docs/fixes.md Added): JuicedConfigExt's
+    // controller (Pads; a test run reads none, so that a controller attached does not change it) and its layout's
+    // controls on the one device of the keyboard, read from the window's messages; the keyboard's maps the controls
+    // file's (DIKEYBOARD_ on its key); the steering wheels of controller.ini's [WheelMap] on the same controls
+    // (WheelInput: its reader started before the FF manager's listing; a test run reads none and keeps [Wheel]'s
+    // defaults).
     oj::input::Input input;
+    oj::InputDevices inputDevices;
+#if !defined(OJ_MACOS) && !defined(OJ_LINUX) && !defined(OJ_ANDROID)
+    oj::Pads pads;
+    oj::WheelInput wheelInput;
+    if (!options.test) {
+        wheelInput.load(LayoutFile::Path());
+        wheelInput.start();
+        input.pads().setWheel(&wheelInput.reader());
+    }
+    input.pads().setLinearSteering(wheelInput.settings().linearInput);
+    // Then its FF manager (0x00591DF0; a test run opens no channel), given the controllers JuicedConfigExt's way.
+    inputDevices.startWheels(options.test ? nullptr : platform.window(), options.test ? nullptr : &wheelInput);
+    input.setWheels(&inputDevices.wheels());
+    pads.refresh();
+    input.pads().setLayout(pads.layout());
+    input.pads().setControllerEnabled(pads.controllerEnabled());
+#else
     if (!options.test && inputDevices.start(platform.window())) {
         input.setControllers(inputDevices.controllers());
         input.setKeyboard(inputDevices.keyboard());
     }
-    // Then its FF manager (0x00591DF0; a test run opens no channel).
     inputDevices.startWheels(options.test ? nullptr : platform.window());
     input.setWheels(&inputDevices.wheels());
+#endif
     std::vector<oj::ActionMap> controlMaps;
     {
-        const std::filesystem::path controls =
-            std::filesystem::path("scripts") / (std::string("controls_dx9_") + language.controlsLetter + ".txt");
-        const auto bytes = oj::GameFiles(std::filesystem::current_path()).read(controls);
+        const std::filesystem::path controls = oj::controlsFile(languageFiles, language);
+        const auto bytes = languageFiles.read(controls);
         if (!bytes) {
             oj::log::warning("no {}", controls.string());
         } else {
+#if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
             controlMaps =
                 oj::parseControls(std::string_view(reinterpret_cast<const char*>(bytes->data()), bytes->size()));
 #if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
@@ -233,6 +274,17 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
             input.load(controlMaps);
 #ifdef OJ_ANDROID
             oj::android::touchBindings(controlMaps);
+#endif
+#else
+            // The controls file with the layout's controls (JuicedConfigExt's ControlsLayout): DRIVER1's keys the game's
+            // keyboard layout.
+            ControllerLayout::KeySlot gameKeys;
+            const std::string merged = oj::input::mergeLayout(
+                std::string_view(reinterpret_cast<const char*>(bytes->data()), bytes->size()),
+                pads.controllerEnabled(), gameKeys);
+            controlMaps = oj::parseControls(merged);
+            input.load(controlMaps);
+            input.pads().setGameKeys(gameKeys);
 #endif
         }
     }
@@ -281,11 +333,32 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
         const auto adapter = device->adapterInfo();
         oj::graphicsAdapter(oj::graphicsConfig(), adapter.vendorId, adapter.deviceId, true, device->fullScreenGamma());
         oj::graphicsPostEffects(oj::graphicsConfig());
+        oj::graphicsConfig().effects = {.carPaint = settings.carPaint,
+                                        .worldLight = settings.worldLight,
+                                        .sky = settings.sky,
+                                        .headlights = settings.headlights,
+                                        .heatHaze = settings.heatHaze,
+                                        .heatHazeStrength = settings.heatHazeStrength,
+                                        .msaa = settings.msaa,
+                                        .smaa = settings.smaa,
+                                        .textureFilter = settings.textureFilter,
+                                        .reflections = settings.reflections,
+                                        .lightFlares = settings.lightFlares,
+                                        .ambientOcclusion = settings.ambientOcclusion,
+                                        .shadows = settings.shadows};
     }
     std::unique_ptr<oj::scene::Engine> scene;
+    // The fixed build's wide screens (Render/Display): the settings' widescreen is the picture's shape; the stock's
+    // wide screen (its x 1.333 and x 1.15, the race camera's 50 / 70 cm and its FOV's 0.975, the views' detail 0.5)
+    // is never on.
+    oj::render::setAspectMode(oj::render::aspectModeOf(settings.widescreen));
     if (data.loaded()) {
-        scene = std::make_unique<oj::scene::Engine>(*device, data.tables, settings.shaders, settings.widescreen != 0,
-                                                    options.localEffects, options.debugEffects);
+        scene = std::make_unique<oj::scene::Engine>(*device, data.tables, settings.shaders, false,
+                                                    options.localEffects, options.debugEffects,
+                                                    oj::render::ReplacedEffects{
+                                                        oj::render::carEffectsOf(settings.carPaint != 0,
+                                                                                 settings.reflections != 0),
+                                                        settings.shadows >= 2});
     }
     // The movies (Game/Media/Movies.h): the game's binkw32.dll, the language's sound track, the audio flags, rand().
     oj::movie::System movies(*device, {std::filesystem::current_path(), language.index, settings.audioFlags,
@@ -294,8 +367,11 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
         if (scene) scene->renderer().endMaterial();
     });
     auto frontend = std::make_unique<oj::Frontend>(*device, language, gameTexts, &data, saveFolder, scene.get());
-    // 0x0046B5A0 outside a replay's race: the window startup over three frames, then the windows the front end keeps
-    // (made on the loading thread in the stock code, the startup window drawn meanwhile; here the frame waits).
+    // 0x0046B5A0 outside a replay's race: the window startup over three frames. Then the windows the front end keeps
+    // made on the loading thread (0x0046C8A0 running 0x0046AF80; their views' models draw its rand()), taking turns
+    // with the frames (oj::FrameTurns), while the main thread each 10 ms runs the renderer's queue and the window
+    // manager's frame on the window shown (0x005A6AB0, 0x00514A40; no messages read meanwhile): startup's one
+    // transition, SPLASH's FADEIN, takes no time, so it is drawn as it is.
     if (data.race.mode != oj::RaceMode::Attract) {
         frontend->showStartup();
         for (int i = 0; i < 3 && platform.pumpMessages(); ++i) {
@@ -304,7 +380,24 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
             device->endFrame();
         }
     }
-    frontend->keepGameWindows();
+    {
+        const std::shared_ptr<oj::LoadJob> kept = oj::loadingThread().queue([&] {
+            oj::frameTurns().beginJob();
+            frontend->keepGameWindows();
+            oj::frameTurns().endJob();
+        });
+        while (!kept->done()) {
+            Sleep(10);
+            oj::frameTurns().beginFrame();
+            if (device->beginFrame()) {
+                frontend->draw();
+                device->endFrame();
+            } else {
+                device->letLoadingRun();
+            }
+            oj::frameTurns().endFrame();
+        }
+    }
     // -i (0x004184D2): the instant race's driver and race, and loading for the first window.
     std::string firstWindow = options.screen;
     if (options.instantRace) {
@@ -376,7 +469,7 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
     // Sound as the stock game has it: on unless switched off (audioflags 8).
     trackView.sound = oj::audio::system().on();
     trackView.cameraOffset = options.trackCamera;
-    trackView.alwaysDepthOfField = options.rf;
+    if (options.casterPixels) trackView.casterPixels = *options.casterPixels;
     trackView.autopilot = options.autopilot;
     // The online switches of the command line for the main menu's enter.
     oj::Frontend::sharedState().onlineCommandLine.host = options.host;
@@ -417,6 +510,32 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
     trackView.gameData = &data;
     trackView.input = &input;
     trackView.wheels = &inputDevices.wheels();
+#if !defined(OJ_MACOS) && !defined(OJ_LINUX) && !defined(OJ_ANDROID)
+    trackView.wheelExponent = wheelInput.settings().exponent;
+#endif
+#if !defined(OJ_MACOS) && !defined(OJ_LINUX) && !defined(OJ_ANDROID)
+    trackView.consoleSteering = pads.consoleSteering();
+#endif
+    trackView.headlights = settings.headlights != 0 ? oj::scene::kHeadlightStrength : 0.0f;
+    trackView.headlightShadows = settings.headlights == 2;
+    trackView.ambientOcclusion = settings.worldLight != 0 || settings.ambientOcclusion != 0;
+    trackView.occlusionOn = settings.ambientOcclusion != 0;
+    trackView.sunShadows = settings.shadows >= 2;
+    trackView.sky = settings.sky;
+    trackView.heatHaze = settings.heatHaze != 0;
+    // The SHADOWS row's level (the stock's own field and our levels above it; Game/Scene/LampShadows and SunShadows).
+    trackView.shadowsLevel = oj::shadowLevel(oj::graphicsConfig());
+    if (options.glow) {
+        // --glow: LIGHT FLARES OFF (0), STOCK (1), CUSTOM (2).
+        oj::graphicsConfig().glow = *options.glow != 0 ? 1 : 0;
+        oj::graphicsConfig().effects.lightFlares = *options.glow == 2 ? 1 : 0;
+    }
+    if (options.reflections && *options.reflections <= 4) {
+        // --reflections: the level of the REFLECTION row, 4 ULTRA.
+        oj::GraphicsConfig& c = oj::graphicsConfig();
+        c.reflections = static_cast<int32_t>(std::min(*options.reflections, 3u));
+        c.effects.reflections = *options.reflections == 4 ? 1 : 0;
+    }
     const bool showTrack = !options.track.empty() && scene && trackView.start(*scene, options.track);
     if (showTrack) {
         for (const auto& player : trackView.players) input.useDriver(player->controller);
@@ -435,7 +554,16 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
             rules.mode = rules.players > 1 ? oj::RaceMode::SplitScreen : oj::RaceMode::Custom;
             rules.type = oj::RaceType::Circuit;
             trackView.prepareRace(2, rules);
-            for (const oj::Spl::GridPoint& place : trackView.scene->lines().grid) {
+            // --car-ahead: the second grid place moved (the race's start puts each car on its place again).
+            std::vector<oj::Spl::GridPoint>& grid = trackView.scene->lines().grid;
+            float right = 0.0f, ahead = 0.0f;
+            if (grid.size() > 1 && sscanf_s(options.carAhead.c_str(), "%f,%f", &right, &ahead) == 2) {
+                grid[1] = grid[0];
+                grid[1].x += std::sin(grid[0].heading) * ahead + std::cos(grid[0].heading) * right;
+                grid[1].z += std::cos(grid[0].heading) * ahead - std::sin(grid[0].heading) * right;
+            }
+            for (const oj::Spl::GridPoint& place : grid) {
+                if (options.cars > 0 && number == options.cars) break;
                 oj::scene::CarModel* model = trackView.scene->addCar(
                     oj::scene::CarModel::load(*scene, car, data.catalogue, trackView.loading, false), place);
                 // Each requested local player needs its own slot for the camera,
@@ -457,10 +585,21 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
     std::unique_ptr<oj::Frontend> loader;
     int loaderFrames = 0;
     bool loadFailed = false;
+    // The loading thread's job (the race's load, 0x00463BB0, or the front end's making after the race, 0x00463C90),
+    // taking turns with the frames (oj::FrameTurns), and what it made.
+    std::shared_ptr<oj::LoadJob> job;
+    bool jobLoaded = false;
+    std::unique_ptr<oj::Frontend> jobFrontend;
+    std::string jobWindow;
 
     // The stock frame limiter: after Present the game yields until 1/60.1 s have passed since the last frame
-    // (no limit with -r).
-    const double frameInterval = options.presentIntervalOne ? 0.0 : 1.0 / 60.1;
+    // (no limit with -r). The fixed build's (Render/FrameOptions): MaxFPS without VSync, else the display's refresh
+    // rate above 60, at + 0.1 as the stock's; above 60 the sound's volumes move by the time.
+    const uint32_t frameLimit =
+        options.test ? 0u : oj::render::frameRateLimit(settings.vsync != 0, settings.maxFps, device->refreshRate());
+    const double frameInterval = oj::render::frameInterval(frameLimit, options.presentIntervalOne);
+    oj::audio::setHighFrameRate(frameLimit > 60);
+    if (frameLimit != 0) oj::log::info("frames: limited to {} a second", frameLimit);
     LARGE_INTEGER frequency{};
     LARGE_INTEGER start{};
     LARGE_INTEGER last{};
@@ -470,6 +609,92 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
     LARGE_INTEGER previousUpdate = start;
     auto seconds = [&](const LARGE_INTEGER& from, const LARGE_INTEGER& to) {
         return static_cast<double>(to.QuadPart - from.QuadPart) / static_cast<double>(frequency.QuadPart);
+    };
+
+    // 0x00461390, the race's load job (0x00463BB0) on the loading thread: the race's track with its sounds and
+    // effects, the racers' cars on their grid places, the race front end; false when the track does not load.
+    const auto loadRace = [&]() -> bool {
+        const oj::RaceSetup& race = data.race;
+        oj::scene::TrackSetup setup;
+        setup.track = race.track;
+        setup.route = race.route;
+        setup.timeOfDay = static_cast<uint32_t>(race.timeOfDay);
+        setup.weather = static_cast<uint32_t>(race.weather);
+        if (!trackView.start(*scene, setup)) return false;
+        // The racers' cars on their grid places (the loading thread's rand() goes on after the track).
+        // Off the network 0x00495DE0 takes a replay's race ([G+0x6C]+0x68: the attract's, mode 4, or a saved
+        // replay's read by loadreplay, mode 0) before the race's mode.
+        // 0x00495E48: its start to the debugger's output ("Done!" as it ends, TrackView::beginRace).
+        oj::log::debugPrint("LOADING PROFILE : Loading cars... ");
+        oj::net::NetGame* const netGame = oj::net::netGame();
+        const bool replayed = trackView.replay.replayRace != 0;
+        if (netGame != nullptr && data.career) netGrid(trackView, data, *scene, netGame->session);
+        if (netGame == nullptr && !replayed && data.career && race.mode == oj::RaceMode::Career) {
+            const oj::RaceSession& session = data.career->session;
+            const oj::Spl& lines = trackView.scene->lines();
+            oj::RaceRules rules;
+            rules.mode = race.mode;
+            rules.type = race.type;
+            rules.lapTime = race.lapTime;
+            rules.speed = race.speed;
+            rules.heat = race.heat;
+            rules.heats = race.heats;
+            rules.players = race.players;
+            rules.minutes = race.difficulty;
+            rules.session = &data.career->session;
+            rules.career = data.career.get();
+            rules.settings = &data.settings;
+            trackView.prepareRace(race.laps, rules);
+            for (uint32_t i = 0; i < session.count && i < session.racers.size(); ++i) {
+                const oj::Racer& racer = session.racers[i];
+                if (racer.cars == nullptr || racer.car < 0 ||
+                    static_cast<size_t>(racer.car) >= racer.cars->size()) {
+                    continue;
+                }
+                const size_t place = static_cast<size_t>(racer.place) < lines.grid.size()
+                                         ? static_cast<size_t>(racer.place)
+                                         : i % std::max<size_t>(lines.grid.size(), 1);
+                if (lines.grid.empty()) break;
+                // 0x004969AA: another crew's racer races a copy of its car (0x00434D90) with its crew's
+                // scheme put on every opponents' car first (0x004A9080), refreshed; the player's crew its
+                // garage's car, as it is. Each gets its grid when it has none (0x005562A0).
+                const bool copied = racer.crew != 0;
+                oj::Car* raced = const_cast<oj::Car*>(&(*racer.cars)[static_cast<size_t>(racer.car)]);
+                if (copied) {
+                    if (static_cast<size_t>(racer.crew) < data.career->crews.size()) {
+                        oj::applyCrewScheme(*data.career, data.career->crews[static_cast<size_t>(racer.crew)],
+                                            data.defs, data.catalogue);
+                    }
+                    trackView.ownCars.push_back(std::make_unique<oj::Car>(oj::copyCar(*raced)));
+                    raced = trackView.ownCars.back().get();
+                }
+                if (!raced->grid) raced->grid.emplace();
+                const oj::Car& racerCar = *raced;
+                auto car =
+                    oj::scene::CarModel::load(*scene, racerCar, data.catalogue, trackView.loading, false);
+                oj::scene::CarModel* model = trackView.scene->addCar(std::move(car), lines.grid[place]);
+                const oj::CarDynamics* dynamics =
+                    data.dynamics && racerCar.def != nullptr ? data.dynamics->of(*racerCar.def) : nullptr;
+                if (dynamics != nullptr) {
+                    trackView.addCar(*dynamics, racerCar, raced, data, model, lines.grid[place],
+                                     racer.driver != 0 ? oj::CarKind::Player : oj::CarKind::Ai, racer.crew,
+                                     static_cast<int32_t>(i), copied);
+                }
+            }
+        }
+        if (netGame == nullptr && !replayed && data.career &&
+            (race.mode == oj::RaceMode::Custom || race.mode == oj::RaceMode::SplitScreen)) {
+            customGrid(trackView, data, *scene);
+        }
+        if (netGame == nullptr && !replayed && data.career && race.mode == oj::RaceMode::Arcade) {
+            arcadeGrid(trackView, data, *scene);
+        }
+        if (netGame == nullptr && replayed) replayGrid(trackView, data, *scene);
+        trackView.startIntro(race.route, scene->wideScreen());
+        // 0x0041DE76: each player's controller made with DRIVER1.
+        for (const std::unique_ptr<RacePlayer>& p : trackView.players) input.useDriver(p->controller);
+        trackView.beginRace();
+        return true;
     };
 
     uint64_t rendered = 0;
@@ -484,11 +709,22 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
     bool creativeClosing = false;
 #endif
 #endif
-    while (platform.pumpMessages()) {
+    for (;;) {
+        // The frame holds the turn from its start to its present; a job of the loading thread runs between the frames.
+        oj::frameTurns().beginFrame();
+        if (!platform.pumpMessages()) {
+            oj::frameTurns().endFrame();
+            break;
+        }
         RECT client{};
         GetClientRect(platform.window(), &client);
         device->resize(static_cast<uint32_t>(client.right), static_cast<uint32_t>(client.bottom));
+        // --profile: the frames' layers timed from that frame on.
+        if (options.profile != 0 && rendered == options.profile && !device->setProfiling(true)) {
+            oj::log::warning("profile: the device has no timestamps");
+        }
         if (!device->beginFrame()) {
+            oj::frameTurns().endFrame();
             Sleep(16);
             continue;
         }
@@ -548,6 +784,7 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
 #endif
             creativeMenu->draw();
             if(options.frames && rendered+1>=options.frames && !options.capture.empty()) device->capture(oj::toWide(options.capture));
+            oj::frameTurns().endFrame();
             device->endFrame();++rendered;
             if (!open) {
                 creativeMenu.reset();
@@ -584,6 +821,7 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
                 const std::filesystem::path file = oj::toWide(options.capture);
                 device->capture((file.is_absolute() ? file : executableFolder() / file).wstring());
             }
+            oj::frameTurns().endFrame();
             device->endFrame();
             ++rendered;
             if (result != oj::mac::ControlsOverlay::Result::Open) {
@@ -618,6 +856,16 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
         }
 #endif
         brightnessGamma(*device);
+        // The fixed build's headlights and heat haze as the graphics options' ADVANCED page leaves them.
+        const oj::FixedEffects& effects = oj::graphicsConfig().effects;
+        trackView.headlights = effects.headlights != 0 ? oj::scene::kHeadlightStrength : 0.0f;
+        trackView.headlightShadows = effects.headlights == 2;
+        trackView.ambientOcclusion = effects.worldLight != 0 || effects.ambientOcclusion != 0;
+        trackView.occlusionOn = effects.ambientOcclusion != 0;
+        trackView.sunShadows = trackView.shadowsLevel >= 3;
+        trackView.sky = effects.sky;
+        trackView.heatHaze = effects.heatHaze != 0;
+        trackView.shadowsLevel = oj::shadowLevel(oj::graphicsConfig());
         // 0x00514B28: the profiler's frame timer (0) ended; 0x00514B5A: the debug pages' current page drawn while
         // they are shown (never); 0x00514C4B: timer 0 started again.
         if (oj::debug::Profiler* p = oj::debug::profiler()) p->stopFrame();
@@ -645,9 +893,21 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
 #if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
         for(const auto& key:keys)if(key.down)oj::mods::neonKey(key.code);
 #endif
+#if !defined(OJ_MACOS) && !defined(OJ_LINUX) && !defined(OJ_ANDROID)
+        // The fixed build: the controller (none in a test run) and controller.ini when it changed; its motors as the
+        // race's frames left them (Core/Input/PadRumble).
+        if (pads.refresh()) {
+            input.pads().setLayout(pads.layout());
+            input.pads().setControllerEnabled(pads.controllerEnabled());
+            trackView.consoleSteering = pads.consoleSteering();
+        }
+        input.setPad(options.test ? oj::input::PadState{} : pads.read());
+        if (!options.test) pads.setMotors(input.padRumble());
+#endif
         input.poll(keys, platform.active() || options.test, dt);
         oj::FrontendInput in;
         in.typed = input.typed();
+        in.text = platform.takeTypedText();
         in.shiftHeld = input.held(0x0F);
         in.playerTaken = input.playerTaken();
         in.devices = input.deviceCount();
@@ -712,12 +972,11 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
         };
         // 0x0040CECA: after the 3D world (0x0040CE14) the game's music ([G+0x48], 0x004090D0), the next song unless
         // a song's preview runs ([0x0075EF28]).
-        // Before it the speech's frame (0x0040CEB2, 0x0040B4D0) when there is a speech object.
-        // Out of a race the 3D world of a window ([G+0x50]: the garage's cut scene, car_rolling) steps here first.
+        // Before it the speech's frame (0x0040CEB2, 0x0040B4D0) when there is a speech object. The 3D world ([G+0x50])
+        // steps in the loop only with a race (0x0040CD54: [G+0x34], the race track, set at the load's end): the
+        // windows of one out of a race step it themselves (CMSCutScene 0x004C7BF0, car_rolling 0x004DF260), and
+        // during the race's load it holds the cars' sounds made by the job, not yet heard.
         const auto musicFrame = [&]() {
-            if (phase != Phase::Race && !showTrack) {
-                if (oj::audio::World* world = oj::gameSounds().world) world->update(dt);
-            }
             if (oj::Speech* speech = oj::gameSounds().speech) speech->update(dt);
             oj::jukebox().update(data.playlist, dt, !oj::jukebox().previewing);
         };
@@ -741,52 +1000,69 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
             trackView.draw(*device, static_cast<float>(seconds(start, now)), dt);
             if (!showTrack && trackView.frontEnd.unloadAsked) {
                 // 0x00462C30 with 1, then 0x004634B0: the race's objects go; the loading front end shows its window
-                // while the job (0x00461A10) makes the front end with its first window. The game's music first stops
-                // (0x00408FA0 with 1: 300 ms slept before and after).
+                // (the record's +0x0C cleared: no tips) while the job (0x00461A10) makes the front end. The game's
+                // music first stops (0x00408FA0 with 1: 300 ms slept before and after).
                 if (oj::audio::system().on()) oj::jukebox().stop(true);
                 // The race's speech freed (unless the configuration has no speech).
                 oj::makeSpeech(0, language.index, oj::GameFiles(std::filesystem::current_path()));
                 oj::gameSounds().raceFrontEnd = false;
                 trackView.endRace();
-                const auto [window, animation] = loaderWindows();
                 loader = std::make_unique<oj::Frontend>(*device, language, gameTexts, &data, saveFolder, scene.get());
                 loader->keepLoaderWindows();
-                loader->startLoader(window, animation);
+                loader->startLoader(loaderWindows().first, false);
                 phase = Phase::Unload;
                 loaderFrames = 0;
                 oj::log::info("race: unloaded");
             }
         } else if (phase == Phase::Unload) {
+            // 0x004634B0: one frame of the loading window (three in the arcade, mode 0), then the animation over it
+            // (0x005A7040) and the job (0x00463C90 → 0x00461A10) on the loading thread: the first window by the race
+            // (0x0075ED18's, else by the race's mode) and the front end with it (0x0046B5A0), while the frames go on.
+            if (!job && loaderFrames == (data.race.mode == oj::RaceMode::Arcade ? 3 : 1)) {
+                loader->startLoaderAnimation(loaderWindows().second);
+                job = oj::loadingThread().queue([&] {
+                    oj::frameTurns().beginJob();
+                    jobWindow = windowAfterRace(data);
+                    auto made =
+                        std::make_unique<oj::Frontend>(*device, language, gameTexts, &data, saveFolder, scene.get());
+                    // 0x0046B5A0, called here with 0 (0x00461A6D): the race no longer a replay's ([G+0x6C]+0x68) and
+                    // the windows kept made at once on this thread (0x0046AF80; no startup window, no job of its own:
+                    // the loading window stays).
+                    trackView.replay.replayRace = 0;
+                    made->keepGameWindows();
+                    jobFrontend = std::move(made);
+                    oj::frameTurns().endJob();
+                });
+            }
             musicFrame();
             loader->update(dt, in);
             loader->draw();
-            if (++loaderFrames >= 3) {
-                // The job done: the front end with its first window; its music (0x0046BA90: with the sound on,
-                // 0x0046BAC0 draws one rand() value).
-                const std::string first = windowAfterRace(data);
-                frontend = std::make_unique<oj::Frontend>(*device, language, gameTexts, &data, saveFolder, scene.get());
-                // 0x0046B5A0: the race no longer a replay's ([G+0x6C]+0x68); outside a replay's race the stock code
-                // draws its startup window from the job's thread while this thread draws the loading window (not
-                // followed: the loading window stays); the windows kept.
-                trackView.replay.replayRace = 0;
-                frontend->keepGameWindows();
+            ++loaderFrames;
+            // 0x00463AA4: the job done and every transition of the loading window at its end (0x005AA120): the front
+            // end's music (0x0046BA90: with the sound on, 0x0046BAC0 draws one rand() value, 0x0046BDD0, the menus'
+            // speech), the front end the game's (0x0040D140); its first window comes on its first frame.
+            if (job && job->done() && loader->loaderShown()) {
+                job.reset();
+                frontend = std::move(jobFrontend);
                 if (oj::audio::system().on()) {
                     frontend->loadMusic();
                     frontend->startMusic();
                     oj::makeSpeech(1, language.index, oj::GameFiles(std::filesystem::current_path()));
                 }
-                frontend->start(first);
+                frontend->start(jobWindow);
                 frontendUi = false;
                 loader.reset();
                 phase = Phase::Frontend;
-                oj::log::info("frontend: back from the race to {}", first);
+                oj::log::info("frontend: back from the race to {}", jobWindow);
             }
         } else if (phase == Phase::Load) {
-            // 0x00462D90: three frames of the loading front end, then the load (on the main thread here: the
-            // loading window does not move while the track loads). Its first (+0x10 0), outside a replay (mode 4 or
-            // [G+0x6C]+0x68), with the statistics, not watching: an online race of more than one racer (not the
-            // career's pink slip) has each local player's user's race begun (0x004EC8C0, referenced and never let
-            // go) and sent; the route's world record asked again (0x004EE0C0 with 1), its tries 0.
+            // 0x00462D90: three frames of the loading window, then the animation over it (0x005A7040), the race's
+            // speech (0x0040D330 with 2) and the race's load as a job of the loading thread (0x00463BB0, queued by
+            // 0x0059A930) while the frames go on; a replay's race of the attract mode reads its replay first. Its
+            // first frame (+0x10 0), outside a replay (mode 4 or [G+0x6C]+0x68), with the statistics, not watching:
+            // an online race of more than one racer (not the career's pink slip) has each local player's user's race
+            // begun (0x004EC8C0, referenced and never let go) and sent; the route's world record asked again
+            // (0x004EE0C0 with 1), its tries 0.
             if (loaderFrames == 0 && data.race.mode != oj::RaceMode::Attract && trackView.replay.replayRace == 0 &&
                 oj::net::stats::gameStatistics() != nullptr) {
                 oj::net::NetGame* netGame = oj::net::netGame();
@@ -808,10 +1084,51 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
                     oj::net::stats::worldBestTries() = 0;
                 }
             }
+            if (!job && !loadFailed && loaderFrames == 3) {
+                if (data.race.mode == oj::RaceMode::Attract && !trackView.replay.playing &&
+                    !loadReplayRace(trackView, data)) {
+                    oj::log::warning("race: the replay {} does not read", data.replayName);
+                    loadFailed = true;  // the loading window stays
+                } else {
+                    loader->startLoaderAnimation(loaderWindows().second);
+                    oj::makeSpeech(2, language.index, oj::GameFiles(std::filesystem::current_path()));
+                    job = oj::loadingThread().queue([&] {
+                        oj::frameTurns().beginJob();
+                        jobLoaded = loadRace();
+                        oj::frameTurns().endJob();
+                    });
+                }
+            }
             musicFrame();
             loader->update(dt, in);
             loader->draw();
             ++loaderFrames;
+            // 0x004633BD: the job done (+0x08 3): the load's end on the main thread (0x004255F0), the game's music
+            // plays its next song (0x00408EC0 with 1, 1: half a second slept) at the settings' music volume (+0x18,
+            // +0x1C and the player's), the pool's statistics to the debugger's output (0x0040D9F0).
+            if (job && job->done()) {
+                job.reset();
+                if (jobLoaded) {
+                    oj::log::info("race: loaded; the load's longest turn between frames {:.0f} ms",
+                                  oj::frameTurns().longestJobTurn());
+                    trackView.finishLoad();
+                    loader.reset();
+                    oj::Jukebox& music = oj::jukebox();
+                    music.play(data.playlist, true, true);
+                    const float volume = std::bit_cast<float>(
+                        (data.settings ? *data.settings : oj::save::Settings::defaults(0))
+                            .u32(oj::save::Settings::kMusicVolume));
+                    if (music.player() != nullptr && music.handle != 0) {
+                        music.player()->setVolume(music.handle, volume);
+                        music.volume = volume;
+                        music.target = volume;
+                    }
+                    oj::debug::poolStats();
+                    phase = Phase::Race;
+                } else {
+                    loadFailed = true;  // the loading window stays
+                }
+            }
         } else {
             musicFrame();
             frontend->update(dt, in);
@@ -819,19 +1136,33 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
             if (frontend->takeSecondPlayerTake()) input.takePlayer(1);
             if (frontend->takeInputConfigure()) {
                 input.useDriver();
-                // 0x0059563F (0x004080D0 with 1): the controls' mapping window with DRIVER1's format, the game's
-                // window hidden round it; failing, the message box.
+                // 0x0059563F (0x004080D0 with 1): DirectInput's mapping window, the game's window hidden round it.
+                // The fixed build has no DirectInput maps: OpenJuiceConfig's layout editor (--layout-only: the
+                // controller's and the keyboard's layouts, the wheels' map with "Wheels and joysticks"), its changes
+                // read from controller.ini as the game runs; without it, the message box (a test run starts none).
+#if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
                 if (const oj::input::MapFormat* format = input.playerFormat(); format != nullptr) {
                     platform.beginControlsWindow();
                     if (!inputDevices.configure(*format)) frontend->directInputProblem();
                     platform.endControlsWindow();
-                } else {
-                    frontend->directInputProblem();
+                } else frontend->directInputProblem();
+                inputDevices.stopWheels();
+                inputDevices.startWheels(options.test ? nullptr : platform.window());
+#else
+                if (!options.test) {
+                    platform.beginControlsWindow();
+                    const bool shown = oj::runSettingsProgram(L"--layout-only");
+                    platform.endControlsWindow();
+                    if (!shown) frontend->directInputProblem();
                 }
                 // 0x00590F40: the FF manager stopped and made anew (its response table not copied again until the
                 // next DRIVER1, 0x004080D0), then the maps registered again.
+#if !defined(OJ_MACOS) && !defined(OJ_LINUX) && !defined(OJ_ANDROID)
                 inputDevices.stopWheels();
-                inputDevices.startWheels(options.test ? nullptr : platform.window());
+                inputDevices.startWheels(options.test ? nullptr : platform.window(),
+                                         options.test ? nullptr : &wheelInput);
+#endif
+#endif
                 input.table().fill(0);
                 input.recreateControllers();
             }
@@ -843,11 +1174,10 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
                 // 0x0046AE50 → 0x00462D90: the front end goes; the load's front end shows the window by the race's
                 // mode and over it its animation.
                 const oj::RaceSetup& race = data.race;
-                const auto [window, animation] = loaderWindows();
                 frontend.reset();
                 loader = std::make_unique<oj::Frontend>(*device, language, gameTexts, &data, saveFolder, scene.get());
                 loader->keepLoaderWindows();
-                loader->startLoader(window, animation);
+                loader->startLoader(loaderWindows().first, true);
                 phase = Phase::Load;
                 loaderFrames = 0;
                 oj::log::info("race: {} {} (time of day {}, weather {})", race.track, race.route, race.timeOfDay,
@@ -884,138 +1214,66 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
             const std::filesystem::path file(oj::toWide(options.capture));
             device->capture((file.is_absolute() ? file : executableFolder() / file).wstring());
         }
+        if (lastFrame && !options.shadowMap.empty() && trackView.shadows) {
+            // The first light's map in the file, light i's in <file>_i.
+            std::filesystem::path file(oj::toWide(options.shadowMap));
+            if (!file.is_absolute()) file = executableFolder() / file;
+            for (size_t i = 0; i < static_cast<size_t>(oj::scene::kHeadlights); ++i) {
+                std::filesystem::path named = file;
+                if (i > 0) named.replace_filename(file.stem().wstring() + L"_" + std::to_wstring(i) +
+                                                  file.extension().wstring());
+                device->captureFloatTarget(trackView.shadows->boundMap(i), named.wstring());
+            }
+        }
+        if (lastFrame && !options.sunMap.empty() && trackView.sunCascades) {
+            const std::filesystem::path file(oj::toWide(options.sunMap));
+            device->captureFloatTarget(trackView.sunCascades->atlas(),
+                                       (file.is_absolute() ? file : executableFolder() / file).wstring());
+        }
+        if (lastFrame && !options.occlusionMap.empty()) {
+            const std::filesystem::path file(oj::toWide(options.occlusionMap));
+            const std::filesystem::path path = file.is_absolute() ? file : executableFolder() / file;
+            device->captureAmbientOcclusion(path.wstring());
+            std::filesystem::path lights = path;
+            lights.replace_extension();
+            device->captureLightReflections(lights.wstring() + L"_lights.bmp");
+            device->captureLampShadows(lights.wstring() + L"_lamps.bmp");
+            device->captureVolumetricLight(lights.wstring() + L"_haze.bmp");
+            device->capturePointLights(lights.wstring() + L"_flames.bmp");
+            if (trackView.scene && trackView.scene->cloudMap() != 0) {
+                device->captureTarget(trackView.scene->cloudMap(), lights.wstring() + L"_clouds.bmp");
+            }
+            if (trackView.lampShadows) {
+                device->captureFloatTarget(trackView.lampShadows->maps()[0], lights.wstring() + L"_lamp0.bmp");
+            }
+        }
+        if (lastFrame && !options.cubeMap.empty() && scene) {
+            std::filesystem::path file(oj::toWide(options.cubeMap));
+            if (!file.is_absolute()) file = executableFolder() / file;
+            const oj::scene::Engine::ReflectionTargets& cubes = scene->reflectionTargets();
+            for (const auto& [name, id] : {std::pair{L"stock", cubes.carCube.id}, std::pair{L"cars", cubes.carsCube.id}}) {
+                for (uint32_t face = 0; face < 6 && id != 0; ++face) {
+                    std::filesystem::path named = file;
+                    named.replace_filename(file.stem().wstring() + L"_" + name + L"_" + std::to_wstring(face) +
+                                           file.extension().wstring());
+                    device->captureCubeFace(id, face, named.wstring());
+                }
+            }
+        }
+        oj::frameTurns().endFrame();
         device->endFrame();
         // 0x0040CFD9: Print Screen ([0x0075F77C], set by the window procedure) after the present.
         if (platform.takeScreenshotRequest()) screenshot(*device);
-        do {
-            Sleep(0);
-            QueryPerformanceCounter(&now);
-        } while (seconds(last, now) < frameInterval);
-        last = now;
+        last.QuadPart = oj::render::waitFrame(last.QuadPart, frameInterval);
         ++rendered;
-        if (phase == Phase::Load && loaderFrames >= 3 && !loadFailed && data.race.mode == oj::RaceMode::Attract &&
-            !trackView.replay.playing && !loadReplayRace(trackView, data)) {
-            oj::log::warning("race: the replay {} does not read", data.replayName);
-            loadFailed = true;
-        }
-        if (phase == Phase::Load && loaderFrames >= 3 && !loadFailed) {
-            // The load holds this frame (the stock's ran on its loading thread, the frames going on): the peers told
-            // we are here meanwhile (else after 25 s of silence they drop this machine).
-            std::optional<oj::net::LoadKeepAlive> keepAlive;
-            if (oj::net::NetGame* netGame = oj::net::netGame()) keepAlive.emplace(&netGame->transport);
-            const oj::RaceSetup& race = data.race;
-            oj::scene::TrackSetup setup;
-            setup.track = race.track;
-            setup.route = race.route;
-            setup.timeOfDay = static_cast<uint32_t>(race.timeOfDay);
-            setup.weather = static_cast<uint32_t>(race.weather);
-            // 0x004632F0: the loader's frames drawn, the race's speech made (0x0040D330 with 2) before the job.
-            oj::makeSpeech(2, language.index, oj::GameFiles(std::filesystem::current_path()));
-            if (trackView.start(*scene, setup)) {
-                // The racers' cars on their grid places (the loading thread's rand() goes on after the track).
-                // Off the network 0x00495DE0 takes a replay's race ([G+0x6C]+0x68: the attract's, mode 4, or a saved
-                // replay's read by loadreplay, mode 0) before the race's mode.
-                // 0x00495E48: its start to the debugger's output ("Done!" as it ends, TrackView::beginRace).
-                oj::log::debugPrint("LOADING PROFILE : Loading cars... ");
-                oj::net::NetGame* const netGame = oj::net::netGame();
-                const bool replayed = trackView.replay.replayRace != 0;
-                if (netGame != nullptr && data.career) netGrid(trackView, data, *scene, netGame->session);
-                if (netGame == nullptr && !replayed && data.career && race.mode == oj::RaceMode::Career) {
-                    const oj::RaceSession& session = data.career->session;
-                    const oj::Spl& lines = trackView.scene->lines();
-                    oj::RaceRules rules;
-                    rules.mode = race.mode;
-                    rules.type = race.type;
-                    rules.lapTime = race.lapTime;
-                    rules.speed = race.speed;
-                    rules.heat = race.heat;
-                    rules.heats = race.heats;
-                    rules.players = race.players;
-                    rules.minutes = race.difficulty;
-                    rules.session = &data.career->session;
-                    rules.career = data.career.get();
-                    rules.settings = &data.settings;
-                    trackView.prepareRace(race.laps, rules);
-                    for (uint32_t i = 0; i < session.count && i < session.racers.size(); ++i) {
-                        const oj::Racer& racer = session.racers[i];
-                        if (racer.cars == nullptr || racer.car < 0 ||
-                            static_cast<size_t>(racer.car) >= racer.cars->size()) {
-                            continue;
-                        }
-                        const size_t place = static_cast<size_t>(racer.place) < lines.grid.size()
-                                                 ? static_cast<size_t>(racer.place)
-                                                 : i % std::max<size_t>(lines.grid.size(), 1);
-                        if (lines.grid.empty()) break;
-                        // 0x004969AA: another crew's racer races a copy of its car (0x00434D90) with its crew's
-                        // scheme put on every opponents' car first (0x004A9080), refreshed; the player's crew its
-                        // garage's car, as it is. Each gets its grid when it has none (0x005562A0).
-                        const bool copied = racer.crew != 0;
-                        oj::Car* raced = const_cast<oj::Car*>(&(*racer.cars)[static_cast<size_t>(racer.car)]);
-                        if (copied) {
-                            if (static_cast<size_t>(racer.crew) < data.career->crews.size()) {
-                                oj::applyCrewScheme(*data.career, data.career->crews[static_cast<size_t>(racer.crew)],
-                                                    data.defs, data.catalogue);
-                            }
-                            trackView.ownCars.push_back(std::make_unique<oj::Car>(oj::copyCar(*raced)));
-                            raced = trackView.ownCars.back().get();
-                        }
-                        if (!raced->grid) raced->grid.emplace();
-                        const oj::Car& racerCar = *raced;
-                        auto car =
-                            oj::scene::CarModel::load(*scene, racerCar, data.catalogue, trackView.loading, false);
-                        oj::scene::CarModel* model = trackView.scene->addCar(std::move(car), lines.grid[place]);
-                        const oj::CarDynamics* dynamics =
-                            data.dynamics && racerCar.def != nullptr ? data.dynamics->of(*racerCar.def) : nullptr;
-                        if (dynamics != nullptr) {
-                            trackView.addCar(*dynamics, racerCar, raced, data, model, lines.grid[place],
-                                             racer.driver != 0 ? oj::CarKind::Player : oj::CarKind::Ai, racer.crew,
-                                             static_cast<int32_t>(i), copied);
-                        }
-                    }
-                }
-                if (netGame == nullptr && !replayed && data.career &&
-                    (race.mode == oj::RaceMode::Custom || race.mode == oj::RaceMode::SplitScreen)) {
-                    customGrid(trackView, data, *scene);
-                }
-                if (netGame == nullptr && !replayed && data.career && race.mode == oj::RaceMode::Arcade) {
-                    arcadeGrid(trackView, data, *scene);
-                }
-                if (netGame == nullptr && replayed) replayGrid(trackView, data, *scene);
-                trackView.startIntro(race.route, scene->wideScreen());
-                // 0x0041DE76: each player's controller made with DRIVER1.
-                for (const std::unique_ptr<RacePlayer>& p : trackView.players) input.useDriver(p->controller);
-                trackView.beginRace();
-                trackView.finishLoad();
-                loader.reset();
-                // 0x00463454: the job done, the game's music plays its next song (0x00408EC0 with 1, 1: half a second
-                // slept) at the settings' music volume (+0x18, +0x1C and the player's).
-                {
-                    oj::Jukebox& music = oj::jukebox();
-                    music.play(data.playlist, true, true);
-                    const float volume = std::bit_cast<float>(
-                        (data.settings ? *data.settings : oj::save::Settings::defaults(0))
-                            .u32(oj::save::Settings::kMusicVolume));
-                    if (music.player() != nullptr && music.handle != 0) {
-                        music.player()->setVolume(music.handle, volume);
-                        music.volume = volume;
-                        music.target = volume;
-                    }
-                }
-                // 0x0046348E: the pool's statistics to the debugger's output.
-                oj::debug::poolStats();
-                phase = Phase::Race;
-                // The stock game loads on its own thread with the frames going on; the load here is not a frame's time.
-                QueryPerformanceCounter(&previousUpdate);
-                last = previousUpdate;
-            } else {
-                loadFailed = true;  // the loading window stays
-            }
-        }
         if (lastFrame) {
             break;
         }
     }
+    // A job still running (the window closed, the test's frames done) ends before what it uses goes.
+    if (job) oj::loadingThread().wait(*job, [&] { device->letLoadingRun(); });
     oj::log::info("{} frame(s) rendered", rendered);
+    if (options.profile != 0) oj::log::info("{}", device->profileReport());
     // The front ends closed (their windows' exits) and the views the windows' records still hold freed before the
     // engine goes.
     loader.reset();
@@ -1040,9 +1298,10 @@ int gameMain(const oj::LaunchOptions& options, const oj::Config& config) {
     // The start's messages in the game's language (the reference build's are its region's).
     oj::setStartupLanguage(oj::chooseLanguage(oj::readLanguageSetting(), config.language));
 
-    // -setup (OpenJuice's): the game's configuration tool only, the one the first start opens.
+    // -setup (OpenJuice's): the game's configuration tool only, the one the first start opens (the fixed build's
+    // OpenJuiceConfig with its Save and play starting the game).
     if (options.setup) {
-        oj::runConfigurationTool();
+        oj::runConfigurationTool(false);
         return 0;
     }
     if (!carModelsReadable()) {

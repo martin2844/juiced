@@ -17,6 +17,18 @@ constexpr uint32_t kKeyUnavailable = 0xC8800000;
 constexpr uint32_t kKeyBox = 0xAF000000;
 constexpr uint32_t kKeyHoverBox = 0xAF404040;
 
+// The symbols page (0x004604E7 .. 0x0046071E): the letters' keys, by the keyboard's rows, take these.
+struct SymbolKey {
+    const char* key;
+    wchar_t symbol;
+};
+constexpr SymbolKey kSymbolKeys[] = {
+    {"BQ", L'"'}, {"BW", L'#'}, {"BE", L'$'}, {"BR", L'%'}, {"BT", L'&'}, {"BY", L'\''}, {"BU", L'('},
+    {"BI", L')'}, {"BO", L'*'}, {"BP", L'+'}, {"BA", L'/'}, {"BS", L':'}, {"BD", L';'}, {"BF", L'<'},
+    {"BG", L'='}, {"BH", L'>'}, {"BJ", L'?'}, {"BK", L'['}, {"BL", L']'}, {"BZ", L'^'}, {"BX", L'_'},
+    {"BC", L'`'}, {"BV", L'{'}, {"BB", L'|'}, {"BN", L'}'}, {"BM", L'~'},
+};
+
 }  // namespace
 
 // A character the keyboard window takes (0x004601E0): one of the allowed characters, and not one of notFirst at
@@ -28,8 +40,8 @@ bool Keyboard::allows(char c) const {
     return c != 0 && m_setup.allowed.find(c) != std::string::npos;
 }
 
-// The letter case of the keys (0x00460450): the symbols page, else upper case while shift is held or the SHIFT button
-// is on, turned over by caps.
+// The letter case of the keys (0x00460450): the symbols page (its symbols on the letters' keys), else upper case while
+// shift is held or the SHIFT button is on, turned over by caps.
 void Keyboard::setCase(ui::Screen& s, bool shiftHeld) {
     LetterCase mode = LetterCase::Symbols;
     if (!m_symbolsOn) {
@@ -46,6 +58,8 @@ void Keyboard::setCase(ui::Screen& s, bool shiftHeld) {
                 mode == LetterCase::Lower ? static_cast<wchar_t>(c - 'A' + 'a') : static_cast<wchar_t>(c);
             s.setText(std::string("B") + c, std::wstring(1, letter));
         }
+    } else {
+        for (const SymbolKey& k : kSymbolKeys) s.setText(k.key, std::wstring(1, k.symbol));
     }
     colours(s);
 }
@@ -94,16 +108,19 @@ void Keyboard::enter(ProfileHost&, ui::Screen& s) {
 }
 
 // The keyboard window (0x00460B40): the keys on screen, the characters typed, DONE and BACK.
-void Keyboard::update(ProfileHost& host, ui::Screen& s, uint32_t event, char typed, bool shiftHeld) {
+void Keyboard::update(ProfileHost& host, ui::Screen& s, uint32_t event, char typed, bool shiftHeld,
+                      const std::string& windowText) {
     std::wstring& text = m_setup.text;
     if (m_setup.chat) {
-        // The fixed build's lobby chat: gone with the session's lobby; ENTER typed says the text (the frame's SELECT
-        // with it left alone).
+        // The fixed build's lobby chat: gone with the session's lobby. ENTER (the game's typed Return, 0x0A) says the
+        // text, the frame's SELECT that came with it left alone. The window's characters (WM_CHAR: the keyboard's
+        // layout and shift, so ! ? , and the rest) are typed in place of the game's own printable ones, which know
+        // only the letters, the digits, - @ . and the space (0x00595A80); its control keys stay.
         if (!lobbyChatFrame(s)) {
             host.request(m_setup.back, SwitchMode::Replace);
             return;
         }
-        if (typed == '\r') {
+        if (typed == 0x0A) {
             if (lobbyChatSay(text)) {
                 text.clear();
                 m_fresh = false;
@@ -111,6 +128,8 @@ void Keyboard::update(ProfileHost& host, ui::Screen& s, uint32_t event, char typ
             }
             typed = 0;
             event = input::kNone;
+        } else if (static_cast<unsigned char>(typed) >= 0x20) {
+            typed = 0;
         }
     }
     auto append = [&](const std::wstring& added) {
@@ -232,6 +251,18 @@ void Keyboard::update(ProfileHost& host, ui::Screen& s, uint32_t event, char typ
         m_shiftOnce = false;
         break;
     }
+    }
+
+    if (m_setup.chat && !windowText.empty()) {
+        for (const char c : windowText) {
+            if (!allows(c)) {
+                host.sound("NO");
+            } else {
+                append(std::wstring(1, static_cast<wchar_t>(static_cast<uint8_t>(c))));
+            }
+        }
+        m_shiftOnce = false;
+        colours(s);
     }
 
     if (host.switchAsked()) {

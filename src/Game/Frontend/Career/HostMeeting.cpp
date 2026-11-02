@@ -352,7 +352,7 @@ void HostMeeting::raceTexts(CareerHost& host, ui::Screen& s) {
     }
     const auto& routes = data->tables.routes;
     if (mapRoute >= 0 && static_cast<size_t>(mapRoute) < routes.size()) {
-        m_race.map.route(host, s, routes[static_cast<size_t>(mapRoute)].name, true);
+        m_race.map.route(s, routes[static_cast<size_t>(mapRoute)].name, true);
     }
     colour("RouteText",
            m_race.type == EventKind::Circuit || m_race.type == EventKind::PointToPoint ? kHostWhite : kHostGrey);
@@ -767,7 +767,7 @@ void HostMeeting::enterSummary(CareerHost& host, ui::Screen& s) {
         }
         const auto& routes = data->tables.routes;
         if (mapRoute >= 0 && static_cast<size_t>(mapRoute) < routes.size()) {
-            m_summary.map.route(host, s, routes[static_cast<size_t>(mapRoute)].name, true);
+            m_summary.map.route(s, routes[static_cast<size_t>(mapRoute)].name, true);
         }
     }
     summaryTexts(host, s);

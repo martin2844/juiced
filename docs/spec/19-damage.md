@@ -69,7 +69,8 @@ Then the grid is finished (`+0x10`, `0x005574B0`):
 5. every zone's dents (`+0x10`) are multiplied by 0.2.
 
 The same build runs for the car shown in the garage screens (`0x00435AE0` carsel, `0x00437BB0` carbuy and its mirror
-image, `0x004894C0`), on the loading thread: its `rand()` draws are that thread's. OpenJuice makes the carsel car's
+image, `0x004894C0`), called by the windows' enter (`0x00436380`, `0x00438150`, from their records) on the main
+thread: its `rand()` draws are the game's. OpenJuice makes the carsel car's
 model again when its parts change (the stock's `0x0048B440` changes them in the model the grid has), undented.
 
 ## A dent (`0x005556C0`)

@@ -28,16 +28,14 @@ The releases are on the project's [Releases](https://gitlab.com/sidecr3w/openjui
 has, for each version:
 
 - the release build: `OpenJuice.exe` (32-bit) and `OpenJuice64.exe` (64-bit), and the settings tool
-  `OpenJuiceConfig.exe` and `OpenJuiceConfig64.exe`;
-- the debug build: `OpenJuice_d.exe`, `OpenJuice64_d.exe`, `OpenJuiceConfig_d.exe` and `OpenJuiceConfig64_d.exe`
-  with their `.pdb` files, slower, for tracking problems down;
-- the source of that version.
+  `OpenJuiceConfig.exe` (32-bit, for both);
+- the source of that version (the debug builds, `_d`, are built from it, not released).
 
 Either the 32-bit or the 64-bit executable will do. The 32-bit one plays the game's movies with the game's own
 `binkw32.dll`; the 64-bit one decodes them itself.
 
 To see which build you have: the executable's Properties, Details: the description reads "OpenJuice unofficial
-patch 1.02 for Juiced (64-bit)" (or 32-bit, debug), the product version "1.02.5 (based on Juiced 1.01, Bug fixes)":
+patch 1.02 for Juiced (64-bit)" (or 32-bit, debug), the product version "1.02.7 (based on Juiced 1.01, Graphics)":
 the patch's version with the release, then the game it is built on. The first line of `OpenJuice.log` says the
 same. What each release changed: `CHANGELOG.md`.
 
@@ -60,19 +58,27 @@ Put the executable in the game's folder, the one holding `tracks\`, and start it
 shortcuts too. Away from the game's folder it says the folder was not found and stops, as the stock game does not
 start there either. The first start writes `OpenJuice.ini` next to the executable with the defaults.
 
-The game's own settings (resolution, windowed, antialiasing, ..) are those of the game's `JuicedConfig.exe`; when
-none are saved yet, OpenJuice starts `JuicedConfig.exe` first, as the stock game does.
+The game's own settings (resolution, windowed, ..) are those of the settings program; when none are saved yet,
+OpenJuice starts `OpenJuiceConfig` first (`JuicedConfig.exe` when it is not there), as the stock game starts
+`JuicedConfig.exe`.
 
-## The settings tool
+## The settings program
 
-`OpenJuiceConfig.exe` (and `OpenJuiceConfig64.exe`) is OpenJuice's copy of `JuicedConfig.exe`, the same window
-writing the same settings (`docs/spec/30-juiced-config.md`). Put it in the game's folder too; renamed
-`JuicedConfig.exe` (keep the original under another name), it is the one the game starts. Its texts are in the
-game's language, picked as the game picks it (`[Game] Language` of `OpenJuice.ini` too). It opens where DirectX 9.0c
-or later is installed. The original takes DxDiag's version letter for it whatever the version, and DirectX 10 .. 12
-report a blank letter, so on Windows Vista and later (Windows 11: DirectX 12) the original shows that DirectX 9.0c is
-needed; OpenJuiceConfig takes any DirectX past 9 for it. The debug builds (`_d`) take `--skip-directx-check`, which
-opens the window whatever the check finds.
+`OpenJuiceConfig.exe` (32-bit, for both executables of the game) is the settings program of JuicedConfig Extended
+(https://gitlab.com/sidecr3w/juicedconfig-extended) made for the unofficial patch: put it in the game's folder, next
+to `OpenJuice.exe` or `OpenJuice64.exe`. Its tabs are the settings the patch's game reads: the display (the monitor,
+full screen, a window without a frame (the picture's shape kept or stretched) or a window, the resolution, the shaders, the picture's shape: 4:3, Auto or a shape of its own, VSync
+and the frame rate limit, the textures' sharpness, the FPS counter, the threading), the
+controller (XInput and SDL controllers, its layout and the keyboard's,
+edited in pictures), the steering wheel (the wheels' map: a wheel, its pedals and a shifter apart; the dead zone, the
+rotation, the response, the force feedback; MultiTurn). The display's settings are the registry's
+(`HKEY_CURRENT_USER\Software\THQ\Juiced`, as `JuicedConfig.exe` writes them); the controller's and the wheel's are
+in `%APPDATA%\THQ\Juiced\JuicedConfigExt\controller.ini`, the file JuicedConfig Extended's plugin reads too. Save and
+play saves and starts the game (`OpenJuice64.exe` on 64-bit Windows when it is there, else `OpenJuice.exe`); the
+game's Controls menu opens its layout editor. Its texts are in eight languages
+(its language list, Auto: Windows'); `--lang <name>` shows one without keeping it. The anti-aliasing (MSAA, SMAA), the
+texture filter and the effects are set in the game: OPTIONS, GRAPHICS, ADVANCED, each in effect at once; the sound's
+EAX (with any card) in the main menu's OPTIONS, AUDIO, beside the volumes.
 
 ## OpenJuice.ini
 

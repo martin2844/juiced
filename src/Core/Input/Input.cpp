@@ -124,8 +124,28 @@ void digitalStep(Binding& b, int32_t raw) {
 
 }  // namespace
 
+// The fixed build: the semantic of JuicedConfigExt's controls in the format (none of DirectInput's).
+constexpr uint32_t kPadSemantic = 0x7F000000u;
+
 Control Device::control(const std::string& text, ControlKind kind) {
     const ControlText t = splitControl(text);
+    // A control of JuicedConfigExt's: its own value, one for each control.
+    if (const PadControls::Control* v = PadControls::find(t.semantic)) {
+        for (size_t i = 0; i < virtuals.size(); ++i) {
+            if (virtuals[i] == v) return {kind, static_cast<int32_t>(i)};
+        }
+        MapAction a;
+        a.appData = static_cast<uint32_t>(values.size());
+        a.semantic = kPadSemantic;
+        a.flags = t.flags;
+        a.label = t.label;
+        format.push_back(a);
+        values.push_back(0);
+        valueFlags.push_back(kind == ControlKind::Key ? 1 : 0);
+        virtuals.resize(values.size());
+        virtuals.back() = v;
+        return {kind, static_cast<int32_t>(a.appData)};
+    }
     const auto s = findSemantic(t.semantic);
     const uint32_t semantic = s ? s->code : 0;
     for (const MapAction& a : format) {
@@ -139,6 +159,7 @@ Control Device::control(const std::string& text, ControlKind kind) {
     format.push_back(a);
     values.push_back(0);
     valueFlags.push_back(kind == ControlKind::Key ? 1 : 0);
+    virtuals.resize(values.size());
     return {kind, static_cast<int32_t>(a.appData)};
 }
 
@@ -164,11 +185,32 @@ bool Device::hasInput() const {
             if (b != 0) return true;
         }
     }
+    // The fixed build: the controller's A or Start, as JuicedConfigExt's PadKeys gives the game.
+    if (pads != nullptr && pads->confirmDown()) return true;
     return state[kReturn] != 0;
 }
 
 float Device::read(const Control& c, const std::array<int32_t, 2048>& table) const {
     const auto at = static_cast<uint32_t>(c.index);
+    if (at < virtuals.size() && virtuals[at] != nullptr && pads != nullptr) {
+        const PadControls::Control& v = *virtuals[at];
+        switch (c.kind) {
+        case ControlKind::Key:
+            return pads->down(v) ? 1.0f : 0.0f;
+        case ControlKind::Axis:
+            return pads->value(v);
+        case ControlKind::AxisTable: {
+            // PadCurved_GetValue: the value x 100 to the nearest, within -100 .. 100, through the game's curve (past
+            // it with [Wheel] linearInput: x 0.01).
+            const long scaled = std::clamp(std::lround(pads->value(v) * 100.0f), -100L, 100L);
+            if (pads->linearSteering()) return static_cast<float>(scaled) * 0.01f;
+            const float f = static_cast<float>(scaled + 100) * 5.12f;
+            auto i = static_cast<uint32_t>(x87::nearest(f));
+            if (i > 0x3FF) i = 0x3FF;
+            return static_cast<float>(table[i]) * 0.0001f;
+        }
+        }
+    }
     switch (c.kind) {
     case ControlKind::Key:
         // 0x00594030: an index past 0x8000 (a character key's) reads 0.
@@ -179,8 +221,9 @@ float Device::read(const Control& c, const std::array<int32_t, 2048>& table) con
     case ControlKind::AxisTable: {
         // 0x00593F90 ([0x0079E89C] is never set): (the value + 100) x 5.12 made whole (cvtss2si with the SSE path,
         // [0x0079E5F8] & 2, to the nearest; x87 cut otherwise; here the nearest), at most 0x3FF, the table's entry x
-        // 0.0001.
+        // 0.0001. The fixed build sets it with [Wheel] linearInput: the value x 0.01.
         if (at >= values.size()) return 0.0f;
+        if (pads != nullptr && pads->linearSteering()) return static_cast<float>(values[at]) * 0.01f;
         const float f = static_cast<float>(values[at] + 100) * 5.12f;  // [0x006FF9D4]
         auto i = static_cast<uint32_t>(x87::nearest(f));
         if (i > 0x3FF) i = 0x3FF;
@@ -227,6 +270,7 @@ void Input::setControllers(const std::vector<ControllerPort*>& controllers) {
     }
     // 0x00591335: no controller, one device of the keyboard alone.
     if (m_devices.empty()) m_devices.emplace_back();
+    for (Device& d : m_devices) d.pads = &m_pads;
     for (size_t i = 0; i < m_devices.size(); ++i) {
         Controller c;
         c.device = static_cast<int32_t>(i);
@@ -284,6 +328,7 @@ void Input::empty(Device& d) {
     d.format.clear();
     d.values.clear();
     d.valueFlags.clear();
+    d.virtuals.clear();
     d.mapped = false;
     d.mapName.clear();
     if (d.controller != nullptr) {
@@ -310,7 +355,13 @@ void Input::registerMap(const std::string& name, Device& d) {
     if (map == nullptr) return;
     d.addCharacterKeys(name);
     for (const ControlAction& a : map->actions) {
-        const auto s = findSemantic(splitControl(a.controlText).semantic);
+        auto s = findSemantic(splitControl(a.controlText).semantic);
+        // The fixed build: JuicedConfigExt's controls by their kind (its plugin's ControlKind: 1 an axis, 0 a button).
+        if (!s) {
+            if (const PadControls::Control* v = PadControls::find(splitControl(a.controlText).semantic)) {
+                s = Semantic{"", 0, v->kind == PadActions::Kind::Axis ? 1 : 0};
+            }
+        }
         if (!s) continue;
         const float sign = a.negative ? -1.0f : 1.0f;
         if (s->kind == 0) {
@@ -589,6 +640,8 @@ void Input::poll(const std::vector<KeyEvent>& events, bool active, float dt) {
     if (!active) m_keyboard.buffer.clear();
     // 0x0058FE50: the first player's device (0x005918E0) by the polls before.
     takePlayer(0);
+    // The fixed build: JuicedConfigExt's controls with the controller the platform read and the keys of the window.
+    m_pads.update(m_pad, m_keyboard.physical, dt);
     for (Device& d : m_devices) pollDevice(d, active, dt);
     // 0x005918C0: then the FF manager's channels read (0x00592050).
     if (m_wheels != nullptr) m_wheels->read();
@@ -762,6 +815,41 @@ int32_t Input::digital(size_t slot, int player) const {
     const Controller* c = const_cast<Input*>(this)->playerController(player);
     if (c == nullptr || slot >= c->driver.size()) return 0;
     return slotValue(m_devices[static_cast<size_t>(c->device)], c->driver[slot]);
+}
+
+bool Input::driverDown(std::string_view action, int player) const {
+    const Controller* c = const_cast<Input*>(this)->playerController(player);
+    if (c == nullptr || c->device < 0 || static_cast<size_t>(c->device) >= m_devices.size()) return false;
+    const Device& d = m_devices[static_cast<size_t>(c->device)];
+    const auto chosen = static_cast<int32_t>(setting(static_cast<save::Settings::Field>(
+        save::Settings::kDriverMap + 4 * static_cast<uint32_t>(std::max(d.index, 0)))));
+    const char* name = kDriverMaps[chosen >= 0 && chosen < 4 ? chosen : 0];
+    for (const ActionMap& m : m_maps) {
+        if (!sameText(m.name, name) || !(m.device.empty() || sameText(m.device, "ACTION_MAP"))) continue;
+        for (const ControlAction& a : m.actions) {
+            if (!sameText(a.name, action)) continue;
+            for (const std::string* text : {&a.controlText, &a.control2Text}) {
+                if (text->empty()) continue;
+                const std::string semantic = splitControl(*text).semantic;
+                if (const PadControls::Control* v = PadControls::find(semantic)) {
+                    if (d.pads == nullptr) continue;
+                    if (v->kind == PadActions::Kind::Axis) {
+                        if (d.pads->value(*v) * (a.negative ? -1.0f : 1.0f) > a.deadzone) return true;
+                    } else if (d.pads->down(*v)) {
+                        return true;
+                    }
+                    continue;
+                }
+                const auto s = findSemantic(semantic);
+                if (s && (s->code & 0xFFFFFF00u) == 0x81000400u && m_keyboard.acquired &&
+                    m_keyboard.physical[s->code & 0xFF]) {
+                    return true;
+                }
+            }
+        }
+        break;
+    }
+    return false;
 }
 
 float Input::analogue(size_t slot, int player) const {

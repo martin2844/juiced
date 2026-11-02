@@ -10,7 +10,7 @@ let
   };
 in pkgs.stdenv.mkDerivation {
   pname = "openjuice";
-  version = "1.02.5-linux-mods1";
+  version = "1.02.7-linux-mods1";
   src = pkgs.lib.cleanSourceWith {
     src = ./.;
     filter = path: type:

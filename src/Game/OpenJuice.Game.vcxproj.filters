@@ -429,10 +429,19 @@
     <ClCompile Include="Platform\InputDevices.cpp">
       <Filter>Platform</Filter>
     </ClCompile>
+    <ClCompile Include="Platform\Pads.cpp">
+      <Filter>Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform\WheelInput.cpp">
+      <Filter>Platform</Filter>
+    </ClCompile>
     <ClCompile Include="Platform\Platform.cpp">
       <Filter>Platform</Filter>
     </ClCompile>
     <ClCompile Include="Platform\Settings.cpp">
+      <Filter>Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform\Screen.cpp">
       <Filter>Platform</Filter>
     </ClCompile>
     <ClCompile Include="Platform\SystemKeys.cpp">
@@ -540,6 +549,45 @@
     <ClCompile Include="Scene\LensFlares.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
+    <ClCompile Include="Scene\Headlights.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\HeadlightShadows.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\VolumetricLight.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\LampShadows.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\LightSets.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\Clouds.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\FlameLights.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\NearestFade.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\AmbientOcclusion.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\SunShadows.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\TunnelLights.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\DepthShaders.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\HeatHaze.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
     <ClCompile Include="Scene\Particles\CameraEmitter.cpp">
       <Filter>Scene\Particles</Filter>
     </ClCompile>
@@ -637,6 +685,9 @@
       <Filter>UI</Filter>
     </ClCompile>
     <ClCompile Include="UI\WindowFixes.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\WideScreen.cpp">
       <Filter>UI</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1013,10 +1064,19 @@
     <ClInclude Include="Platform\InputDevices.h">
       <Filter>Platform</Filter>
     </ClInclude>
+    <ClInclude Include="Platform\Pads.h">
+      <Filter>Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform\WheelInput.h">
+      <Filter>Platform</Filter>
+    </ClInclude>
     <ClInclude Include="Platform\Platform.h">
       <Filter>Platform</Filter>
     </ClInclude>
     <ClInclude Include="Platform\Settings.h">
+      <Filter>Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform\Screen.h">
       <Filter>Platform</Filter>
     </ClInclude>
     <ClInclude Include="Platform\SystemKeys.h">
@@ -1092,6 +1152,45 @@
       <Filter>Race\TrackView</Filter>
     </ClInclude>
     <ClInclude Include="Scene\LensFlares.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\Headlights.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\HeadlightShadows.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\VolumetricLight.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\LampShadows.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\LightSets.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\Clouds.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\FlameLights.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\NearestFade.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\AmbientOcclusion.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\SunShadows.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\TunnelLights.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\DepthShaders.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\HeatHaze.h">
       <Filter>Scene</Filter>
     </ClInclude>
     <ClInclude Include="Scene\Particles.h">
@@ -1200,6 +1299,9 @@
       <Filter>UI</Filter>
     </ClInclude>
     <ClInclude Include="UI\WindowFixes.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\WideScreen.h">
       <Filter>UI</Filter>
     </ClInclude>
   </ItemGroup>

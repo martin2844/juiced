@@ -390,10 +390,10 @@ void LinkLobby::update(OnlineHost& host, ui::Screen& s, uint32_t event) {
         }
     }
     if (host.netKeys(event, net::SessionStage::Lobby, true)) return;
-    // The fixed build's lobby chat of an online session: its hint; SELECT2 opens it (Frontend/Network/LobbyChat).
+    // The fixed build's lobby chat of an online session: its hint; SELECT3 (TAB) opens it (Frontend/Network/LobbyChat).
     lobbyChatHint(s);
-    if (event == input::kSelect2 && lobbyChatOn()) {
-        openLobbyChat(host);
+    if (event == input::kSelect3 && lobbyChatOn()) {
+        openLobbyChat(host, "link_lobby");
         return;
     }
     if (event != input::kSelect || net == nullptr || !net->transport.hosting()) return;
@@ -589,6 +589,12 @@ void LinkSelCar::enter(CustomRaceHost& host, ui::Screen& s) {
 void LinkSelCar::update(CustomRaceHost& host, ui::Screen& s, uint32_t event) {
     GameData* data = host.gameData();
     if (host.netKeys(event, net::SessionStage::Cars, true)) return;
+    // The fixed build's lobby chat here too: its hint; SELECT3 (TAB) opens it (Frontend/Network/LobbyChat).
+    lobbyChatHint(s);
+    if (event == input::kSelect3 && lobbyChatOn()) {
+        openLobbyChat(host, "link_selcar");
+        return;
+    }
     net::NetGame* net = net::netGame();
     if (net == nullptr || data == nullptr) return;
     GameData& d = *data;

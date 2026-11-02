@@ -2,7 +2,8 @@
 // The post effects of the race's 3D view (docs/spec/12-rendering.md, "The post effects"): with an effect asked for the
 // view's scene goes into a render target (0x00516880), and the view's end (0x00516D20) draws the motion blur, the
 // depth of field, the copy into the back buffer with the exposure, the glow and the director's cut over it, then
-// the frame's target becomes the previous one.
+// the frame's target becomes the previous one. The fixed build draws no depth of field (the user, 2026-10-28: removed
+// altogether, as its DOF row of the graphics options and the cameras' asking for it).
 
 #include "Render/Materials.h"
 #include "Render/Renderer3d.h"
@@ -27,6 +28,15 @@ class Engine;
 // 0x00401F9D (the camera leaving the car's node, 0x00401F90): the exposure 1 and its speed 0.
 void resetExposure();
 
+// 0x00512290's step of the exposure (LIGHT FLARES): its speed toward the aim 0.8 of the weighted brightness (0.7 of
+// the measure's high end, 0.3 of its mean) times the exposure, half the speed kept, within -0.02 .. 0.02; the exposure
+// within 0.8 .. `most` (the stock's 2, the fixed build's CUSTOM kCustomExposure), its speed stopped at the limits.
+struct ExposureStep {
+    float exposure = 1.0f;
+    float speed = 0.0f;
+};
+ExposureStep stepExposure(ExposureStep now, float high, float mean, float most);
+
 // A material of the class TexShape2D (0x10002, 0x0052CE30): Material_TexShape2D, a texture, parameters 0 (added) and
 // 1 (opaque).
 std::unique_ptr<render::Material> makeTexShape2d(Engine& engine);
@@ -39,8 +49,6 @@ public:
         bool glow = true;
         bool glowFirst = true;
         uint32_t clear = 0xFF000000u;
-        // The fixed build's: the cars' headlights on (night or wet; TrackView), the glow at 0.7 of its strength.
-        bool headlights = false;
     };
 
     // The renderer's start (0x005146D6, 0x00514745, 0x005142B3, 0x005142D8): with a size for them (the settings'
@@ -54,12 +62,12 @@ public:
     // then takes the view's viewport (the target's size), its clear (colour and depth by the target) and the 2D
     // constants c22, c23 (the view's size).
     void begin(const render::Camera& camera, View& view, uint32_t x, uint32_t y, uint32_t width, uint32_t height,
-               bool cutBlend, bool alwaysDepthOfField);
+               bool cutBlend);
     // 0x00516D20: the effects into the back buffer (cutAmount the director's transition, [0x0075ABC4]), the targets
     // swapped, the interface's states.
     // `smears`: with the camera's screen smears (+0x234) the effects manager's SMEAR emitters (0x005224E0), given the
     // view's corners.
-    void end(const render::Camera& camera, View& view, float cutAmount, bool alwaysDepthOfField,
+    void end(const render::Camera& camera, View& view, float cutAmount,
              const std::function<void(float, float, float, float)>& smears = {});
 
     // The target taken last ([0x0075F168]): a texture drawn into taken through it (0x0051F660: not again when it is
@@ -80,8 +88,11 @@ private:
 
     bool shaders() const;           // no [0x0079E664] and [0x0079E66C]
     bool motionBlurOn() const;      // 0x005A3370: the settings' +0x54 with shaders
-    bool depthOfFieldOn(const render::Camera& camera, bool always) const;
+    // The glow and its exposure: the settings' +0x58 with shaders, the view's own.
+    bool glowOn(const View& view) const;
     void makeTarget(Target& target, uint32_t width, uint32_t height);
+    // A target of the scene: with the frame's samples (the fixed build's MSAA with the effects).
+    void makeSceneTarget(Target& target, uint32_t width, uint32_t height);
     // 0x0051F660 and the like: the target taken unless it is the one taken last ([0x0075F168]; 0 the back buffer);
     // taking one empties the texture stages 0 .. 3 (0x0051F3E0).
     void take(const Target* target);
@@ -97,15 +108,9 @@ private:
     // with a program, that program's pass over it.
     void drawToBack(const render::GameTexture& texture, float x, float y, float width, float height,
                     bool alphaOnly, render::Program* program);
-    void measureExposure(float width, float height);  // 0x00520900, 0x00512290
+    void measureExposure(float width, float height, bool glow);  // 0x00520900, 0x00512290
     void cutBlend(float amount, float x0, float y0, float x1, float y1);  // 0x00520410
-    void depthOfField(const render::Camera& camera, float x0, float y0);  // 0x005214C0
-    void glow(float x0, float y0, float x1, float y1, bool first, float strength);  // 0x00521C80
-    // 0x00520EF0: 2DBlur (0x10005) with -2 and the texture, its pass, the engine's c52 .. c55 0.
-    void blurPass(const render::GameTexture& texture);
-    // 0x00520FC0: a quad of transformed vertices (XYZRHW, a colour, four u v with their offsets of 1 / 256) from the
-    // second buffer (+0x04) at the depth z.
-    void blurQuad(uint32_t colour, float x0, float y0, float x1, float y1, float z);
+    void glow(float x0, float y0, float x1, float y1, bool first);      // 0x00521C80
 
     // The fixed build's split screen (Game/Scene/PostEffectsSplit.cpp): a view that is not the whole screen takes its
     // own pair of the scene's targets, of its size, and its passes go at its own places from (0, 0), the back buffer
@@ -132,14 +137,13 @@ private:
     bool m_drawing = false;
     render::DeclarationId m_declaration2d = 0;
     // The effects' object (+0x224): the vertex buffer (+0x00), the samplers (+0x08 linear clamped, +0x0C linear
-    // wrapped, point between levels), the blur targets (+0x14 settings +0x24 x +0x28, +0x1C +0x1C x +0x20) cleared
-    // white with no alpha, the exposure's program (+0x20).
+    // wrapped, point between levels), the small blur target (+0x14, the settings' +0x24 x +0x28) cleared white with no
+    // alpha, the exposure's program (+0x20). The depth of field's second buffer (+0x04) and wide blur target (+0x1C)
+    // are not made by the fixed build.
     render::BufferId m_buffer = 0;
-    render::BufferId m_buffer2 = 0;
     render::SamplerParams m_clamped{2, 2, 1, 3, 3, 0.0f};
     render::SamplerParams m_wrapped{2, 2, 1, 1, 1, 0.0f};
     Target m_blurSmall;
-    Target m_blurWide;
     render::Program* m_exposureProgram = nullptr;
     bool m_exposureLoaded = false;
     // The materials of the 2D classes (the material manager's +4 by class id).

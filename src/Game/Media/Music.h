@@ -52,6 +52,9 @@ public:
 
 private:
     std::unique_ptr<audio::Player> m_player;
+    // Not of the game: the starts since the music last played, for the log (a song that does not play, music.dsb not
+    // read, is started again every frame, as the stock's).
+    uint32_t m_unplayedStarts = 0;
 };
 
 // [game + 0x48]: the one the game makes (0x0040D200).

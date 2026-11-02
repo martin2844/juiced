@@ -1,7 +1,7 @@
 #pragma once
-// The files of a race track (docs/spec/15-tracks.md; the byte layouts: the Blender add-on's docs/technical TDF, D8G,
-// D8M_ROUTE, D8W_D8T, SHD_TXB, SPL): the track's routes and the layers each is built of, the geometry layers, a
-// route's materials, its textures and baked-light tiles, its racing lines and starting grid.
+// The files of a race track (docs/spec/15-tracks.md; the byte layouts: docs/spec/31-file-layouts.md): the track's
+// routes and the layers each is built of, the geometry layers, a route's materials, its textures and baked-light
+// tiles, its regions, the fly-by, its racing lines and starting grid.
 
 #include "Core/Formats/Model.h"
 

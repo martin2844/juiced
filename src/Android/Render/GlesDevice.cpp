@@ -1083,6 +1083,8 @@ void GlesDevice::letLoadingRun() {
         if (std::chrono::steady_clock::now() >= deadline)
             break;
     } while (workReady.wait_until(lock, deadline, [this] { return !work.empty(); }));
+    lock.unlock();
+    IRenderDevice::letLoadingRun();
 }
 void GlesDevice::waitForService() {
     if (std::this_thread::get_id() != owner)

@@ -51,28 +51,43 @@ public:
         projectionChanged();
     }
     void setFar(float value);                             // 0x00552990
+    // The fixed build's wide screens (Render/Display): the projection's and the side planes' angles widened, the
+    // tangents of the half angles times across (Hor+) and down (Vert+); the angles setFov keeps, the parts' distances
+    // (lodScale) and fovSin stay the 4:3 view's. 1 and 1: the stock's.
+    void setWiden(float across, float down);
+    float widen() const { return m_widen; }
     float fov() const { return m_fov; }
     float nearPlane() const { return m_near; }  // 0x005529E0
     float farPlane() const { return m_far; }    // 0x005529F0
     // The scale of the parts' distance ranges (0x0054CA00): +0x1DC × the field of view's sin² × 1.5.
-    float lodScale() const { return lodFactor * m_sin2; }
+    float lodScale() const { return m_lodFromEye ? m_lodEyeScale : lodFactor * m_sin2; }
+    // The place the parts' distances are taken from: the camera's.
+    Vec4 lodOrigin() {
+        if (m_lodFromEye) return m_lodEye;
+        const Mat34& w = world();
+        return {w[3], w[7], w[11], 0.0f};
+    }
+    // The fixed build's sun cascades (Game/Scene/SunShadows): the parts' distances and their scale taken from another
+    // camera (the view), so that the casters are the parts the view draws.
+    void setLodEye(const Vec4& place, float scale) {
+        m_lodEye = place;
+        m_lodEyeScale = scale;
+        m_lodFromEye = true;
+    }
     float lodFactor = 1.0f;  // +0x1DC
     // [11] 0x0054C9F0: the sine of half the field of view across (+0xAC).
     float fovSin() const { return m_sin; }
 
     // The post effects the view's end draws for this camera (0x00516D20): the motion blur's middle (+0x224) and
-    // edge (+0x228) amounts, the depth of field (+0x22C), its mode (+0x230: set to 2 with it by the views of the race's
-    // camera, read by nothing) and the screen's smears (+0x234, the effects manager's SMEAR emitters, 0x005224E0).
+    // edge (+0x228) amounts and the screen's smears (+0x234, the effects manager's SMEAR emitters, 0x005224E0). The
+    // stock's depth of field (+0x22C) and its mode (+0x230) are not kept: the fixed build draws none.
     float blurMiddle = 0.0f;   // +0x224
     float blurEdge = 0.0f;     // +0x228
-    bool depthOfField = false; // +0x22C
-    int32_t depthOfFieldMode = 0; // +0x230
     bool smears = false;       // +0x234
-    // [24] 0x0054CD90: the point the depth of field keeps sharp (+0x250); +0x23C the point's clip depth (z / w
-    // through the world-to-clip matrix, rounded), read by nothing found. [25] 0x0054CE60 gives the point back.
+    // [24] 0x0054CD90: the point the camera looks at (+0x250; the stock's depth of field kept it sharp, the cars' cube
+    // is drawn round it); the stock's +0x23C, its clip depth, is read by nothing. [25] 0x0054CE60 gives it back.
     void setFocus(const Vec4& point);
     Vec4 focus{};              // +0x250
-    int32_t focusDepth = 0;    // +0x23C
 
     // 0x00552180: the view matrix (the world matrix inverted) and the world-to-clip matrix, then the planes of the
     // view (0x005521D0).
@@ -98,7 +113,15 @@ private:
     float m_near = 15.0f;   // +0xB8
     float m_far = 10000.0f; // +0xBC
     float m_aspect = 0.75f; // +0xC0
+    // The fixed build's widening and the angles it gives the projection and the planes (m_fov, m_fovY at 1).
+    float m_widen = 1.0f;
+    float m_widenY = 1.0f;
+    float m_viewX = 0.0f;
+    float m_viewY = 0.0f;
     bool m_orthographic = false;  // +0x178
+    bool m_lodFromEye = false;
+    Vec4 m_lodEye{};
+    float m_lodEyeScale = 0.0f;
     Mat34 m_view = identity34();  // +0xC8
     Mat44 m_projection{};         // +0xF8
     Mat44 m_worldToClip{};        // +0x138

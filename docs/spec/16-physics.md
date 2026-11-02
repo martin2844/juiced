@@ -298,7 +298,7 @@ face's crossing; the depth is the distance of the face's deepest corner behind t
 offset along the triangle's normal and the depth takes the offset; deeper than 0 it touches with the mesh collider's
 ID, the face's zone, the triangle's normal.
 
-The meshes of a car (`.ocd`, the add-on's `OCD`) are read from the car's folder: `cars\<name>\<File>`.
+The meshes of a car (`.ocd`, `31-file-layouts.md`) are read from the car's folder: `cars\<name>\<File>`.
 
 ## Bodies against bodies
 
@@ -384,7 +384,10 @@ last of the list take its place, which is skipped); then the nodes of the primar
 follow their bodies (`[4] 0x004F2C00` → `0x004F01E0`): a body put to sleep keeps its node of the step before. A
 primary body whose spheres overlap a body that is not primary wakes it (`0x0053D0C0`). A body is also synced when it is placed (`0x00429D40`, `0x004F2C10` and `0x004F3150` with their flag
 set) and after each step of the grid's settling and a respawn. A player's car does not collide (`+0x78` = 0) while
-its ghost time after a respawn lasts (`0x0041E200`).
+its ghost time after a respawn lasts (`0x0041E200`, at `0x0041F3F0`); after it the car collides again off line, and
+online only in a session hosted with collisions (the online arcade's session `+0x34` or the online career's `+0x44`
+1). Online without collisions every car is made not colliding (`0x00485F86`: with the matchmaking, an arcade session
+in a network game or a career session with the setting 0) and stays so.
 
 ## The race start
 

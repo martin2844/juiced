@@ -2,8 +2,10 @@
 
 #include "Game/Scene/Scene3d.h"
 
+#include <algorithm>
 #include <bit>
 #include <cmath>
+#include <optional>
 #include <cstring>
 
 namespace oj::scene {
@@ -27,6 +29,22 @@ void tiltFlare(Mat34& world) {
 }
 
 }  // namespace
+
+std::array<float, 3> glowColour(const Ddt& image) {
+    const bool whole = image.pixels.size() >= levelBytes(image.format, image.width, image.height);
+    if (image.width == 0 || image.height == 0 || !whole) return {1.0f, 1.0f, 1.0f};
+    const std::vector<uint32_t> pixels = decodeLevel(image.format, image.width, image.height, image.pixels.data());
+    double sum[3] = {};
+    for (const uint32_t p : pixels) {
+        const double c[3] = {static_cast<double>((p >> 16) & 0xFF), static_cast<double>((p >> 8) & 0xFF),
+                             static_cast<double>(p & 0xFF)};
+        const double weight = static_cast<double>(p >> 24) * std::max({c[0], c[1], c[2]});
+        for (size_t k = 0; k < 3; ++k) sum[k] += c[k] * weight;
+    }
+    const double most = std::max({sum[0], sum[1], sum[2]});
+    if (most <= 0.0) return {1.0f, 1.0f, 1.0f};
+    return {static_cast<float>(sum[0] / most), static_cast<float>(sum[1] / most), static_cast<float>(sum[2] / most)};
+}
 
 LensFlares::LensFlares(Engine& engine) : m_engine(engine) {}
 
@@ -65,6 +83,14 @@ void LensFlares::makeReflectionBatches(Flare& f) {
     };
     f.reflectionBatch = batchOf(f.def->reflection);
     f.roadBatch = batchOf(f.def->yReflection);
+    if (f.roadBatch == SIZE_MAX) return;
+    auto colour = m_roadColours.find(f.def->yReflection);
+    if (colour == m_roadColours.end()) {
+        const std::optional<Ddt> image = m_engine.textureImage(f.def->yReflection);
+        colour = m_roadColours.emplace(f.def->yReflection, image ? glowColour(*image) : std::array<float, 3>{1, 1, 1})
+                     .first;
+    }
+    f.roadColour = colour->second;
 }
 
 void LensFlares::makeDevice() {
@@ -224,6 +250,7 @@ void LensFlares::quad(render::Camera& camera, Flare& f) {
         else if (scale > 1.0f) scale = 1.0f;
         size = seen / (seen + 2000.0f) * f.def->size * left * 0.5f / scale;
     }
+    fade *= f.crowd;
     if (!(fade > 0.003921569f)) return;
     if (!camera.sphereVisible({px, py, pz, f.world[11]}, size)) return;
     const auto alpha = static_cast<uint32_t>(static_cast<int32_t>(left * fade * 255.0f));
@@ -268,12 +295,63 @@ void LensFlares::draw(render::Camera& camera) {
         device.setRenderState(RenderState::ZWriteEnable, 1);
         device.setRenderState(RenderState::ColourWriteEnable, ColourWrite::All);
     }
+    if (calmCrowds) crowdShares(camera);
     for (Flare& f : m_flares) quad(camera, f);
+    // The shares are this view's: the cube's faces (drawChosen) take their flares whole.
+    for (Flare& f : m_flares) f.crowd = 1.0f;
     device.setRenderState(RenderState::ZEnable, 1);
     drawBatches();
 }
 
-void LensFlares::drawBatches() {
+void LensFlares::crowdShares(render::Camera& camera) {
+    struct Seen {
+        Flare* flare;
+        std::array<float, 3> place;
+        std::array<float, 3> look;  // toward it from the camera, unit
+        float radius;               // its angular radius
+        float weight;               // its visibility
+    };
+    const Mat34& c = camera.world();
+    std::vector<Seen> seen;
+    for (Flare& f : m_flares) {
+        f.crowd = 1.0f;
+        if (f.def->screen != 0.0f || f.visibility <= 0.0f || (f.on != nullptr && !*f.on)) continue;
+        const float dx = f.world[3] - c[3], dy = f.world[7] - c[7], dz = f.world[11] - c[11];
+        const float distance = std::sqrt(dx * dx + dy * dy + dz * dz);
+        if (distance <= 1.0f) continue;
+        seen.push_back({&f, {f.world[3], f.world[7], f.world[11]}, {dx / distance, dy / distance, dz / distance},
+                        kCrowdCore * f.def->size * 0.5f / distance, std::min(f.visibility, 1.0f)});
+    }
+    for (Seen& a : seen) {
+        float overlaps = 0.0f;
+        for (const Seen& b : seen) {
+            if (&a == &b) continue;
+            const float px = a.place[0] - b.place[0], py = a.place[1] - b.place[1], pz = a.place[2] - b.place[2];
+            if (px * px + py * py + pz * pz < kCrowdSame * kCrowdSame) continue;
+            const float ex = a.look[0] - b.look[0], ey = a.look[1] - b.look[1], ez = a.look[2] - b.look[2];
+            const float apart = std::sqrt(ex * ex + ey * ey + ez * ez);
+            const float reach = a.radius + b.radius;
+            if (apart < reach) overlaps += (1.0f - apart / reach) * b.weight;
+        }
+        a.flare->crowd = 1.0f / std::sqrt(1.0f + overlaps);
+    }
+}
+
+void LensFlares::drawChosen(render::Camera& camera, const std::function<bool(const Flare&)>& take) {
+    bool any = false;
+    for (Flare& f : m_flares) {
+        if (f.def->screen != 0.0f || !take(f)) continue;
+        flareWorld(f);
+        const float seen = f.visibility;
+        f.visibility = 1.0f;
+        quad(camera, f);
+        f.visibility = seen;
+        any = true;
+    }
+    if (any) drawBatches(true);
+}
+
+void LensFlares::drawBatches(bool depthTest, bool noDepth) {
     FlareDevice& d = m_engine.flareDevice();
     render::Renderer3d& r = m_engine.renderer();
     render::IRenderDevice& device = m_engine.device();
@@ -287,7 +365,7 @@ void LensFlares::drawBatches() {
         device.setDeclaration(d.declaration);
         r.lastDeclaration = d.declaration;
         r.beginMaterialPass(*b.material, 0);
-        device.setRenderState(RenderState::ZEnable, d.queries ? 0 : 1);
+        device.setRenderState(RenderState::ZEnable, noDepth || (d.queries && !depthTest) ? 0 : 1);
         device.setStream(b.vertices, 0x20);
         device.setIndices(d.indices);
         device.drawIndexed(Primitive::TriangleList, count, 0, count / 4 * 2);

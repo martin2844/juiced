@@ -34,7 +34,7 @@ FreeCameraMouse& freeCameraMouse();
 
 // The game's language as the English build 1.0.1 picks it (0x0059E300): the settings' language id (JuicedConfig's
 // `language`) when it is not negative, else the user's (GetUserDefaultLangID), by languageOfLangId; [Game] Language of
-// OpenJuice.ini names one instead (an unknown name is logged and passed over).
+// OpenJuice.ini names one instead, the letters' case aside (an unknown name is logged and passed over).
 Language chooseLanguage(int32_t settingsLanguage, const std::string& configLanguage);
 // The language of the start's messages (startupText), set as the main function starts.
 void setStartupLanguage(const Language& language);
@@ -52,8 +52,15 @@ std::wstring startupText(int index);
 void errorBox(const std::wstring& text, const std::wstring& caption, bool overDesktop = false);
 
 // The configuration tool the adapter check starts: JuicedConfig.exe of the current directory, waited for; when it
-// does not start, startupText(3) ("Cant find JuicedConfig", 0x0059C846) and false.
-bool runConfigurationTool();
+// does not start, startupText(3) ("Cant find JuicedConfig", 0x0059C846) and false. The fixed build starts its own
+// OpenJuiceConfig first (runSettingsProgram; `firstStart`: --first-run, its Save and play only saving, the game
+// waits), JuicedConfig.exe when there is none.
+bool runConfigurationTool(bool firstStart = true);
+
+// The fixed build's settings program (docs/fixes.md Added: JuicedConfigExt's, OpenJuiceConfig): beside the executable,
+// of its bitness first (with a debug build its debug build first), else the other; started with `arguments` and
+// waited for. False when none is there or it does not start.
+bool runSettingsProgram(const std::wstring& arguments);
 
 // What the game window's procedure does with a WM_SYSCOMMAND (0x0059BE2E), by its command and parameter: SC_KEYMENU
 // minimizes the window with Enter (Alt+Enter) and is dropped with any other key (Alt alone, Alt and a letter), so the
@@ -73,6 +80,8 @@ public:
     bool start(const char* title, const LaunchOptions& options, Settings& settings);
 
     HWND window() const { return m_window; }
+    // 0x00512B30: the adapter of the settings (the last whose DeviceIdentifier is the Adapter value), else the first.
+    uint32_t adapter() const { return m_adapter; }
 
     // Handles the waiting messages; false once the game was asked to quit.
     bool pumpMessages();
@@ -90,17 +99,26 @@ public:
     // The keys that went down or up in the window since the last call, in order (the game reads the keyboard through
     // DirectInput; the scan codes of the window messages are the same codes).
     std::vector<input::KeyEvent> takeKeyEvents();
+    // The fixed build's lobby chat: the printable characters (0x20 .. 0x7E) the window was sent as WM_CHAR since the
+    // last call, the keyboard's layout and shift applied (the game's own typing knows only the letters, the digits,
+    // '-', '@', '.' and the space: 0x00595A80), at most 64.
+    std::string takeTypedText();
 
 private:
     bool findAdapter(int attempt, const LaunchOptions& options, bool& matched);
     bool registerClass(bool quiet);
     bool registerWindowClass();
     bool createWindow(const char* title, const Settings& settings, bool hidden);
+    // The fixed build's screen: the adapter of the settings' Monitor, the monitor's areas, the full screen mode (none
+    // of the resolution: the window without a frame), Windowed as the mode is.
+    void chooseScreen(Settings& settings);
 
     HWND m_window = nullptr;
+    uint32_t m_adapter = 0;
     void* m_instanceMutex = nullptr;
     bool m_classRegistered = false;
     bool m_quit = false;
+    std::string m_typed;
 };
 
 }  // namespace oj
