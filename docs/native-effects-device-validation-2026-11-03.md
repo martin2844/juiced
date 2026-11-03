@@ -98,10 +98,14 @@ is not a claim that every kit on every vehicle has been visually re-reviewed.
   pulled archive contains the new opaque backbuffer BMP, whose decoded RGB
   is constant `(160,64,32)` with no image alpha channel.
 * ARM64 debug and signed release Gradle builds: successful.
-* Mac earlier native run: **730 unit assertions passed**, then all **17** GPU
-  cases including the new TEXCOORD test passed before the Mac disconnected.
-  RGB inspection of the earlier Metal day/night races and imported-405 gallery
-  disproves the black-surface blocker reported in the earlier checkpoint.
+* Mac final native run after reconnection: **730 unit assertions passed** and
+  all **18** GPU cases passed, including opaque screenshots and TEXCOORD alpha.
+  Both a stock Focus day race and a modded 405 night/wet race rendered 600
+  frames, with acceleration and route progress recorded. Their fresh opaque
+  BMPs were inspected. A third 600-frame 405 race ran through LaunchServices
+  from the installed Mod Garage app with the actual updated mod directory.
+* Mac platform CTest checks rebuilt against the final backend: controls,
+  controls overlay and reflection regressions all passed (**3/3**).
 
 The broad unit runner was initially invoked without `--unit` or game/save fixture
 arguments and correctly reported two missing integration fixtures. The required
@@ -119,11 +123,37 @@ The isolated checkout is
 there in the preceding pass. The TEXCOORD correction compiled and passed its
 GPU test on the Mac during this follow-up.
 
-The Mac subsequently went offline at Tailscale address `100.98.44.120`.
-The final BGRX screenshot-export correction is ready in local source, but its
-last Mac rebuild/test still requires reconnection. The normal installed Mac app
-and user support/save directory have not been replaced. Do not describe that
-last rebuild as completed until its log has been obtained.
+After the Mac reconnected at `100.98.44.120`, the final BGRX export correction
+was rebuilt and tested on its actual Metal GPU. This closes the pending Mac
+rebuild from the previous checkpoint.
+
+Installed applications, both bundle version **1.2.7** (engine **1.02.7**):
+
+* `/Applications/Juiced.app`: the native base game.
+* `/Applications/Juiced Mod Garage.app`: the native game with the current mod
+  collection. Its launcher retains the existing
+  `~/Library/Application Support/Juiced Mods/ModGarage` save directory.
+
+The old applications and live mod directory were retained in
+`/Users/martin/Projects/juiced/openjuice-effects-20261103/out/mac-release/previous-20261103.noindex`.
+That directory also contains a compressed backup of both original user-support
+trees and SHA256 manifests before installation and after the installed-app test.
+All **12** existing user save/configuration files matched exactly. Tests used
+separate `/tmp/oj-effects-*` support/save directories.
+
+The live `~/JuicedMods/mods` collection now has all 11 current packages, including
+Ferrari revision 4, Street Cars revision 8, Wave 2 revision 21 and AI Hero
+Liveries revision 2. Existing package toggles and root configuration were kept.
+The previous six-package collection remains available in the rollback directory.
+
+`cmake/BundleMac.cmake` copies and relocates the actual non-system dylib dependency
+tree, then applies and verifies ad-hoc signatures. Both installed apps passed
+`codesign --verify --deep --strict`. Runtime dyld tracing of the installed native
+executable showed **zero** libraries loaded from `/opt/homebrew`. This is local
+packaging/signing, not Apple notarization or an Intel compatibility test.
+The mod-app packager now inherits the base app version instead of stamping every
+build as 0.3.5. LaunchServices successfully opened the staged mod-app selector
+for 240 frames and the installed mod-app race for 600 frames.
 
 ## Evidence and reproduction
 
@@ -133,6 +163,8 @@ Contains the signed APK, old APK, save backup and per-file hash manifests,
 actual RP5 screenshots, GPU captures, negative-control logs and build logs.
 `rp5-before-release.tar` contains an isolated-race log/capture and read-only
 copies of the user's saves. Keep it private; it is not a release asset.
+The `mac-final` subdirectory holds the final Metal GPU/unit/build logs, day/night
+captures, installed-app capture, dependency trace and installation manifest.
 
 Build:
 
@@ -144,7 +176,19 @@ SDL_VIDEODRIVER=wayland LD_LIBRARY_PATH=/run/opengl-driver/lib \
   out/native-effects/juiced_native_effects_check /tmp/oj-native-gpu
 ```
 
-On the Mac, sync the changed source into the isolated checkout, then build
-`juiced juiced_tests juiced_native_effects_check juiced_app`, run the unit suite
-with `--unit` and the GPU executable, and inspect a fresh opaque day/night race
-capture. Keep Mac user saves isolated using `JUICED_SUPPORT_DIR`.
+On the Mac, build `juiced juiced_tests juiced_native_effects_check juiced_app`,
+run the unit suite with `--unit` and the GPU executable, and keep race tests
+isolated using `JUICED_SUPPORT_DIR`. To package a new staged build:
+
+```sh
+ditto out/native-effects/Juiced.app out/staging/Juiced.app
+cmake -DAPP="$PWD/out/staging/Juiced.app" -P cmake/BundleMac.cmake
+python3 tools/mod_bundle/install_macos.py \
+  --base-app "$PWD/out/staging/Juiced.app" \
+  --exe "$PWD/out/staging/Juiced.app/Contents/MacOS/Juiced" \
+  --output "$PWD/out/staging/Juiced Mod Garage.app" \
+  --scripts "$PWD/mods" --creative-mods
+```
+
+Stage and verify first; retain the previous app and mod directory when installing
+over a working setup. The helper does not deploy or edit user saves itself.

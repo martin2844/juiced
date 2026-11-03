@@ -88,7 +88,8 @@ mod_bin_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
         pl = plistlib.loads(info.read_bytes())
         pl.update(CFBundleExecutable='LaunchModGarage', CFBundleIdentifier='org.openjuice.macos.modgarage',
                   CFBundleName='Juiced Mod Garage', CFBundleDisplayName='Juiced Mod Garage',
-                  CFBundleVersion='0.3.5.0', CFBundleShortVersionString='0.3.5')
+                  CFBundleVersion=pl.get('CFBundleVersion', '0.3.5.0'),
+                  CFBundleShortVersionString=pl.get('CFBundleShortVersionString', '0.3.5'))
         info.write_bytes(plistlib.dumps(pl))
         subprocess.run(['codesign', '--force', '--sign', '-', str(exe)], check=True)
         subprocess.run(['codesign', '--force', '--deep', '--sign', '-', str(app)], check=True)

@@ -1,5 +1,13 @@
 # macOS port status
 
+The current engine **1.02.7** / app **1.2.7** checkpoint is
+[native-effects device validation, 3 November 2026](native-effects-device-validation-2026-11-03.md).
+It records the completed Metal effects tests, day/night races, installed native
+apps, current car/vinyl packages and unchanged user-save hashes. Both apps now
+bundle their non-system dylib dependencies. The sections below retain the
+earlier 0.3.x port history and its then-current limitations; consult the linked
+checkpoint for the new renderer and packaging results.
+
 ## Provenance
 
 - Upstream: https://gitlab.com/sidecr3w/openjuice
