@@ -2,10 +2,13 @@
 
 #include "Core/Base/Log.h"
 #include "Core/Base/X87.h"
+#include "Core/Input/PadPrompts.h"
 
 #include <algorithm>
 #include <cctype>
 #include <cmath>
+#include <cstdlib>
+#include <iterator>
 #include <string_view>
 #include <utility>
 
@@ -248,6 +251,7 @@ std::array<int32_t, 1024> responseTable(int32_t nonlinearity) {
 }
 
 Input::Input() {
+    usedPad(false);  // Not stock: a new input starts on the keyboard's hints (PadPrompts)
     m_keyboard.appData.fill(-1);
     setControllers({});
 }
@@ -570,13 +574,20 @@ void Input::pollDevice(Device& d, bool active, float dt) {
     if (d.controller != nullptr) {
         const ControllerRead r = d.controller->read(d.mapped);
         if (r.ok) {
+            // Not stock: a button pressed or an axis pushed half way (from rest) shows the pad's hints (PadPrompts).
+            bool used = false;
             if (d.mapped) {
                 for (const auto& [appData, data] : r.events) {
-                    if (appData < d.values.size()) d.values[appData] = static_cast<int32_t>(data);
+                    if (appData >= d.values.size()) continue;
+                    const auto value = static_cast<int32_t>(data);
+                    used = used || (d.values[appData] == 0 && std::abs(value) >= 50);
+                    d.values[appData] = value;
                 }
             } else {
+                for (size_t i = 0; i < r.buttons.size() && !used; ++i) used = r.buttons[i] != 0 && d.buttons[i] == 0;
                 d.buttons = r.buttons;
             }
+            if (used) usedPad(true);
         }
         d.connected = r.ok ? 1 : 0;
     } else {
@@ -615,6 +626,15 @@ void Input::pollDevice(Device& d, bool active, float dt) {
     step(d, dt);
 }
 
+void Input::setPad(const PadState& pad) {
+    // Not stock: a button pressed or an axis pushed half way (from rest) shows the pad's hints (PadPrompts).
+    bool used = pad.connected && (pad.pad.buttons & ~m_pad.pad.buttons) != 0;
+    for (size_t i = 0; i < std::size(pad.pad.axes) && pad.connected && !used; ++i)
+        used = std::fabs(pad.pad.axes[i]) >= 0.5f && std::fabs(m_pad.pad.axes[i]) < 0.5f;
+    if (used) usedPad(true);
+    m_pad = pad;
+}
+
 void Input::poll(const std::vector<KeyEvent>& events, bool active, float dt) {
     // The keyboard: DirectInput buffers the keys of its action map while the window is the active one (inactive, it
     // is unacquired and its buffer is lost). Acquired again with the focus it reports the release of each key it last
@@ -631,6 +651,7 @@ void Input::poll(const std::vector<KeyEvent>& events, bool active, float dt) {
     }
     m_keyboard.acquired = active;
     for (const KeyEvent& e : events) {
+        if (e.down) usedPad(false);  // Not stock: a key shows the keyboard's hints again (PadPrompts)
         m_keyboard.physical[e.code] = e.down;
         if (active && m_keyboard.mapped && m_keyboard.appData[e.code] != -1) {
             m_keyboard.buffer.push_back(e);

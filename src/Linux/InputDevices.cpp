@@ -99,8 +99,12 @@ class SdlController final : public input::ControllerPort {
             return result;
         }
         for (auto &a : format.actions) {
-            if ((a.semantic >> 24) == 0x81)
-                continue; // keyboard values are supplied independently
+            if ((a.semantic >> 24) == 0x81) {
+                // Keyboard values are supplied independently; the stock UI map gives Tab's SELECT3 no pad button.
+                if (ui && a.semantic == 0x8100040Fu)
+                    result.events.emplace_back(a.appData, static_cast<uint32_t>(button(SDL_GAMEPAD_BUTTON_WEST)));
+                continue;
+            }
             int value = 0;
             if (!ui && a.semantic >= 0x7F000100u && a.semantic <= 0x7F000105u) {
                 const bool third = button(SDL_GAMEPAD_BUTTON_BACK) != 0;

@@ -432,6 +432,9 @@
     <ClCompile Include="Unit\Input\PadControlsTests.cpp">
       <Filter>Unit\Input</Filter>
     </ClCompile>
+    <ClCompile Include="Unit\Input\PadPromptsTests.cpp">
+      <Filter>Unit\Input</Filter>
+    </ClCompile>
     <ClCompile Include="Unit\Input\PadRumbleTests.cpp">
       <Filter>Unit\Input</Filter>
     </ClCompile>

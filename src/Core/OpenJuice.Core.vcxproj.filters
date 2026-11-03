@@ -168,6 +168,9 @@
     <ClCompile Include="Input\PadControls.cpp">
       <Filter>Input</Filter>
     </ClCompile>
+    <ClCompile Include="Input\PadPrompts.cpp">
+      <Filter>Input</Filter>
+    </ClCompile>
     <ClCompile Include="Input\PadRumble.cpp">
       <Filter>Input</Filter>
     </ClCompile>
@@ -462,6 +465,9 @@
       <Filter>Input</Filter>
     </ClInclude>
     <ClInclude Include="Input\PadControls.h">
+      <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Input\PadPrompts.h">
       <Filter>Input</Filter>
     </ClInclude>
     <ClInclude Include="Input\PadRumble.h">
