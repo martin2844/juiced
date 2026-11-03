@@ -423,7 +423,12 @@ public final class LauncherActivity extends Activity {
           idle);
       content = settingsBody;
       Ui.divider(content);
-      section("About OpenJuice", "Version 1.02.5 · Native Android engine");
+      String version = "unknown";
+      try {
+        version = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+      } catch (android.content.pm.PackageManager.NameNotFoundException ignored) {
+      }
+      section("About OpenJuice", "Version " + version + " · Native Android engine");
       action("Open-source licenses", false, this::licenses, true);
     }
     setContentView(root);

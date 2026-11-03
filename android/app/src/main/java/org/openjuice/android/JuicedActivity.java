@@ -207,6 +207,8 @@ public final class JuicedActivity extends SDLActivity {
   protected String[] getArguments() {
     String mode = getIntent().getStringExtra("mode");
     String root = getFilesDir().getAbsolutePath();
+    if ((getApplicationInfo().flags & android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE) != 0
+        && getIntent().getBooleanExtra("isolate", false)) root += "/validation";
     if ("race".equals(mode)) return new String[] {root, "-i"};
     if ("diagnostics".equals(mode)) return new String[] {root, "--diagnostics"};
     if ("stock".equals(mode)) return new String[] {root, "--no-mods"};
@@ -225,7 +227,9 @@ public final class JuicedActivity extends SDLActivity {
       return new String[] {
         root,
         "--track",
-        "Angel SuperSpeedway/Speedway_r1",
+        getIntent().getStringExtra("track") == null
+            ? "Angel SuperSpeedway/Speedway_r1"
+            : getIntent().getStringExtra("track"),
         "--car",
         getIntent().getStringExtra("car") == null
             ? "FERRARI_458"

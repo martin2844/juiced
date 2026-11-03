@@ -1238,7 +1238,8 @@ bool MetalDevice::capture(const std::wstring &path) {
     uint32_t pitch;
     if (!readTarget(0, pixels, &pitch))
         return false;
-    auto surface = SDL_CreateSurfaceFrom(p->w, p->h, SDL_PIXELFORMAT_BGRA32, pixels.data(), pitch);
+    // Backbuffer alpha carries effects data; a screenshot represents an opaque display.
+    auto surface = SDL_CreateSurfaceFrom(p->w, p->h, SDL_PIXELFORMAT_BGRX32, pixels.data(), pitch);
     if (!surface)
         return false;
     bool ok = SDL_SaveBMP(surface, std::filesystem::path(path).c_str());

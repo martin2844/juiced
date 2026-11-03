@@ -73,6 +73,52 @@ int runNativeEffectsCheck(const char* directory) {
         const auto depth=d.createNativeScalarTexture(W,H,plane.data());
         const auto steps=d.createNativeScalarTexture(W,H,occluder.data());
         require(depth && steps,"scalar textures");
+        check("opaque-screenshot",[&] {
+            // The backbuffer alpha contains lighting/exposure data, not window
+            // transparency. Exporting it creates black holes when viewers scale.
+            d.setRenderTarget(0,0);d.setViewport({0,0,d.width(),d.height(),0,1});
+            d.setRenderState(RenderState::ColourWriteEnable,15);
+            d.clear(7,0x00a04020,1,0);
+            const auto file=output/"opaque-backbuffer.bmp";
+            require(d.capture(file.wstring()),"backbuffer screenshot");
+            auto* loaded=SDL_LoadBMP(file.string().c_str());
+            require(loaded!=nullptr,"load backbuffer screenshot");
+            auto* bgra=SDL_ConvertSurface(loaded,SDL_PIXELFORMAT_BGRA32);
+            SDL_DestroySurface(loaded);require(bgra!=nullptr,"convert screenshot");
+            bool opaque=true,rgb=true;
+            for(int y=0;y<bgra->h;++y)for(int x=0;x<bgra->w;++x) {
+                const auto* b=static_cast<const uint8_t*>(bgra->pixels)+y*bgra->pitch+x*4;
+                opaque &= b[3]==255;rgb &= b[0]==32 && b[1]==64 && b[2]==160;
+            }
+            SDL_DestroySurface(bgra);
+            // Raw render-target reads must keep the shader's original alpha.
+            std::vector<uint8_t> raw;uint32_t pitch=0;
+            const bool kept=d.readTarget(0,raw,&pitch) && raw.size()>=4 && raw[3]==0;
+            d.setRenderTarget(target,0);d.setViewport({0,0,W,H,0,1});
+            require(opaque,"screenshots must export opaque alpha");
+            require(rgb,"screenshot RGB must remain unchanged");
+            require(kept,"screenshot must preserve GPU alpha data");
+        });
+        check("texcoord-alpha",[&] {
+            const uint32_t vs[]={0xfffe0101,1,0xc00f0000,0x90e40000,1,0xe00f0000,0xa0e40000,0xffff};
+            const uint32_t ps[]={0xffff0101,64,0xb00f0000,1,0x800f0000,0xb0e40000,0xffff};
+            const VertexElement decl[]={{0,0,3,0,0,0},{255,0,17,0,0,0}};
+            const float q[]={-1,1,.5f,1,1,1,.5f,1,-1,-1,.5f,1,1,-1,.5f,1};
+            const auto vertex=d.createVertexShader(vs),pixel=d.createPixelShader(ps);
+            const auto buffer=d.createVertexBuffer(q,sizeof(q));
+            d.setVertexShader(vertex);d.setPixelShader(pixel);d.setDeclaration(d.createDeclaration(decl));
+            d.setStream(buffer,16);d.setFvf(0);d.setRenderState(RenderState::CullMode,1);
+            d.setRenderState(RenderState::ZEnable,0);d.setRenderState(RenderState::AlphaTestEnable,0);
+            d.setRenderState(RenderState::AlphaBlendEnable,0);
+            // TEXCOORD always writes w=1, regardless of the interpolator's w.
+            const float uv[]={.25f,.5f,.75f,0};d.setVertexShaderConstantF(0,uv,1);d.draw(5,0,2);
+            Pixels p(d,target);require(p.channel(64,48,3)==255 && std::abs(p.channel(64,48)-64)<=1,"TEXCOORD must force alpha one");
+            d.setRenderState(RenderState::AlphaBlendEnable,1);d.setRenderState(RenderState::SrcBlend,5);
+            d.setRenderState(RenderState::DestBlend,6);d.draw(5,0,2);
+            require(std::abs(Pixels(d,target).channel(64,48)-64)<=1,"TEXCOORD alpha controls source blending");
+            d.setRenderState(RenderState::AlphaBlendEnable,0);
+            d.destroyShader(vertex);d.destroyShader(pixel);d.destroyBuffer(buffer);
+        });
         check("signed-logarithm",[&] {
             // D3D LOG takes abs(source). GLSL/MSL log2 of a negative source is NaN.
             const uint32_t vs[]={0xfffe0101,1,0xc00f0000,0x90e40000,0xffff};

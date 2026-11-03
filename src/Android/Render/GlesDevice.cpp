@@ -1058,7 +1058,8 @@ bool GlesDevice::capture(const std::wstring &file) {
     uint32_t pitch;
     if (!readTarget(0, pixels, &pitch))
         return false;
-    auto *s = SDL_CreateSurfaceFrom(p->w, p->h, SDL_PIXELFORMAT_BGRA32, pixels.data(), pitch);
+    // Backbuffer alpha carries effects data; a screenshot represents an opaque display.
+    auto *s = SDL_CreateSurfaceFrom(p->w, p->h, SDL_PIXELFORMAT_BGRX32, pixels.data(), pitch);
     if (!s)
         return false;
     bool ok = SDL_SaveBMP(s, std::filesystem::path(file).string().c_str());

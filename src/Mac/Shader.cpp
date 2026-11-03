@@ -6,8 +6,9 @@
 #include <vector>
 namespace oj::mac {
 Shader::Shader(SDL_GPUDevice *d, const uint32_t *code, uint32_t cubeMask) : device(d) {
-    // TEXCOORD in ps_1_1 saturates the interpolated texture register. Lower it
-    // to MOV_SAT before translation; the other instructions retain their order.
+    // TEXCOORD in ps_1_1 saturates xyz and forces w=1. Lower it to MOV_SAT
+    // and supply w during initialization; the other instructions retain their order.
+    uint32_t texcoordMask=0;
     std::vector<uint32_t> lowered;
     const uint32_t *input = code;
     auto original = MOJOSHADER_parse("bytecode", "oj_shader", (const unsigned char *)code, 0, nullptr, 0, nullptr, 0,
@@ -29,6 +30,9 @@ Shader::Shader(SDL_GPUDevice *d, const uint32_t *code, uint32_t cubeMask) : devi
             }
             if (token == 64 && i + 1 < words) {
                 uint32_t dst = code[++i];
+                const auto slot=dst&0x7ffu;
+                if(slot>=8) throw std::runtime_error("Invalid TEXCOORD register");
+                texcoordMask|=1u<<slot;
                 lowered.push_back(1);
                 lowered.push_back(dst | 0x00100000);
                 lowered.push_back((dst & 0xf0001fff) | 0x00e40000);
@@ -62,6 +66,14 @@ Shader::Shader(SDL_GPUDevice *d, const uint32_t *code, uint32_t cubeMask) : devi
         throw std::runtime_error(error);
     }
     std::string source(parsed->output, parsed->output_len);
+    for(unsigned i=0;i<8;++i) if(texcoordMask&(1u<<i)) {
+        const auto name="t"+std::to_string(i);
+        const auto init="float4 "+name+" = input."+name+";";
+        const auto at=source.find(init);
+        if(at==std::string::npos) throw std::runtime_error("Missing TEXCOORD initialization");
+        source.replace(at,init.size(),"float4 "+name+" = float4(input."+name+".xyz,1.0);");
+    }
+
     if(clampPixelColours) {
         const std::regex colour("float4 ([A-Za-z0-9_]+) \\[\\[user\\(color[0-9]+\\)\\]\\];");
         std::vector<std::string> names;

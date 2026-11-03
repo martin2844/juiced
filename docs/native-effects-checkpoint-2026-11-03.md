@@ -1,5 +1,11 @@
 # Native effects checkpoint — 3 November 2026
 
+> **Superseded by [the Android/device validation follow-up](native-effects-device-validation-2026-11-03.md).**
+> The black surface speckling described below was a screenshot interpretation
+> error: game backbuffer alpha was exported as transparency. Inspecting RGB before
+> resizing and taking a direct RP5 screen capture disproved the supposed scene
+> defect. Preserve this document as investigation history, not the current verdict.
+
 **Work in progress; not a release acceptance.** The native effects implementation
 builds and its isolated GPU regressions pass on the Mac and desktop GL hosts.
 Actual races expose a remaining visual defect. Do not replace the habitual Linux

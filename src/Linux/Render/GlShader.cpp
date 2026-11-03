@@ -63,9 +63,10 @@ Shader::Shader(const uint32_t *code, uint32_t cubeMask) {
     const bool legacyPixel = !vertex && original->major_ver == 1;
     if (legacyPixel) legacyCode.assign(code, code + words);
     MOJOSHADER_freeParseData(original);
+    uint32_t texcoordMask=0;
     std::vector<uint32_t> lowered;
     if (code[0] == 0xffff0101) {
-        // Legacy TEXCOORD saturates its interpolated register; MOV_SAT is equivalent.
+        // TEXCOORD saturates xyz and forces w=1; initialization below supplies w.
         for (size_t i = 0; i < words; ++i) {
             auto token = code[i];
             if ((token & 0xffff) == 0xfffe) {
@@ -76,6 +77,9 @@ Shader::Shader(const uint32_t *code, uint32_t cubeMask) {
                 i += count;
             } else if (token == 64 && i + 1 < words) {
                 uint32_t dst = code[++i];
+                const auto slot=dst&0x7ffu;
+                if(slot>=8) throw std::runtime_error("Invalid TEXCOORD register");
+                texcoordMask|=1u<<slot;
                 lowered.insert(lowered.end(), {1, dst | 0x00100000, (dst & 0xf0001fff) | 0x00e40000});
             } else
                 lowered.push_back(token);
@@ -128,6 +132,7 @@ Shader::Shader(const uint32_t *code, uint32_t cubeMask) {
                 if (source.find("in highp vec4 " + input + ";") == std::string::npos)
                     legacyInputs += "in highp vec4 " + input + ";\n";
                 legacyInit += name + "=" + input + ";";
+                if(texcoordMask&(1u<<i)) legacyInit+=name+".w=1.0;";
             }
         }
     if(!vertex && source.find("gl_FragCoord")!=std::string::npos) {

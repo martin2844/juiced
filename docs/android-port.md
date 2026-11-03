@@ -95,6 +95,11 @@ runs and is absent from release builds.
 
 ## Verification and limits
 
+For `1.02.7-android.28-native-effects`, see the
+[physical RP5 native-effects validation](native-effects-device-validation-2026-11-03.md),
+including GPU pixel regressions, a 405 race, the signed release install, current
+car/vinyl pack revisions and save-preservation evidence.
+
 See [the individual button sizes checkpoint](android-button-sizes-2026-10-25.md)
 for version `1.02.5-android.3`. See [the UI and touch checkpoint](android-ui-touch-checkpoint-2026-10-25.md) for
 version `1.02.5-android.2` and its screenshots. See [the 2026-10-25 checkpoint](android-checkpoint-2026-10-25.md) for the actual
