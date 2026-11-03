@@ -1,0 +1,90 @@
+[
+  {
+    "file": "downtown-linux.jpg",
+    "platform": "Linux / native OpenGL",
+    "captured": "2026-11-03",
+    "scene": "Downtown Angel City, Skyline GT-R, dusk/wet race",
+    "width": 1600,
+    "height": 900,
+    "bytes": 250057,
+    "sha256": "8f46aab84ad28cf56702ba43a47a330e53add2364e2a07017c9e2a3f808e9dad",
+    "original_sha256": "13730771dc4d2119e5b5ca4cc525a5d376abb8588b8caf4db485d45cd7356a40"
+  },
+  {
+    "file": "night-macos.jpg",
+    "platform": "macOS / native Metal",
+    "captured": "2026-11-03",
+    "scene": "Installed Mod Garage app, Peugeot 405, night/wet race",
+    "width": 1280,
+    "height": 890,
+    "bytes": 237471,
+    "sha256": "bff21187581d475ad747da50ae3ddc24a18552908a1d9c9e75c109de60a7b265",
+    "original_sha256": "2c25c0a723eb453ae9cd28cc5eb5a2ebd8f07561a60ffa2c8e6df5d61d6003a0"
+  },
+  {
+    "file": "race-rp5.jpg",
+    "platform": "Android / Retroid Pocket 5",
+    "captured": "2026-11-03",
+    "scene": "Direct physical-screen capture; Peugeot 405 starting grid",
+    "width": 1280,
+    "height": 720,
+    "bytes": 168715,
+    "sha256": "9bdc0f96d6d2dba0f30af305ebf1f2356af5c1f1cb3444d450464c4edaa5fc4d",
+    "original_sha256": "91ea867de577f3e5b0ad6c9ffc32b62f8e808690ca2cab47ceae25f6c6bb4289"
+  },
+  {
+    "file": "peugeot405-kit.jpg",
+    "platform": "Linux / native CarView",
+    "captured": "2026-11-03",
+    "scene": "Peugeot 405 GLX, third kit; close garage viewport with 2D UI hidden",
+    "width": 1280,
+    "height": 960,
+    "bytes": 91026,
+    "sha256": "2756c335daf9546a25d5693d7f234e8a874509f6ceea1eafffafecd8a057d56c",
+    "original_sha256": "2f1fe5c172d90380ccc0da0a1f722a9fd3d4d829eb747adf8592792ee4c829a3"
+  },
+  {
+    "file": "skyline-livery.jpg",
+    "platform": "Linux / native CarView",
+    "captured": "2026-11-03",
+    "scene": "Skyline GT-R, AI Hero Livery; close garage viewport with 2D UI hidden",
+    "width": 1280,
+    "height": 960,
+    "bytes": 90488,
+    "sha256": "39e5d06cc98a41abe1a319eb2a7dee28b833acb19ae9544a8eeb32b9c59c54af",
+    "original_sha256": "3015d2ddc54c8d38eecf01a871690f9ad5222fb58403bee5e26a24e139717658"
+  },
+  {
+    "file": "career-poker.jpg",
+    "platform": "Linux / native game UI",
+    "captured": "2026-11-03",
+    "scene": "Career poker cash/title wager and real car preview; synthetic test career",
+    "width": 1280,
+    "height": 720,
+    "bytes": 122691,
+    "sha256": "183443cb2ab5b8dc30de1c6a30d756779c0140fa55067f53be933960928e56d2",
+    "original_sha256": "19a1e194a9186489672f0f911c9d1f94c8b22f51a7b1f9e353242ac2f5e77506"
+  },
+  {
+    "file": "android-launcher.jpg",
+    "platform": "Android / Retroid Pocket 5",
+    "captured": "2026-11-03",
+    "scene": "Physical-device launcher screenshot, with game and mod collection installed",
+    "width": 1280,
+    "height": 720,
+    "bytes": 64503,
+    "sha256": "7a4f7126f420377905ef158e6c862ffd46a2af3b1c5a3838db135170eb35f2cf",
+    "original_sha256": "132ef7b3c5733f7cfe88485c0fad761fffecb9b2b32f489db5fda340217b496e"
+  },
+  {
+    "file": "android-touch.jpg",
+    "platform": "Android / touch layout editor",
+    "captured": "2026-10-25",
+    "scene": "Individual touch-button sizing and default control hierarchy",
+    "width": 1280,
+    "height": 720,
+    "bytes": 83339,
+    "sha256": "e0f33f1505a92c4a5a4e0c3ccdff23e940e4680a5ae59b5119afce1e27ed716d",
+    "original_sha256": "78a05c7b385aa87a2f19e0fb4b96c2f125565b8cbc56a772def271ed7312d33d"
+  }
+]

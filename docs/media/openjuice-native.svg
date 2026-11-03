@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="188" viewBox="0 0 1200 188" role="img" aria-labelledby="title desc">
+  <title id="title">OpenJuice — native ports</title>
+  <desc id="desc">Native ports for Android, Linux and macOS. Engine by Sidewinder.</desc>
+  <rect width="1200" height="188" rx="3" fill="#0e1219"/>
+  <path d="M920 0h280v188H815Z" fill="#182129"/>
+  <path d="M1098 0h25l-106 188h-25Zm50 0h14l-106 188h-14Z" fill="#b8ef35" opacity=".16"/>
+  <path d="M44 36h40l-8 12H36Z" fill="#b8ef35"/>
+  <text x="96" y="47" font-family="Arial,Helvetica,sans-serif" font-size="14" font-weight="700" letter-spacing="4" fill="#b8ef35">NATIVE PORTS</text>
+  <text x="37" y="129" font-family="Arial Black,Arial,Helvetica,sans-serif" font-size="83" font-style="italic" font-weight="900" letter-spacing="-4" fill="#f5f7f9">OPENJUICE</text>
+  <text x="44" y="160" font-family="Arial,Helvetica,sans-serif" font-size="14" letter-spacing="2" fill="#a5afb9">ANDROID · LINUX / NIXOS · macOS</text>
+  <path d="m1057 59 45 35-45 35Zm-43 0 45 35-45 35Z" fill="#b8ef35"/>
+  <path d="M0 184h1200v4H0Z" fill="#b8ef35"/>
+</svg>
