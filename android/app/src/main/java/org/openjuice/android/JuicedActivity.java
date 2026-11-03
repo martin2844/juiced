@@ -212,6 +212,9 @@ public final class JuicedActivity extends SDLActivity {
     if ("stock".equals(mode)) return new String[] {root, "--no-mods"};
     if ("mods".equals(mode)) return new String[] {root, "--mods-menu"};
     if ((getApplicationInfo().flags & android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE) != 0
+        && "effects-check".equals(mode))
+      return new String[] {root, "--effects-check"};
+    if ((getApplicationInfo().flags & android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE) != 0
         && "render-check".equals(mode))
       return new String[] {root, "--render-check"};
     if ((getApplicationInfo().flags & android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE) != 0

@@ -58,6 +58,7 @@ Settings Settings::defaults(const LaunchOptions &options) {
     s.audioFlags = 4 | 32;
     readSettings(s);
     readNativeSettings(s);
+    applyNativeGraphicsOptions(s,options);
     s.audioFlags |= options.audioFlagsOr;
     if (options.audioFlagsOne)
         s.audioFlags = 1;
@@ -79,6 +80,8 @@ void readSettings(Settings &s) {
     auto dir = std::filesystem::path(home) / "Library/Application Support/Juiced";
 #endif
     std::filesystem::create_directories(dir);
+    if(const char* isolated=std::getenv("JUICED_SUPPORT_DIR");isolated && *isolated)
+        dir=std::filesystem::absolute(isolated);
     auto path = dir / "settings.ini";
     std::ifstream in(path);
     if (!in) {

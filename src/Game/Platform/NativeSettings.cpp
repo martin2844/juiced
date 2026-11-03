@@ -1,6 +1,7 @@
 #if defined(OJ_LINUX) || defined(OJ_ANDROID) || defined(OJ_MACOS)
 #include "Game/Platform/Settings.h"
 #include "Game/Platform/NativeSettings.h"
+#include "Game/Platform/CommandLine.h"
 #if defined(OJ_LINUX)
 #include "Linux/Paths.h"
 #endif
@@ -60,6 +61,12 @@ void readNativeSettings(Settings& s) {
         {"Shadows",&Settings::shadows,2},{"AmbientOcclusion",&Settings::ambientOcclusion,1},
         {"audioflags",&Settings::audioFlags,63}};
     for(const auto& f:fields) if(const auto v=readSetting(f.name);v && *v<=f.maximum) s.*(f.member)=*v;
+}
+void applyNativeGraphicsOptions(Settings& s,const LaunchOptions& o) {
+    if(o.worldLight && *o.worldLight<=2) s.worldLight=*o.worldLight;
+    if(o.sky && *o.sky<=2) s.sky=*o.sky;
+    if(o.headlights && *o.headlights<=2) s.headlights=*o.headlights;
+    if(o.carPaint && *o.carPaint<=1) s.carPaint=*o.carPaint;
 }
 }
 #endif

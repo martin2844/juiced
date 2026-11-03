@@ -17,6 +17,7 @@
 int runDiagnostics(const std::filesystem::path &support, const std::filesystem::path &game);
 #ifdef OJ_ANDROID_RENDER_CHECK
 int runRenderCheck();
+int runNativeEffectsCheck(const char* directory);
 #endif
 int main(int argc, char **argv) {
     struct Overlay {
@@ -35,6 +36,7 @@ int main(int argc, char **argv) {
         bool diagnostics = false, noMods = false, modsMenu = false;
 #ifdef OJ_ANDROID_RENDER_CHECK
         bool renderCheck = false;
+        bool effectsCheck = false;
 #endif
 #ifdef __ANDROID__
         if (argc < 2)
@@ -54,6 +56,10 @@ int main(int argc, char **argv) {
 #ifdef OJ_ANDROID_RENDER_CHECK
             if (a == "--render-check") {
                 renderCheck = true;
+                continue;
+            }
+            if (a == "--effects-check") {
+                effectsCheck = true;
                 continue;
             }
 #endif
@@ -82,6 +88,12 @@ int main(int argc, char **argv) {
             command += ' ';
         }
 #ifdef OJ_ANDROID_RENDER_CHECK
+        if (effectsCheck) {
+            std::filesystem::create_directories(support);
+            const int result = runNativeEffectsCheck((support / "effects-captures").c_str());
+            std::ofstream(support / "effects-check-result.txt") << (result == 0 ? "PASS" : "FAIL") << '\n';
+            return result;
+        }
         if (renderCheck) {
             std::filesystem::create_directories(support);
             const int result = runRenderCheck();

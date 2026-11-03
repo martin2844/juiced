@@ -82,6 +82,7 @@ void main(){if(oj_screen.x>0.0){float w=oj_pos.w!=0.0?1.0/oj_pos.w:1.0;gl_Positi
 io_5_0=oj_uv0;io_5_1=oj_uv1;io_5_2=oj_uv2;io_5_3=oj_uv3;io_5_4=oj_uv4;io_5_5=oj_uv5;io_5_6=oj_uv6;io_5_7=oj_uv7;io_10_0=oj_color.bgra;io_10_1=vec4(0);})";
 } // namespace
 struct GlesDevice::Impl {
+    NativeRenderDevice* nativeDevice=nullptr;
     SDL_Window *window = nullptr;
     SDL_GLContext context = nullptr;
     uint32_t w = 1280, h = 720, next = 1, target = 0, face = 0, vs = 0, ps = 0, decl = 0, stream = 0,
@@ -89,6 +90,9 @@ struct GlesDevice::Impl {
     GLuint vao = 0, fixedVS = 0, upBuffer = 0;
     TextureId white = 0, backbuffer = 0;
     Viewport viewport{};
+    bool nativePass = false;
+    uint32_t textureFilter = 0;
+    float maxAnisotropy = 1;
     bool clipped = false;
     ClipRect clip{};
     std::array<uint32_t, 256> states{};
@@ -98,7 +102,7 @@ struct GlesDevice::Impl {
     struct Texture {
         GLuint gl = 0, fbo = 0, depth = 0;
         uint32_t w = 0, h = 0, levels = 1;
-        bool cube = false;
+        bool cube = false, volume = false, scalar = false, hdr = false;
         uint32_t attachedFace = ~0u;
         std::vector<uint8_t> cpu;
     };
@@ -156,7 +160,7 @@ layout(location=0)out vec4 color;
 vec4 arg(int a,vec4 d,vec4 t){vec4 v=(a&15)==2?t:(a&15)==3?oj_factor:d;if((a&32)!=0)v=v.aaaa;return (a&16)!=0?1.0-v:v;}
 vec4 op(int o,vec4 a,vec4 b){if(o==2)return a;if(o==3)return b;if(o==4)return a*b;if(o==5)return 2.0*a*b;if(o==6)return 4.0*a*b;if(o==7)return a+b;if(o==8)return a+b-.5;if(o==9)return 2.0*(a+b-.5);if(o==10)return a-b;if(o==11)return a+b-a*b;return a*b;}
 void main(){)";
-        s += "vec4 d=" + std::string(color ? "io_10_0" : "vec4(1)") + ",t=texture(oj_texture," +
+        s += "vec4 d=" + std::string(color ? "clamp(io_10_0,0.0,1.0)" : "vec4(1)") + ",t=texture(oj_texture," +
              std::string(tex ? "io_5_0.xy" : "vec2(0)") + ");\n";
         if (simple)
             s += "color=d*t;";
@@ -178,7 +182,8 @@ void main(){)";
         for (unsigned i = 0; i < bound.size(); ++i)
             if (textures.contains(bound[i]) && textures.at(bound[i]).cube)
                 cubeMask |= 1u << i;
-        gles::Shader *pixel = (!simple && ps) ? &shaders.at(ps)->forCubeSamplers(cubeMask) : nullptr;
+        const auto effectivePixel=(!simple && ps)?nativeDevice->resolveNativePixelShader(ps):0;
+        gles::Shader *pixel = effectivePixel ? &shaders.at(effectivePixel)->forCubeSamplers(cubeMask) : nullptr;
         GLuint f = pixel ? pixel->id : fixedFragment(v, simple);
         auto pair = std::make_pair(v, f);
         if (!programs.contains(pair))
@@ -190,6 +195,7 @@ void main(){)";
         if (pixel)
             pixel->uniforms(program, pixelRegisters);
         glUniform1f(glGetUniformLocation(program, "oj_flip"), target ? -1.f : 1.f);
+        glUniform2f(glGetUniformLocation(program,"oj_vpos"),target?1.f:-1.f,target?0.f:float(th()));
         glUniform3f(glGetUniformLocation(program, "oj_alpha"), states[15], states[24] / 255.f, states[25]);
         glUniform1i(glGetUniformLocation(program, "oj_texture"), 0);
         uint32_t c = states[60];
@@ -248,22 +254,26 @@ void main(){)";
             auto &t = textures.at(id);
             auto &s = sampling[i];
             glActiveTexture(GL_TEXTURE0 + i);
-            GLenum kind = t.cube ? GL_TEXTURE_CUBE_MAP : GL_TEXTURE_2D;
+            GLenum kind = t.volume ? GL_TEXTURE_3D : t.cube ? GL_TEXTURE_CUBE_MAP : GL_TEXTURE_2D;
             glBindTexture(kind, t.gl);
             auto wrap = [](unsigned n) {
                 return n == 1 ? GL_REPEAT : n == 2 ? GL_MIRRORED_REPEAT : GL_CLAMP_TO_EDGE;
             };
             glTexParameteri(kind, GL_TEXTURE_WRAP_S, wrap(s[1]));
             glTexParameteri(kind, GL_TEXTURE_WRAP_T, wrap(s[2]));
-            if (t.cube)
+            if (t.cube || t.volume)
                 glTexParameteri(kind, GL_TEXTURE_WRAP_R, wrap(s[3]));
-            bool linear = s[6] != 1;
+            bool linear = s[6] != 1 || (!nativePass && i < 8 && textureFilter != 0);
             GLenum min = linear ? GL_LINEAR : GL_NEAREST;
             if (s[7] && t.levels > 1)
                 min = s[7] == 1 ? (linear ? GL_LINEAR_MIPMAP_NEAREST : GL_NEAREST_MIPMAP_NEAREST)
                                 : (linear ? GL_LINEAR_MIPMAP_LINEAR : GL_NEAREST_MIPMAP_LINEAR);
             glTexParameteri(kind, GL_TEXTURE_MIN_FILTER, min);
-            glTexParameteri(kind, GL_TEXTURE_MAG_FILTER, s[5] == 1 ? GL_NEAREST : GL_LINEAR);
+            if (maxAnisotropy > 1) {
+                const auto wanted = !nativePass && i<8 && textureFilter>=2 ? 1u<<(textureFilter-1) : (s[6]==3?std::max(s[10],1u):1u);
+                glTexParameterf(kind,0x84fe,std::min(float(wanted),maxAnisotropy));
+            }
+            glTexParameteri(kind, GL_TEXTURE_MAG_FILTER, s[5] == 1 && (nativePass || i>=8 || textureFilter==0) ? GL_NEAREST : GL_LINEAR);
         }
         glActiveTexture(GL_TEXTURE0);
         for (int i = 0; i < 16; i++)
@@ -359,11 +369,17 @@ void main(){)";
     }
 };
 GlesDevice::GlesDevice(const DeviceDesc &desc) : p(std::make_unique<Impl>()) {
+    p->nativeDevice=this;configureNativeShaders(desc);
     p->window = reinterpret_cast<SDL_Window *>(desc.window);
+    p->textureFilter=desc.textureFilter;
+    setAntialiasing(desc.msaa,desc.smaa);
+    setHeatHazeStrength(desc.heatHazeStrength);
     p->context = SDL_GL_CreateContext(p->window);
     if (!p->context)
         throw std::runtime_error(SDL_GetError());
-    SDL_GL_SetSwapInterval(1);
+    if(SDL_GL_ExtensionSupported("GL_EXT_texture_filter_anisotropic"))
+        glGetFloatv(0x84ff,&p->maxAnisotropy);
+    SDL_GL_SetSwapInterval(desc.vsync ? 1 : 0);
     glGenVertexArrays(1, &p->vao);
     glBindVertexArray(p->vao);
     glGenBuffers(1, &p->upBuffer);
@@ -397,6 +413,7 @@ GlesDevice::GlesDevice(const DeviceDesc &desc) : p(std::make_unique<Impl>()) {
     log::info("OpenGL renderer: {}", adapterName());
 }
 GlesDevice::~GlesDevice() {
+    shutdownNativeEffects();
     for (auto &read : p->readbacks) {
         if (read.fence)
             glDeleteSync(read.fence);
@@ -445,6 +462,7 @@ bool GlesDevice::beginFrame() {
     return true;
 }
 void GlesDevice::endFrame() {
+    finishNativeFrame();
     int width, height;
     SDL_GetWindowSizeInPixels(p->window, &width, &height);
     glBindFramebuffer(GL_READ_FRAMEBUFFER, p->textures.at(p->backbuffer).fbo);
@@ -652,7 +670,12 @@ bool GlesDevice::readTarget(TextureId id, std::vector<uint8_t> &pixels, uint32_t
     setRenderTarget(id, 0);
     unsigned w = p->tw(), h = p->th();
     pixels.resize(w * h * 4);
-    glReadPixels(0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
+    if(id && (p->textures.at(id).scalar || p->textures.at(id).hdr)) {
+        std::vector<float> values(size_t(w)*h*4);
+        glReadPixels(0,0,w,h,GL_RGBA,GL_FLOAT,values.data());
+        for(size_t i=0;i<values.size();++i) pixels[i]=uint8_t(std::clamp(values[i],0.f,1.f)*255.f+.5f);
+        if(p->textures.at(id).scalar) for(size_t i=0;i<pixels.size();i+=4) pixels[i+1]=pixels[i+2]=pixels[i];
+    } else glReadPixels(0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
     bool ok = glGetError() == GL_NO_ERROR;
     for (size_t i = 0; i < pixels.size(); i += 4)
         std::swap(pixels[i], pixels[i + 2]);
@@ -758,18 +781,17 @@ void GlesDevice::unlockTexture(TextureId id) {
     glBindTexture(GL_TEXTURE_2D, t.gl);
     glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, t.w, t.h, GL_RGBA, GL_UNSIGNED_BYTE, data.data());
 }
-ShaderId GlesDevice::createVertexShader(const uint32_t *code) {
-    if (std::this_thread::get_id() != owner)
-        return onOwner([&] { return createVertexShader(code); });
-    auto shader = std::make_unique<gles::Shader>(code);
-    auto id = p->next++;
-    p->shaders[id] = std::move(shader);
-    return id;
+ShaderId GlesDevice::createVertexShader(const uint32_t* code) {
+    if(std::this_thread::get_id()!=owner) return onOwner([&]{return createVertexShader(code);});
+    const auto replaced=nativeShaderCode(code,true);
+    auto compiled=std::make_unique<gles::Shader>(replaced.empty()?code:replaced.data());
+    const auto id=p->next++;p->shaders[id]=std::move(compiled);rememberNativeShader(id,code,true);return id;
 }
-ShaderId GlesDevice::createPixelShader(const uint32_t *code) {
-    if (std::this_thread::get_id() != owner)
-        return onOwner([&] { return createPixelShader(code); });
-    return createVertexShader(code);
+ShaderId GlesDevice::createPixelShader(const uint32_t* code) {
+    if(std::this_thread::get_id()!=owner) return onOwner([&]{return createPixelShader(code);});
+    const auto replaced=nativeShaderCode(code,false);
+    auto compiled=std::make_unique<gles::Shader>(replaced.empty()?code:replaced.data());
+    const auto id=p->next++;p->shaders[id]=std::move(compiled);rememberNativeShader(id,code,false);return id;
 }
 DeclarationId GlesDevice::createDeclaration(const VertexElement *e) {
     if (std::this_thread::get_id() != owner)
@@ -1094,3 +1116,5 @@ void GlesDevice::waitForService() {
         onOwner([] {});
 }
 } // namespace oj::render
+
+#include "Render/GlNativeEffects.inl"

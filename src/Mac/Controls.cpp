@@ -180,6 +180,8 @@ std::string rebind(Bindings &values, size_t action, std::string_view key) {
     return message;
 }
 std::filesystem::path bindingsPath() {
+    if(const char* isolated=std::getenv("JUICED_SUPPORT_DIR");isolated && *isolated)
+        return std::filesystem::path(isolated)/"controls.ini";
 #ifdef OJ_ANDROID
     const char* root=std::getenv("JUICED_SUPPORT_DIR");
     return std::filesystem::path(root?root:".") / "controls.ini";

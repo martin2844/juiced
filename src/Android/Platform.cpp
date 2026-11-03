@@ -161,6 +161,7 @@ Settings Settings::defaults(const LaunchOptions &options) {
     s.audioFlags = 4 | 32;
     readSettings(s);
     readNativeSettings(s);
+    applyNativeGraphicsOptions(s,options);
     s.audioFlags |= options.audioFlagsOr;
     if (options.audioFlagsOne)
         s.audioFlags = 1;

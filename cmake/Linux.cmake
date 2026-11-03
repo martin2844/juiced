@@ -188,3 +188,8 @@ if(BUILD_TESTING)
   target_compile_definitions(juiced_neon_picker_check PRIVATE JUICED_TEST_MODS="${PROJECT_SOURCE_DIR}/mods")
   target_link_libraries(juiced_neon_picker_check PRIVATE juice_game)
 endif()
+
+if(BUILD_TESTING AND NOT ANDROID)
+  add_executable(juiced_native_effects_check tools/NativeEffectsCheck.cpp)
+  target_link_libraries(juiced_native_effects_check PRIVATE juice_render)
+endif()

@@ -2,7 +2,14 @@
 #include "Core/Cars/CarCollection.h"
 #include "Core/Data/GameData.h"
 #include "Game/Cars/CarView.h"
+#include "Mods/Packages.h"
+#ifdef OJ_MACOS
+#include "Mac/MetalDevice.h"
+using GalleryDevice = oj::render::MetalDevice;
+#else
 #include "Linux/Render/GlesDevice.h"
+using GalleryDevice = oj::render::GlesDevice;
+#endif
 #include <SDL3/SDL.h>
 #include <chrono>
 #include <cmath>
@@ -40,7 +47,16 @@ int main(int argc, char **argv) {
         if (int(vinylSweep) + int(kitSweep) + int(wingSweep) > 1)
             throw std::runtime_error("Select one of vinyl, kit or wing review");
         const auto game = std::filesystem::absolute(argv[1]);
-        const auto overlay = std::filesystem::absolute(argv[2]);
+        auto overlay = std::filesystem::absolute(argv[2]);
+        struct GeneratedOverlay {
+            std::filesystem::path path;
+            ~GeneratedOverlay() {if(!path.empty()){std::error_code e;std::filesystem::remove_all(path,e);}}
+        } generated;
+        if (std::filesystem::is_regular_file(overlay / "collection.ini")) {
+            oj::mods::packages::discover(overlay);
+            generated.path = oj::mods::packages::assemble(game);
+            overlay = generated.path;
+        }
         const auto output = std::filesystem::absolute(argv[3]);
         if (!std::filesystem::is_directory(game) ||
             !std::filesystem::is_regular_file(overlay / "scripts/cardefs.txt"))
@@ -52,10 +68,16 @@ int main(int argc, char **argv) {
         std::filesystem::current_path(game);
         if (!SDL_Init(SDL_INIT_VIDEO))
             throw std::runtime_error(SDL_GetError());
+#ifndef OJ_MACOS
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-        auto *window = SDL_CreateWindow("Native car visual review", 1280, 960, SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN);
+#endif
+        auto *window = SDL_CreateWindow("Native car visual review", 1280, 960,
+#ifndef OJ_MACOS
+            SDL_WINDOW_OPENGL |
+#endif
+            SDL_WINDOW_HIDDEN);
         if (!window)
             throw std::runtime_error(SDL_GetError());
         {
@@ -67,8 +89,10 @@ int main(int argc, char **argv) {
                 throw std::runtime_error(error);
             oj::render::DeviceDesc desc;
             desc.window = reinterpret_cast<HWND>(window);
-            oj::render::GlesDevice gpu(desc);
+            GalleryDevice gpu(desc);
+#ifndef OJ_MACOS
             SDL_GL_SetSwapInterval(0); // Offline captures, not a frame-rate benchmark.
+#endif
             oj::scene::Engine engine(gpu, data.tables, 3, false);
             oj::ui::Screen screen(gpu, *oj::Language::byName("english"));
             screen.setView3dFactory([&](const oj::ui::Element &element) -> std::unique_ptr<oj::ui::View3d> {

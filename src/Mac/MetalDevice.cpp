@@ -5,6 +5,7 @@
 #include "Core/Base/Log.h"
 #include "Core/Formats/Ddt.h"
 #include "Mac/Shader.h"
+#include "Render/NativeHalf.h"
 #include "Render/HlslCompiler.h"
 #include <SDL3/SDL.h>
 #include <algorithm>
@@ -21,6 +22,8 @@ void check(bool ok) {
         throw std::runtime_error(SDL_GetError());
 }
 SDL_GPUBlendFactor blend(uint32_t n) {
+    if(n==14) return SDL_GPU_BLENDFACTOR_CONSTANT_COLOR;
+    if(n==15) return SDL_GPU_BLENDFACTOR_ONE_MINUS_CONSTANT_COLOR;
     static SDL_GPUBlendFactor v[] = {SDL_GPU_BLENDFACTOR_ZERO,
                                      SDL_GPU_BLENDFACTOR_ZERO,
                                      SDL_GPU_BLENDFACTOR_ONE,
@@ -126,6 +129,7 @@ std::array<float, 16> multiply(const std::array<float, 16> &a, const std::array<
 }
 } // namespace
 struct MetalDevice::Impl {
+    NativeRenderDevice* nativeDevice=nullptr;
     // Asset jobs share resource maps with rendering, but SDL command buffers stay on their creating thread.
     std::recursive_mutex deviceLock;
     const std::thread::id deviceThread = std::this_thread::get_id();
@@ -142,9 +146,12 @@ struct MetalDevice::Impl {
     SDL_GPUTextureFormat swapFormat = SDL_GPU_TEXTUREFORMAT_B8G8R8A8_UNORM;
     uint32_t w = 800, h = 600, depthW = 0, depthH = 0;
     uint32_t materialClass = UINT32_MAX;
+    bool nativePass = false;
+    uint32_t textureFilter = 0;
     struct Texture {
         SDL_GPUTexture *gpu = nullptr;
         SDL_GPUTexture *depth = nullptr;
+        bool ownsDepth = true, volume = false;
         uint32_t w = 0, h = 0, layers = 1;
         SDL_GPUTextureFormat format = SDL_GPU_TEXTUREFORMAT_B8G8R8A8_UNORM;
         std::vector<uint8_t> pixels;
@@ -260,7 +267,8 @@ struct MetalDevice::Impl {
         SDL_GPUTextureRegion dst{};
         dst.texture = t.gpu;
         dst.mip_level = level;
-        dst.layer = layer;
+        dst.layer = t.volume ? 0 : layer;
+        dst.z = t.volume ? layer : 0;
         dst.w = tw;
         dst.h = th;
         dst.d = 1;
@@ -306,7 +314,8 @@ struct MetalDevice::Impl {
         SDL_ReleaseGPUTransferBuffer(gpu, t);
     }
     SDL_GPUSampler *sampler(uint32_t slot) {
-        auto &s = sampling[slot];
+        auto s = sampling[slot];
+        if(!nativePass && slot<8 && textureFilter) { s[5]=s[6]=2;s[7]=2;if(textureFilter>=2){s[6]=3;s[10]=1u<<(textureFilter-1);} }
         std::string key((char *)s.data(), sizeof s);
         if (auto it = samplers.find(key); it != samplers.end())
             return it->second;
@@ -325,6 +334,7 @@ struct MetalDevice::Impl {
         ci.min_lod = 0;
         ci.max_lod = s[7] ? 1000 : 0;
         ci.mip_lod_bias = std::bit_cast<float>(s[8]);
+        ci.enable_anisotropy=s[6]==3 && s[10]>1;ci.max_anisotropy=std::clamp(float(s[10]),1.f,16.f);
         auto result = SDL_CreateGPUSampler(gpu, &ci);
         check(result);
         samplers[key] = result;
@@ -347,7 +357,7 @@ struct MetalDevice::Impl {
             R"(float4 arg(uint a,float4 d,float4 t,float4 f){float4 v=(a&15)==2?t:(a&15)==3?f:d;if(a&32)v=v.aaaa;return (a&16)?1-v:v;}
 float4 op(uint o,float4 a,float4 b){switch(o){case 2:return a;case 3:return b;case 4:return a*b;case 5:return 2*a*b;case 6:return 4*a*b;case 7:return a+b;case 8:return a+b-.5;case 9:return 2*(a+b-.5);case 10:return a-b;case 11:return a+b-a*b;default:return a*b;}}
 fragment float4 ff_ps(V v [[stage_in]],texture2d<float> tex [[texture(0)]],sampler s [[sampler(0)]],constant U& u [[buffer(0)]],constant float4& alpha [[buffer(1)]]){)";
-        msl += "float4 d=" + std::string(color ? "v.color" : "float4(1)") +
+        msl += "float4 d=" + std::string(color ? "saturate(v.color)" : "float4(1)") +
                ";float2 uv=" + std::string(tex ? "v.uv.xy" : "float2(0)") + ";float4 t=tex.sample(s,uv);";
         msl += "if(u.ops.x==1)return d;float4 a=arg(u.args.x,d,t,u.factor),b=arg(u.args.y,d,t,u.factor);float4 "
                "c=op(u.ops.x,a,b);c.a=op(u.ops.y,arg(u.args.z,d,t,u.factor),arg(u.args.w,d,t,u.factor)).a;"
@@ -423,6 +433,11 @@ fragment float4 ff_ps(V v [[stage_in]],texture2d<float> tex [[texture(0)]],sampl
         ci.rasterizer_state.cull_mode = states[22] == 1 ? SDL_GPU_CULLMODE_NONE : SDL_GPU_CULLMODE_BACK;
         ci.rasterizer_state.front_face =
             states[22] == 2 ? SDL_GPU_FRONTFACE_COUNTER_CLOCKWISE : SDL_GPU_FRONTFACE_CLOCKWISE;
+        const float bias=std::bit_cast<float>(states[195]);
+        const float slope=std::bit_cast<float>(states[175]);
+        ci.rasterizer_state.enable_depth_bias=bias!=0 || slope!=0;
+        ci.rasterizer_state.depth_bias_constant_factor=bias*16777216.f;
+        ci.rasterizer_state.depth_bias_slope_factor=slope;
         ci.depth_stencil_state.enable_depth_test = states[7];
         ci.depth_stencil_state.enable_depth_write = states[14];
         ci.depth_stencil_state.compare_op = (SDL_GPUCompareOp)std::clamp(states[23], 1u, 8u);
@@ -441,10 +456,15 @@ fragment float4 ff_ps(V v [[stage_in]],texture2d<float> tex [[texture(0)]],sampl
         b.enable_blend = states[27];
         b.src_color_blendfactor = blend(states[19]);
         b.dst_color_blendfactor = blend(states[20]);
-        b.color_blend_op = SDL_GPU_BLENDOP_ADD;
-        b.src_alpha_blendfactor = SDL_GPU_BLENDFACTOR_ONE;
-        b.dst_alpha_blendfactor = SDL_GPU_BLENDFACTOR_ONE_MINUS_SRC_ALPHA;
-        b.alpha_blend_op = SDL_GPU_BLENDOP_ADD;
+        const auto blendOp=[](uint32_t value) {
+            constexpr SDL_GPUBlendOp ops[]={SDL_GPU_BLENDOP_ADD,SDL_GPU_BLENDOP_ADD,SDL_GPU_BLENDOP_SUBTRACT,
+                SDL_GPU_BLENDOP_REVERSE_SUBTRACT,SDL_GPU_BLENDOP_MIN,SDL_GPU_BLENDOP_MAX};
+            return ops[std::min(value,5u)];
+        };
+        b.color_blend_op = blendOp(states[171]);
+        b.src_alpha_blendfactor = blend(states[206]?states[207]:states[19]);
+        b.dst_alpha_blendfactor = blend(states[206]?states[208]:states[20]);
+        b.alpha_blend_op = blendOp(states[206]?states[209]:states[171]);
         b.enable_color_write_mask = true;
         b.color_write_mask = states[168];
         ci.target_info.color_target_descriptions = &ct;
@@ -470,11 +490,15 @@ fragment float4 ff_ps(V v [[stage_in]],texture2d<float> tex [[texture(0)]],sampl
         return pipe;
     }
     void prepare(uint32_t type, bool fixed) {
+        struct KeepPixel { uint32_t& id;uint32_t previous;~KeepPixel(){id=previous;} } keep{ps,ps};
+        if(!fixed && ps) ps=nativeDevice->resolveNativePixelShader(ps);
         auto pipe = pipeline(type, fixed);
         beginPass();
         if (!pass)
             return;
         SDL_BindGPUGraphicsPipeline(pass, pipe);
+        const uint32_t factor=states[193];
+        SDL_SetGPUBlendConstants(pass,{((factor>>16)&255)/255.f,((factor>>8)&255)/255.f,(factor&255)/255.f,(factor>>24)/255.f});
         SDL_GPUViewport vp{(float)viewport.x,      (float)viewport.y, (float)viewport.width,
                            (float)viewport.height, viewport.minZ,     viewport.maxZ};
         SDL_SetGPUViewport(pass, &vp);
@@ -544,7 +568,10 @@ fragment float4 ff_ps(V v [[stage_in]],texture2d<float> tex [[texture(0)]],sampl
     }
 };
 MetalDevice::MetalDevice(const DeviceDesc &desc) : p(std::make_unique<Impl>()) {
+    p->nativeDevice=this;configureNativeShaders(desc);
     p->window = reinterpret_cast<SDL_Window *>(desc.window);
+    p->textureFilter=desc.textureFilter;setAntialiasing(desc.msaa,desc.smaa);
+    setHeatHazeStrength(desc.heatHazeStrength);
     p->gpu = SDL_CreateGPUDevice(SDL_GPU_SHADERFORMAT_MSL, true, "metal");
     check(p->gpu);
     check(SDL_ClaimWindowForGPUDevice(p->gpu, p->window));
@@ -589,6 +616,7 @@ MetalDevice::MetalDevice(const DeviceDesc &desc) : p(std::make_unique<Impl>()) {
     p->flush();
 }
 MetalDevice::~MetalDevice() {
+    shutdownNativeEffects();
     p->flush();
     SDL_WaitForGPUIdle(p->gpu);
     for (auto &[_, v] : p->pipelines)
@@ -666,6 +694,7 @@ bool MetalDevice::beginFrame() {
     return true;
 }
 void MetalDevice::endFrame() {
+    finishNativeFrame();
     p->endPass();
     uint32_t w = 0, h = 0;
     check(SDL_WaitAndAcquireGPUSwapchainTexture(p->commands(), p->window, &p->swap, &w, &h));
@@ -824,7 +853,7 @@ void MetalDevice::destroyTexture(TextureId id) {
     if (auto it = p->textures.find(id); it != p->textures.end()) {
         if (p->onDeviceThread()) p->endPass();
         SDL_ReleaseGPUTexture(p->gpu, it->second.gpu);
-        if (it->second.depth)
+        if (it->second.depth && it->second.ownsDepth)
             SDL_ReleaseGPUTexture(p->gpu, it->second.depth);
         p->textures.erase(it);
     }
@@ -874,7 +903,10 @@ bool MetalDevice::readTarget(TextureId id, std::vector<uint8_t> &pixels, uint32_
     p->endPass();
     SDL_GPUTransferBufferCreateInfo ci{};
     ci.usage = SDL_GPU_TRANSFERBUFFERUSAGE_DOWNLOAD;
-    ci.size = w * h * 4;
+    const auto format=id?p->textures.at(id).format:SDL_GPU_TEXTUREFORMAT_B8G8R8A8_UNORM;
+    const uint32_t pixelBytes=format==SDL_GPU_TEXTUREFORMAT_R16G16B16A16_FLOAT?8:
+                              format==SDL_GPU_TEXTUREFORMAT_R16_FLOAT?2:4;
+    ci.size = w * h * pixelBytes;
     auto buffer = SDL_CreateGPUTransferBuffer(p->gpu, &ci);
     if (!buffer)
         return false;
@@ -898,7 +930,17 @@ bool MetalDevice::readTarget(TextureId id, std::vector<uint8_t> &pixels, uint32_
     auto data = SDL_MapGPUTransferBuffer(p->gpu, buffer, false);
     if (!data)
         return false;
-    pixels.assign((uint8_t *)data, (uint8_t *)data + w * h * 4);
+    pixels.resize(size_t(w)*h*4);
+    if(format==SDL_GPU_TEXTUREFORMAT_R32_FLOAT || format==SDL_GPU_TEXTUREFORMAT_R16_FLOAT || format==SDL_GPU_TEXTUREFORMAT_R16G16B16A16_FLOAT) {
+        const auto bytes=static_cast<const uint8_t*>(data);
+        for(size_t i=0;i<size_t(w)*h;++i) for(int c=0;c<4;++c) {
+            float value=1;
+            if(format==SDL_GPU_TEXTUREFORMAT_R32_FLOAT) std::memcpy(&value,bytes+i*4,4);
+            else if(format==SDL_GPU_TEXTUREFORMAT_R16_FLOAT) value=nativeFloat(reinterpret_cast<const uint16_t*>(bytes)[i]);
+            else value=nativeFloat(reinterpret_cast<const uint16_t*>(bytes)[i*4+(c==0?2:c==2?0:c)]);
+            pixels[i*4+c]=uint8_t(std::clamp(value,0.f,1.f)*255.f+.5f);
+        }
+    } else std::memcpy(pixels.data(),data,pixels.size());
     SDL_UnmapGPUTransferBuffer(p->gpu, buffer);
     SDL_ReleaseGPUFence(p->gpu, fence);
     SDL_ReleaseGPUTransferBuffer(p->gpu, buffer);
@@ -931,20 +973,17 @@ void MetalDevice::unlockTexture(TextureId id) {
     auto &t = p->textures.at(id);
     p->uploadTexture(t, t.pixels.data(), t.pixels.size(), 0, 0, t.w, t.h);
 }
-ShaderId MetalDevice::createVertexShader(const uint32_t *code) {
+ShaderId MetalDevice::createVertexShader(const uint32_t* code) {
     const std::lock_guard lock(p->deviceLock);
-    try {
-        auto shader = std::make_unique<oj::mac::Shader>(p->gpu, code);
-        auto id = p->next++;
-        p->shaders[id] = std::move(shader);
-        return id;
-    } catch (const std::exception &e) {
-        log::warning("shader: {}", e.what());
-        return 0;
-    }
+    const auto replaced=nativeShaderCode(code,true);
+    auto compiled=std::make_unique<oj::mac::Shader>(p->gpu,replaced.empty()?code:replaced.data());
+    const auto id=p->next++;p->shaders[id]=std::move(compiled);rememberNativeShader(id,code,true);return id;
 }
-ShaderId MetalDevice::createPixelShader(const uint32_t *code) {
-    return createVertexShader(code);
+ShaderId MetalDevice::createPixelShader(const uint32_t* code) {
+    const std::lock_guard lock(p->deviceLock);
+    const auto replaced=nativeShaderCode(code,false);
+    auto compiled=std::make_unique<oj::mac::Shader>(p->gpu,replaced.empty()?code:replaced.data());
+    const auto id=p->next++;p->shaders[id]=std::move(compiled);rememberNativeShader(id,code,false);return id;
 }
 DeclarationId MetalDevice::createDeclaration(const VertexElement *es) {
     const std::lock_guard lock(p->deviceLock);
@@ -1088,9 +1127,22 @@ void MetalDevice::setViewport(const Viewport &v) {
     p->viewport = v;
 }
 void MetalDevice::clear(uint32_t flags, uint32_t argb, float z, uint32_t stencil) {
-    p->beginPass(
-        flags, {((argb >> 16) & 255) / 255.f, ((argb >> 8) & 255) / 255.f, (argb & 255) / 255.f, (argb >> 24) / 255.f},
-        z, stencil);
+    const auto& v=p->viewport;
+    if(v.x==0 && v.y==0 && v.width==p->width() && v.height==p->height() && !p->clipped) {
+        p->beginPass(flags,{((argb>>16)&255)/255.f,((argb>>8)&255)/255.f,(argb&255)/255.f,(argb>>24)/255.f},z,stencil);
+        return;
+    }
+    // Metal's attachment CLEAR ignores viewport/scissor. A restricted D3D clear
+    // must draw the requested colour, depth and stencil over that rectangle.
+    auto saved=saveNativeState();
+    p->states[7]=(flags&2)?1:0;p->states[14]=(flags&2)?1:0;p->states[23]=8;
+    p->states[8]=3;p->states[15]=0;p->states[22]=1;p->states[27]=0;p->states[168]=(flags&1)?15:0;
+    p->states[52]=(flags&4)?1:0;p->states[53]=p->states[54]=p->states[55]=3;
+    p->states[56]=8;p->states[57]=stencil;p->states[58]=p->states[59]=255;
+    p->bound[0]=0;
+    const FixedVertex q[]={{-1,1,z,1,0,0,argb},{1,1,z,1,0,0,argb},{-1,-1,z,1,0,0,argb},
+                          {-1,-1,z,1,0,0,argb},{1,1,z,1,0,0,argb},{1,-1,z,1,0,0,argb}};
+    p->fixedDraw(q,6,4,identity(),false);
 }
 void MetalDevice::setClip(const ClipRect *r) {
     p->clipped = r != nullptr;
@@ -1213,3 +1265,5 @@ std::optional<std::vector<uint8_t>> compile(const std::vector<std::byte> &, cons
     return {};
 }
 } // namespace oj::render::hlsl
+
+#include "Render/MetalNativeEffects.inl"

@@ -93,6 +93,8 @@ int main(int argc, char **argv) {
     try {
         const char *home = getenv("HOME");
         auto support = std::filesystem::path(home ? home : ".") / "Library/Application Support/Juiced";
+        if(const char* isolated=std::getenv("JUICED_SUPPORT_DIR");isolated && *isolated)
+            support=std::filesystem::absolute(isolated);
         std::filesystem::create_directories(support);
         if (game.empty()) {
             std::ifstream saved(support / "game-path.txt");

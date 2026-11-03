@@ -38,6 +38,7 @@ Shader::Shader(SDL_GPUDevice *d, const uint32_t *code, uint32_t cubeMask) : devi
         input = lowered.data();
     }
     bool vertex = original->shader_type == MOJOSHADER_TYPE_VERTEX;
+    const bool clampPixelColours = !vertex && original->major_ver < 3;
     const bool legacyPixel = !vertex && original->major_ver == 1;
     if (legacyPixel)
         legacyCode.assign(code, code + original->output_len / 4);
@@ -61,9 +62,22 @@ Shader::Shader(SDL_GPUDevice *d, const uint32_t *code, uint32_t cubeMask) : devi
         throw std::runtime_error(error);
     }
     std::string source(parsed->output, parsed->output_len);
+    if(clampPixelColours) {
+        const std::regex colour("float4 ([A-Za-z0-9_]+) \\[\\[user\\(color[0-9]+\\)\\]\\];");
+        std::vector<std::string> names;
+        for(std::sregex_iterator i(source.begin(),source.end(),colour),end;i!=end;++i) names.push_back((*i)[1].str());
+        for(const auto& name:names)
+            source=std::regex_replace(source,std::regex("input\\."+name+"\\b"),"clamp(input."+name+",float4(0),float4(1))");
+    }
+    if (source.find("log2(") != std::string::npos) {
+        source = std::regex_replace(source, std::regex("log2\\("), "oj_log2(");
+        const std::string helper = "\ntemplate<typename T> T oj_log2(T v){return metal::select(metal::log2(metal::max(metal::abs(v),T(1.17549435e-38))),T(-3.402823e38),v==T(0));}\n";
+        source.insert(source.find(vertex ? "vertex " : "fragment "), helper);
+    }
     // MojoShader emits the ps_1_x texture register initializers but omits the
     // stage-input declarations. Supply the corresponding D3D texcoord semantics.
     source = "#include <metal_stdlib>\n" + source;
+    if(vertex) source=std::regex_replace(source,std::regex("\\[\\[position\\]\\]"),"[[position, invariant]]");
     bool needsInput = source.find("input.t") != std::string::npos;
     auto pos = source.find("struct oj_shader_Input");
     if (needsInput && pos == std::string::npos) {

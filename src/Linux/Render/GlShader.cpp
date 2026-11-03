@@ -58,6 +58,7 @@ Shader::Shader(const uint32_t *code, uint32_t cubeMask) {
         throw std::runtime_error(error);
     }
     bool vertex = original->shader_type == MOJOSHADER_TYPE_VERTEX;
+    const bool clampPixelColours = !vertex && original->major_ver < 3;
     size_t words = original->output_len / 4;
     const bool legacyPixel = !vertex && original->major_ver == 1;
     if (legacyPixel) legacyCode.assign(code, code + words);
@@ -97,11 +98,25 @@ Shader::Shader(const uint32_t *code, uint32_t cubeMask) {
     }
     for (int i = 0; i < parsed->sampler_count; ++i) samplerMask |= 1u << parsed->samplers[i].index;
     source.assign(parsed->output, parsed->output_len);
+    if(clampPixelColours)
+        source=std::regex_replace(source,std::regex("(#define ps_[^ \\n]+) (io_10_[0-9]+)"),"$1 (clamp($2,0.0,1.0))");
     // Pixel math requires high precision for the game's large world-space values.
     if (auto p = source.find("precision mediump float;"); p != std::string::npos)
         source.replace(p, strlen("precision mediump float;"), "precision highp float;");
     // MojoShader's ES profile declares fog as vec4 even though the legacy output is scalar.
-    source = std::regex_replace(source, std::regex("(#define vs_oFog io_11_[0-9]+)(\\n)"), "$1.x$2");
+    source = std::regex_replace(source, std::regex("(#define vs_o(?:Fog|[0-9]+) io_11_[0-9]+)(\\n)"), "$1.x$2");
+    // D3D LOG takes abs(source) and has a finite limit at zero.
+    if (source.find("log2(") != std::string::npos) {
+        source = std::regex_replace(source, std::regex("log2\\("), "oj_log2(");
+        std::string helpers;
+        for (const auto* type : {"float", "vec2", "vec3", "vec4"}) {
+            const std::string t = type;
+            helpers += t + " oj_log2(" + t + " v){return " + (t == "float" ?
+                "v==0.0?-3.402823e38:log2(abs(v))" :
+                "mix(log2(max(abs(v),"+t+"(1.17549435e-38))),"+t+"(-3.402823e38),equal(v,"+t+"(0)))") + ";}\n";
+        }
+        source.insert(source.find("void main()"), helpers);
+    }
     std::string legacyInputs, legacyInit;
     if (!vertex)
         for (int i = 0; i < 8; i++) {
@@ -115,15 +130,20 @@ Shader::Shader(const uint32_t *code, uint32_t cubeMask) {
                 legacyInit += name + "=" + input + ";";
             }
         }
+    if(!vertex && source.find("gl_FragCoord")!=std::string::npos) {
+        source=std::regex_replace(source,std::regex("gl_FragCoord"),
+            "vec4(gl_FragCoord.x-0.5,gl_FragCoord.y*oj_vpos.x+oj_vpos.y-0.5,gl_FragCoord.zw)");
+        const auto line=source.find('\n');source.insert(line+1,"uniform highp vec2 oj_vpos;\n");
+    }
     // Wrap main rather than patching individual RET paths. D3D alpha testing is pipeline state.
     auto main = source.find("void main()");
     if (main == std::string::npos)
         throw std::runtime_error("Shader entry point missing");
     source.replace(main, strlen("void main()"), "void oj_main()");
-    if (vertex)
-        source += "\nuniform float oj_flip;\nvoid "
-                  "main(){oj_main();gl_Position.z=2.0*gl_Position.z-gl_Position.w;gl_Position.y*=oj_flip;}\n";
-    else {
+    if (vertex) {
+        source.insert(source.find('\n')+1,"invariant gl_Position;\n");
+        source += "\nuniform float oj_flip;\nvoid main(){oj_main();gl_Position.z=2.0*gl_Position.z-gl_Position.w;gl_Position.y*=oj_flip;}\n";
+    } else {
         source += "\n" + legacyInputs + "\nvoid oj_initialize(){" + legacyInit + "}\n";
         source += R"(
 uniform vec3 oj_alpha;

@@ -31,7 +31,7 @@ static std::wstring widenPage(std::string_view text, uint32_t page) {
 #else
     text = text.substr(0, text.find('\0'));
     const auto from = "CP" + std::to_string(page);
-    iconv_t converter = iconv_open("WCHAR_T", from.c_str());
+    iconv_t converter = iconv_open(sizeof(wchar_t)==4?"UTF-32LE":"UTF-16LE", from.c_str());
     if (converter == (iconv_t)-1) return {};
     std::wstring result(text.size(), L'\0');
     char* input = const_cast<char*>(text.data());

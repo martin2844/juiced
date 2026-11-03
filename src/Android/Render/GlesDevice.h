@@ -1,5 +1,5 @@
 #pragma once
-#include "Render/RenderDevice.h"
+#include "Render/NativeEffects.h"
 #include <condition_variable>
 #include <deque>
 #include <functional>
@@ -7,7 +7,7 @@
 #include <mutex>
 #include <thread>
 namespace oj::render {
-class GlesDevice final : public IRenderDevice {
+class GlesDevice final : public NativeRenderDevice {
   public:
     explicit GlesDevice(const DeviceDesc &);
     ~GlesDevice() override;
@@ -89,6 +89,25 @@ class GlesDevice final : public IRenderDevice {
     void draw(uint32_t primitive, uint32_t startVertex, uint32_t primitiveCount) override;
     void setViewport(const Viewport &viewport) override;
     void clear(uint32_t flags, uint32_t argb, float z, uint32_t stencil) override;
+
+
+    Target nativeTarget() const override;
+    SavedState saveNativeState() override;
+    TextureId createNativeTarget(uint32_t width,uint32_t height,TargetFormat format) override;
+    TextureId createNativeScalarTexture(uint32_t width,uint32_t height,const float* values) override;
+    TextureId createNativeVolume(uint32_t width,uint32_t height,uint32_t depth,const float* rgba) override;
+    bool copyNativeTarget(TextureId from,uint32_t face,const Viewport& region,TextureId to) override;
+    bool copyNativeDepth(TextureId from,TextureId to) override;
+    bool captureTarget(TextureId target,const std::wstring& file) override;
+    bool captureFloatTarget(TextureId target,const std::wstring& file) override;
+    bool copyCubeFace(TextureId from,TextureId to,uint32_t face) override;
+    bool captureCubeFace(TextureId target,uint32_t face,const std::wstring& file) override;
+    void destroyShader(ShaderId id) override;
+    void setShadowMaps(const TextureId* maps,uint32_t count) override;
+    void setSunShadowMap(TextureId map) override;
+    QualityCaps qualityCaps() const override;
+    bool hasStencilBuffer() const override;
+    void setTextureFilter(uint32_t filter) override;
 
   private:
     // All OpenGL work stays on the context owner; callers wait with their input data alive.
