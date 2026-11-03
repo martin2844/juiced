@@ -24,13 +24,25 @@ inline void addCrewBindings(std::vector<ActionMap> &maps) {
         }
     }
 }
+// The pad's layout file: the Mac build's settings stay in its Application Support folder.
+inline std::filesystem::path controllerIni() {
+#ifdef OJ_MACOS
+    if (const char* dir = std::getenv("JUICED_SUPPORT_DIR"); dir && *dir)
+        return std::filesystem::absolute(dir) / "controller.ini";
+    const char* home = std::getenv("HOME");
+    return home && *home ? std::filesystem::path(home) / "Library/Application Support/Juiced/controller.ini"
+                         : std::filesystem::path();
+#else
+    return dataPath() / "controller.ini";
+#endif
+}
 struct ControllerConfig {
     int deadzone = 12;
     std::map<int, int> remap;
     void load() {
         deadzone = 12;
         remap.clear();
-        std::ifstream file(dataPath() / "controller.ini");
+        std::ifstream file(controllerIni());
         const std::map<std::string, int> names = {{"select", 0},  {"back", 1},         {"action1", 3},
                                                   {"action2", 2}, {"leftstick", 7},    {"rightstick", 8},
                                                   {"pause", 6},   {"leftshoulder", 9}, {"rightshoulder", 10}};

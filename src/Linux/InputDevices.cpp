@@ -19,7 +19,7 @@ class Gamepads {
     SDL_Gamepad *get(size_t slot) {
         for (auto *&pad : pads)
             if (pad && !SDL_GamepadConnected(pad)) {
-                log::info("Linux gamepad slot {} disconnected", &pad - pads.data() + 1);
+                log::info("gamepad slot {} disconnected", &pad - pads.data() + 1);
                 SDL_CloseGamepad(pad);
                 pad = nullptr;
             }
@@ -36,7 +36,7 @@ class Gamepads {
             auto *candidate = SDL_OpenGamepad(ids[i]);
             if (linux_port::hasDrivingAxes(candidate)) {
                 *at = candidate;
-                log::info("Linux gamepad slot {}: {}", at - pads.begin() + 1, SDL_GetGamepadName(candidate));
+                log::info("gamepad slot {}: {}", at - pads.begin() + 1, SDL_GetGamepadName(candidate));
             } else if (candidate) {
                 ignored.insert(ids[i]);
                 SDL_CloseGamepad(candidate);

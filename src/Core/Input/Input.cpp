@@ -600,7 +600,7 @@ void Input::pollDevice(Device& d, bool active, float dt) {
         }
     } else {
         bool readsKeyboard = true;
-#ifdef OJ_LINUX
+#ifdef OJ_SDL_INPUT
         // SDL exposes a dedicated keyboard device before its stable gamepad
         // slots. Raw Enter belongs to that device: broadcasting it to pads
         // lets the last empty slot take the player at the title screen and

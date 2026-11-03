@@ -10,7 +10,7 @@
 // (docs/spec/01-startup.md).
 
 #include "Game/App/GameLoop.h"
-#ifdef OJ_LINUX
+#ifdef OJ_SDL_INPUT
 #include "Linux/Gamepad.h"
 #endif
 #include "Game/Race/RaceGrids.h"
@@ -270,7 +270,7 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
 #ifdef OJ_ANDROID
             oj::android::addCrewBindings(controlMaps);
 #endif
-#ifdef OJ_LINUX
+#ifdef OJ_SDL_INPUT
             oj::linux_port::addCrewBindings(controlMaps);
 #endif
             input.load(controlMaps);
@@ -404,7 +404,7 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
     std::string firstWindow = options.screen;
     if (options.instantRace) {
         input.setPlayerDevice(0, 0);
-#ifdef OJ_LINUX
+#ifdef OJ_SDL_INPUT
         if (!options.test) {
             // The keyboard occupies port zero on Linux. Prefer a present pad
             // for the direct-race launcher, which bypasses player acquisition.
@@ -705,7 +705,7 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
     std::unique_ptr<oj::mac::ControlsOverlay> controlsEditor;
     std::unique_ptr<oj::mods::CreativeMenu> creativeMenu;
     oj::input::Input::Map controlsPreviousMap = oj::input::Input::Map::None;
-#ifdef OJ_LINUX
+#ifdef OJ_SDL_INPUT
     oj::input::Input::Map creativePreviousMap = oj::input::Input::Map::None;
     bool creativeAwaitRelease = true;
     bool creativeClosing = false;
@@ -734,7 +734,7 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
         if (!creativeMenu) {
             if (auto request = oj::mods::takeRequest()) {
                 creativeMenu = std::make_unique<oj::mods::CreativeMenu>(*device, language, std::move(*request));
-#ifdef OJ_LINUX
+#ifdef OJ_SDL_INPUT
                 creativePreviousMap = input.map();
                 if (creativePreviousMap != oj::input::Input::Map::Ui) input.useUi();
                 creativeAwaitRelease = true;
@@ -750,7 +750,7 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
             oj::audio::setActive(false);
             auto keys=platform.takeKeyEvents();
             for(const auto& p:options.presses){if(p.down==rendered)keys.push_back({p.code,true});if(p.up==rendered)keys.push_back({p.code,false});}
-#ifdef OJ_LINUX
+#ifdef OJ_SDL_INPUT
             LARGE_INTEGER inputNow{};
             QueryPerformanceCounter(&inputNow);
             const float overlayDt = std::clamp(static_cast<float>(seconds(previousUpdate, inputNow)), 0.0f, 0.1f);
@@ -793,7 +793,7 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
                 std::vector<oj::input::KeyEvent> released;
                 for (int k = 1; k < 256; ++k) released.push_back({static_cast<uint8_t>(k), false});
                 input.poll(released, false, 0.0f);
-#ifdef OJ_LINUX
+#ifdef OJ_SDL_INPUT
                 if (creativePreviousMap == oj::input::Input::Map::Driver) input.useDriver();
 #endif
 #ifdef OJ_LINUX
@@ -832,7 +832,7 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
 #ifdef OJ_ANDROID
                     oj::android::addCrewBindings(controlMaps);
 #endif
-#ifdef OJ_LINUX
+#ifdef OJ_SDL_INPUT
                     oj::linux_port::addCrewBindings(controlMaps);
 #endif
                     input.load(controlMaps);
@@ -913,7 +913,7 @@ int runGame(const oj::LaunchOptions& options, const oj::Config& config) {
         in.shiftHeld = input.held(0x0F);
         in.playerTaken = input.playerTaken();
         in.devices = input.deviceCount();
-#ifdef OJ_LINUX
+#ifdef OJ_SDL_INPUT
         // SDL keeps stable hot-plug slots. Empty slots must not enable split screen.
         in.devices = 0;
         for (size_t i = 0; i < input.deviceCount(); ++i)
