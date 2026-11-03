@@ -4,36 +4,48 @@ Native macOS, Linux/NixOS and Android ports of **[OpenJuice](https://gitlab.com/
 
 Required Notice: Copyright 2026 Sidewinder (https://gitlab.com/sidecr3w/openjuice)
 
-The local Linux source now integrates upstream **1.02.7** (`b23976cf`), with our
-car packs, liveries, career mods and SDL controls retained. See the
-[integration checkpoint](docs/upstream-sync-2026-11-02.md) for validation and
-remaining backend limits: the new Direct3D graphics passes are not yet ported
-to OpenGL. Published downloads below retain their existing versions; this
-source update does not replace the Android or macOS binaries.
+The current source integrates upstream **1.02.7** (`b23976cf`) across macOS,
+Linux/NixOS and Android, including native Metal/GL effects, our car packs,
+liveries, career mods and SDL controls. The main branch contains the shared
+native-port code; the older platform branches remain available as history.
+
+The [3 November validation checkpoint](docs/native-effects-device-validation-2026-11-03.md)
+records 18 GPU checks on the physical Retroid Pocket 5 and the Apple Silicon Mac,
+day/night races, a signed Android release build, installed Mac applications and
+save-preservation checks. See the [upstream integration notes](docs/upstream-sync-2026-11-02.md)
+for the source import. This source update does not replace existing release assets.
 
 ## Downloads
 
 Development builds. Compatibility and performance vary by device; no frame-rate target is guaranteed. Supply your own Juiced game data; game data is not bundled.
 
+The Android and Linux downloads below are older published builds. They do not
+contain all changes in the current 1.02.7 source. Build the current source using
+the platform guides below.
+
 | Platform | Build | Download / requirements |
 | --- | --- | --- |
 | Android ARM64 | OpenJuice 1.02.5 · android.4 | [APK and optional mods](https://github.com/martin2844/juiced/releases/tag/android-v1.02.5-4) · Android 8+ |
 | Linux x86_64 / NixOS | OpenJuice 1.02.5 · mods1 | [Nix binary package](https://github.com/martin2844/juiced/releases/tag/linux-v1.02.5-mods1) · Nix and OpenGL drivers required |
-| macOS Apple Silicon | Port 0.3.3 · OpenJuice 1.01.4 | Build pending: [release workflow](https://github.com/martin2844/juiced/actions/workflows/macos-release.yml) · Homebrew FFmpeg required |
+| macOS Apple Silicon | Current source: OpenJuice 1.02.7 · app 1.2.7 | [Build and package locally](docs/macos-build-and-run.md) · validated locally; current app download not published |
 
 Android: install the APK and import your own `Juiced.zip` in the launcher. Import optional mods separately. Physical controllers and customizable touch controls are available; touch controls can be disabled.
 
 Linux: follow the included instructions. The download is a Nix closure, not a standalone AppImage.
 
-macOS: install FFmpeg with `brew install ffmpeg`, extract the app and select your game folder. The app is ad-hoc signed, not notarized. This build uses a different upstream base from Linux and Android.
+macOS: compile locally on a Mac. The packaging helper bundles non-system libraries
+and applies an ad-hoc signature; it does not notarize the app. The regular app
+runs the base game, and **Juiced Mod Garage** loads the editable mod collection.
 
 ## Source and documentation
 
-- [macOS source](https://github.com/martin2844/juiced/tree/main), [build instructions](https://github.com/martin2844/juiced/blob/main/docs/macos-build-and-run.md), [port status](https://github.com/martin2844/juiced/blob/main/docs/macos-port.md).
-- [Linux and Android source](https://github.com/martin2844/juiced/tree/linux-nixos), [Linux guide](https://github.com/martin2844/juiced/blob/linux-nixos/docs/linux-port.md), [Android guide](https://github.com/martin2844/juiced/blob/linux-nixos/docs/android-port.md).
+- [macOS build instructions](docs/macos-build-and-run.md) and [port status](docs/macos-port.md).
+- [Linux/NixOS guide](docs/linux-port.md) and [Android guide](docs/android-port.md).
+- [Current device validation and checkpoints](docs/native-effects-device-validation-2026-11-03.md).
 - [Upstream source](https://gitlab.com/sidecr3w/openjuice) and [upstream releases](https://gitlab.com/sidecr3w/openjuice/-/releases).
 
-The older `android` branch and rain-fix release remain as history. Current Android development is on `linux-nixos`.
+The older `android` branch and rain-fix release remain as history. Current
+macOS, Linux and Android sources are consolidated on `main`.
 
 ## License and credits
 
