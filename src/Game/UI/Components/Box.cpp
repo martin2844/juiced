@@ -10,6 +10,7 @@
 #include "Core/Base/Log.h"
 #include "Core/Base/X87.h"
 #include "Core/Formats/Ddt.h"
+#include "Core/Input/PadPrompts.h"
 #include "Render/FrameOptions.h"
 
 #include <algorithm>
@@ -94,6 +95,7 @@ render::TextureId Screen::texture(const std::string& name) {
 #if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
     auto custom=mods::uiTexture(name);if(custom!=name)return texture(custom);
 #endif
+    if (const char* pad = input::promptTexture(name)) return texture(pad);  // Not stock: the pad's hints
     const auto found = m_textures.find(name);
     if (found != m_textures.end()) {
         return found->second;
@@ -108,7 +110,8 @@ render::TextureId Screen::loadTexture(const std::string& name) {
     const GameFiles files(std::filesystem::current_path());
     // Localized pictures (button hints) exist as <name>_<language letter>.ddt only: the file system looks for them
     // when the name is not there (0x004F9DB3).
-    auto bytes = files.read(std::filesystem::path("ui") / "textures" / (name + ".ddt"));
+    auto bytes = input::promptBytes(name);  // Not stock: the pad's hints, built in
+    if (!bytes) bytes = files.read(std::filesystem::path("ui") / "textures" / (name + ".ddt"));
 #if defined(OJ_MACOS) || defined(OJ_LINUX) || defined(OJ_ANDROID)
     if(auto image=mods::imageBytes(name))bytes=std::move(image);
 #endif

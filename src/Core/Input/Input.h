@@ -216,7 +216,7 @@ public:
     // for the next poll.
     PadControls& pads() { return m_pads; }
     const PadControls& pads() const { return m_pads; }
-    void setPad(const PadState& pad) { m_pad = pad; }
+    void setPad(const PadState& pad);
     // The fixed build: the first player's motors of the race's frames for the controller (PadRumble).
     PadRumble& padRumble() { return m_padRumble; }
     // The uAppData of the action the keyboard's map gives a key (a DIK code), -1 for none.

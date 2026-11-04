@@ -87,6 +87,7 @@
     <ClInclude Include="Input\ForceFeedback.h" />
     <ClInclude Include="Input\Input.h" />
     <ClInclude Include="Input\PadControls.h" />
+    <ClInclude Include="Input\PadPrompts.h" />
     <ClInclude Include="Input\PadRumble.h" />
     <ClInclude Include="Network\GameSpy\GameSpy.h" />
     <ClInclude Include="Network\GameSpy\GameSpyBrowser.h" />
@@ -181,6 +182,7 @@
     <ClCompile Include="Input\ForceFeedback.cpp" />
     <ClCompile Include="Input\Input.cpp" />
     <ClCompile Include="Input\PadControls.cpp" />
+    <ClCompile Include="Input\PadPrompts.cpp" />
     <ClCompile Include="Input\PadRumble.cpp" />
     <ClCompile Include="Network\GameSpy\GameSpy.cpp" />
     <ClCompile Include="Network\GameSpy\GameSpyBrowser.cpp" />

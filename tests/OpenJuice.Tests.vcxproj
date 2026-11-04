@@ -210,6 +210,7 @@
     <ClCompile Include="Integration\Input\PadControlsFileTests.cpp" />
     <ClCompile Include="Integration\Input\WheelInputTests.cpp" />
     <ClCompile Include="Unit\Input\PadControlsTests.cpp" />
+    <ClCompile Include="Unit\Input\PadPromptsTests.cpp" />
     <ClCompile Include="Unit\Input\PadRumbleTests.cpp" />
     <ClCompile Include="Unit\Input\KeyboardSteeringTests.cpp" />
     <ClCompile Include="Unit\Input\UiInputTests.cpp" />

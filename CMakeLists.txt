@@ -38,7 +38,7 @@ target_include_directories(juice_core PUBLIC src src/Mac/Compat)
 include(${PROJECT_SOURCE_DIR}/cmake/NativeShared.cmake)
 oj_native_shared(juice_core)
 target_compile_options(juice_core PUBLIC -include ${CMAKE_CURRENT_SOURCE_DIR}/src/Mac/Compat/Crt.h)
-target_compile_definitions(juice_core PUBLIC _DEBUG OJ_MACOS)
+target_compile_definitions(juice_core PUBLIC _DEBUG OJ_MACOS OJ_SDL_INPUT)
 target_link_libraries(juice_core PUBLIC SDL3::SDL3)
 find_package(Iconv REQUIRED)
 target_link_libraries(juice_core PUBLIC Iconv::Iconv)
@@ -68,7 +68,7 @@ add_library(juice_audio STATIC src/Audio/Bank.cpp src/Audio/Player.cpp src/Audio
 target_link_libraries(juice_audio PUBLIC juice_core PkgConfig::FFMPEG)
 file(GLOB_RECURSE GAME CONFIGURE_DEPENDS src/Game/*.cpp)
 list(FILTER GAME EXCLUDE REGEX "App/(Main|CrashLog)\\.cpp$|Platform/(Platform|InputDevices|Settings|SystemKeys|Win7Imports|Windows7|Pads|WheelInput)\\.cpp$|Media/Binkw32\\.cpp$")
-add_library(juice_game STATIC ${GAME} src/Mac/Platform.cpp src/Mac/Controls.cpp src/Mac/ControlsOverlay.cpp
+add_library(juice_game STATIC ${GAME} src/Mac/Platform.cpp src/Linux/InputDevices.cpp src/Mac/Controls.cpp src/Mac/ControlsOverlay.cpp
   src/Mac/ImageImport.mm src/Mods/Packages.cpp src/Mods/Runtime.cpp src/Mods/Creative.cpp src/Mods/CreativeMenu.cpp)
 target_include_directories(juice_game PRIVATE ${LUA_INCLUDE_DIR})
 target_link_libraries(juice_game PUBLIC juice_render juice_audio ${LUA_LIBRARIES} "-framework AppKit")
